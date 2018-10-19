@@ -1,0 +1,10 @@
+{% import '_includes/forms' as forms %}
+
+<div id="{{ name }}">
+  {{- forms.checkboxSelectField({
+    label: 'Root templates',
+    name: 'rootTemplates',
+    options: templates,
+    values: settings.rootTemplates,
+  }) -}}
+</div>

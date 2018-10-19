@@ -1,0 +1,10 @@
+<div class="tcfField" id="{{ name }}">
+  <script type="application/json">{{ payload|raw }}</script>
+  <input type="hidden" id="{{ name }}-content" name="{{ name }}[content]" value="{{ content }}" class="tcfField--content" />
+  <input type="hidden" id="{{ name }}-isCpFormData" name="{{ name }}[isCpFormData]" value="true" />
+  <div class="tcfField--app"></div>
+</div>
+
+{% js %}
+  createContentField("{{ nameNs }}");
+{% endjs %}

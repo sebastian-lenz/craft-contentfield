@@ -1,0 +1,29 @@
+{
+  "name": "sebastianlenz/contentfield",
+  "description": "A Craft field type for editing structured content",
+  "type": "craft-plugin",
+  "license": "Craft",
+  "require": {
+    "php": "^7.0",
+    "craftcms/cms": "^3.0.0",
+    "symfony/yaml": "^3.4",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "craftcms/redactor": "2.1.6"
+  },
+  "suggest": {
+    "craftcms/redactor": "2.1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "contentfield\\": "src/"
+    }
+  },
+  "extra": {
+    "handle": "contentfield",
+    "name": "Content field",
+    "developer": "Sebastian Lenz",
+    "developerUrl": "https://github.com/sebastian-lenz/"
+  }
+}

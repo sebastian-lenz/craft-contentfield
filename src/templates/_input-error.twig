@@ -1,0 +1,15 @@
+{% do view.registerAssetBundle('contentfield\\utilities\\CpAdminAssetBundle') %}
+
+<div class="contentfield">
+  <p>This field could not be rendered as on or more schemas contain errors:</p>
+  {% for schema in schemas %}
+    <p>
+      <strong>{{ schema.name }}</strong>
+      {% for errors in schema.errors %}
+        {% for error in errors %}
+          <br>{{ error }}
+        {% endfor %}
+      {% endfor %}
+    </p>
+  {% endfor %}
+</div>
