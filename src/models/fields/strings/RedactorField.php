@@ -1,17 +1,15 @@
 <?php
 
-namespace contentfield\models\widgets;
+namespace contentfield\models\fields\strings;
 
-use contentfield\models\fields\StringField;
 use craft\base\ElementInterface;
 
 /**
- * Class RedactorWidget
- * @package contentfield\models
+ * Class RedactorField
  *
  * Displays a redactor input field.
  */
-class RedactorWidget extends AbstractWidget
+class RedactorField extends AbstractStringField
 {
   /**
    * The internal name of this widget.
@@ -58,15 +56,5 @@ class RedactorWidget extends AbstractWidget
    */
   public function isHtmlWidget() {
     return true;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  static function expandFieldConfig(&$config) {
-    if ($config['type'] === self::NAME) {
-      $config['type'] = StringField::NAME;
-      $config['widget'] = self::NAME;
-    }
   }
 }

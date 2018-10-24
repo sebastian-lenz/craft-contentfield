@@ -65,7 +65,26 @@ abstract class AbstractSchema extends Model
 
     if (isset($config['fields'])) {
       $fieldManager = Plugin::getFieldManager();
-      foreach ($config['fields'] as $field) {
+      foreach ($config['fields'] as $key => $field) {
+        // If the field is no an array try to load blueprint or use it
+        // as the field type
+        if (is_string($field)) {
+          if ($fieldManager->hasBlueprint($field)) {
+            $field = $fieldManager->getBlueprint($field);
+          } else {
+            $field = array('type' => $field);
+          }
+        }
+
+        // If the field list is associative, use the keys as the field names
+        if (is_string($key)) {
+          if (isset($field['name'])) {
+            \Craft::warning(array('The field `$1` has multiple names.', $key), 'craft-contentfield');
+          }
+
+          $field['name'] = $key;
+        }
+
         $instance = $fieldManager->createField($field);
         if (isset($this->fields[$instance->name])) {
           throw new \Exception('The field "' . $instance->name . '" is already set on schema "' . $config['qualifier'] . '".');

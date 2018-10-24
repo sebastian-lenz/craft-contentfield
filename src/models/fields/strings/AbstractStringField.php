@@ -1,27 +1,16 @@
 <?php
 
-namespace contentfield\models\fields;
+namespace contentfield\models\fields\strings;
 
+use contentfield\models\fields\AbstractField;
 use contentfield\models\values\AbstractValue;
 use contentfield\models\values\StringValue;
-use contentfield\models\widgets\InputWidget;
 
 /**
  * Class StringField
  */
-class StringField extends AbstractField
+abstract class AbstractStringField extends AbstractField
 {
-  /**
-   * @inheritdoc
-   */
-  const DEFAULT_WIDGET = InputWidget::NAME;
-
-  /**
-   * The internal name of this field.
-   */
-  const NAME = 'string';
-
-
   /**
    * @inheritdoc
    */

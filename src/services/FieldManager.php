@@ -6,13 +6,9 @@ use contentfield\models\fields\AbstractField;
 use contentfield\models\fields\ArrayField;
 use contentfield\models\fields\InstanceField;
 use contentfield\models\fields\ReferenceField;
-use contentfield\models\fields\StringField;
-use contentfield\models\widgets\AbstractWidget;
-use contentfield\models\widgets\ArrayWidget;
-use contentfield\models\widgets\InputWidget;
-use contentfield\models\widgets\InstanceWidget;
-use contentfield\models\widgets\RedactorWidget;
-use contentfield\models\widgets\ReferenceWidget;
+use contentfield\models\fields\strings\RedactorField;
+use contentfield\models\fields\strings\TextAreaField;
+use contentfield\models\fields\strings\TextField;
 
 /**
  * Class FieldManager
@@ -27,21 +23,10 @@ class FieldManager
     ArrayField::NAME     => ArrayField::class,
     InstanceField::NAME  => InstanceField::class,
     ReferenceField::NAME => ReferenceField::class,
-    StringField::NAME    => StringField::class,
+    RedactorField::NAME  => RedactorField::class,
+    TextAreaField::NAME  => TextAreaField::class,
+    TextField::NAME      => TextField::class
   );
-
-  /**
-   * A map of all known widget types.
-   * @var array
-   */
-  static $WIDGET_TYPES = array(
-    ArrayWidget::NAME     => ArrayWidget::class,
-    InputWidget::NAME     => InputWidget::class,
-    InstanceWidget::NAME  => InstanceWidget::class,
-    RedactorWidget::NAME  => RedactorWidget::class,
-    ReferenceWidget::NAME => ReferenceWidget::class,
-  );
-
 
   /**
    * Creates a new field instance from the given configuration.
@@ -56,8 +41,8 @@ class FieldManager
     // We don't know the field type, let the widgets try to expand
     // the given configuration
     if (!array_key_exists($type, self::$FIELD_TYPES)) {
-      foreach (self::$WIDGET_TYPES as $widgetClass) {
-        $widgetClass::expandFieldConfig($config);
+      foreach (self::$FIELD_TYPES as $fieldClass) {
+        $fieldClass::expandFieldConfig($config);
       }
     }
 
@@ -71,17 +56,22 @@ class FieldManager
   }
 
   /**
-   * @param array $config
-   * @return AbstractWidget
-   * @throws \Exception
+   * Return the blueprint field definition for the given name.
+   *
+   * @param string $name
+   * @return array
    */
-  public function createWidget(&$config) {
-    $type = strtolower($config['widget']);
-    if (!array_key_exists($type, self::$WIDGET_TYPES)) {
-      throw new \Exception('Invalid widget type "' . $type . '".');
-    }
+  public function getBlueprint($name) {
+    return array();
+  }
 
-    $widgetClass = self::$WIDGET_TYPES[$type];
-    return new $widgetClass($config);
+  /**
+   * Test whether the blueprint with the given name exists.
+   *
+   * @param string $name
+   * @return bool
+   */
+  public function hasBlueprint($name) {
+    return false;
   }
 }

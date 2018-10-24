@@ -8,7 +8,6 @@ use craft\elements\Asset;
 use craft\elements\Entry;
 
 use contentfield\models\values\ReferenceValue;
-use contentfield\models\widgets\ReferenceWidget;
 
 /**
  * Class ReferenceField
@@ -34,11 +33,6 @@ class ReferenceField extends AbstractField
    * @var string
    */
   public $viewMode;
-
-  /**
-   * @inheritdoc
-   */
-  const DEFAULT_WIDGET = ReferenceWidget::NAME;
 
   /**
    * The internal name of this field.
@@ -129,6 +123,9 @@ class ReferenceField extends AbstractField
     );
   }
 
+  /**
+   * @param $attribute
+   */
   public function validateElementType($attribute) {
     if (!isset($this->$attribute) || empty($this->$attribute) || !is_string($this->$attribute)) {
       $this->addError($attribute, "The element type is required.");

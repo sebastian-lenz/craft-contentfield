@@ -2,13 +2,12 @@
 
 namespace contentfield\models\values;
 
-use contentfield\models\Content;
-use contentfield\models\fields\StringField;
+use contentfield\models\fields\strings\AbstractStringField;
 
 /**
  * Class StringValue
  *
- * @property StringField $field
+ * @property AbstractStringField $field
  */
 class StringValue extends AbstractValue
 {
@@ -23,9 +22,9 @@ class StringValue extends AbstractValue
    *
    * @param mixed $data
    * @param AbstractValue $parent
-   * @param StringField $field
+   * @param AbstractStringField $field
    */
-  public function __construct($data, AbstractValue $parent, StringField $field) {
+  public function __construct($data, AbstractValue $parent, AbstractStringField $field) {
     parent::__construct($parent, $field);
     $this->value = is_string($data) ? $data : '';
   }
@@ -48,7 +47,7 @@ class StringValue extends AbstractValue
    * @inheritdoc
    */
   public function getHtml() {
-    return new \Twig_Markup($this->field->widget->isHtmlWidget()
+    return new \Twig_Markup($this->field->isHtmlField()
       ? $this->value
       : htmlentities($this->value)
     , 'utf-8');

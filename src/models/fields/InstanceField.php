@@ -2,12 +2,11 @@
 
 namespace contentfield\models\fields;
 
-use contentfield\models\values\AbstractValue;
 use craft\base\ElementInterface;
 
 use contentfield\models\schemas\AbstractSchema;
+use contentfield\models\values\AbstractValue;
 use contentfield\models\values\InstanceValue;
-use contentfield\models\widgets\InstanceWidget;
 use contentfield\Plugin;
 
 /**
@@ -21,11 +20,6 @@ class InstanceField extends AbstractField
    * @var AbstractSchema[]
    */
   public $schemas;
-
-  /**
-   * @inheritdoc
-   */
-  const DEFAULT_WIDGET = InstanceWidget::NAME;
 
   /**
    * The internal name of this field.
@@ -85,7 +79,25 @@ class InstanceField extends AbstractField
     }
 
     return parent::getEditorData($element) + array(
-        'schemas' => $schemas,
-      );
+      'schemas' => $schemas,
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  static function expandFieldConfig(&$config) {
+    // Expand the type `instances` to an array of instance fields
+    if ($config['type'] === 'instances') {
+      $config = array_intersect_key($config, array(
+          'name'  => true,
+          'label' => true,
+        )) + array(
+          'type'  => ArrayField::NAME,
+          'member' => array(
+              'type' => self::NAME,
+            ) + $config,
+        );
+    }
   }
 }

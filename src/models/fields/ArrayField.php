@@ -7,8 +7,6 @@ use contentfield\models\values\ArrayValue;
 use contentfield\Plugin;
 use craft\base\ElementInterface;
 
-use contentfield\models\widgets\ArrayWidget;
-
 /**
  * Class ArrayField
  */
@@ -18,11 +16,6 @@ class ArrayField extends AbstractField
    * @var AbstractField
    */
   public $member;
-
-  /**
-   * @inheritdoc
-   */
-  const DEFAULT_WIDGET = ArrayWidget::NAME;
 
   /**
    * @inheritdoc

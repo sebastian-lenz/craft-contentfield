@@ -3,11 +3,9 @@
 namespace contentfield\models\fields;
 
 use contentfield\models\values\AbstractValue;
-use contentfield\Plugin;
 use craft\base\ElementInterface;
 use craft\base\Model;
 
-use contentfield\models\widgets\AbstractWidget;
 use contentfield\models\schemas\AbstractSchema;
 
 /**
@@ -18,29 +16,34 @@ use contentfield\models\schemas\AbstractSchema;
 abstract class AbstractField extends Model
 {
   /**
+   * The group name this field belongs to.
+   * @var string
+   */
+  public $group;
+
+  /**
+   * The human readable label of this field.
    * @var string
    */
   public $label;
 
   /**
+   * The internal name of this field.
    * @var string
    */
   public $name;
 
   /**
+   * The type of this field.
    * @var string
    */
   public $type;
 
   /**
-   * @var AbstractWidget
+   * The width of this field in the control panel.
+   * @var string
    */
-  public $widget;
-
-  /**
-   * Defines the default widget to use with this field.
-   */
-  const DEFAULT_WIDGET = AbstractWidget::NAME;
+  public $width = '12/12';
 
   /**
    * The internal name of this field.
@@ -60,14 +63,6 @@ abstract class AbstractField extends Model
 
     if (!isset($config['label'])) {
       $config['label'] = $this->generateAttributeLabel($config['name']);
-    }
-
-    if (!isset($config['widget'])) {
-      $config['widget'] = static::NAME;
-    }
-
-    if (!($config['widget'] instanceof AbstractWidget)) {
-      $config['widget'] = Plugin::getFieldManager()->createWidget($config);
     }
 
     parent::__construct($config);
@@ -100,11 +95,21 @@ abstract class AbstractField extends Model
    */
   public function getEditorData(ElementInterface $element = null) {
     return array(
+      'group'  => $this->group,
       'label'  => $this->label,
       'name'   => $this->name,
       'type'   => $this->type,
-      'widget' => $this->widget->getEditorData($element),
+      'width'  => $this->width,
     );
+  }
+
+  /**
+   * Return whether this fields stores html output.
+   *
+   * @return boolean
+   */
+  public function isHtmlField() {
+    return false;
   }
 
   /**
@@ -126,4 +131,14 @@ abstract class AbstractField extends Model
       $this->addError($attribute, 'Field names cannot start with two underscores.');
     }
   }
+
+  /**
+   * Allows this widget to manipulate the given field configuration.
+   *
+   * Will be only invoked if the field type is not set to a valid field type
+   * and will be invoked on all widget types.
+   *
+   * @param array $config
+   */
+  static function expandFieldConfig(&$config) {}
 }
