@@ -85,6 +85,10 @@ abstract class AbstractSchema extends Model
           $field['name'] = $key;
         }
 
+        if (!is_array($field) || !isset($field['type']) || !isset($field['name'])) {
+          throw new \Exception('Invalid schema');
+        }
+
         $instance = $fieldManager->createField($field);
         if (isset($this->fields[$instance->name])) {
           throw new \Exception('The field "' . $instance->name . '" is already set on schema "' . $config['qualifier'] . '".');

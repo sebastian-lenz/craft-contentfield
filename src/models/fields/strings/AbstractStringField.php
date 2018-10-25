@@ -7,7 +7,7 @@ use contentfield\models\values\AbstractValue;
 use contentfield\models\values\StringValue;
 
 /**
- * Class StringField
+ * Class AbstractStringField
  */
 abstract class AbstractStringField extends AbstractField
 {

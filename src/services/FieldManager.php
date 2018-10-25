@@ -4,6 +4,7 @@ namespace contentfield\services;
 
 use contentfield\models\fields\AbstractField;
 use contentfield\models\fields\ArrayField;
+use contentfield\models\fields\enumerations\SelectField;
 use contentfield\models\fields\InstanceField;
 use contentfield\models\fields\ReferenceField;
 use contentfield\models\fields\strings\RedactorField;
@@ -24,9 +25,11 @@ class FieldManager
     InstanceField::NAME  => InstanceField::class,
     ReferenceField::NAME => ReferenceField::class,
     RedactorField::NAME  => RedactorField::class,
+    SelectField::NAME    => SelectField::class,
     TextAreaField::NAME  => TextAreaField::class,
     TextField::NAME      => TextField::class
   );
+
 
   /**
    * Creates a new field instance from the given configuration.

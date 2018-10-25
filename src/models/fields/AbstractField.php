@@ -53,6 +53,7 @@ abstract class AbstractField extends Model
 
   /**
    * Field constructor.
+   *
    * @param array $config
    * @throws \Exception
    */
