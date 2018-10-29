@@ -16,8 +16,14 @@ use contentfield\models\schemas\AbstractSchema;
 abstract class AbstractField extends Model
 {
   /**
+   * The default value of this field.
+   * @var mixed
+   */
+  public $defaultValue;
+
+  /**
    * The group name this field belongs to.
-   * @var string
+   * @var array|string
    */
   public $group;
 
@@ -49,6 +55,29 @@ abstract class AbstractField extends Model
    * The internal name of this field.
    */
   const NAME = '@invalid';
+
+  /**
+   * List of attributes allowed on groups.
+   */
+  const GROUP_ATTRIBUTES = [
+    'label'
+  ];
+
+  /**
+   * List of style attributes allowed on groups.
+   */
+  const GROUP_STYLE_ATTRIBUTES = [
+    'alignSelf',
+    'gridArea',
+    'gridColumn',
+    'gridColumnEnd',
+    'gridColumnStart',
+    'gridRow',
+    'gridRowEnd',
+    'gridRowStart',
+    'justifySelf',
+    'placeSelf',
+  ];
 
 
   /**
@@ -95,13 +124,58 @@ abstract class AbstractField extends Model
    * @return array
    */
   public function getEditorData(ElementInterface $element = null) {
+    $width = 1;
+    if (preg_match('/(\d+)\/(\d+)/', $this->width, $match)) {
+      $width = floor(intval($match[1]) / intval($match[2]) * 1000000) / 10000;
+    }
+
     return array(
-      'group'  => $this->group,
-      'label'  => $this->label,
-      'name'   => $this->name,
-      'type'   => $this->type,
-      'width'  => $this->width,
+      'defaultValue' => $this->getEditorDefaultValue($element),
+      'group'        => $this->getEditorGroup($element),
+      'label'        => $this->label,
+      'name'         => $this->name,
+      'type'         => $this->type,
+      'width'        => $width,
     );
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return mixed
+   */
+  public function getEditorDefaultValue(ElementInterface $element = null) {
+    return $this->defaultValue;
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return array
+   */
+  public function getEditorGroup(ElementInterface $element = null) {
+    if (!isset($this->group) || !is_array($this->group)) {
+      return null;
+    }
+
+    $attributes = $this->group;
+    if (!is_array($attributes)) {
+      $attributes = ['label' => $attributes];
+    }
+
+    $group = array();
+    $style = array();
+    foreach ($attributes as $name => $value) {
+      if (in_array($name, self::GROUP_STYLE_ATTRIBUTES)) {
+        $style[$name] = (string)$value;
+      } else if (in_array($name, self::GROUP_ATTRIBUTES)) {
+        $group[$name] = (string)$value;
+      }
+    }
+
+    if (count($style) > 0) {
+      $group['style'] = $style;
+    }
+
+    return $group;
   }
 
   /**

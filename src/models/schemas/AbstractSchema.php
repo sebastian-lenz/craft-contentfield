@@ -23,6 +23,13 @@ abstract class AbstractSchema extends Model
   public $fields = array();
 
   /**
+   * Defines the css grid layout of this schema. Grid layout is used
+   * to place the field groups within the schema form.
+   * @var string
+   */
+  public $grid;
+
+  /**
    * The name of the icon that represents this schema.
    * @var string
    */
@@ -145,6 +152,7 @@ abstract class AbstractSchema extends Model
 
     return array(
       'fields'    => $fields,
+      'grid'      => (string)$this->grid,
       'icon'      => $this->getIcon(),
       'label'     => $this->getLabel(),
       'preview'   => $this->getPreview(),
@@ -198,14 +206,11 @@ abstract class AbstractSchema extends Model
    * @inheritdoc
    */
   public function rules() {
-    return array(
-      array('fields',    'validateFields'),
-      array('icon',      'string'),
-      array('label',     'string'),
-      array('preview',   'string'),
-      array('qualifier', 'required'),
-      array('qualifier', 'string'),
-    );
+    return [
+      [['fields', 'qualifier'], 'required'],
+      [['icon', 'grid', 'label', 'preview', 'qualifier'], 'string'],
+      ['fields', 'validateFields'],
+    ];
   }
 
   /**
@@ -214,10 +219,9 @@ abstract class AbstractSchema extends Model
    * @param string $attribute
    */
   public function validateFields($attribute) {
-    if (!isset($this->$attribute)) {
-      return $this->addError($attribute, 'Fields not set.');
-    } elseif (!is_array($this->$attribute)) {
-      return $this->addError($attribute, 'Fields must be an array.');
+    if (!is_array($this->$attribute)) {
+      $this->addError($attribute, "$attribute must be an array.");
+      return;
     }
 
     foreach ($this->$attribute as $name => $field) {

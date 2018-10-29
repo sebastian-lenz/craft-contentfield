@@ -17,7 +17,8 @@ use contentfield\utilities\TemplateLoader;
 
 /**
  * Class Plugin
- * @package contentfield
+ *
+ * @method Config getSettings()
  */
 class Plugin extends \craft\base\Plugin
 {
@@ -83,6 +84,13 @@ class Plugin extends \craft\base\Plugin
         $event->types[] = IconUtility::class;
       }
     );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  protected function createSettingsModel() {
+    return new Config();
   }
 
   /**

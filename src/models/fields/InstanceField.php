@@ -90,14 +90,14 @@ class InstanceField extends AbstractField
     // Expand the type `instances` to an array of instance fields
     if ($config['type'] === 'instances') {
       $config = array_intersect_key($config, array(
-          'name'  => true,
-          'label' => true,
-        )) + array(
-          'type'  => ArrayField::NAME,
-          'member' => array(
-              'type' => self::NAME,
-            ) + $config,
-        );
+        'name'  => true,
+        'label' => true,
+      )) + array(
+        'type'  => ArrayField::NAME,
+        'member' => array(
+          'type' => self::NAME,
+        ) + $config,
+      );
     }
   }
 }

@@ -86,7 +86,7 @@ class ContentField extends Field
    */
 
   /**
-   * @param $model
+   * @param Content $content
    * @return array
    */
   private function loadReferences(Content $content) {
@@ -158,10 +158,11 @@ class ContentField extends Field
 
     $data = array(
       'config' => array(
-        'elementId'    => is_null($element) ? null : $element->getId(),
-        'i18nCategory' => Plugin::$TRANSLATION_CATEGORY,
-        'references'   => $this->loadReferences($value),
-        'rootSchemas'  => array_map(function($schema) {
+        'googleMapsApiKey' => Plugin::getInstance()->getSettings()->googleMapsApiKey,
+        'elementId'        => is_null($element) ? null : $element->getId(),
+        'i18nCategory'     => Plugin::$TRANSLATION_CATEGORY,
+        'references'       => $this->loadReferences($value),
+        'rootSchemas'      => array_map(function($schema) {
           return $schema->qualifier;
         }, $rootSchemas),
       ),

@@ -4,6 +4,7 @@ namespace contentfield\models\values;
 
 use contentfield\models\Content;
 use contentfield\models\fields\AbstractField;
+use craft\base\ElementInterface;
 use craft\base\Model;
 
 /**
@@ -75,6 +76,14 @@ abstract class AbstractValue extends Model
    * @return mixed
    */
   abstract function getEditorData();
+
+  /**
+   * @return ElementInterface|null
+   */
+  public function getElement() {
+    $content = $this->getContent();
+    return is_null($content) ? null : $content->getOwner();
+  }
 
   /**
    * @return AbstractField|null

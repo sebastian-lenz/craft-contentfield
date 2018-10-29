@@ -4,8 +4,10 @@ namespace contentfield\services;
 
 use contentfield\models\fields\AbstractField;
 use contentfield\models\fields\ArrayField;
+use contentfield\models\fields\ColorField;
 use contentfield\models\fields\enumerations\SelectField;
 use contentfield\models\fields\InstanceField;
+use contentfield\models\fields\LocationField;
 use contentfield\models\fields\ReferenceField;
 use contentfield\models\fields\strings\RedactorField;
 use contentfield\models\fields\strings\TextAreaField;
@@ -22,7 +24,9 @@ class FieldManager
    */
   static $FIELD_TYPES = array(
     ArrayField::NAME     => ArrayField::class,
+    ColorField::NAME     => ColorField::class,
     InstanceField::NAME  => InstanceField::class,
+    LocationField::NAME  => LocationField::class,
     ReferenceField::NAME => ReferenceField::class,
     RedactorField::NAME  => RedactorField::class,
     SelectField::NAME    => SelectField::class,
