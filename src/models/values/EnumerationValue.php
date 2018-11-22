@@ -7,7 +7,7 @@ use contentfield\models\fields\enumerations\AbstractEnumerationField;
 /**
  * Class EnumerationValue
  *
- * @property AbstractEnumerationField $field
+ * @property AbstractEnumerationField $__field
  */
 class EnumerationValue extends AbstractValue
 {

@@ -17,17 +17,17 @@ abstract class AbstractValue extends Model
   /**
    * @var Content|null
    */
-  protected $content = null;
+  protected $__content = null;
 
   /**
    * @var AbstractField|null
    */
-  protected $field;
+  protected $__field;
 
   /**
    * @var AbstractValue|null
    */
-  protected $parent;
+  protected $__parent;
 
 
   /**
@@ -39,8 +39,8 @@ abstract class AbstractValue extends Model
   public function __construct(AbstractValue $parent = null, AbstractField $field = null) {
     parent::__construct();
 
-    $this->field = $field;
-    $this->parent = $parent;
+    $this->__field = $field;
+    $this->__parent = $parent;
   }
 
   /**
@@ -52,10 +52,10 @@ abstract class AbstractValue extends Model
    * @return Content|null
    */
   public function getContent() {
-    if (!is_null($this->content)) {
-      return $this->content;
-    } else if (!is_null($this->parent)) {
-      return $this->parent->getContent();
+    if (!is_null($this->__content)) {
+      return $this->__content;
+    } else if (!is_null($this->__parent)) {
+      return $this->__parent->getContent();
     }
 
     return null;
@@ -89,7 +89,7 @@ abstract class AbstractValue extends Model
    * @return AbstractField|null
    */
   public function getField() {
-    return $this->field;
+    return $this->__field;
   }
 
   /**
@@ -101,13 +101,22 @@ abstract class AbstractValue extends Model
    * @return AbstractValue|null
    */
   public function getParent() {
-    return $this->parent;
+    return $this->__parent;
+  }
+
+  /**
+   * Returns the data of this value for storing in the database. By default,
+   * this is the same as `$this->getEditorData()`.
+   * @return mixed
+   */
+  public function getSerializedData() {
+    return $this->getEditorData();
   }
 
   /**
    * @param Content $content
    */
   public function setContent(Content $content) {
-    $this->content = $content;
+    $this->__content = $content;
   }
 }

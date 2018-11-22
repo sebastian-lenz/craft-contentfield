@@ -7,7 +7,7 @@ use contentfield\models\fields\strings\AbstractStringField;
 /**
  * Class StringValue
  *
- * @property AbstractStringField $field
+ * @property AbstractStringField $__field
  */
 class StringValue extends AbstractValue
 {
@@ -47,7 +47,7 @@ class StringValue extends AbstractValue
    * @inheritdoc
    */
   public function getHtml() {
-    return new \Twig_Markup($this->field->isHtmlField()
+    return new \Twig_Markup($this->__field->isHtmlField()
       ? $this->value
       : htmlentities($this->value)
     , 'utf-8');

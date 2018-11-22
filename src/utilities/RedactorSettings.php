@@ -105,6 +105,13 @@ class RedactorSettings extends Field
   }
 
   /**
+   * @inheritdoc
+   */
+  public function serializeValue($value, ElementInterface $element = null) {
+    return parent::serializeValue($value, $element);
+  }
+
+  /**
    * @return array
    */
   protected function getRedactorConfig() {

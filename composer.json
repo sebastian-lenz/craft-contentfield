@@ -6,14 +6,9 @@
   "require": {
     "php": "^7.0",
     "craftcms/cms": "^3.0.0",
+    "craftcms/redactor": "2.1.6",
     "symfony/yaml": "^3.4",
-    "ext-json": "*"
-  },
-  "require-dev": {
-    "craftcms/redactor": "2.1.6"
-  },
-  "suggest": {
-    "craftcms/redactor": "2.1.6"
+    "ext-curl": "*"
   },
   "autoload": {
     "psr-4": {

@@ -2,10 +2,13 @@
 
 namespace contentfield;
 
+use contentfield\services\ImageTags;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterUrlRulesEvent;
 use craft\events\TemplateEvent;
 use craft\services\Fields;
 use craft\services\Utilities;
+use craft\web\UrlManager;
 use craft\web\View;
 use yii\base\Event;
 
@@ -18,56 +21,71 @@ use contentfield\utilities\TemplateLoader;
 /**
  * Class Plugin
  *
+ * @property services\FieldManager $fields
+ * @property services\ImageTags $imageTags
+ * @property services\Relations $relations
+ * @property services\SchemaManager $schemas
  * @method Config getSettings()
  */
 class Plugin extends \craft\base\Plugin
 {
+  /**
+   * @var array
+   */
   private $patchedViews = array();
-
-  /**
-   * @var FieldManager
-   */
-  private static $fieldManager;
-
-  /**
-   * @var SchemaManager
-   */
-  private static $schemaManager;
-
-  /**
-   * @var Plugin
-   */
-  static $instance;
 
   /**
    * @var string
    */
   static $TRANSLATION_CATEGORY = 'site';
 
+
   /**
    * @return void
    */
   public function init() {
     parent::init();
-    self::$instance = $this;
 
-    Event::on(View::class, View::EVENT_AFTER_RENDER_PAGE_TEMPLATE, function(TemplateEvent $event) {
-      /** @var View $view */
-      $view = $event->sender;
-      if (!in_array($view, $this->patchedViews)) {
-        $view->getTwig()->setLoader(new TemplateLoader($view));
-        $this->patchedViews[] = $view;
-      }
-    });
+    $this->setComponents([
+      'fields' => [
+        'class' => services\FieldManager::class
+      ],
+      'imageTags' => [
+        'class' => services\ImageTags::class
+      ],
+      'relations' => [
+        'class' => services\Relations::class
+      ],
+      'schemas' => [
+        'class' => services\SchemaManager::class
+      ]
+    ]);
 
-    Event::on(View::class, View::EVENT_BEFORE_RENDER_TEMPLATE, function(TemplateEvent $event) {
-      /** @var View $view */
-      $view = $event->sender;
-      if (!in_array($view, $this->patchedViews)) {
-        $view->getTwig()->setLoader(new TemplateLoader($view));
-        $this->patchedViews[] = $view;
+    Event::on(
+      View::class,
+      View::EVENT_AFTER_RENDER_PAGE_TEMPLATE,
+      function(TemplateEvent $event) {
+        /** @var View $view */
+        $view = $event->sender;
+        if (!in_array($view, $this->patchedViews)) {
+          $view->getTwig()->setLoader(new TemplateLoader($view));
+          $this->patchedViews[] = $view;
+        }
       }
-    });
+    );
+
+    Event::on(
+      View::class,
+      View::EVENT_BEFORE_RENDER_TEMPLATE,
+      function(TemplateEvent $event) {
+        /** @var View $view */
+        $view = $event->sender;
+        if (!in_array($view, $this->patchedViews)) {
+          $view->getTwig()->setLoader(new TemplateLoader($view));
+          $this->patchedViews[] = $view;
+        }
+      }
+    );
 
     Event::on(
       Fields::class,
@@ -91,28 +109,5 @@ class Plugin extends \craft\base\Plugin
    */
   protected function createSettingsModel() {
     return new Config();
-  }
-
-  /**
-   * @return FieldManager
-   */
-  static public function getFieldManager() {
-    if (!isset(self::$fieldManager)) {
-      self::$fieldManager = new FieldManager();
-    }
-
-    return self::$fieldManager;
-  }
-
-  /**
-   * @return SchemaManager
-   * @throws \yii\base\Exception
-   */
-  static public function getSchemaManager() {
-    if (!isset(self::$schemaManager)) {
-      self::$schemaManager = new SchemaManager();
-    }
-
-    return self::$schemaManager;
   }
 }

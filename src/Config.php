@@ -13,4 +13,9 @@ class Config extends Model
    * @var string
    */
   public $googleMapsApiKey;
+
+  /**
+   * @var string
+   */
+  public $googleTranslateApiKey;
 }

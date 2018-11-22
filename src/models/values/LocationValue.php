@@ -7,7 +7,7 @@ use contentfield\models\fields\LocationField;
 /**
  * Class LocationValue
  *
- * @property LocationField $field
+ * @property LocationField $__field
  */
 class LocationValue extends AbstractValue
 {

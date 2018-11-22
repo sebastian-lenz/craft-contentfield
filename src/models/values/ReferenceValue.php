@@ -3,12 +3,15 @@
 namespace contentfield\models\values;
 
 use contentfield\models\fields\ReferenceField;
+use contentfield\Plugin;
 use craft\base\ElementInterface;
+use craft\elements\Asset;
+use craft\helpers\Template;
 
 /**
  * Class ReferenceValue
  *
- * @property ReferenceField $field
+ * @property ReferenceField $__field
  */
 class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, \IteratorAggregate
 {
@@ -63,7 +66,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
    * @inheritdoc
    */
   public function getEagerLoadingMap(&$result = array()) {
-    $elementType = $this->field->getElementType();
+    $elementType = $this->__field->getElementType();
     if (!array_key_exists($elementType, $result)) {
       $result[$elementType] = array(
         'ids' => array(),
@@ -103,6 +106,14 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
   }
 
   /**
+   * @return ElementInterface
+   */
+  public function getFirst() {
+    $references = $this->getReferences();
+    return $references[0];
+  }
+
+  /**
    * @return ElementInterface[]
    */
   public function getReferences() {
@@ -114,10 +125,31 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
   }
 
   /**
+   * @param array $config
+   * @return \Twig_Markup|null
+   * @throws \Exception
+   */
+  public function imageTag($config = 'default') {
+    foreach ($this->getReferences() as $reference) {
+      if ($reference instanceof Asset) {
+        $result = Plugin::getInstance()
+          ->imageTags
+          ->render($reference, $config);
+
+        return is_null($result)
+          ? null
+          : Template::raw($result);
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * @return ElementInterface[]
    */
   private function loadReferences() {
-    $elementType = $this->field->getElementType();
+    $elementType = $this->__field->getElementType();
     if (is_null($elementType) || count($this->values) === 0) {
       return array();
     }

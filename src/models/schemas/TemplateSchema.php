@@ -25,14 +25,34 @@ class TemplateSchema extends AbstractSchema
    */
   public function render(InstanceValue $instance, array $variables = []) {
     $variables = array_merge(
+      [
+        'entry' => $instance->getContent()->getOwner(),
+        'node' => $instance,
+      ],
       $instance->getValues(),
       $variables
     );
 
-    try {
-      return \Craft::$app->getView()->renderTemplate($this->template, $variables);
-    } catch (\Exception $exception) {
-      return '';
+    $view = \Craft::$app->getView();
+    $oldTemplateMode = $view->getTemplateMode();
+    if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
+      $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
     }
+
+    if (CRAFT_ENVIRONMENT === 'dev') {
+      $result = $view->renderTemplate($this->template, $variables);
+    } else {
+      try {
+        $result = $view->renderTemplate($this->template, $variables);
+      } catch (\Exception $exception) {
+        $result = '';
+      }
+    }
+
+    if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
+      $view->setTemplateMode($oldTemplateMode);
+    }
+
+    return $result;
   }
 }

@@ -8,30 +8,36 @@ use contentfield\models\schemas\AbstractSchema;
 /**
  * Class InstanceValue
  *
- * @property InstanceField|null $field
+ * @property InstanceField|null $__field
  */
 class InstanceValue extends AbstractValue
 {
   /**
    * @var AbstractSchema
    */
-  private $schema;
+  private $__schema;
 
   /**
    * @var string
    */
-  private $uuid;
+  private $__uuid;
+
+  /**
+   * @var string
+   */
+  private $__originalUuid;
 
   /**
    * @var AbstractValue[]
    */
-  private $values = array();
+  private $__values = array();
 
   /**
    * @var string
    */
   const TYPE_PROPERTY = '__type';
   const UUID_PROPERTY = '__uuid';
+  const ORIGINAL_UUID_PROPERTY = '__originalUuid';
 
 
   /**
@@ -46,13 +52,17 @@ class InstanceValue extends AbstractValue
   public function __construct(array $data, AbstractSchema $schema, AbstractValue $parent = null, InstanceField $field = null) {
     parent::__construct($parent, $field);
 
-    $this->schema = $schema;
+    $this->__schema = $schema;
 
-    if (array_key_exists('uuid', $data)) {
-      unset($data['uuid']);
-      $this->uuid = $data['uuid'];
+    if (array_key_exists(self::UUID_PROPERTY, $data)) {
+      $this->__uuid = $data[self::UUID_PROPERTY];
+      unset($data[self::UUID_PROPERTY]);
     } else {
-      $this->uuid = self::uuid();
+      $this->__uuid = self::uuid();
+    }
+
+    if (array_key_exists(self::ORIGINAL_UUID_PROPERTY, $data)) {
+      $this->__originalUuid = $data[self::ORIGINAL_UUID_PROPERTY];
     }
 
     foreach ($schema->fields as $name => $field) {
@@ -64,8 +74,8 @@ class InstanceValue extends AbstractValue
    * @inheritdoc
    */
   public function __get($name) {
-    if (array_key_exists($name, $this->schema->fields)) {
-      return $this->values[$name];
+    if (array_key_exists($name, $this->__schema->fields)) {
+      return $this->__values[$name];
     } else {
       return parent::__get($name);
     }
@@ -76,8 +86,8 @@ class InstanceValue extends AbstractValue
    * @throws \Exception
    */
   public function __set($name, $value) {
-    if (array_key_exists($name, $this->schema->fields)) {
-      $this->values[$name] = $this->schema->fields[$name]->createValue($value, $this);
+    if (array_key_exists($name, $this->__schema->fields)) {
+      $this->__values[$name] = $this->__schema->fields[$name]->createValue($value, $this);
     } else {
       parent::__set($name, $value);
     }
@@ -86,15 +96,26 @@ class InstanceValue extends AbstractValue
   /**
    * @inheritdoc
    */
+  public function __isset($name) {
+    if (array_key_exists($name, $this->__schema->fields)) {
+      return true;
+    } else {
+      return parent::__isset($name);
+    }
+  }
+
+  /**
+   * @inheritdoc
+   */
   public function __toString() {
-    return $this->schema->render($this);
+    return $this->__schema->render($this);
   }
 
   /**
    * @inheritdoc
    */
   public function attributes() {
-    return array_keys($this->schema->fields);
+    return array_keys($this->__schema->fields);
   }
 
   /**
@@ -102,8 +123,10 @@ class InstanceValue extends AbstractValue
    * @return array
    */
   public function getEagerLoadingMap(&$result = array()) {
-    foreach ($this->values as $field) {
-      $field->getEagerLoadingMap($result);
+    foreach ($this->__values as $field) {
+      if (!is_null($field)) {
+        $field->getEagerLoadingMap($result);
+      }
     }
 
     return $result;
@@ -114,27 +137,54 @@ class InstanceValue extends AbstractValue
    */
   public function getEditorData() {
     $result = array();
-    foreach ($this->values as $name => $value) {
-      $result[$name] = $value->getEditorData();
+    foreach ($this->__values as $name => $value) {
+      if (!is_null($value)) {
+        $result[$name] = $value->getEditorData();
+      }
     }
 
-    $result[self::TYPE_PROPERTY] = $this->schema->qualifier;
-    $result[self::UUID_PROPERTY] = $this->uuid;
+    $result[self::TYPE_PROPERTY] = $this->__schema->qualifier;
+    $result[self::UUID_PROPERTY] = $this->__uuid;
+    $result[self::ORIGINAL_UUID_PROPERTY] = $this->__originalUuid;
     return $result;
   }
 
   /**
    * @inheritdoc
    */
-  public function getHtml() {
-    return new \Twig_Markup($this->schema->render($this), 'utf-8');
+  public function getHtml(array $variables = []) {
+    return new \Twig_Markup($this->__schema->render($this, $variables), 'utf-8');
+  }
+
+  /**
+   * @return array
+   */
+  public function getSerializedData() {
+    $result = array();
+    foreach ($this->__values as $name => $value) {
+      if (!is_null($value)) {
+        $result[$name] = $value->getSerializedData();
+      }
+    }
+
+    $result[self::TYPE_PROPERTY] = $this->__schema->qualifier;
+    $result[self::UUID_PROPERTY] = $this->__uuid;
+    $result[self::ORIGINAL_UUID_PROPERTY] = $this->__originalUuid;
+    return $result;
+  }
+
+  /**
+   * @return string
+   */
+  public function getType() {
+    return $this->__schema->qualifier;
   }
 
   /**
    * @return AbstractValue[]
    */
   public function getValues() {
-    return $this->values;
+    return $this->__values;
   }
 
   /**

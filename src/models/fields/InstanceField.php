@@ -40,10 +40,14 @@ class InstanceField extends AbstractField
    */
   public function __construct(array $config = []) {
     if (array_key_exists('schemas', $config)) {
-      $schemaManager = Plugin::getSchemaManager();
+      $schemaManager = Plugin::getInstance()->schemas;
+      $schemas = is_array($config['schemas'])
+        ? $config['schemas']
+        : explode(',', $config['schemas']);
+
       $specs = array_filter(array_map(function($spec) {
         return trim($spec);
-      }, explode(',', $config['schemas'])));
+      }, $schemas));
 
       $config['schemas'] = $schemaManager->getSchemas($specs);
     }
@@ -55,7 +59,7 @@ class InstanceField extends AbstractField
    * @inheritdoc
    */
   public function createValue($data, AbstractValue $parent) {
-    return Plugin::getSchemaManager()->createValue($data, $parent, $this);
+    return Plugin::getInstance()->schemas->createValue($data, $parent, $this);
   }
 
   /**
@@ -90,13 +94,19 @@ class InstanceField extends AbstractField
     // Expand the type `instances` to an array of instance fields
     if ($config['type'] === 'instances') {
       $config = array_intersect_key($config, array(
-        'name'  => true,
-        'label' => true,
+        'collapsible' => true,
+        'group'       => true,
+        'name'        => true,
+        'label'       => true,
+        'width'       => true,
       )) + array(
         'type'  => ArrayField::NAME,
         'member' => array(
-          'type' => self::NAME,
-        ) + $config,
+            'type' => self::NAME,
+          ) + array_intersect_key($config, array(
+            'name'    => true,
+            'schemas' => true,
+          )),
       );
     }
   }

@@ -71,16 +71,13 @@ abstract class AbstractSchema extends Model
     }
 
     if (isset($config['fields'])) {
-      $fieldManager = Plugin::getFieldManager();
+      $fieldManager = Plugin::getInstance()->fields;
+
       foreach ($config['fields'] as $key => $field) {
         // If the field is no an array try to load blueprint or use it
         // as the field type
         if (is_string($field)) {
-          if ($fieldManager->hasBlueprint($field)) {
-            $field = $fieldManager->getBlueprint($field);
-          } else {
-            $field = array('type' => $field);
-          }
+          $field = array('type' => $field);
         }
 
         // If the field list is associative, use the keys as the field names
@@ -207,7 +204,7 @@ abstract class AbstractSchema extends Model
    */
   public function rules() {
     return [
-      [['fields', 'qualifier'], 'required'],
+      ['qualifier', 'required'],
       [['icon', 'grid', 'label', 'preview', 'qualifier'], 'string'],
       ['fields', 'validateFields'],
     ];

@@ -36,6 +36,7 @@ abstract class AbstractEnumerationField extends AbstractField
       try {
         $enumClass = $config['enumeration'];
         $enum = new $enumClass();
+
         if (!($enum instanceof EnumerationInterface)) {
           throw new \Exception(sprintf('Invalid enumeration class given, %s must implement EnumerationInterface.', $enumClass));
         } else {

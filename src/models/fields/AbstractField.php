@@ -124,7 +124,7 @@ abstract class AbstractField extends Model
    * @return array
    */
   public function getEditorData(ElementInterface $element = null) {
-    $width = 1;
+    $width = (string)$this->width;
     if (preg_match('/(\d+)\/(\d+)/', $this->width, $match)) {
       $width = floor(intval($match[1]) / intval($match[2]) * 1000000) / 10000;
     }
@@ -134,7 +134,7 @@ abstract class AbstractField extends Model
       'group'        => $this->getEditorGroup($element),
       'label'        => $this->label,
       'name'         => $this->name,
-      'type'         => $this->type,
+      'type'         => strtolower($this->type),
       'width'        => $width,
     );
   }

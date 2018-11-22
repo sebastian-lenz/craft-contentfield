@@ -2,10 +2,13 @@
 
 namespace contentfield\fields;
 
+use contentfield\events\RootSchemasEvent;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\elements\db\ElementQuery;
 use craft\helpers\Json;
+use yii\base\Event;
 use yii\db\Schema;
 
 use contentfield\models\Content;
@@ -24,6 +27,39 @@ class ContentField extends Field
    */
   public $rootTemplates;
 
+  const EVENT_ROOT_SCHEMAS = 'rootSchemas';
+
+
+  /**
+   * @inheritdoc
+   * @throws \Throwable
+   */
+  public function afterElementSave(ElementInterface $element, bool $isNew) {
+    // Skip if the element is just propagating, and we're not localizing relations
+    /** @var Element $element */
+    if (!$element->propagating || $this->localizeRelations()) {
+      /** @var Content $value */
+      $value = $element->getFieldValue($this->handle);
+      $elementTypes = $value->model instanceof InstanceValue
+        ? $value->model->getEagerLoadingMap()
+        : array();
+
+      $targetIds = array();
+      foreach ($elementTypes as $elementType) {
+        foreach ($elementType['ids'] as $elementId) {
+          if (!in_array($elementId, $targetIds)) {
+            $targetIds[] = $elementId;
+          }
+        }
+      }
+
+      Plugin::getInstance()
+        ->relations
+        ->saveRelations($this, $element, $targetIds);
+    }
+
+    parent::afterElementSave($element, $isNew);
+  }
 
   /**
    * @param bool $isNew
@@ -54,14 +90,21 @@ class ContentField extends Field
       return $value;
     }
 
-    $schemas = Plugin::getSchemaManager();
+    $schemas = Plugin::getInstance()->schemas;
 
     if (is_string($value)) {
-      $model = $schemas->createValue(json_decode($value, true));
+      $model = $schemas->createValue(Json::decode($value, true));
     } else if (is_array($value) && isset($value['isCpFormData'])) {
-      $model = $schemas->createValue(json_decode($value['content'], true));
+      $model = $schemas->createValue(Json::decode($value['content'], true));
     } elseif (is_array($value)) {
       throw new \Exception('Check me!');
+    }
+
+    if (is_null($model)) {
+      $schemas = $this->getRootSchemas($element);
+      if (count($schemas) === 1) {
+        $model = new InstanceValue([], $schemas[0], null, null);
+      }
     }
 
     $content = new Content(array(
@@ -89,7 +132,7 @@ class ContentField extends Field
    * @param Content $content
    * @return array
    */
-  private function loadReferences(Content $content) {
+  static function loadReferences(Content $content) {
     if (!($content->model instanceof InstanceValue)) {
       return array();
     }
@@ -126,18 +169,85 @@ class ContentField extends Field
   }
 
   /**
+   * Whether each site should get its own unique set of relations.
+   * @return boolean
+   */
+  public function localizeRelations() {
+    return $this->translationMethod !== Field::TRANSLATION_METHOD_NONE;
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return array
+   */
+  private function getElementConfig(ElementInterface $element = null) {
+    if (is_null($element)) {
+      return [
+        'elementId'      => null,
+        'elementSiteId'  => null,
+        'fieldHandle'    => $this->handle,
+        'supportedSites' => [],
+      ];
+    }
+
+    try {
+      /** @var Element $element */
+      $elementSiteId = intval($element->site->id);
+    } catch (\Throwable $error) {
+      $elementSiteId = null;
+    }
+
+    $supportedSites = [];
+    foreach ($element->getSupportedSites() as $siteInfo) {
+      $site = \Craft::$app->getSites()->getSiteById($siteInfo['siteId']);
+      if (is_null($site)) {
+        continue;
+      }
+
+      $supportedSites[] = [
+        'id'       => intval($site->id),
+        'label'    => $site->name,
+        'language' => $site->language,
+      ];
+    }
+
+    return [
+      'elementId'      => intval($element->getId()),
+      'elementSiteId'  => $elementSiteId,
+      'fieldHandle'    => $this->handle,
+      'supportedSites' => $supportedSites
+    ];
+  }
+
+  /**
+   * @return array
+   */
+  private function getGeneralConfig() {
+    $urls = \Craft::$app->urlManager;
+
+    return [
+      'apiEndpoints'     => array(
+        'fetchSite'      => $urls->createUrl('contentfield/cp/fetch'),
+        'oembed'         => $urls->createUrl('contentfield/cp/oembed'),
+        'translate'      => $urls->createUrl('contentfield/cp/translate'),
+      ),
+      'googleMapsApiKey' => Plugin::getInstance()->getSettings()->googleMapsApiKey,
+      'i18nCategory'     => Plugin::$TRANSLATION_CATEGORY,
+    ];
+  }
+
+  /**
    * @param Content $value
    * @param ElementInterface|null $element
    * @return string
-   * @throws \Twig_Error_Loader
-   * @throws \yii\base\Exception
+   * @throws \Exception
    */
   public function getInputHtml($value, ElementInterface $element = null): string {
     $view = \Craft::$app->getView();
     $view->registerAssetBundle(CpAssetBundle::class);
 
-    $schemaManager = Plugin::getSchemaManager();
-    $rootSchemas   = $schemaManager->getSchemas($this->rootTemplates);
+    $schemaManager = Plugin::getInstance()->schemas;
+    $rootSchemas   = $this->getRootSchemas($element);
     $allSchemas    = $schemaManager->getDependedSchemas($rootSchemas);
     $schemaErrors  = array();
     $jsonSchemas   = array();
@@ -157,14 +267,15 @@ class ContentField extends Field
     }
 
     $data = array(
-      'config' => array(
-        'googleMapsApiKey' => Plugin::getInstance()->getSettings()->googleMapsApiKey,
-        'elementId'        => is_null($element) ? null : $element->getId(),
-        'i18nCategory'     => Plugin::$TRANSLATION_CATEGORY,
-        'references'       => $this->loadReferences($value),
-        'rootSchemas'      => array_map(function($schema) {
-          return $schema->qualifier;
-        }, $rootSchemas),
+      'config' => array_merge(
+        $this->getGeneralConfig(),
+        $this->getElementConfig($element),
+        array(
+          'references'       => $this->loadReferences($value),
+          'rootSchemas'      => array_map(function($schema) {
+            return $schema->qualifier;
+          }, $rootSchemas),
+        )
       ),
       'schemas' => $jsonSchemas,
     );
@@ -180,6 +291,27 @@ class ContentField extends Field
   }
 
   /**
+   * @param ElementInterface|null $element
+   * @return \contentfield\models\schemas\AbstractSchema[]
+   * @throws \Exception
+   */
+  public function getRootSchemas(ElementInterface $element = null) {
+    $schemas = $this->rootTemplates;
+
+    if (Event::hasHandlers($this, self::EVENT_ROOT_SCHEMAS)) {
+      $event = new RootSchemasEvent([
+        'element' => $element,
+        'schemas' => $this->rootTemplates,
+      ]);
+
+      Event::trigger($this, self::EVENT_ROOT_SCHEMAS, $event);
+      $schemas = $event->schemas;
+    }
+
+    return Plugin::getInstance()->schemas->getSchemas($schemas);
+  }
+
+  /**
    * @return string
    * @throws \Twig_Error_Loader
    * @throws \yii\base\Exception
@@ -191,7 +323,7 @@ class ContentField extends Field
       'name'      => 'contentfield',
       'nameNs'    => \Craft::$app->view->namespaceInputId('contentfield'),
       'settings'  => $settings,
-      'templates' => Plugin::$instance->getSchemaManager()->getTemplateLoader()->getAllTemplateAsList(),
+      'templates' => Plugin::getInstance()->getInstance()->schemas->getTemplateLoader()->getAllTemplateAsList(),
     ]);
   }
 
@@ -216,7 +348,10 @@ class ContentField extends Field
       return null;
     }
 
-    return json_encode(is_null($value->model) ? null : $value->model->getEditorData());
+    return Json::encode(is_null($value->model)
+      ? null
+      : $value->model->getSerializedData()
+    );
   }
 
   /**

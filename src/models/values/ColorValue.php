@@ -8,7 +8,7 @@ use contentfield\models\values\AbstractValue;
 /**
  * Class ColorValue
  *
- * @property ColorField $field
+ * @property ColorField $__field
  */
 class ColorValue extends AbstractValue
 {
@@ -66,7 +66,7 @@ class ColorValue extends AbstractValue
    * @return string
    */
   function __toString() {
-    return $this->field->disableAlpha
+    return $this->__field->disableAlpha
       ? $this->hex()
       : $this->rgba();
   }

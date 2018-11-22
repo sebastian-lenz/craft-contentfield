@@ -71,6 +71,10 @@ class StaticEnumeration implements EnumerationInterface
    * @inheritdoc
    */
   function getOptions() {
+    usort($this->options, function($left, $right) {
+      return strcmp($left['label'], $right['label']);
+    });
+
     return $this->options;
   }
 }

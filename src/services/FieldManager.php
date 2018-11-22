@@ -6,32 +6,43 @@ use contentfield\models\fields\AbstractField;
 use contentfield\models\fields\ArrayField;
 use contentfield\models\fields\ColorField;
 use contentfield\models\fields\enumerations\SelectField;
+use contentfield\models\fields\enumerations\SwatchColorField;
 use contentfield\models\fields\InstanceField;
+use contentfield\models\fields\LinkField;
 use contentfield\models\fields\LocationField;
 use contentfield\models\fields\ReferenceField;
 use contentfield\models\fields\strings\RedactorField;
 use contentfield\models\fields\strings\TextAreaField;
 use contentfield\models\fields\strings\TextField;
+use contentfield\models\fields\OEmbedField;
 
 /**
  * Class FieldManager
  */
-class FieldManager
+class FieldManager extends AbstractDefinitionService
 {
+  /**
+   * @var array
+   */
+  protected $blueprints;
+
   /**
    * A map of all known field types.
    * @var array
    */
   static $FIELD_TYPES = array(
-    ArrayField::NAME     => ArrayField::class,
-    ColorField::NAME     => ColorField::class,
-    InstanceField::NAME  => InstanceField::class,
-    LocationField::NAME  => LocationField::class,
-    ReferenceField::NAME => ReferenceField::class,
-    RedactorField::NAME  => RedactorField::class,
-    SelectField::NAME    => SelectField::class,
-    TextAreaField::NAME  => TextAreaField::class,
-    TextField::NAME      => TextField::class
+    ArrayField::NAME       => ArrayField::class,
+    ColorField::NAME       => ColorField::class,
+    InstanceField::NAME    => InstanceField::class,
+    LinkField::NAME        => LinkField::class,
+    LocationField::NAME    => LocationField::class,
+    ReferenceField::NAME   => ReferenceField::class,
+    RedactorField::NAME    => RedactorField::class,
+    SelectField::NAME      => SelectField::class,
+    SwatchColorField::NAME => SwatchColorField::class,
+    TextAreaField::NAME    => TextAreaField::class,
+    TextField::NAME        => TextField::class,
+    OEmbedField::NAME     => OEmbedField::class,
   );
 
 
@@ -44,6 +55,7 @@ class FieldManager
    */
   public function createField($config) {
     $type = strtolower($config['type']);
+    $config = $this->resolveDefinition($config);
 
     // We don't know the field type, let the widgets try to expand
     // the given configuration
@@ -63,22 +75,17 @@ class FieldManager
   }
 
   /**
-   * Return the blueprint field definition for the given name.
-   *
-   * @param string $name
-   * @return array
+   * @return string
    */
-  public function getBlueprint($name) {
-    return array();
+  protected function getDefinitionName() {
+    return 'fields';
   }
 
   /**
-   * Test whether the blueprint with the given name exists.
-   *
-   * @param string $name
-   * @return bool
+   * @param string $type
+   * @return boolean
    */
-  public function hasBlueprint($name) {
-    return false;
+  protected function isNativeType($type) {
+    return array_key_exists($type, self::$FIELD_TYPES);
   }
 }

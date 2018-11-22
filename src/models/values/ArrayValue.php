@@ -3,11 +3,12 @@
 namespace contentfield\models\values;
 
 use contentfield\models\fields\ArrayField;
+use contentfield\models\fields\InstanceField;
 
 /**
  * Class ArrayValue
  *
- * @property ArrayField $field
+ * @property ArrayField $__field
  */
 class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \IteratorAggregate
 {
@@ -30,7 +31,7 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
     if (!is_array($data)) {
       $this->values = array();
     } else {
-      $member = $this->field->member;
+      $member = $this->__field->member;
       $this->values = array_filter(array_map(function($value) use ($member) {
         return $member->createValue($value, $this);
       }, $data));
@@ -42,8 +43,15 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
    */
   public function __toString() {
     $result = array();
-    foreach ($this->values as $value) {
-      $result[] = (string)$value;
+    foreach ($this->values as $index => $value) {
+      if ($value instanceof InstanceValue) {
+        $result[] = (string)$value->getHtml([
+          'count' => count($this->values),
+          'index' => $index,
+        ]);
+      } else {
+        $result[] = (string)$value;
+      }
     }
 
     return implode('', $result);
@@ -83,12 +91,7 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
    * @inheritdoc
    */
   function getHtml() {
-    $result = array();
-    foreach ($this->values as $value) {
-      $result[] = (string)$value->getHtml();
-    }
-
-    return new \Twig_Markup(implode('', $result), 'utf-8');
+    return new \Twig_Markup((string)$this, 'utf-8');
   }
 
   /**
@@ -96,6 +99,18 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
    */
   public function getIterator() {
     return new \ArrayIterator($this->values);
+  }
+
+  /**
+   * @return mixed
+   */
+  function getSerializedData() {
+    $result = array();
+    foreach ($this->values as $value) {
+      $result[] = $value->getSerializedData();
+    }
+
+    return $result;
   }
 
   /**

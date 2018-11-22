@@ -2,6 +2,8 @@
 
 namespace contentfield\models\fields\strings;
 
+use contentfield\models\values\AbstractValue;
+use contentfield\models\values\RedactorValue;
 use craft\base\ElementInterface;
 
 /**
@@ -11,6 +13,11 @@ use craft\base\ElementInterface;
  */
 class RedactorField extends AbstractStringField
 {
+  /**
+   * @var string|null
+   */
+  public $redactorConfig = 'Standard.json';
+
   /**
    * The internal name of this widget.
    */
@@ -25,10 +32,30 @@ class RedactorField extends AbstractStringField
   /**
    * @inheritdoc
    */
+  public function createValue($data, AbstractValue $parent) {
+    return new RedactorValue($data, $parent, $this);
+  }
+
+  /**
+   * @inheritdoc
+   */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData($element) + array(
-      'redactor' => $this->getRedactorSettings()
+      'redactor' => $this->getRedactorSettings($element)
     );
+  }
+
+  /**
+   * @return \contentfield\utilities\RedactorSettings|null
+   */
+  public function getRedactorField() {
+    try {
+      return new \contentfield\utilities\RedactorSettings([
+        'redactorConfig' => $this->redactorConfig,
+      ]);
+    } catch (\Throwable $error) { }
+
+    return null;
   }
 
   /**
@@ -37,11 +64,10 @@ class RedactorField extends AbstractStringField
    */
   public function getRedactorSettings(ElementInterface $element = null) {
     try {
-      $settings = new \contentfield\utilities\RedactorSettings();
-      return $settings->getFieldSettings($element);
-    } catch (\Exception $e) {
-      return array();
-    }
+      return $this->getRedactorField()->getFieldSettings($element);
+    } catch (\Throwable $error) { }
+
+    return array();
   }
 
   /**
@@ -54,7 +80,7 @@ class RedactorField extends AbstractStringField
   /**
    * @inheritdoc
    */
-  public function isHtmlWidget() {
+  public function isHtmlField() {
     return true;
   }
 }

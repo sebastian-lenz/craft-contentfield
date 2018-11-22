@@ -156,4 +156,33 @@ class ReferenceField extends AbstractField
       ? $this->elementType
       : null;
   }
+
+  /**
+   * @inheritdoc
+   */
+  static function expandFieldConfig(&$config) {
+    // Expand the type `instances` to an array of instance fields
+    if (
+      $config['type'] === 'image' ||
+      $config['type'] === 'images'
+    ) {
+      $config = array(
+        'type'        => self::NAME,
+        'elementType' => Asset::class,
+        'limit'       => $config['type'] === 'image' ? 1 : null,
+      ) + $config;
+    }
+
+    if (
+      $config['type'] === 'file' ||
+      $config['type'] === 'files'
+    ) {
+      $config = array(
+        'type'        => self::NAME,
+        'elementType' => Asset::class,
+        'limit'       => $config['type'] === 'file' ? 1 : null,
+        'viewMode'    => 'small'
+      ) + $config;
+    }
+  }
 }

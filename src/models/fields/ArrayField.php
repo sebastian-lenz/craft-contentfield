@@ -13,6 +13,11 @@ use craft\base\ElementInterface;
 class ArrayField extends AbstractField
 {
   /**
+   * @var boolean
+   */
+  public $collapsible = true;
+
+  /**
    * @var AbstractField
    */
   public $member;
@@ -30,7 +35,9 @@ class ArrayField extends AbstractField
    */
   public function __construct(array $config = []) {
     if (array_key_exists('member', $config)) {
-      $config['member'] = Plugin::getFieldManager()->createField($config['member']);
+      $config['member'] = Plugin::getInstance()
+        ->fields
+        ->createField($config['member']);
     }
 
     parent::__construct($config);
@@ -62,7 +69,8 @@ class ArrayField extends AbstractField
     }
 
     return parent::getEditorData() + array(
-      'member' => $this->member->getEditorData($element),
+      'collapsible' => !!$this->collapsible,
+      'member'      => $this->member->getEditorData($element),
     );
   }
 }
