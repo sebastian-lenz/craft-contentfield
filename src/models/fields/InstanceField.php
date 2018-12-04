@@ -59,6 +59,22 @@ class InstanceField extends AbstractField
    * @inheritdoc
    */
   public function createValue($data, AbstractValue $parent) {
+    if (count($this->schemas) === 0) {
+      return null;
+    }
+
+    if (!is_array($data)) {
+      $data = array();
+    }
+
+    $schema = isset($data[InstanceValue::TYPE_PROPERTY])
+      ? $data[InstanceValue::TYPE_PROPERTY]
+      : null;
+
+    if (is_null($schema) || !in_array($schema, $this->schemas)) {
+      $data[InstanceValue::TYPE_PROPERTY] = $this->schemas[0];
+    }
+
     return Plugin::getInstance()->schemas->createValue($data, $parent, $this);
   }
 
