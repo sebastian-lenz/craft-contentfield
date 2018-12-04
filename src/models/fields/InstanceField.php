@@ -71,8 +71,8 @@ class InstanceField extends AbstractField
       ? $data[InstanceValue::TYPE_PROPERTY]
       : null;
 
-    if (is_null($schema) || !in_array($schema, $this->schemas)) {
-      $data[InstanceValue::TYPE_PROPERTY] = $this->schemas[0];
+    if (is_null($schema) || !$this->isValidSchema($schema)) {
+      $data[InstanceValue::TYPE_PROPERTY] = $this->schemas[0]->qualifier;
     }
 
     return Plugin::getInstance()->schemas->createValue($data, $parent, $this);
@@ -101,6 +101,20 @@ class InstanceField extends AbstractField
     return parent::getEditorData($element) + array(
       'schemas' => $schemas,
     );
+  }
+
+  /**
+   * @param string $qualifier
+   * @return bool
+   */
+  public function isValidSchema($qualifier) {
+    foreach ($this->schemas as $schema) {
+      if ($schema->qualifier === $qualifier) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
