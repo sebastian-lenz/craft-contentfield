@@ -16,6 +16,11 @@ class RedactorField extends AbstractStringField
   /**
    * @var string|null
    */
+  public $purifierConfig = null;
+
+  /**
+   * @var string|null
+   */
   public $redactorConfig = 'Standard.json';
 
   /**
@@ -51,6 +56,7 @@ class RedactorField extends AbstractStringField
   public function getRedactorField() {
     try {
       return new \contentfield\utilities\RedactorSettings([
+        'purifierConfig' => $this->purifierConfig,
         'redactorConfig' => $this->redactorConfig,
       ]);
     } catch (\Throwable $error) { }
