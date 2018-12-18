@@ -6,7 +6,7 @@
   "require": {
     "php": "^7.0",
     "craftcms/cms": "^3.0.0",
-    "craftcms/redactor": "2.1.6",
+    "craftcms/redactor": "2.1.7",
     "symfony/yaml": "^3.4",
     "ext-curl": "*"
   },
