@@ -56,8 +56,9 @@ class Endpoint
    * @return OEmbed|null
    */
   public function getOEmbed($url) {
-    $url = $this->url . '?url=' . urlencode($url);
-    $data = OEmbed::fetchJson($url);
+    $endpointUrl = str_replace('{format}', 'json', $this->url);
+    $endpointUrl .= '?url=' . urlencode($url);
+    $data = OEmbed::fetchJson($endpointUrl);
 
     return is_null($data)
       ? null
