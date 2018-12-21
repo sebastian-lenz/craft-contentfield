@@ -2,6 +2,7 @@
 
 namespace contentfield\utilities\oembed;
 
+use contentfield\utilities\HTTP;
 use craft\helpers\Json;
 use yii\caching\FileCache;
 
@@ -213,7 +214,7 @@ class OEmbed
 
     if (is_null($result)) {
       try {
-        $response = file_get_contents($url);
+        $response = HTTP::fetch($url);
         $result = Json::decode($response);
         $duration = isset($result['cache_age']) ? $result['cache_age'] : self::CACHE_DURATION;
         $cache->set($url, $response, $duration);
