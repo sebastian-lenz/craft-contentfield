@@ -86,7 +86,13 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
    * @return int[]
    */
   public function getEditorData() {
-    return $this->values;
+    $result = [];
+    $references = $this->getReferences();
+    foreach ($references as $reference) {
+      $result[] = $reference->getId();
+    }
+
+    return $result;
   }
 
   /**
