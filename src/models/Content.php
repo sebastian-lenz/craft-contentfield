@@ -62,14 +62,15 @@ class Content extends Model
 
   /**
    * @param string $elementType
+   * @param array|null $elementData
    * @return ElementInterface[]
    */
-  public function getEagerLoadedElements($elementType) {
+  public function getEagerLoadedElements($elementType, $elementData = null) {
     if (!(array_key_exists($elementType, $this->eagerLoadedElements))) {
       $result = array();
-      $elements = $this->eagerLoad($elementType);
+      $elements = $this->eagerLoad($elementType, $elementData);
       foreach ($elements as $element) {
-        $result[$element->getId()] = $element;
+        $result[intval($element->getId())] = $element;
       }
 
       $this->eagerLoadedElements[$elementType] = $result;
@@ -108,22 +109,56 @@ class Content extends Model
   }
 
   /**
+   * @return int[]
+   */
+  public function getReferencedIds() {
+    $result = array();
+    $elementTypes = $this->model->getEagerLoadingMap();
+
+    /** @var ElementInterface $elementType */
+    foreach ($elementTypes as $elementType => $elementData) {
+      $elements = $this->getEagerLoadedElements($elementType, $elementData);
+
+      foreach ($elements as $id => $element) {
+        if (!in_array($id, $result)) {
+          $result[] = $id;
+        }
+      }
+    }
+
+    return $result;
+  }
+
+  /**
    * @param string $elementType
+   * @param array|null $elementData
    * @return ElementInterface[]
    */
-  private function eagerLoad($elementType) {
+  private function eagerLoad($elementType, $elementData = null) {
     if (is_null($this->model)) {
       return array();
     }
 
-    $map = $this->model->getEagerLoadingMap();
-    if (!array_key_exists($elementType, $map) || count($map[$elementType]['ids']) === 0) {
+    if (!is_array($elementData)) {
+      $map = $this->model->getEagerLoadingMap();
+      if (!array_key_exists($elementType, $map)) {
+        return array();
+      }
+
+      $elementData = $map[$elementType];
+    }
+
+    if (
+      !isset($elementData['ids']) ||
+      !is_array($elementData['ids']) ||
+      count($elementData['ids']) === 0
+    ) {
       return array();
     }
 
     /** @var ElementInterface $elementType */
     return $elementType::find()
-      ->id($map[$elementType]['ids'])
+      ->id($elementData['ids'])
       ->all();
   }
 }

@@ -40,18 +40,9 @@ class ContentField extends Field
     if (!$element->propagating || $this->localizeRelations()) {
       /** @var Content $value */
       $value = $element->getFieldValue($this->handle);
-      $elementTypes = $value->model instanceof InstanceValue
-        ? $value->model->getEagerLoadingMap()
+      $targetIds = $value->model instanceof InstanceValue
+        ? $value->model->getReferencedIds()
         : array();
-
-      $targetIds = array();
-      foreach ($elementTypes as $elementType) {
-        foreach ($elementType['ids'] as $elementId) {
-          if (!in_array($elementId, $targetIds)) {
-            $targetIds[] = $elementId;
-          }
-        }
-      }
 
       Plugin::getInstance()
         ->relations
