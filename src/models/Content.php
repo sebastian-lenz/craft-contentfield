@@ -113,6 +113,10 @@ class Content extends Model
    */
   public function getReferencedIds() {
     $result = array();
+    if (is_null($this->model) || !($this->model instanceof values\InstanceValue)) {
+      return $result;
+    }
+
     $elementTypes = $this->model->getEagerLoadingMap();
 
     /** @var ElementInterface $elementType */

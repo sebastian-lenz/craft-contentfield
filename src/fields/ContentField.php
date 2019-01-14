@@ -40,13 +40,11 @@ class ContentField extends Field
     if (!$element->propagating || $this->localizeRelations()) {
       /** @var Content $value */
       $value = $element->getFieldValue($this->handle);
-      $targetIds = $value->model instanceof InstanceValue
-        ? $value->model->getReferencedIds()
-        : array();
+      $referencedIds = $value->getReferencedIds();
 
       Plugin::getInstance()
         ->relations
-        ->saveRelations($this, $element, $targetIds);
+        ->saveRelations($this, $element, $referencedIds);
     }
 
     parent::afterElementSave($element, $isNew);
