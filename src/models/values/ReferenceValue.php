@@ -89,7 +89,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
     $result = [];
     $references = $this->getReferences();
     foreach ($references as $reference) {
-      $result[] = $reference->getId();
+      $result[] = intval($reference->getId());
     }
 
     return $result;
