@@ -188,7 +188,8 @@ class ContentField extends Field
 
     $supportedSites = [];
     foreach ($element->getSupportedSites() as $siteInfo) {
-      $site = \Craft::$app->getSites()->getSiteById($siteInfo['siteId']);
+      $siteId = is_array($siteInfo) ? $siteInfo['siteId'] : $siteInfo;
+      $site = \Craft::$app->getSites()->getSiteById($siteId);
       if (is_null($site)) {
         continue;
       }
