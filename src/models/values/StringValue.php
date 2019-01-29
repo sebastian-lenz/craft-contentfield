@@ -52,4 +52,11 @@ class StringValue extends AbstractValue
       : htmlentities($this->value)
     , 'utf-8');
   }
+
+  /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return empty($this->value);
+  }
 }

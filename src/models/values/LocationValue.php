@@ -72,4 +72,11 @@ class LocationValue extends AbstractValue
   function getHtml() {
     return new \Twig_Markup((string)$this, 'utf-8');
   }
+
+  /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return $this->latitude == 0 || $this->longitude == 0;
+  }
 }

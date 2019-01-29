@@ -152,6 +152,13 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
   }
 
   /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return $this->count() == 0;
+  }
+
+  /**
    * @return ElementInterface[]
    */
   private function loadReferences() {

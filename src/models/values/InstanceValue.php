@@ -188,6 +188,13 @@ class InstanceValue extends AbstractValue
   }
 
   /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return false;
+  }
+
+  /**
    * @return string
    * @throws \Exception
    */

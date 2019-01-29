@@ -64,4 +64,11 @@ class RedactorValue extends AbstractValue
 
     return $this->value->getRawContent();
   }
+
+  /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return empty($this->value);
+  }
 }

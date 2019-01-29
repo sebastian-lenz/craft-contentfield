@@ -174,4 +174,18 @@ class LinkValue extends AbstractValue
       $this->elementId !== 0
     );
   }
+
+  /**
+   * @return bool
+   */
+  public function isEmpty() {
+    $linkType = $this->getLinkType();
+    if (is_null($linkType)) {
+      return true;
+    }
+
+    return $linkType['type'] === 'element'
+      ? is_null($this->getLinkedElement())
+      : empty($this->url);
+  }
 }

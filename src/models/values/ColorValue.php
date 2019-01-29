@@ -100,6 +100,13 @@ class ColorValue extends AbstractValue
   }
 
   /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return false;
+  }
+
+  /**
    * @return string
    */
   public function rgba() {

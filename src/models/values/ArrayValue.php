@@ -114,6 +114,13 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
   }
 
   /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return $this->count() == 0;
+  }
+
+  /**
    * @inheritdoc
    */
   public function offsetExists($offset) {

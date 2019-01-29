@@ -76,4 +76,11 @@ class OEmbedValue extends AbstractValue
   public function getSerializedData() {
     return $this->value;
   }
+
+  /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return is_null($this->getOEmbed());
+  }
 }

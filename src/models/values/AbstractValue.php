@@ -114,6 +114,11 @@ abstract class AbstractValue extends Model
   }
 
   /**
+   * @return bool
+   */
+  abstract function isEmpty();
+
+  /**
    * @param Content $content
    */
   public function setContent(Content $content) {

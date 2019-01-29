@@ -51,6 +51,13 @@ class EnumerationValue extends AbstractValue
   }
 
   /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return empty($this->value);
+  }
+
+  /**
    * @param mixed $value
    * @return bool
    */
