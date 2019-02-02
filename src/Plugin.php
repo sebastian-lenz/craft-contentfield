@@ -30,6 +30,11 @@ use contentfield\utilities\TemplateLoader;
 class Plugin extends \craft\base\Plugin
 {
   /**
+   * @inheritdoc
+   */
+  public $schemaVersion = '1.1.0';
+
+  /**
    * @var array
    */
   private $patchedViews = array();

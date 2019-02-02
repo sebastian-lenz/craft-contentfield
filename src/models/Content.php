@@ -2,6 +2,7 @@
 
 namespace contentfield\models;
 
+use contentfield\models\values\InstanceValue;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;
@@ -13,14 +14,14 @@ use craft\base\Model;
 class Content extends Model
 {
   /**
-   * @var values\InstanceValue|null
-   */
-  public $model;
-
-  /**
    * @var ElementInterface[][]
    */
   private $eagerLoadedElements = array();
+
+  /**
+   * @var values\InstanceValue|null
+   */
+  private $model;
 
   /**
    * @var ElementInterface|null
@@ -29,14 +30,19 @@ class Content extends Model
 
 
   /**
-   * Link constructor.
-   * @param array $config
+   * Content constructor.
+   *
+   * @param values\InstanceValue|null $model
+   * @param ElementInterface|null $element
    */
-  public function __construct($config = []) {
-    $this->owner = $config['owner'];
-    unset($config['owner']);
+  public function __construct(
+    values\InstanceValue $model = null,
+    ElementInterface $element = null
+  ) {
+    $this->owner = $element;
+    $this->setModel($model);
 
-    parent::__construct($config);
+    parent::__construct();
   }
 
   /**
@@ -89,6 +95,13 @@ class Content extends Model
   }
 
   /**
+   * @return values\InstanceValue|null
+   */
+  public function getModel() {
+    return $this->model;
+  }
+
+  /**
    * @return ElementInterface|null
    */
   public function getOwner() {
@@ -131,6 +144,17 @@ class Content extends Model
     }
 
     return $result;
+  }
+
+  /**
+   * @param InstanceValue|null $model
+   */
+  public function setModel(InstanceValue $model = null) {
+    $this->model = $model;
+
+    if (!is_null($model)) {
+      $model->setContent($this);
+    }
   }
 
   /**

@@ -3,13 +3,12 @@
 namespace contentfield\fields;
 
 use contentfield\events\RootSchemasEvent;
+use contentfield\records\ContentRecord;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Field;
-use craft\elements\db\ElementQuery;
 use craft\helpers\Json;
 use yii\base\Event;
-use yii\db\Schema;
 
 use contentfield\models\Content;
 use contentfield\models\values\InstanceValue;
@@ -27,6 +26,11 @@ class ContentField extends Field
    */
   public $rootTemplates;
 
+  /**
+   * Event that will be fired when the content field is looking for the
+   * available root schemas.
+   * @event
+   */
   const EVENT_ROOT_SCHEMAS = 'rootSchemas';
 
 
@@ -47,6 +51,22 @@ class ContentField extends Field
         ->saveRelations($this, $element, $referencedIds);
     }
 
+    $field = $this->handle;
+    $model = $element->$field->getModel();
+    $conditions = $this->getContentRecordConditions($element);
+
+    if (is_null($model)) {
+      ContentRecord::deleteAll($conditions);
+    } else {
+      $record = $this->getContentRecord($element);
+      if (is_null($record)) {
+        $record = new ContentRecord($conditions);
+      }
+
+      $record->content = Json::encode($model->getEditorData());
+      $record->save();
+    }
+
     parent::afterElementSave($element, $isNew);
   }
 
@@ -59,27 +79,25 @@ class ContentField extends Field
   }
 
   /**
-   * Get Content Column Type
-   * Used to set the correct column type in the DB
-   * @return string
-   */
-  public function getContentColumnType(): string {
-    return Schema::TYPE_TEXT;
-  }
-
-  /**
    * @param Content|string|array $value
    * @param ElementInterface|null $element
    * @return Content
    * @throws \Exception
    */
   public function normalizeValue($value, ElementInterface $element = null) {
-    $model = null;
     if ($value instanceof Content) {
       return $value;
     }
 
+    $model = null;
     $schemas = Plugin::getInstance()->schemas;
+
+    if (is_null($value) && $element instanceof Element) {
+      $record = $this->getContentRecord($element);
+      if (!is_null($record)) {
+        $value = $record->content;
+      }
+    }
 
     if (is_string($value)) {
       $model = $schemas->createValue(Json::decode($value, true));
@@ -96,16 +114,7 @@ class ContentField extends Field
       }
     }
 
-    $content = new Content(array(
-      'model' => $model,
-      'owner' => $element,
-    ));
-
-    if (!is_null($model)) {
-      $model->setContent($content);
-    }
-
-    return $content;
+    return new Content($model, $element);
   }
 
   /**
@@ -122,12 +131,13 @@ class ContentField extends Field
    * @return array
    */
   static function loadReferences(Content $content) {
-    if (!($content->model instanceof InstanceValue)) {
+    $model = $content->getModel();
+    if (!($model instanceof InstanceValue)) {
       return array();
     }
 
     $view = \Craft::$app->getView();
-    $eagerLoadingMap = $content->model->getEagerLoadingMap();
+    $eagerLoadingMap = $model->getEagerLoadingMap();
     $result = array();
 
     foreach ($eagerLoadingMap as $elementType => $elementData) {
@@ -163,6 +173,28 @@ class ContentField extends Field
    */
   public function localizeRelations() {
     return $this->translationMethod !== Field::TRANSLATION_METHOD_NONE;
+  }
+
+  /**
+   * @param Element $element
+   * @return ContentRecord|null
+   */
+  private function getContentRecord(Element $element) {
+    return ContentRecord::findOne(
+      $this->getContentRecordConditions($element)
+    );
+  }
+
+  /**
+   * @param Element $element
+   * @return array
+   */
+  private function getContentRecordConditions(Element $element) {
+    return [
+      'elementId' => $element->id,
+      'siteId'    => $element->site->id,
+      'fieldId'   => $this->id,
+    ];
   }
 
   /**
@@ -270,9 +302,11 @@ class ContentField extends Field
       'schemas' => $jsonSchemas,
     );
 
+    $model = $value->getModel();
+
     return $view->renderTemplate('contentfield/_input', [
       'payload'  => Json::encode($data),
-      'content'  => Json::encode(is_null($value->model) ? null : $value->model->getEditorData()),
+      'content'  => Json::encode(is_null($model) ? null : $model->getEditorData()),
       'name'     => $this->handle,
       'nameNs'   => \Craft::$app->view->namespaceInputId($this->handle),
       'settings' => $this->getSettings(),
@@ -318,6 +352,13 @@ class ContentField extends Field
   }
 
   /**
+   * @inheritdoc
+   */
+  public static function hasContentColumn(): bool {
+    return false;
+  }
+
+  /**
    * @param $value
    * @param ElementInterface $element
    * @return bool
@@ -338,9 +379,10 @@ class ContentField extends Field
       return null;
     }
 
-    return Json::encode(is_null($value->model)
+    $model = $value->getModel();
+    return Json::encode(is_null($model)
       ? null
-      : $value->model->getSerializedData()
+      : $model->getSerializedData()
     );
   }
 

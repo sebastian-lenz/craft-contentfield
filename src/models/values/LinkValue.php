@@ -164,6 +164,13 @@ class LinkValue extends AbstractValue
   }
 
   /**
+   * @return string
+   */
+  function getUrl() {
+    return (string)$this;
+  }
+
+  /**
    * @return bool
    */
   function hasLinkedElement() {

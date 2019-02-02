@@ -116,7 +116,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
    */
   public function getFirst() {
     $references = $this->getReferences();
-    return $references[0];
+    return isset($references[0]) ? $references[0] : null;
   }
 
   /**
