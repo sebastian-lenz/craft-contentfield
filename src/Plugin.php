@@ -2,19 +2,14 @@
 
 namespace contentfield;
 
-use contentfield\services\ImageTags;
 use craft\events\RegisterComponentTypesEvent;
-use craft\events\RegisterUrlRulesEvent;
 use craft\events\TemplateEvent;
 use craft\services\Fields;
 use craft\services\Utilities;
-use craft\web\UrlManager;
 use craft\web\View;
 use yii\base\Event;
 
 use contentfield\fields\ContentField;
-use contentfield\services\FieldManager;
-use contentfield\services\SchemaManager;
 use contentfield\utilities\IconUtility;
 use contentfield\utilities\TemplateLoader;
 

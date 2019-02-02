@@ -3,6 +3,7 @@
 namespace contentfield\services\loaders;
 
 use craft\helpers\FileHelper;
+use craft\helpers\Json;
 use Symfony\Component\Yaml\Yaml;
 
 use contentfield\models\schemas\TemplateSchema;
@@ -23,6 +24,11 @@ class TemplateLoader extends AbstractLoader
    * @var array
    */
   private $templates;
+
+  /**
+   * The prefix used to generate cache keys.
+   */
+  const CACHE_PREFIX = 'CONTENTFIELD_TPLSCHEMA:';
 
   /**
    * Prefix for the schema names loaded by this loader.
@@ -72,6 +78,40 @@ class TemplateLoader extends AbstractLoader
       return $this->templates;
     }
 
+    $templates = null;
+    if (CRAFT_ENVIRONMENT == 'production') {
+      $templates = $this->getAllTemplatesFromCache();
+    }
+
+    if (is_null($templates)) {
+      $templates = $this->getAllTemplatesFromSource();
+      \Craft::$app->getCache()->set(self::CACHE_PREFIX, Json::encode($templates));
+    }
+
+    $this->templates = $templates;
+    return $templates;
+  }
+
+  /**
+   * @return array|null
+   */
+  private function getAllTemplatesFromCache() {
+    $data = \Craft::$app->getCache()->get(self::CACHE_PREFIX);
+    if (is_null($data)) {
+      return null;
+    }
+
+    try {
+      return Json::decode($data);
+    } catch (\Exception $error) { }
+
+    return null;
+  }
+
+  /**
+   * @return array
+   */
+  private function getAllTemplatesFromSource() {
     $generalConfig = \Craft::$app->getConfig()->getGeneral();
     $extensions    = $generalConfig->defaultTemplateExtensions;
     $basePath      = $this->getBasePath();
@@ -103,7 +143,6 @@ class TemplateLoader extends AbstractLoader
       );
     }
 
-    $this->templates = $result;
     return $result;
   }
 
@@ -169,7 +208,57 @@ class TemplateLoader extends AbstractLoader
    * @inheritdoc
    */
   public function load($name) {
-    $path     = $this->getTemplatePath($name);
+    $path = $this->getTemplatePath($name);
+    $data = $this->loadFromCache($name, $path);
+
+    if (is_null($data)) {
+      $data = $this->loadFromSource($name, $path);
+    }
+
+    return new TemplateSchema($data + array(
+      'path'      => $path,
+      'qualifier' => self::NAME_PREFIX . $name,
+      'template'  => $name
+    ));
+  }
+
+  /**
+   * @param string $name
+   * @param string $path
+   * @return array|null
+   */
+  private function loadFromCache($name, $path) {
+    $data = \Craft::$app->getCache()->get(self::CACHE_PREFIX . $name);
+    if (is_null($data)) {
+      return null;
+    }
+
+    try {
+      $data = Json::decode($data);
+
+      // If we are not in production mode, check filemtime
+      if (CRAFT_ENVIRONMENT != 'production') {
+        if ($data['filemtime'] != filemtime($path)) {
+          return null;
+        }
+      }
+
+      // Return the cached data
+      if (array_key_exists('data', $data)) {
+        return $data['data'];
+      }
+    } catch (\Exception $error) { }
+
+    return null;
+  }
+
+  /**
+   * @param string $name
+   * @param string $path
+   * @return array
+   * @throws \Exception
+   */
+  private function loadFromSource($name, $path) {
     $contents = file_get_contents($path);
 
     if (!preg_match('/^---+/m', $contents, $match, PREG_OFFSET_CAPTURE)) {
@@ -177,11 +266,12 @@ class TemplateLoader extends AbstractLoader
     }
 
     $data = Yaml::parse(substr($contents, 0, $match[0][1]));
-    return new TemplateSchema($data + array(
-      'path'      => $path,
-      'qualifier' => self::NAME_PREFIX . $name,
-      'template'  => $name
-    ));
+    \Craft::$app->getCache()->set(self::CACHE_PREFIX . $name, Json::encode([
+      'filemtime' => filemtime($path),
+      'data'      => $data,
+    ]));
+
+    return $data;
   }
 
   /**
