@@ -12,7 +12,7 @@ abstract class AbstractDefinitionService
   /**
    * @var array
    */
-  private $definitions;
+  protected $definitions;
 
   /**
    * @var string[]

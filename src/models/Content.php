@@ -3,9 +3,11 @@
 namespace contentfield\models;
 
 use contentfield\models\values\InstanceValue;
+use contentfield\Plugin;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;
+use craft\elements\db\AssetQuery;
 
 /**
  * Class Content
@@ -185,8 +187,16 @@ class Content extends Model
     }
 
     /** @var ElementInterface $elementType */
-    return $elementType::find()
-      ->id($elementData['ids'])
-      ->all();
+    $query = $elementType::find()
+      ->id($elementData['ids']);
+
+    if ($query instanceof AssetQuery) {
+      $transforms = Plugin::getInstance()->imageTags->getAllTransforms();
+      if (count($transforms)) {
+        $query->withTransforms($transforms);
+      }
+    }
+
+    return $query->all();
   }
 }

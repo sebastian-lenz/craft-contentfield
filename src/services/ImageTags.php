@@ -39,6 +39,42 @@ class ImageTags extends AbstractDefinitionService
     $this->imageTags[$type] = $imageTagClass;
   }
 
+  /**
+   * @return array
+   */
+  public function getAllTransforms() {
+    if (!isset($this->definitions)) {
+      $this->loadDefinitions();
+    }
+
+    $transforms = array();
+
+    foreach ($this->definitions as $definition) {
+      if (
+        array_key_exists('fallbackTransform', $definition) &&
+        is_string($definition['fallbackTransform']) &&
+        !in_array($definition['fallbackTransform'], $transforms)
+      ) {
+        $transforms[] = $definition['fallbackTransform'];
+      }
+
+      if (
+        array_key_exists('transforms', $definition) &&
+        is_array($definition['transforms'])
+      ) {
+        foreach ($definition['transforms'] as $transform) {
+          if (
+            is_string($transform) &&
+            !in_array($transform, $transforms)
+          ) {
+            $transforms[] = $transform;
+          }
+        }
+      }
+    }
+
+    return $transforms;
+  }
 
   /**
    * @return string
