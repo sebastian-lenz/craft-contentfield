@@ -141,7 +141,9 @@ class LinkValue extends AbstractValue
 
         if (!is_null($content)) {
           $elements = $content->getEagerLoadedElements($elementType);
-          $this->element = $elements[$elementId] ?: null;
+          $this->element = isset($elements[$elementId])
+            ? $elements[$elementId]
+            : null;
         } else {
           /** @var ElementInterface $elementType */
           $this->element = $elementType::findOne(array(
