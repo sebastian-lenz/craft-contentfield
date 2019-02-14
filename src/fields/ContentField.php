@@ -120,9 +120,9 @@ class ContentField extends Field
   /**
    * @return array
   public function getElementValidationRules(): array {
-    return [
-      [LinkFieldValidator::class, 'field' => $this],
-    ];
+  return [
+  [LinkFieldValidator::class, 'field' => $this],
+  ];
   }
    */
 
@@ -391,5 +391,18 @@ class ContentField extends Field
    */
   static public function displayName(): string {
     return \Craft::t('contentfield', 'Content field');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  static public function supportedTranslationMethods(): array {
+    return [
+      self::TRANSLATION_METHOD_NONE,
+      self::TRANSLATION_METHOD_SITE,
+      self::TRANSLATION_METHOD_SITE_GROUP,
+      self::TRANSLATION_METHOD_LANGUAGE,
+      self::TRANSLATION_METHOD_CUSTOM,
+    ];
   }
 }
