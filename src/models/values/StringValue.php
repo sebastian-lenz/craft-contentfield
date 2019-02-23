@@ -57,6 +57,6 @@ class StringValue extends AbstractValue
    * @return bool
    */
   public function isEmpty() {
-    return empty($this->value->getRawContent());
+    return empty($this->value);
   }
 }
