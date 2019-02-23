@@ -5,6 +5,8 @@ namespace contentfield\models\values;
 use contentfield\models\fields\LinkField;
 use craft\base\ElementInterface;
 use craft\elements\Entry;
+use craft\helpers\Html;
+use craft\helpers\Template;
 
 /**
  * Class LinkValue
@@ -17,6 +19,11 @@ class LinkValue extends AbstractValue
    * @var int
    */
   public $elementId = 0;
+
+  /**
+   * @var bool
+   */
+  public $openInNewWindow = false;
 
   /**
    * @var string
@@ -56,6 +63,10 @@ class LinkValue extends AbstractValue
       if (isset($data['url'])) {
         $this->url = $data['url'];
       }
+
+      if (isset($data['openInNewWindow'])) {
+        $this->openInNewWindow = !!$data['openInNewWindow'];
+      }
     }
   }
 
@@ -72,6 +83,26 @@ class LinkValue extends AbstractValue
         $element = $this->getLinkedElement();
         return is_null($element) ? '' : $element->getUrl();
     }
+  }
+
+  /**
+   * @param array $extraAttribs
+   * @return string
+   */
+  public function getLinkAttributes($extraAttribs = array()) {
+    if ($this->isEmpty()) {
+      return '';
+    }
+
+    $attribs = [
+      'href' => $this->getUrl(),
+    ] + $extraAttribs;
+
+    if ($this->openInNewWindow) {
+      $attribs['target'] = '_blank';
+    }
+
+    return Template::raw(Html::renderTagAttributes($attribs));
   }
 
   /**
@@ -104,9 +135,10 @@ class LinkValue extends AbstractValue
    */
   function getEditorData() {
     return array(
-      'elementId' => $this->elementId,
-      'type'      => $this->type,
-      'url'       => $this->url,
+      'elementId'       => $this->elementId,
+      'openInNewWindow' => $this->openInNewWindow,
+      'type'            => $this->type,
+      'url'             => $this->url,
     );
   }
 

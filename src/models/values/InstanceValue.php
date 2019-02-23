@@ -153,6 +153,19 @@ class InstanceValue extends AbstractValue
    * @inheritdoc
    */
   public function getHtml(array $variables = []) {
+    if (!array_key_exists('loop', $variables)) {
+      $variables['loop'] = [
+        'index'     => 1,
+        'index0'    => 0,
+        'revindex'  => 1,
+        'revindex0' => 0,
+        'first'     => true,
+        'last'      => true,
+        'length'    => 1,
+        'parent'    => [],
+      ];
+    }
+
     return new \Twig_Markup($this->__schema->render($this, $variables), 'utf-8');
   }
 

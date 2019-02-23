@@ -43,11 +43,21 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
    */
   public function __toString() {
     $result = array();
+    $count = count($this->values);
+
     foreach ($this->values as $index => $value) {
       if ($value instanceof InstanceValue) {
         $result[] = (string)$value->getHtml([
-          'count' => count($this->values),
-          'index' => $index,
+          'loop' => [
+            'index'     => $index + 1,
+            'index0'    => $index,
+            'revindex'  => $count - $index,
+            'revindex0' => $count - $index - 1,
+            'first'     => $index == 0,
+            'last'      => $index == $count - 1,
+            'length'    => $count,
+            'parent'    => $this,
+          ],
         ]);
       } else {
         $result[] = (string)$value;

@@ -3,9 +3,9 @@
 namespace contentfield\models\fields;
 
 use craft\base\ElementInterface;
-
 use contentfield\models\values\AbstractValue;
 use contentfield\models\values\LinkValue;
+use craft\elements\Asset;
 use craft\elements\Entry;
 
 /**
@@ -13,6 +13,11 @@ use craft\elements\Entry;
  */
 class LinkField extends AbstractField
 {
+  /**
+   * @var bool
+   */
+  public $allowNewWindow = true;
+
   /**
    * @var array
    */
@@ -30,6 +35,12 @@ class LinkField extends AbstractField
     'entry' => [
       'elementType' => Entry::class,
       'label'       => 'Entry',
+      'sources'     => null,
+      'type'        => 'element',
+    ],
+    'asset' => [
+      'elementType' => Asset::class,
+      'label'       => 'Asset',
       'sources'     => null,
       'type'        => 'element',
     ],
@@ -53,6 +64,7 @@ class LinkField extends AbstractField
    */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData($element) + array(
+      'allowNewWindow' => $this->allowNewWindow,
       'linkTypes' => $this->linkTypes
     );
   }

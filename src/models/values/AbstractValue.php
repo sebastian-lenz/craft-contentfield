@@ -116,6 +116,13 @@ abstract class AbstractValue extends Model
   /**
    * @return bool
    */
+  public function hasValue() {
+    return $this->isEmpty();
+  }
+
+  /**
+   * @return bool
+   */
   abstract function isEmpty();
 
   /**

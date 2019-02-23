@@ -51,6 +51,13 @@ class EnumerationValue extends AbstractValue
   }
 
   /**
+   * @return number|string
+   */
+  public function getValue() {
+    return $this->value;
+  }
+
+  /**
    * @return bool
    */
   public function isEmpty() {
