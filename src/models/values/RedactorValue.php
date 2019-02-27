@@ -54,6 +54,13 @@ class RedactorValue extends AbstractValue
   }
 
   /**
+   * @return FieldData
+   */
+  public function getRedactorFieldData() {
+    return $this->value;
+  }
+
+  /**
    * @inheritdoc
    */
   public function getSerializedData() {
