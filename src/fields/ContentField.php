@@ -39,11 +39,12 @@ class ContentField extends Field
    * @throws \Throwable
    */
   public function afterElementSave(ElementInterface $element, bool $isNew) {
+    $value = $element->getFieldValue($this->handle);
+
     // Skip if the element is just propagating, and we're not localizing relations
     /** @var Element $element */
     if (!$element->propagating || $this->localizeRelations()) {
       /** @var Content $value */
-      $value = $element->getFieldValue($this->handle);
       $referencedIds = $value->getReferencedIds();
 
       Plugin::getInstance()
@@ -51,8 +52,7 @@ class ContentField extends Field
         ->saveRelations($this, $element, $referencedIds);
     }
 
-    $field = $this->handle;
-    $model = $element->$field->getModel();
+    $model = $value->getModel();
     $conditions = $this->getContentRecordConditions($element);
 
     if (is_null($model)) {
@@ -63,7 +63,7 @@ class ContentField extends Field
         $record = new ContentRecord($conditions);
       }
 
-      $record->content = Json::encode($model->getEditorData());
+      $record->content = $this->serializeValue($value, $element);
       $record->save();
     }
 
@@ -312,6 +312,16 @@ class ContentField extends Field
       'settings' => $this->getSettings(),
       'value'    => $value,
     ]);
+  }
+
+  /**
+   * @param $value
+   * @param ElementInterface $element
+   * @return string
+   * @throws \Exception
+   */
+  public function getStaticHtml($value, ElementInterface $element): string {
+    return $this->getInputHtml($value, $element);
   }
 
   /**
