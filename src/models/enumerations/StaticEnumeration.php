@@ -1,8 +1,8 @@
 <?php
 
-namespace contentfield\models\enumerations;
+namespace sebastianlenz\contentfield\models\enumerations;
 
-use contentfield\models\values\EnumerationValue;
+use sebastianlenz\contentfield\models\values\EnumerationValue;
 
 /**
  * Class StaticEnumeration

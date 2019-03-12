@@ -1,9 +1,9 @@
 <?php
 
-namespace contentfield\models\fields\strings;
+namespace sebastianlenz\contentfield\models\fields\strings;
 
-use contentfield\models\values\AbstractValue;
-use contentfield\models\values\RedactorValue;
+use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\RedactorValue;
 use craft\base\ElementInterface;
 
 /**
@@ -51,11 +51,11 @@ class RedactorField extends AbstractStringField
   }
 
   /**
-   * @return \contentfield\utilities\RedactorSettings|null
+   * @return \sebastianlenz\contentfield\utilities\RedactorSettings|null
    */
   public function getRedactorField() {
     try {
-      return new \contentfield\utilities\RedactorSettings([
+      return new \sebastianlenz\contentfield\utilities\RedactorSettings([
         'purifierConfig' => $this->purifierConfig,
         'redactorConfig' => $this->redactorConfig,
       ]);

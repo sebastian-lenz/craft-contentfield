@@ -1,8 +1,8 @@
 <?php
 
-namespace contentfield\services;
+namespace sebastianlenz\contentfield\services;
 
-use contentfield\fields\ContentField;
+use sebastianlenz\contentfield\fields\ContentField;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;

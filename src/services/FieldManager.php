@@ -1,20 +1,20 @@
 <?php
 
-namespace contentfield\services;
+namespace sebastianlenz\contentfield\services;
 
-use contentfield\models\fields\AbstractField;
-use contentfield\models\fields\ArrayField;
-use contentfield\models\fields\ColorField;
-use contentfield\models\fields\enumerations\SelectField;
-use contentfield\models\fields\enumerations\SwatchColorField;
-use contentfield\models\fields\InstanceField;
-use contentfield\models\fields\LinkField;
-use contentfield\models\fields\LocationField;
-use contentfield\models\fields\ReferenceField;
-use contentfield\models\fields\strings\RedactorField;
-use contentfield\models\fields\strings\TextAreaField;
-use contentfield\models\fields\strings\TextField;
-use contentfield\models\fields\OEmbedField;
+use sebastianlenz\contentfield\models\fields\AbstractField;
+use sebastianlenz\contentfield\models\fields\ArrayField;
+use sebastianlenz\contentfield\models\fields\ColorField;
+use sebastianlenz\contentfield\models\fields\enumerations\SelectField;
+use sebastianlenz\contentfield\models\fields\enumerations\SwatchColorField;
+use sebastianlenz\contentfield\models\fields\InstanceField;
+use sebastianlenz\contentfield\models\fields\LinkField;
+use sebastianlenz\contentfield\models\fields\LocationField;
+use sebastianlenz\contentfield\models\fields\ReferenceField;
+use sebastianlenz\contentfield\models\fields\strings\RedactorField;
+use sebastianlenz\contentfield\models\fields\strings\TextAreaField;
+use sebastianlenz\contentfield\models\fields\strings\TextField;
+use sebastianlenz\contentfield\models\fields\OEmbedField;
 
 /**
  * Class FieldManager

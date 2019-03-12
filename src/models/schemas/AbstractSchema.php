@@ -1,13 +1,13 @@
 <?php
 
-namespace contentfield\models\schemas;
+namespace sebastianlenz\contentfield\models\schemas;
 
 use craft\base\ElementInterface;
 use craft\base\Model;
 
-use contentfield\models\fields\AbstractField;
-use contentfield\models\values\InstanceValue;
-use contentfield\Plugin;
+use sebastianlenz\contentfield\models\fields\AbstractField;
+use sebastianlenz\contentfield\models\values\InstanceValue;
+use sebastianlenz\contentfield\Plugin;
 
 /**
  * Class AbstractSchema

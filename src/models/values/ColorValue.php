@@ -1,9 +1,9 @@
 <?php
 
-namespace contentfield\models\values;
+namespace sebastianlenz\contentfield\models\values;
 
-use contentfield\models\fields\ColorField;
-use contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\fields\ColorField;
+use sebastianlenz\contentfield\models\values\AbstractValue;
 
 /**
  * Class ColorValue

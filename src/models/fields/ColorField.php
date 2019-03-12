@@ -1,9 +1,9 @@
 <?php
 
-namespace contentfield\models\fields;
+namespace sebastianlenz\contentfield\models\fields;
 
-use contentfield\models\values\ColorValue;
-use contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ColorValue;
+use sebastianlenz\contentfield\models\values\AbstractValue;
 use craft\base\ElementInterface;
 
 /**

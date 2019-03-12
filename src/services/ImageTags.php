@@ -1,13 +1,13 @@
 <?php
 
-namespace contentfield\services;
+namespace sebastianlenz\contentfield\services;
 
 use craft\elements\Asset;
 
-use contentfield\services\imageTags\DefaultImageTag;
-use contentfield\services\imageTags\PictureImageTag;
-use contentfield\services\imageTags\ImageTag;
-use contentfield\services\imageTags\WrappedImageTag;
+use sebastianlenz\contentfield\services\imageTags\DefaultImageTag;
+use sebastianlenz\contentfield\services\imageTags\PictureImageTag;
+use sebastianlenz\contentfield\services\imageTags\ImageTag;
+use sebastianlenz\contentfield\services\imageTags\WrappedImageTag;
 
 /**
  * Class ImageTags

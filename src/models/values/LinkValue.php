@@ -1,8 +1,8 @@
 <?php
 
-namespace contentfield\models\values;
+namespace sebastianlenz\contentfield\models\values;
 
-use contentfield\models\fields\LinkField;
+use sebastianlenz\contentfield\models\fields\LinkField;
 use craft\base\ElementInterface;
 use craft\elements\Entry;
 use craft\helpers\Html;

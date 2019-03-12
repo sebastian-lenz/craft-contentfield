@@ -1,6 +1,6 @@
 <?php
 
-namespace contentfield\utilities\oembed;
+namespace sebastianlenz\contentfield\utilities\oembed;
 
 /**
  * Class Endpoint

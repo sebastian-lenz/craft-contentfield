@@ -1,8 +1,8 @@
 <?php
 
-namespace contentfield\services\loaders;
+namespace sebastianlenz\contentfield\services\loaders;
 
-use contentfield\models\schemas\AbstractSchema;
+use sebastianlenz\contentfield\models\schemas\AbstractSchema;
 
 /**
  * Class AbstractLoader

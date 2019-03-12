@@ -1,11 +1,11 @@
 <?php
 
-namespace contentfield\models\values;
+namespace sebastianlenz\contentfield\models\values;
 
-use contentfield\utilities\RedactorSettings;
+use sebastianlenz\contentfield\utilities\RedactorSettings;
 use craft\redactor\FieldData;
 
-use contentfield\models\fields\strings\RedactorField;
+use sebastianlenz\contentfield\models\fields\strings\RedactorField;
 
 /**
  * Class RedactorValue

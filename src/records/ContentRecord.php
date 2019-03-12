@@ -1,6 +1,6 @@
 <?php
 
-namespace contentfield\records;
+namespace sebastianlenz\contentfield\records;
 
 use craft\db\ActiveRecord;
 use craft\db\SoftDeleteTrait;

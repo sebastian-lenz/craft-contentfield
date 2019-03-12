@@ -1,10 +1,10 @@
 <?php
 
-namespace contentfield\models\fields\strings;
+namespace sebastianlenz\contentfield\models\fields\strings;
 
-use contentfield\models\fields\AbstractField;
-use contentfield\models\values\AbstractValue;
-use contentfield\models\values\StringValue;
+use sebastianlenz\contentfield\models\fields\AbstractField;
+use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\StringValue;
 use craft\base\ElementInterface;
 
 /**

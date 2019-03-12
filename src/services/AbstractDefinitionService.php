@@ -1,6 +1,6 @@
 <?php
 
-namespace contentfield\services;
+namespace sebastianlenz\contentfield\services;
 
 use Symfony\Component\Yaml\Yaml;
 

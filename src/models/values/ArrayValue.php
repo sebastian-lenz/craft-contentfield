@@ -1,9 +1,9 @@
 <?php
 
-namespace contentfield\models\values;
+namespace sebastianlenz\contentfield\models\values;
 
-use contentfield\models\fields\ArrayField;
-use contentfield\models\fields\InstanceField;
+use sebastianlenz\contentfield\models\fields\ArrayField;
+use sebastianlenz\contentfield\models\fields\InstanceField;
 
 /**
  * Class ArrayValue

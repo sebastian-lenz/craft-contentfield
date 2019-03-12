@@ -1,10 +1,9 @@
 <?php
 
-namespace contentfield\utilities;
+namespace sebastianlenz\contentfield\utilities;
 
 /**
  * Class Url
- * @package contentfield\utilities
  */
 class Url
 {

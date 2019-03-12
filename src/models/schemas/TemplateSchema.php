@@ -1,8 +1,8 @@
 <?php
 
-namespace contentfield\models\schemas;
+namespace sebastianlenz\contentfield\models\schemas;
 
-use contentfield\models\values\InstanceValue;
+use sebastianlenz\contentfield\models\values\InstanceValue;
 
 /**
  * Class TemplateSchema

@@ -1,9 +1,9 @@
 <?php
 
-namespace contentfield\models;
+namespace sebastianlenz\contentfield\models;
 
-use contentfield\models\values\InstanceValue;
-use contentfield\Plugin;
+use sebastianlenz\contentfield\models\values\InstanceValue;
+use sebastianlenz\contentfield\Plugin;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;

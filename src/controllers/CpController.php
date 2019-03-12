@@ -1,12 +1,12 @@
 <?php
 
-namespace contentfield\controllers;
+namespace sebastianlenz\contentfield\controllers;
 
-use contentfield\fields\ContentField;
-use contentfield\models\Content;
-use contentfield\models\fields\OEmbedField;
-use contentfield\Plugin;
-use contentfield\utilities\Url;
+use sebastianlenz\contentfield\fields\ContentField;
+use sebastianlenz\contentfield\models\Content;
+use sebastianlenz\contentfield\models\fields\OEmbedField;
+use sebastianlenz\contentfield\Plugin;
+use sebastianlenz\contentfield\utilities\Url;
 use craft\web\Controller;
 
 /**

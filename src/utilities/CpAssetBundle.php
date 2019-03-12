@@ -1,6 +1,6 @@
 <?php
 
-namespace contentfield\utilities;
+namespace sebastianlenz\contentfield\utilities;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;

@@ -1,9 +1,9 @@
 <?php
 
-namespace contentfield\models\values;
+namespace sebastianlenz\contentfield\models\values;
 
-use contentfield\models\fields\OEmbedField;
-use contentfield\utilities\oembed\OEmbed;
+use sebastianlenz\contentfield\models\fields\OEmbedField;
+use sebastianlenz\contentfield\utilities\oembed\OEmbed;
 
 /**
  * Class OEmbedValue

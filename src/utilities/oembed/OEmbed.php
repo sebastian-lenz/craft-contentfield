@@ -1,8 +1,8 @@
 <?php
 
-namespace contentfield\utilities\oembed;
+namespace sebastianlenz\contentfield\utilities\oembed;
 
-use contentfield\utilities\HTTP;
+use sebastianlenz\contentfield\utilities\HTTP;
 use craft\helpers\Json;
 use yii\caching\FileCache;
 
@@ -182,7 +182,7 @@ class OEmbed
       return;
     }
 
-    $url = new \contentfield\utilities\Url($src);
+    $url = new \sebastianlenz\contentfield\utilities\Url($src);
     $query = $url->getQuery();
 
     foreach ($options as $name => $value) {

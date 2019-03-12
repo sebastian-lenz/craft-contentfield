@@ -1,6 +1,6 @@
 <?php
 
-namespace contentfield\models\fields\enumerations;
+namespace sebastianlenz\contentfield\models\fields\enumerations;
 
 /**
  * Class SwatchColorField

@@ -1,10 +1,10 @@
 <?php
 
-namespace contentfield\models\fields;
+namespace sebastianlenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
-use contentfield\models\values\AbstractValue;
-use contentfield\models\values\LinkValue;
+use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\LinkValue;
 use craft\elements\Asset;
 use craft\elements\Entry;
 

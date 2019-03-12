@@ -1,13 +1,13 @@
 <?php
 
-namespace contentfield\services;
+namespace sebastianlenz\contentfield\services;
 
-use contentfield\models\fields\InstanceField;
-use contentfield\models\schemas\AbstractSchema;
-use contentfield\models\values\AbstractValue;
-use contentfield\models\values\InstanceValue;
-use contentfield\services\loaders\AbstractLoader;
-use contentfield\services\loaders\TemplateLoader;
+use sebastianlenz\contentfield\models\fields\InstanceField;
+use sebastianlenz\contentfield\models\schemas\AbstractSchema;
+use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\InstanceValue;
+use sebastianlenz\contentfield\services\loaders\AbstractLoader;
+use sebastianlenz\contentfield\services\loaders\TemplateLoader;
 
 /**
  * Class SchemaManager

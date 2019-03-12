@@ -1,19 +1,19 @@
 <?php
 
-namespace contentfield\fields;
+namespace sebastianlenz\contentfield\fields;
 
-use contentfield\events\RootSchemasEvent;
-use contentfield\records\ContentRecord;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\helpers\Json;
 use yii\base\Event;
 
-use contentfield\models\Content;
-use contentfield\models\values\InstanceValue;
-use contentfield\Plugin;
-use contentfield\utilities\CpAssetBundle;
+use sebastianlenz\contentfield\events\RootSchemasEvent;
+use sebastianlenz\contentfield\models\Content;
+use sebastianlenz\contentfield\models\values\InstanceValue;
+use sebastianlenz\contentfield\Plugin;
+use sebastianlenz\contentfield\records\ContentRecord;
+use sebastianlenz\contentfield\utilities\CpAssetBundle;
 
 /**
  * Class ContentField
@@ -326,7 +326,7 @@ class ContentField extends Field
 
   /**
    * @param ElementInterface|null $element
-   * @return \contentfield\models\schemas\AbstractSchema[]
+   * @return \sebastianlenz\contentfield\models\schemas\AbstractSchema[]
    * @throws \Exception
    */
   public function getRootSchemas(ElementInterface $element = null) {

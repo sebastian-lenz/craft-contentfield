@@ -1,12 +1,12 @@
 <?php
 
-namespace contentfield\services\loaders;
+namespace sebastianlenz\contentfield\services\loaders;
 
 use craft\helpers\FileHelper;
 use craft\helpers\Json;
 use Symfony\Component\Yaml\Yaml;
 
-use contentfield\models\schemas\TemplateSchema;
+use sebastianlenz\contentfield\models\schemas\TemplateSchema;
 
 /**
  * Class TemplateLoader

@@ -1,8 +1,8 @@
 <?php
 
-namespace contentfield\models\values;
+namespace sebastianlenz\contentfield\models\values;
 
-use contentfield\models\fields\LocationField;
+use sebastianlenz\contentfield\models\fields\LocationField;
 
 /**
  * Class LocationValue

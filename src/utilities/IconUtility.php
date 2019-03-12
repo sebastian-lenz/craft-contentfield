@@ -1,16 +1,14 @@
 <?php
 
-namespace contentfield\utilities;
+namespace sebastianlenz\contentfield\utilities;
 
 use craft\base\Utility;
 use craft\helpers\Json;
 use craft\web\assets\cp\CpAsset;
 use craft\web\View;
-use yii\base\Exception;
 
 /**
  * Class IconUtility
- * @package contentfield\utilities
  */
 class IconUtility extends Utility
 {

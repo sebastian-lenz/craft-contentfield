@@ -1,6 +1,6 @@
 <?php
 
-namespace contentfield;
+namespace sebastianlenz\contentfield;
 
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\TemplateEvent;
@@ -9,9 +9,9 @@ use craft\services\Utilities;
 use craft\web\View;
 use yii\base\Event;
 
-use contentfield\fields\ContentField;
-use contentfield\utilities\IconUtility;
-use contentfield\utilities\TemplateLoader;
+use sebastianlenz\contentfield\fields\ContentField;
+use sebastianlenz\contentfield\utilities\IconUtility;
+use sebastianlenz\contentfield\utilities\TemplateLoader;
 
 /**
  * Class Plugin

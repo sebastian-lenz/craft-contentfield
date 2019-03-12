@@ -1,8 +1,8 @@
 <?php
 
-namespace contentfield\models\values;
+namespace sebastianlenz\contentfield\models\values;
 
-use contentfield\models\fields\enumerations\AbstractEnumerationField;
+use sebastianlenz\contentfield\models\fields\enumerations\AbstractEnumerationField;
 
 /**
  * Class EnumerationValue

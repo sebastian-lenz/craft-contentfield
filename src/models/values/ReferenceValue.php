@@ -1,9 +1,9 @@
 <?php
 
-namespace contentfield\models\values;
+namespace sebastianlenz\contentfield\models\values;
 
-use contentfield\models\fields\ReferenceField;
-use contentfield\Plugin;
+use sebastianlenz\contentfield\models\fields\ReferenceField;
+use sebastianlenz\contentfield\Plugin;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\helpers\Template;

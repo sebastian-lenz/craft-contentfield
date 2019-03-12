@@ -1,6 +1,6 @@
 <?php
 
-namespace contentfield\utilities;
+namespace sebastianlenz\contentfield\utilities;
 
 /**
  * Class HTTP
