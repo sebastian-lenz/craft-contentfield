@@ -59,6 +59,14 @@ class ImageTags extends AbstractDefinitionService
       }
 
       if (
+        array_key_exists('inlineTransform', $definition) &&
+        is_string($definition['inlineTransform']) &&
+        !in_array($definition['inlineTransform'], $transforms)
+      ) {
+        $transforms[] = $definition['inlineTransform'];
+      }
+
+      if (
         array_key_exists('transforms', $definition) &&
         is_array($definition['transforms'])
       ) {

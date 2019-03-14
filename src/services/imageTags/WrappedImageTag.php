@@ -24,6 +24,21 @@ class WrappedImageTag extends DefaultImageTag
    */
   public $wrapAttributes = array();
 
+  /**
+   * @var string
+   */
+  public $placeholder = '';
+
+  /**
+   * @var string
+   */
+  public $placeholderTag;
+
+  /**
+   * @var array
+   */
+  public $placeholderAttributes = array();
+
 
   /**
    * @return string
@@ -31,7 +46,7 @@ class WrappedImageTag extends DefaultImageTag
   public function getAspectStyle() {
     $source = $this->getMaxSource();
     $ratio = round($source['height'] / $source['width'] * 100, 6);
-    return 'padding-bottom:' . $ratio . '%';
+    return 'padding-bottom:' . $ratio . '%;';
   }
 
   /**
@@ -40,16 +55,24 @@ class WrappedImageTag extends DefaultImageTag
   public function render() {
     $content = parent::render();
     $source = $this->getMaxSource();
-    $attributes = $this->expandAttributes(
-      $this->wrapAttributes,
-      array(
-        '$height'      => $source['height'],
-        '$src'         => $source['src'],
-        '$width'       => $source['width'],
-        '$srcset'      => array($this, 'getSourceSet'),
-        '$aspectStyle' => array($this, 'getAspectStyle'),
-      )
+    $values = array(
+      '$height'      => $source['height'],
+      '$src'         => $source['src'],
+      '$width'       => $source['width'],
+      '$srcset'      => array($this, 'getSourceSet'),
+      '$aspectStyle' => array($this, 'getAspectStyle'),
     );
+
+    if (isset($this->placeholderTag)) {
+      $content = Html::tag(
+        $this->placeholderTag,
+        $this->placeholder,
+        $this->expandAttributes(
+          $this->placeholderAttributes,
+          $values
+        )
+      ) . $content;
+    }
 
     if ($this->withNoscript) {
       $content .= Html::tag(
@@ -60,7 +83,13 @@ class WrappedImageTag extends DefaultImageTag
       );
     }
 
-    return Html::tag('div', $content, $attributes);
+    return Html::tag(
+      'div',
+      $content, $this->expandAttributes(
+        $this->wrapAttributes,
+        $values
+      )
+    );
   }
 
   /**

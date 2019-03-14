@@ -22,6 +22,21 @@ class PictureImageTag extends ImageTag
   public $fallbackTransform = null;
 
   /**
+   * @var string
+   */
+  public $placeholder = '';
+
+  /**
+   * @var string
+   */
+  public $placeholderTag;
+
+  /**
+   * @var array
+   */
+  public $placeholderAttributes = array();
+
+  /**
    * @var array
    */
   public $sourceAttributes;
@@ -62,6 +77,14 @@ class PictureImageTag extends ImageTag
       if (!is_null($sourceTag)) {
         $content[] = $sourceTag;
       }
+    }
+
+    if (isset($this->placeholderTag)) {
+      $content[] = Html::tag(
+        $this->placeholderTag,
+        $this->placeholder,
+        $this->expandAttributes($this->placeholderAttributes)
+      );
     }
 
     $content[] = Html::tag('noscript',

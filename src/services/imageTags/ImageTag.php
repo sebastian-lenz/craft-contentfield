@@ -3,6 +3,7 @@
 namespace sebastianlenz\contentfield\services\imageTags;
 
 use craft\elements\Asset;
+use craft\helpers\Image;
 use yii\base\BaseObject;
 
 /**
@@ -14,6 +15,11 @@ abstract class ImageTag extends BaseObject
    * @var Asset
    */
   public $asset;
+
+  /**
+   * @var string
+   */
+  public $thumbnailTransform;
 
 
   /**
@@ -34,27 +40,82 @@ abstract class ImageTag extends BaseObject
   protected function expandAttributes($attributes, $values = array()) {
     $asset = $this->asset;
     $focalPoint = $asset->getFocalPoint() ?? ['x' => 0.5, 'y' => 0.5];
+    $result = array();
 
     $values += array(
-      '$focusX'       => $focalPoint['x'],
-      '$focusY'       => $focalPoint['y'],
-      '$nativeWidth'  => $asset->getWidth(),
-      '$nativeHeight' => $asset->getHeight(),
-      '$title'        => $asset->title,
+      '$focusX'         => $focalPoint['x'],
+      '$focusY'         => $focalPoint['y'],
+      '$nativeWidth'    => $asset->getWidth(),
+      '$nativeHeight'   => $asset->getHeight(),
+      '$title'          => $asset->title,
+      '$thumbnail'      => [$this, 'getThumbnail'],
+      '$thumbnailStyle' => [$this, 'getThumbnailStyle'],
     );
 
-    $result = array();
-    foreach ($attributes as $key => $value) {
-      if (array_key_exists($value, $values)) {
-        $result[$key] = is_callable($values[$value])
-          ? $values[$value]()
-          : $values[$value];
-      } else {
-        $result[$key] = $value;
+    uksort($values, function($left, $right) {
+      return strlen($right) - strlen($left);
+    });
+
+    foreach ($attributes as $attributeName => $attribute) {
+      foreach ($values as $valueName => $value) {
+        if (strpos($attribute, $valueName) === false) {
+          continue;
+        }
+
+        $resolvedValue = is_callable($value) ? $value() : $value;
+        $attribute = str_replace($valueName, $resolvedValue, $attribute);
       }
+
+      $result[$attributeName] = $attribute;
     }
 
     return $result;
+  }
+
+  /**
+   * @return string
+   */
+  public function getThumbnailStyle() {
+    try {
+      $thumbnail = $this->getThumbnail();
+      return is_null($thumbnail) ? '' : 'background-image:' . $thumbnail . ';';
+    } catch (\Throwable $error) {
+      return '';
+    }
+  }
+
+  /**
+   * @return string|null
+   * @throws \craft\errors\AssetException
+   * @throws \craft\errors\AssetTransformException
+   */
+  public function getThumbnail() {
+    $asset = $this->asset;
+    $volume = $asset->volume;
+
+    if (
+      $this->thumbnailTransform === null ||
+      !Image::canManipulateAsImage(pathinfo($asset->filename, PATHINFO_EXTENSION)))
+    {
+      return null;
+    }
+
+    $transforms = \Craft::$app->getAssetTransforms();
+    $index = $transforms->getTransformIndex($asset, $this->thumbnailTransform);
+
+    try {
+      $transforms->ensureTransformUrlByIndexModel($index);
+    } catch (\Throwable $exception) {
+      $transforms->deleteTransformIndex($index->id);
+      return null;
+    }
+
+    $stream = $volume->getFileStream(
+      $asset->folderPath .
+      $transforms->getTransformSubpath($this->asset, $index)
+    );
+
+    return "url('data:image/gif;base64," . base64_encode(stream_get_contents($stream)) . "')";
   }
 
   /**
