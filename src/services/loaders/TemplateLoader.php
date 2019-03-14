@@ -229,7 +229,7 @@ class TemplateLoader extends AbstractLoader
    */
   private function loadFromCache($name, $path) {
     $data = \Craft::$app->getCache()->get(self::CACHE_PREFIX . $name);
-    if (is_null($data)) {
+    if ($data === false) {
       return null;
     }
 
