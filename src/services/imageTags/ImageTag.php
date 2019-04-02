@@ -123,6 +123,10 @@ abstract class ImageTag extends BaseObject
    * @return array
    */
   protected function toSource($transform = null) {
+    if ($transform == '@original') {
+      $transform = null;
+    }
+
     return array(
       'height' => $this->asset->getHeight($transform),
       'src'    => $this->asset->getUrl($transform),
