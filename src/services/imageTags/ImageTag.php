@@ -21,6 +21,11 @@ abstract class ImageTag extends BaseObject
    */
   public $thumbnailTransform;
 
+  /**
+   * Transform handle used to indicate original transform.
+   */
+  const ORIGINAL_TRANSFORM = '$original';
+
 
   /**
    * @return boolean
@@ -123,7 +128,7 @@ abstract class ImageTag extends BaseObject
    * @return array
    */
   protected function toSource($transform = null) {
-    if ($transform == '@original') {
+    if ($transform == self::ORIGINAL_TRANSFORM) {
       $transform = null;
     }
 

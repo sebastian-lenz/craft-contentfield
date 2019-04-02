@@ -19,6 +19,15 @@ class ImageTags extends AbstractDefinitionService
    */
   private $imageTags;
 
+  /**
+   * List of attributes known to contain transform names.
+   */
+  const TRANSFORM_ATTRIBUTES = [
+    'fallbackTransform',
+    'inlineTransform',
+    'transforms'
+  ];
+
 
   /**
    * ImageTags constructor.
@@ -50,32 +59,27 @@ class ImageTags extends AbstractDefinitionService
     $transforms = array();
 
     foreach ($this->definitions as $definition) {
-      if (
-        array_key_exists('fallbackTransform', $definition) &&
-        is_string($definition['fallbackTransform']) &&
-        !in_array($definition['fallbackTransform'], $transforms)
-      ) {
-        $transforms[] = $definition['fallbackTransform'];
-      }
+      foreach (self::TRANSFORM_ATTRIBUTES as $attribute) {
+        if (!array_key_exists($attribute, $definition)) {
+          continue;
+        }
 
-      if (
-        array_key_exists('inlineTransform', $definition) &&
-        is_string($definition['inlineTransform']) &&
-        !in_array($definition['inlineTransform'], $transforms)
-      ) {
-        $transforms[] = $definition['inlineTransform'];
-      }
+        $values = $definition[$attribute];
+        if (is_string($values)) {
+          $values = [$values];
+        }
 
-      if (
-        array_key_exists('transforms', $definition) &&
-        is_array($definition['transforms'])
-      ) {
-        foreach ($definition['transforms'] as $transform) {
+        if (!is_array($values)) {
+          continue;
+        }
+
+        foreach ($values as $value) {
           if (
-            is_string($transform) &&
-            !in_array($transform, $transforms)
+            is_string($value) &&
+            !in_array($value, $transforms) &&
+            $value != ImageTag::ORIGINAL_TRANSFORM
           ) {
-            $transforms[] = $transform;
+            $transforms[] = $value;
           }
         }
       }
