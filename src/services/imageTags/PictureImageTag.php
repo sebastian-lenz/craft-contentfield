@@ -136,4 +136,16 @@ class PictureImageTag extends ImageTag
 
     return Html::tag('source', '', $attributes);
   }
+  /**
+   * @param array $target
+   * @param array $source
+   * @return array
+   */
+  static public function mergeConfig($target, $source) {
+    return self::mergeAttributes(
+      $target,
+      $source,
+      array('attributes', 'wrapAttributes')
+    ) + $source;
+  }
 }

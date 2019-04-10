@@ -27,9 +27,9 @@ class m190202_133033_AddContentTable extends Migration
       'content'     => $this->longText(),
     ]);
 
-    $this->createIndex(null, ContentRecord::TABLE, ['elementId', 'siteId'], true);
-    $this->createIndex(null, ContentRecord::TABLE, ['siteId'], false);
-    $this->createIndex(null, ContentRecord::TABLE, ['fieldId'], false);
+    $this->createIndex('contentfield_elementId_siteId_unq_idx', ContentRecord::TABLE, ['elementId', 'siteId'], true);
+    $this->createIndex('contentfield_siteId_idx', ContentRecord::TABLE, ['siteId'], false);
+    $this->createIndex('contentfield_fieldId_idx', ContentRecord::TABLE, ['fieldId'], false);
 
     $this->addForeignKey(null, ContentRecord::TABLE, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE', null);
     $this->addForeignKey(null, ContentRecord::TABLE, ['fieldId'], Table::FIELDS, ['id'], 'CASCADE', null);

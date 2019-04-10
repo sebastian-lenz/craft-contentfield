@@ -184,5 +184,17 @@ class ReferenceField extends AbstractField
         'viewMode'    => 'small'
       ) + $config;
     }
+
+    if (
+      $config['type'] === 'entry' ||
+      $config['type'] === 'entries'
+    ) {
+      $config = array(
+        'type'        => self::NAME,
+        'elementType' => Entry::class,
+        'limit'       => $config['type'] === 'entry' ? 1 : null,
+        'viewMode'    => 'small'
+      ) + $config;
+    }
   }
 }
