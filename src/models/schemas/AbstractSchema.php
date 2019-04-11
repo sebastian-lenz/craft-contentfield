@@ -191,6 +191,18 @@ abstract class AbstractSchema extends Model
   }
 
   /**
+   * @param string|string[] $qualifier
+   * @return boolean
+   */
+  public function matchesQualifier($qualifier) {
+    if (is_array($qualifier)) {
+      return in_array($this->qualifier, $qualifier);
+    } else {
+      return $this->qualifier == $qualifier;
+    }
+  }
+
+  /**
    * Renders this schema.
    *
    * @param InstanceValue $instance

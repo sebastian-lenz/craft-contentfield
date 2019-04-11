@@ -137,34 +137,24 @@ class ContentField extends Field
     }
 
     $view = \Craft::$app->getView();
-    $eagerLoadingMap = $model->getEagerLoadingMap();
-    $result = array();
+    return array_map(function(Element $element) use ($view) {
+      $context = array(
+        'element' => $element,
+        'context' => 'field',
+        'size'    => 'large'
+      );
 
-    foreach ($eagerLoadingMap as $elementType => $elementData) {
-      $elements = $content->getEagerLoadedElements($elementType);
-
-      /** @var Element $element */
-      foreach ($elements as $id => $element) {
-        $context = array(
-          'element' => $element,
-          'context' => 'field',
-          'size'    => 'large'
-        );
-
-        $result[] = array(
-          'element'  => $view->invokeHook('cp.elements.element', $context),
-          'hasThumb' => false,
-          'id'       => $id,
-          'label'    => (string)$element,
-          'siteId'   => $element->siteId,
-          'status'   => $element->getStatus(),
-          'type'     => $elementType,
-          'url'      => $element->getUrl(),
-        );
-      }
-    }
-
-    return $result;
+      return array(
+        'element'  => $view->invokeHook('cp.elements.element', $context),
+        'hasThumb' => false,
+        'id'       => intval($element->id),
+        'label'    => (string)$element,
+        'siteId'   => $element->siteId,
+        'status'   => $element->getStatus(),
+        'type'     => get_class($element),
+        'url'      => $element->getUrl(),
+      );
+    }, $model->getReferenceMap()->queryAll());
   }
 
   /**

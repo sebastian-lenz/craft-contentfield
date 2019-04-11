@@ -7,6 +7,7 @@ use craft\base\ElementInterface;
 use craft\elements\Entry;
 use craft\helpers\Html;
 use craft\helpers\Template;
+use sebastianlenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class LinkValue
@@ -106,30 +107,6 @@ class LinkValue extends AbstractValue
   }
 
   /**
-   * @inheritdoc
-   */
-  public function getEagerLoadingMap(&$result = array()) {
-    if (!$this->hasLinkedElement()) {
-      return $result;
-    }
-
-    $elementType = $this->getElementType();
-    $elementId = $this->elementId;
-
-    if (!array_key_exists($elementType, $result)) {
-      $result[$elementType] = array(
-        'ids' => array(),
-      );
-    }
-
-    if (!in_array($elementId, $result[$elementType]['ids'])) {
-      $result[$elementType]['ids'][] = $elementId;
-    }
-
-    return $result;
-  }
-
-  /**
    * Returns the data of this value as required by the cp editor.
    * @return mixed
    */
@@ -172,10 +149,7 @@ class LinkValue extends AbstractValue
         $content = $this->getContent();
 
         if (!is_null($content)) {
-          $elements = $content->getEagerLoadedElements($elementType);
-          $this->element = isset($elements[$elementId])
-            ? $elements[$elementId]
-            : null;
+          $this->element = $content->getBatchLoader()->getElement($elementType, $elementId);
         } else {
           /** @var ElementInterface $elementType */
           $this->element = $elementType::findOne(array(
@@ -195,6 +169,21 @@ class LinkValue extends AbstractValue
     return array_key_exists($this->type, $this->__field->linkTypes)
       ? $this->__field->linkTypes[$this->type]
       : null;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getReferenceMap(ReferenceMap $map = null) {
+    if (is_null($map)) {
+      $map = new ReferenceMap();
+    }
+
+    if ($this->hasLinkedElement()) {
+      $map->push($this->getElementType(), $this->elementId);
+    }
+
+    return $map;
   }
 
   /**

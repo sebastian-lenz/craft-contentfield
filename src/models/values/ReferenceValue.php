@@ -7,6 +7,7 @@ use sebastianlenz\contentfield\Plugin;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\helpers\Template;
+use sebastianlenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class ReferenceValue
@@ -63,26 +64,6 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
   }
 
   /**
-   * @inheritdoc
-   */
-  public function getEagerLoadingMap(&$result = array()) {
-    $elementType = $this->__field->getElementType();
-    if (!array_key_exists($elementType, $result)) {
-      $result[$elementType] = array(
-        'ids' => array(),
-      );
-    }
-
-    foreach ($this->values as $value) {
-      if (!in_array($value, $result[$elementType]['ids'])) {
-        $result[$elementType]['ids'][] = $value;
-      }
-    }
-
-    return $result;
-  }
-
-  /**
    * @return int[]
    */
   public function getEditorData() {
@@ -93,6 +74,14 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
     }
 
     return $result;
+  }
+
+  /**
+   * @return ElementInterface
+   */
+  public function getFirst() {
+    $references = $this->getReferences();
+    return isset($references[0]) ? $references[0] : null;
   }
 
   /**
@@ -112,11 +101,26 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
   }
 
   /**
-   * @return ElementInterface
+   * @return int[]
    */
-  public function getFirst() {
-    $references = $this->getReferences();
-    return isset($references[0]) ? $references[0] : null;
+  public function getReferencedIds() {
+    return $this->values;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getReferenceMap(ReferenceMap $map = null) {
+    if (is_null($map)) {
+      $map = new ReferenceMap();
+    }
+
+    $elementType = $this->__field->getElementType();
+    foreach ($this->values as $value) {
+      $map->push($elementType, $value);
+    }
+
+    return $map;
   }
 
   /**
@@ -131,8 +135,8 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
   }
 
   /**
-   * @param array $config
-   * @return \Twig_Markup|null
+   * @param string|array $config
+   * @return \Twig_Markup|\Twig\Markup|null
    * @throws \Exception
    */
   public function imageTag($config = 'default') {
@@ -169,8 +173,9 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
 
     $content = $this->getContent();
     if (!is_null($content)) {
-      $elements = $content->getEagerLoadedElements($elementType);
+      $elements = $content->getBatchLoader()->getElements($elementType);
       $result = array();
+
       foreach ($this->values as $id) {
         if (array_key_exists($id, $elements)) {
           $result[] = $elements[$id];

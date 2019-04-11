@@ -4,6 +4,7 @@ namespace sebastianlenz\contentfield\models\values;
 
 use sebastianlenz\contentfield\models\fields\ArrayField;
 use sebastianlenz\contentfield\models\fields\InstanceField;
+use sebastianlenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class ArrayValue
@@ -75,11 +76,17 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
   }
 
   /**
-   * @inheritdoc
+   * @param string|string[] $qualifier
+   * @return InstanceValue[]
    */
-  public function getEagerLoadingMap(&$result = array()) {
+  public function findInstances($qualifier) {
+    $result = array();
+
     foreach ($this->values as $value) {
-      $value->getEagerLoadingMap($result);
+      $matches = $value->findInstances($qualifier);
+      if (count($matches) > 0) {
+        $result = array_merge($result, $matches);
+      }
     }
 
     return $result;
@@ -109,6 +116,21 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
    */
   public function getIterator() {
     return new \ArrayIterator($this->values);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getReferenceMap(ReferenceMap $map = null) {
+    if (is_null($map)) {
+      $map = new ReferenceMap();
+    }
+
+    foreach ($this->values as $value) {
+      $value->getReferenceMap($map);
+    }
+
+    return $map;
   }
 
   /**

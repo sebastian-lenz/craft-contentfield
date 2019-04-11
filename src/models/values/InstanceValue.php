@@ -4,6 +4,7 @@ namespace sebastianlenz\contentfield\models\values;
 
 use sebastianlenz\contentfield\models\fields\InstanceField;
 use sebastianlenz\contentfield\models\schemas\AbstractSchema;
+use sebastianlenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class InstanceValue
@@ -13,6 +14,11 @@ use sebastianlenz\contentfield\models\schemas\AbstractSchema;
 class InstanceValue extends AbstractValue
 {
   /**
+   * @var string
+   */
+  private $__originalUuid;
+
+  /**
    * @var AbstractSchema
    */
   private $__schema;
@@ -21,11 +27,6 @@ class InstanceValue extends AbstractValue
    * @var string
    */
   private $__uuid;
-
-  /**
-   * @var string
-   */
-  private $__originalUuid;
 
   /**
    * @var AbstractValue[]
@@ -108,7 +109,11 @@ class InstanceValue extends AbstractValue
    * @inheritdoc
    */
   public function __toString() {
-    return $this->__schema->render($this);
+    if (!isset($this->__html)) {
+      $this->__html = $this->__schema->render($this);
+    }
+
+    return $this->__html;
   }
 
   /**
@@ -119,13 +124,21 @@ class InstanceValue extends AbstractValue
   }
 
   /**
-   * @param array $result
-   * @return array
+   * @param string|string[] $qualifier
+   * @return InstanceValue[]
    */
-  public function getEagerLoadingMap(&$result = array()) {
-    foreach ($this->__values as $field) {
-      if (!is_null($field)) {
-        $field->getEagerLoadingMap($result);
+  public function findInstances($qualifier) {
+    $result = array();
+    if ($this->__schema->matchesQualifier($qualifier)) {
+      $result[] = $this;
+    }
+
+    foreach ($this->__values as $value) {
+      if (!is_null($value)) {
+        $matches = $value->findInstances($qualifier);
+        if (count($matches) > 0) {
+          $result = array_merge($result, $matches);
+        }
       }
     }
 
@@ -167,6 +180,23 @@ class InstanceValue extends AbstractValue
     }
 
     return new \Twig_Markup($this->__schema->render($this, $variables), 'utf-8');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getReferenceMap(ReferenceMap $map = null) {
+    if (is_null($map)) {
+      $map = new ReferenceMap();
+    }
+
+    foreach ($this->__values as $field) {
+      if (!is_null($field)) {
+        $field->getReferenceMap($map);
+      }
+    }
+
+    return $map;
   }
 
   /**

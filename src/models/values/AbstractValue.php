@@ -6,6 +6,7 @@ use sebastianlenz\contentfield\models\Content;
 use sebastianlenz\contentfield\models\fields\AbstractField;
 use craft\base\ElementInterface;
 use craft\base\Model;
+use sebastianlenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class AbstractValue
@@ -49,6 +50,14 @@ abstract class AbstractValue extends Model
   abstract function __toString();
 
   /**
+   * @param string|string[] $qualifier
+   * @return InstanceValue[]
+   */
+  public function findInstances($qualifier) {
+    return array();
+  }
+
+  /**
    * @return Content|null
    */
   public function getContent() {
@@ -59,16 +68,6 @@ abstract class AbstractValue extends Model
     }
 
     return null;
-  }
-
-  /**
-   * Return a list of all referenced entries by this field.
-   *
-   * @param array $result
-   * @return array
-   */
-  public function getEagerLoadingMap(&$result = array()) {
-    return $result;
   }
 
   /**
@@ -102,6 +101,18 @@ abstract class AbstractValue extends Model
    */
   public function getParent() {
     return $this->__parent;
+  }
+
+  /**
+   * Return a list of all referenced entries by this field.
+   *
+   * @param ReferenceMap $map
+   * @return ReferenceMap
+   */
+  public function getReferenceMap(ReferenceMap $map = null) {
+    return is_null($map)
+      ? new ReferenceMap()
+      : $map;
   }
 
   /**

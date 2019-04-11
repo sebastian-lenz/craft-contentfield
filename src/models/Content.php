@@ -2,12 +2,14 @@
 
 namespace sebastianlenz\contentfield\models;
 
+use sebastianlenz\contentfield\events\RenderEvent;
 use sebastianlenz\contentfield\models\values\InstanceValue;
 use sebastianlenz\contentfield\Plugin;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;
 use craft\elements\db\AssetQuery;
+use sebastianlenz\contentfield\utilities\ReferenceLoader;
 
 /**
  * Class Content
@@ -16,9 +18,9 @@ use craft\elements\db\AssetQuery;
 class Content extends Model
 {
   /**
-   * @var ElementInterface[][]
+   * @var ReferenceLoader
    */
-  private $eagerLoadedElements = array();
+  private $batchLoader;
 
   /**
    * @var values\InstanceValue|null
@@ -29,6 +31,11 @@ class Content extends Model
    * @var ElementInterface|null
    */
   private $owner;
+
+  /**
+   * Event triggered before some content is rendered.
+   */
+  const EVENT_BEFORE_RENDER = 'beforeRender';
 
 
   /**
@@ -51,49 +58,34 @@ class Content extends Model
    * @return string
    */
   public function __toString() {
-    return is_null($this->model)
-      ? ''
-      : (string)$this->model;
+    return (string)$this->getHtml();
   }
 
   /**
-   * @param string $elementType
-   * @param int $id
-   * @return ElementInterface|null
+   * @return ReferenceLoader
    */
-  public function getEagerLoadedElement($elementType, $id) {
-    $elements = $this->getEagerLoadedElements($elementType);
-    return array_key_exists($id, $elements)
-      ? $elements[$id]
-      : null;
-  }
-
-  /**
-   * @param string $elementType
-   * @param array|null $elementData
-   * @return ElementInterface[]
-   */
-  public function getEagerLoadedElements($elementType, $elementData = null) {
-    if (!(array_key_exists($elementType, $this->eagerLoadedElements))) {
-      $result = array();
-      $elements = $this->eagerLoad($elementType, $elementData);
-      foreach ($elements as $element) {
-        $result[intval($element->getId())] = $element;
-      }
-
-      $this->eagerLoadedElements[$elementType] = $result;
+  public function getBatchLoader() {
+    if (!isset($this->batchLoader)) {
+      $this->batchLoader = new ReferenceLoader($this);
     }
 
-    return $this->eagerLoadedElements[$elementType];
+    return $this->batchLoader;
   }
 
   /**
    * @return \Twig_Markup
    */
   public function getHtml() {
-    return is_null($this->model)
-      ? new \Twig_Markup('', 'utf-8')
-      : $this->model->getHtml();
+    $model = $this->model;
+    if (is_null($model)) {
+      return new \Twig_Markup('', 'utf-8');
+    }
+
+    $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
+      'content' => $this,
+    ]));
+
+    return $model->getHtml();
   }
 
   /**
@@ -128,24 +120,25 @@ class Content extends Model
    */
   public function getReferencedIds() {
     $result = array();
-    if (is_null($this->model) || !($this->model instanceof values\InstanceValue)) {
+    if (
+      is_null($this->model) ||
+      !($this->model instanceof values\InstanceValue)
+    ) {
       return $result;
     }
 
-    $elementTypes = $this->model->getEagerLoadingMap();
+    return array_map(function(ElementInterface $element) {
+      return $element->getId();
+    }, $this->model->getReferenceMap()->queryAll());
+  }
 
-    /** @var ElementInterface $elementType */
-    foreach ($elementTypes as $elementType => $elementData) {
-      $elements = $this->getEagerLoadedElements($elementType, $elementData);
-
-      foreach ($elements as $id => $element) {
-        if (!in_array($id, $result)) {
-          $result[] = $id;
-        }
-      }
-    }
-
-    return $result;
+  /**
+   * @param ReferenceLoader $batchLoader
+   * @throws \Exception
+   */
+  public function setBatchLoader(ReferenceLoader $batchLoader) {
+    $batchLoader->addContent($this);
+    $this->batchLoader = $batchLoader;
   }
 
   /**
@@ -157,46 +150,5 @@ class Content extends Model
     if (!is_null($model)) {
       $model->setContent($this);
     }
-  }
-
-  /**
-   * @param string $elementType
-   * @param array|null $elementData
-   * @return ElementInterface[]
-   */
-  private function eagerLoad($elementType, $elementData = null) {
-    if (is_null($this->model)) {
-      return array();
-    }
-
-    if (!is_array($elementData)) {
-      $map = $this->model->getEagerLoadingMap();
-      if (!array_key_exists($elementType, $map)) {
-        return array();
-      }
-
-      $elementData = $map[$elementType];
-    }
-
-    if (
-      !isset($elementData['ids']) ||
-      !is_array($elementData['ids']) ||
-      count($elementData['ids']) === 0
-    ) {
-      return array();
-    }
-
-    /** @var ElementInterface $elementType */
-    $query = $elementType::find()
-      ->id($elementData['ids']);
-
-    if ($query instanceof AssetQuery) {
-      $transforms = Plugin::getInstance()->imageTags->getAllTransforms();
-      if (count($transforms)) {
-        $query->withTransforms($transforms);
-      }
-    }
-
-    return $query->all();
   }
 }
