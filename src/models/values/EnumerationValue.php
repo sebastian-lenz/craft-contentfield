@@ -44,13 +44,6 @@ class EnumerationValue extends AbstractValue
   }
 
   /**
-   * @inheritdoc
-   */
-  public function getHtml() {
-    return $this->value;
-  }
-
-  /**
    * @return number|string
    */
   public function getValue() {

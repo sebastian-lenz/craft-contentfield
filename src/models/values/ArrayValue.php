@@ -107,13 +107,6 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
   /**
    * @inheritdoc
    */
-  function getHtml() {
-    return new \Twig_Markup((string)$this, 'utf-8');
-  }
-
-  /**
-   * @inheritdoc
-   */
   public function getIterator() {
     return new \ArrayIterator($this->values);
   }

@@ -67,13 +67,6 @@ class LocationValue extends AbstractValue
   }
 
   /**
-   * @return \Twig_Markup
-   */
-  function getHtml() {
-    return new \Twig_Markup((string)$this, 'utf-8');
-  }
-
-  /**
    * @return bool
    */
   public function isEmpty() {

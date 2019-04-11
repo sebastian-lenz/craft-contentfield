@@ -85,15 +85,6 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
   }
 
   /**
-   * @return \Twig_Markup
-   */
-  public function getHtml() {
-    return new \Twig_Markup(implode('', array_map(function($value) {
-      return (string)$value;
-    }, $this->getReferences())), 'utf-8');
-  }
-
-  /**
    * @inheritdoc
    */
   public function getIterator() {

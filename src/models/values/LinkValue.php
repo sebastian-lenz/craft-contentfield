@@ -130,13 +130,6 @@ class LinkValue extends AbstractValue
   }
 
   /**
-   * @return \Twig_Markup
-   */
-  function getHtml() {
-    return new \Twig_Markup((string)$this, 'utf-8');
-  }
-
-  /**
    * @return ElementInterface|null
    */
   function getLinkedElement() {

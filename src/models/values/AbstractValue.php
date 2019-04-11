@@ -94,7 +94,9 @@ abstract class AbstractValue extends Model
   /**
    * @return \Twig_Markup
    */
-  abstract function getHtml();
+  public function getHtml() {
+    return new \Twig_Markup((string)$this, 'utf-8');
+  }
 
   /**
    * @return AbstractValue|null
