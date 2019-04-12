@@ -19,12 +19,12 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
   /**
    * @var ElementInterface[]
    */
-  private $references;
+  private $_references;
 
   /**
    * @var int[]
    */
-  private $values = array();
+  private $_values = array();
 
 
   /**
@@ -38,9 +38,9 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
     parent::__construct($parent, $field);
 
     if (!is_array($data)) {
-      $this->values = array();
+      $this->_values = array();
     } else {
-      $this->values = array_filter($data, function($value) {
+      $this->_values = array_filter($data, function($value) {
         return is_int($value);
       });
     }
@@ -95,7 +95,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
    * @return int[]
    */
   public function getReferencedIds() {
-    return $this->values;
+    return $this->_values;
   }
 
   /**
@@ -107,7 +107,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
     }
 
     $elementType = $this->__field->getElementType();
-    foreach ($this->values as $value) {
+    foreach ($this->_values as $value) {
       $map->push($elementType, $value);
     }
 
@@ -118,11 +118,11 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
    * @return ElementInterface[]
    */
   public function getReferences() {
-    if (!isset($this->references)) {
-      $this->references = $this->loadReferences();
+    if (!isset($this->_references)) {
+      $this->_references = $this->loadReferences();
     }
 
-    return $this->references;
+    return $this->_references;
   }
 
   /**
@@ -158,7 +158,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
    */
   private function loadReferences() {
     $elementType = $this->__field->getElementType();
-    if (is_null($elementType) || count($this->values) === 0) {
+    if (is_null($elementType) || count($this->_values) === 0) {
       return array();
     }
 
@@ -167,7 +167,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
       $elements = $content->getBatchLoader()->getElements($elementType);
       $result = array();
 
-      foreach ($this->values as $id) {
+      foreach ($this->_values as $id) {
         if (array_key_exists($id, $elements)) {
           $result[] = $elements[$id];
         }
@@ -179,10 +179,10 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
     /** @var ElementInterface $elementType */
     $result = array();
     $elements = $elementType::findAll(array(
-      'id' => $this->values,
+      'id' => $this->_values,
     ));
 
-    foreach ($this->values as $id) {
+    foreach ($this->_values as $id) {
       foreach ($elements as $element) {
         if ($element->getId() === $id) {
           $result[] = $element;

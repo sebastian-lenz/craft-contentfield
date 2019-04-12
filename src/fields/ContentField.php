@@ -305,6 +305,14 @@ class ContentField extends Field
   }
 
   /**
+   * @inheritDoc
+   */
+  public function getSearchKeywords($value, ElementInterface $element): string {
+    $content = $this->normalizeValue($value, $element);
+    return $content->getSearchKeywords();
+  }
+
+  /**
    * @param $value
    * @param ElementInterface $element
    * @return string

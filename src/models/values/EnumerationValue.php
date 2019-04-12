@@ -14,7 +14,7 @@ class EnumerationValue extends AbstractValue
   /**
    * @var string|number
    */
-  private $value;
+  private $_value;
 
 
   /**
@@ -26,35 +26,35 @@ class EnumerationValue extends AbstractValue
    */
   public function __construct($data, AbstractValue $parent, AbstractEnumerationField $field) {
     parent::__construct($parent, $field);
-    $this->value = self::isValidEnumerationKey($data) ? $data : '';
+    $this->_value = self::isValidEnumerationKey($data) ? $data : '';
   }
 
   /**
    * @inheritdoc
    */
   public function __toString() {
-    return (string)$this->value;
+    return (string)$this->_value;
   }
 
   /**
    * @inheritdoc
    */
   public function getEditorData() {
-    return $this->value;
+    return $this->_value;
   }
 
   /**
    * @return number|string
    */
   public function getValue() {
-    return $this->value;
+    return $this->_value;
   }
 
   /**
    * @return bool
    */
   public function isEmpty() {
-    return empty($this->value);
+    return empty($this->_value);
   }
 
   /**

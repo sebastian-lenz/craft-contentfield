@@ -17,7 +17,7 @@ class RedactorValue extends AbstractValue
   /**
    * @var FieldData
    */
-  private $value;
+  private $_value;
 
 
   /**
@@ -29,35 +29,42 @@ class RedactorValue extends AbstractValue
    */
   public function __construct($data, AbstractValue $parent, RedactorField $field) {
     parent::__construct($parent, $field);
-    $this->value = new FieldData(is_string($data) ? $data : '');
+    $this->_value = new FieldData(is_string($data) ? $data : '');
   }
 
   /**
    * @inheritdoc
    */
   public function __toString() {
-    return $this->value->getParsedContent();
+    return $this->_value->getParsedContent();
   }
 
   /**
    * @inheritdoc
    */
   public function getEditorData() {
-    return $this->value->getRawContent();
+    return $this->_value->getRawContent();
   }
 
   /**
    * @inheritdoc
    */
   public function getHtml() {
-    return $this->value;
+    return $this->_value;
   }
 
   /**
    * @return FieldData
    */
   public function getRedactorFieldData() {
-    return $this->value;
+    return $this->_value;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSearchKeywords() {
+    return $this->_value->getParsedContent();
   }
 
   /**
@@ -66,16 +73,16 @@ class RedactorValue extends AbstractValue
   public function getSerializedData() {
     try {
       $field = $this->__field->getRedactorField();
-      return $field->serializeValue($this->value, $this->getElement());
+      return $field->serializeValue($this->_value, $this->getElement());
     } catch (\Throwable $error) { }
 
-    return $this->value->getRawContent();
+    return $this->_value->getRawContent();
   }
 
   /**
    * @return bool
    */
   public function isEmpty() {
-    return empty($this->value->getRawContent());
+    return empty($this->_value->getRawContent());
   }
 }

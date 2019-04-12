@@ -15,6 +15,11 @@ use sebastianlenz\contentfield\models\values\ReferenceValue;
 class ReferenceField extends AbstractField
 {
   /**
+   * @var array
+   */
+  public $criteria;
+
+  /**
    * @var string
    */
   public $elementType;
@@ -116,6 +121,7 @@ class ReferenceField extends AbstractField
    */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData() + array(
+      'criteria'    => is_array($this->criteria) ? $this->criteria : null,
       'elementType' => $this->getElementType(),
       'limit'       => $this->getLimit(),
       'sources'     => $this->getSources(),

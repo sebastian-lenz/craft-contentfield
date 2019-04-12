@@ -16,22 +16,27 @@ class InstanceValue extends AbstractValue
   /**
    * @var string
    */
-  private $__originalUuid;
-
-  /**
-   * @var AbstractSchema
-   */
-  private $__schema;
+  private $_output;
 
   /**
    * @var string
    */
-  private $__uuid;
+  private $_originalUuid;
+
+  /**
+   * @var AbstractSchema
+   */
+  private $_schema;
+
+  /**
+   * @var string
+   */
+  private $_uuid;
 
   /**
    * @var AbstractValue[]
    */
-  private $__values = array();
+  private $_values = array();
 
   /**
    * @var string
@@ -53,17 +58,17 @@ class InstanceValue extends AbstractValue
   public function __construct(array $data, AbstractSchema $schema, AbstractValue $parent = null, InstanceField $field = null) {
     parent::__construct($parent, $field);
 
-    $this->__schema = $schema;
+    $this->_schema = $schema;
 
     if (array_key_exists(self::UUID_PROPERTY, $data)) {
-      $this->__uuid = $data[self::UUID_PROPERTY];
+      $this->_uuid = $data[self::UUID_PROPERTY];
       unset($data[self::UUID_PROPERTY]);
     } else {
-      $this->__uuid = self::uuid();
+      $this->_uuid = self::uuid();
     }
 
     if (array_key_exists(self::ORIGINAL_UUID_PROPERTY, $data)) {
-      $this->__originalUuid = $data[self::ORIGINAL_UUID_PROPERTY];
+      $this->_originalUuid = $data[self::ORIGINAL_UUID_PROPERTY];
     }
 
     foreach ($schema->fields as $name => $field) {
@@ -75,8 +80,8 @@ class InstanceValue extends AbstractValue
    * @inheritdoc
    */
   public function __get($name) {
-    if (array_key_exists($name, $this->__schema->fields)) {
-      return $this->__values[$name];
+    if (array_key_exists($name, $this->_schema->fields)) {
+      return $this->_values[$name];
     } else {
       return parent::__get($name);
     }
@@ -87,8 +92,8 @@ class InstanceValue extends AbstractValue
    * @throws \Exception
    */
   public function __set($name, $value) {
-    if (array_key_exists($name, $this->__schema->fields)) {
-      $this->__values[$name] = $this->__schema->fields[$name]->createValue($value, $this);
+    if (array_key_exists($name, $this->_schema->fields)) {
+      $this->_values[$name] = $this->_schema->fields[$name]->createValue($value, $this);
     } else {
       parent::__set($name, $value);
     }
@@ -98,7 +103,7 @@ class InstanceValue extends AbstractValue
    * @inheritdoc
    */
   public function __isset($name) {
-    if (array_key_exists($name, $this->__schema->fields)) {
+    if (array_key_exists($name, $this->_schema->fields)) {
       return true;
     } else {
       return parent::__isset($name);
@@ -109,18 +114,14 @@ class InstanceValue extends AbstractValue
    * @inheritdoc
    */
   public function __toString() {
-    if (!isset($this->__html)) {
-      $this->__html = $this->__schema->render($this);
-    }
-
-    return $this->__html;
+    return $this->render();
   }
 
   /**
    * @inheritdoc
    */
   public function attributes() {
-    return array_keys($this->__schema->fields);
+    return array_keys($this->_schema->fields);
   }
 
   /**
@@ -129,11 +130,11 @@ class InstanceValue extends AbstractValue
    */
   public function findInstances($qualifier) {
     $result = array();
-    if ($this->__schema->matchesQualifier($qualifier)) {
+    if ($this->_schema->matchesQualifier($qualifier)) {
       $result[] = $this;
     }
 
-    foreach ($this->__values as $value) {
+    foreach ($this->_values as $value) {
       if (!is_null($value)) {
         $matches = $value->findInstances($qualifier);
         if (count($matches) > 0) {
@@ -150,15 +151,15 @@ class InstanceValue extends AbstractValue
    */
   public function getEditorData() {
     $result = array();
-    foreach ($this->__values as $name => $value) {
+    foreach ($this->_values as $name => $value) {
       if (!is_null($value)) {
         $result[$name] = $value->getEditorData();
       }
     }
 
-    $result[self::TYPE_PROPERTY] = $this->__schema->qualifier;
-    $result[self::UUID_PROPERTY] = $this->__uuid;
-    $result[self::ORIGINAL_UUID_PROPERTY] = $this->__originalUuid;
+    $result[self::TYPE_PROPERTY] = $this->_schema->qualifier;
+    $result[self::UUID_PROPERTY] = $this->_uuid;
+    $result[self::ORIGINAL_UUID_PROPERTY] = $this->_originalUuid;
     return $result;
   }
 
@@ -166,6 +167,89 @@ class InstanceValue extends AbstractValue
    * @inheritdoc
    */
   public function getHtml(array $variables = []) {
+    return new \Twig_Markup($this->render($variables), 'utf-8');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getReferenceMap(ReferenceMap $map = null) {
+    if (is_null($map)) {
+      $map = new ReferenceMap();
+    }
+
+    foreach ($this->_values as $field) {
+      if (!is_null($field)) {
+        $field->getReferenceMap($map);
+      }
+    }
+
+    return $map;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSearchKeywords() {
+    return implode(' ', array_map(function(AbstractValue $value) {
+      $value->getSearchKeywords();
+    }, $this->_values));
+  }
+
+  /**
+   * @return array
+   */
+  public function getSerializedData() {
+    $result = array();
+    foreach ($this->_values as $name => $value) {
+      if (!is_null($value)) {
+        $result[$name] = $value->getSerializedData();
+      }
+    }
+
+    $result[self::TYPE_PROPERTY] = $this->_schema->qualifier;
+    $result[self::UUID_PROPERTY] = $this->_uuid;
+    $result[self::ORIGINAL_UUID_PROPERTY] = $this->_originalUuid;
+    return $result;
+  }
+
+  /**
+   * @return string
+   */
+  public function getType() {
+    return $this->_schema->qualifier;
+  }
+
+  /**
+   * @return AbstractValue[]
+   */
+  public function getValues() {
+    return $this->_values;
+  }
+
+  /**
+   * @return bool
+   */
+  public function hasCachedOutput() {
+    return isset($this->_output);
+  }
+
+  /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return false;
+  }
+
+  /**
+   * @param array $variables
+   * @return string
+   */
+  public function render(array $variables = []) {
+    if (isset($this->_output)) {
+      return $this->_output;
+    }
+
     if (!array_key_exists('loop', $variables)) {
       $variables['loop'] = [
         'index'     => 1,
@@ -179,62 +263,14 @@ class InstanceValue extends AbstractValue
       ];
     }
 
-    return new \Twig_Markup($this->__schema->render($this, $variables), 'utf-8');
+    return $this->_schema->render($this, $variables);
   }
 
   /**
-   * @inheritdoc
+   * @param string $value
    */
-  public function getReferenceMap(ReferenceMap $map = null) {
-    if (is_null($map)) {
-      $map = new ReferenceMap();
-    }
-
-    foreach ($this->__values as $field) {
-      if (!is_null($field)) {
-        $field->getReferenceMap($map);
-      }
-    }
-
-    return $map;
-  }
-
-  /**
-   * @return array
-   */
-  public function getSerializedData() {
-    $result = array();
-    foreach ($this->__values as $name => $value) {
-      if (!is_null($value)) {
-        $result[$name] = $value->getSerializedData();
-      }
-    }
-
-    $result[self::TYPE_PROPERTY] = $this->__schema->qualifier;
-    $result[self::UUID_PROPERTY] = $this->__uuid;
-    $result[self::ORIGINAL_UUID_PROPERTY] = $this->__originalUuid;
-    return $result;
-  }
-
-  /**
-   * @return string
-   */
-  public function getType() {
-    return $this->__schema->qualifier;
-  }
-
-  /**
-   * @return AbstractValue[]
-   */
-  public function getValues() {
-    return $this->__values;
-  }
-
-  /**
-   * @return bool
-   */
-  public function isEmpty() {
-    return false;
+  public function setCachedOutput($value) {
+    $this->_output = $value;
   }
 
   /**

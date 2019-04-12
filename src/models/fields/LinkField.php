@@ -7,6 +7,7 @@ use sebastianlenz\contentfield\models\values\AbstractValue;
 use sebastianlenz\contentfield\models\values\LinkValue;
 use craft\elements\Asset;
 use craft\elements\Entry;
+use sebastianlenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class LinkField
@@ -63,9 +64,16 @@ class LinkField extends AbstractField
    * @inheritdoc
    */
   public function getEditorData(ElementInterface $element = null) {
+    $linkTypes = $this->linkTypes;
+    foreach ($linkTypes as $key => $linkType) {
+      if (isset($linkType['elementType'])) {
+        $linkTypes[$key]['elementType'] = ReferenceMap::normalizeElementType($linkType['elementType']);
+      }
+    }
+
     return parent::getEditorData($element) + array(
       'allowNewWindow' => $this->allowNewWindow,
-      'linkTypes' => $this->linkTypes
+      'linkTypes' => $linkTypes,
     );
   }
 }

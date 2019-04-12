@@ -118,6 +118,13 @@ abstract class AbstractValue extends Model
   }
 
   /**
+   * @return string
+   */
+  public function getSearchKeywords() {
+    return '';
+  }
+
+  /**
    * Returns the data of this value for storing in the database. By default,
    * this is the same as `$this->getEditorData()`.
    * @return mixed

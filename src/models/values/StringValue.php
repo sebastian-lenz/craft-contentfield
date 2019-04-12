@@ -14,7 +14,7 @@ class StringValue extends AbstractValue
   /**
    * @var string
    */
-  private $value;
+  private $_value;
 
 
   /**
@@ -26,21 +26,21 @@ class StringValue extends AbstractValue
    */
   public function __construct($data, AbstractValue $parent, AbstractStringField $field) {
     parent::__construct($parent, $field);
-    $this->value = is_string($data) ? $data : '';
+    $this->_value = is_string($data) ? $data : '';
   }
 
   /**
    * @inheritdoc
    */
   public function __toString() {
-    return $this->value;
+    return $this->_value;
   }
 
   /**
    * @inheritdoc
    */
   public function getEditorData() {
-    return $this->value;
+    return $this->_value;
   }
 
   /**
@@ -48,15 +48,22 @@ class StringValue extends AbstractValue
    */
   public function getHtml() {
     return new \Twig_Markup($this->__field->isHtmlField()
-      ? $this->value
-      : htmlentities($this->value)
+      ? $this->_value
+      : htmlentities($this->_value)
     , 'utf-8');
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSearchKeywords() {
+    return $this->_value;
   }
 
   /**
    * @return bool
    */
   public function isEmpty() {
-    return empty($this->value);
+    return empty($this->_value);
   }
 }

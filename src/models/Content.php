@@ -73,9 +73,10 @@ class Content extends Model
   }
 
   /**
+   * @param array $variables
    * @return \Twig_Markup
    */
-  public function getHtml() {
+  public function getHtml(array $variables = []) {
     $model = $this->model;
     if (is_null($model)) {
       return new \Twig_Markup('', 'utf-8');
@@ -85,7 +86,7 @@ class Content extends Model
       'content' => $this,
     ]));
 
-    return $model->getHtml();
+    return $model->getHtml($variables);
   }
 
   /**
@@ -130,6 +131,15 @@ class Content extends Model
     return array_map(function(ElementInterface $element) {
       return $element->getId();
     }, $this->model->getReferenceMap()->queryAll());
+  }
+
+  /**
+   * @return string
+   */
+  public function getSearchKeywords() {
+    return is_null($this->model)
+      ? ''
+      : $this->model->getSearchKeywords();
   }
 
   /**

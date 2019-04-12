@@ -15,7 +15,7 @@ class OEmbedValue extends AbstractValue
   /**
    * @var string
    */
-  private $value = '';
+  private $_value = '';
 
 
   /**
@@ -29,9 +29,9 @@ class OEmbedValue extends AbstractValue
     parent::__construct($parent, $field);
 
     if (is_array($data) && array_key_exists('url', $data)) {
-      $this->value = (string)$data['url'];
+      $this->_value = (string)$data['url'];
     } elseif (is_string($data)) {
-      $this->value = $data;
+      $this->_value = $data;
     }
   }
 
@@ -39,7 +39,7 @@ class OEmbedValue extends AbstractValue
    * @inheritdoc
    */
   public function __toString() {
-    return $this->value;
+    return $this->_value;
   }
 
   /**
@@ -47,7 +47,7 @@ class OEmbedValue extends AbstractValue
    */
   public function getEditorData() {
     return array(
-      'url'  => $this->value,
+      'url'  => $this->_value,
       'info' => $this->getOEmbed(),
     );
   }
@@ -67,14 +67,14 @@ class OEmbedValue extends AbstractValue
    * @return OEmbed|null
    */
   public function getOEmbed() {
-    return $this->__field->getOEmbed($this->value);
+    return $this->__field->getOEmbed($this->_value);
   }
 
   /**
    * @return mixed
    */
   public function getSerializedData() {
-    return $this->value;
+    return $this->_value;
   }
 
   /**

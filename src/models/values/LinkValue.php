@@ -39,7 +39,7 @@ class LinkValue extends AbstractValue
   /**
    * @var ElementInterface|null
    */
-  private $element;
+  private $_element;
 
 
   /**
@@ -125,7 +125,7 @@ class LinkValue extends AbstractValue
   public function getElementType() {
     $linkType = $this->getLinkType();
     return !is_null($linkType) && $linkType['type'] === 'element'
-      ? $linkType['elementType']
+      ? ReferenceMap::normalizeElementType($linkType['elementType'])
       : null;
   }
 
@@ -133,26 +133,26 @@ class LinkValue extends AbstractValue
    * @return ElementInterface|null
    */
   function getLinkedElement() {
-    if (!isset($this->element)) {
+    if (!isset($this->_element)) {
       if (!$this->hasLinkedElement()) {
-        $this->element = null;
+        $this->_element = null;
       } else {
         $elementType = $this->getElementType();
         $elementId = $this->elementId;
         $content = $this->getContent();
 
         if (!is_null($content)) {
-          $this->element = $content->getBatchLoader()->getElement($elementType, $elementId);
+          $this->_element = $content->getBatchLoader()->getElement($elementType, $elementId);
         } else {
           /** @var ElementInterface $elementType */
-          $this->element = $elementType::findOne(array(
+          $this->_element = $elementType::findOne(array(
             'id' => $elementId,
           ));
         }
       }
     }
 
-    return $this->element;
+    return $this->_element;
   }
 
   /**
