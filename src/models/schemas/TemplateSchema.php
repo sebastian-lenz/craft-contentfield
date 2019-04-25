@@ -31,6 +31,15 @@ class TemplateSchema extends AbstractSchema
 
 
   /**
+   * @inheritdoc
+   */
+  public function display(InstanceValue $instance, array $variables = []) {
+    $this->getTemplate()->display(
+      $this->getNormalizedVariables($instance, $variables)
+    );
+  }
+
+  /**
    * @return \Twig\TemplateWrapper
    * @throws \Throwable
    */
@@ -46,14 +55,9 @@ class TemplateSchema extends AbstractSchema
    * @inheritdoc
    */
   public function render(InstanceValue $instance, array $variables = []) {
-    return $this->getTemplate()->render(array_merge(
-      [
-        'entry' => $instance->getContent()->getOwner(),
-        'node' => $instance,
-      ],
-      $instance->getValues(),
-      $variables
-    ));
+    return $this->getTemplate()->render(
+      $this->getNormalizedVariables($instance, $variables)
+    );
   }
 
   /**
@@ -76,5 +80,21 @@ class TemplateSchema extends AbstractSchema
     }
 
     return self::$_twig;
+  }
+
+  /**
+   * @param InstanceValue $instance
+   * @param array $variables
+   * @return array
+   */
+  private function getNormalizedVariables(InstanceValue $instance, array $variables) {
+    return array_merge(
+      [
+        'entry' => $instance->getContent()->getOwner(),
+        'node' => $instance,
+      ],
+      $instance->getValues(),
+      $variables
+    );
   }
 }

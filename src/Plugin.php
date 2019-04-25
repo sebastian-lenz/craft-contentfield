@@ -7,11 +7,11 @@ use craft\events\TemplateEvent;
 use craft\services\Fields;
 use craft\services\Utilities;
 use craft\web\View;
-use yii\base\Event;
-
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\utilities\IconUtility;
 use lenz\contentfield\utilities\TemplateLoader;
+use lenz\contentfield\utilities\twig\Extension;
+use yii\base\Event;
 
 /**
  * Class Plugin
@@ -60,6 +60,8 @@ class Plugin extends \craft\base\Plugin
         'class' => services\SchemaManager::class
       ]
     ]);
+
+    \Craft::$app->view->registerTwigExtension(new Extension());
 
     Event::on(
       View::class,

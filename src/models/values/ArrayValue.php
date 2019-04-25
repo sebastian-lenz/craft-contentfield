@@ -53,6 +53,32 @@ class ArrayValue extends Value implements \ArrayAccess, \Countable, \IteratorAgg
   }
 
   /**
+   * @param array $variables
+   */
+  public function display(array $variables = []) {
+    $count = count($this->__values);
+
+    foreach ($this->__values as $index => $value) {
+      if ($value instanceof InstanceValue) {
+        $value->display($variables + [
+          'loop' => [
+            'index'     => $index + 1,
+            'index0'    => $index,
+            'revindex'  => $count - $index,
+            'revindex0' => $count - $index - 1,
+            'first'     => $index == 0,
+            'last'      => $index == $count - 1,
+            'length'    => $count,
+            'parent'    => $this,
+          ],
+        ]);
+      } else {
+        echo (string)$value;
+      }
+    }
+  }
+
+  /**
    * @param string|string[] $qualifier
    * @return InstanceValue[]
    */

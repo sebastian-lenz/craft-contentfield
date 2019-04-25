@@ -107,6 +107,14 @@ abstract class AbstractSchema extends Model
   }
 
   /**
+   * @param InstanceValue $instance
+   * @param array $variables
+   */
+  public function display(InstanceValue $instance, array $variables = []) {
+    echo $this->render($instance, $variables);
+  }
+
+  /**
    * Return a list of all schemas this schema depends on, e.g.
    * when another schema is used by a field.
    *

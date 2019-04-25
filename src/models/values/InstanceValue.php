@@ -130,6 +130,18 @@ class InstanceValue extends Model implements ValueInterface
   }
 
   /**
+   * @param array $variables
+   */
+  public function display($variables = []) {
+    if (isset($this->_output)) {
+      echo $this->_output;
+    }
+
+    self::normalizeVariables($variables);
+    $this->_schema->display($this, $variables);
+  }
+
+  /**
    * @param string|string[] $qualifier
    * @return InstanceValue[]
    */
@@ -255,19 +267,7 @@ class InstanceValue extends Model implements ValueInterface
       return $this->_output;
     }
 
-    if (!array_key_exists('loop', $variables)) {
-      $variables['loop'] = [
-        'index'     => 1,
-        'index0'    => 0,
-        'revindex'  => 1,
-        'revindex0' => 0,
-        'first'     => true,
-        'last'      => true,
-        'length'    => 1,
-        'parent'    => [],
-      ];
-    }
-
+    self::normalizeVariables($variables);
     return $this->_schema->render($this, $variables);
   }
 
@@ -288,5 +288,23 @@ class InstanceValue extends Model implements ValueInterface
     $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
 
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+  }
+
+  /**
+   * @param array $variables
+   */
+  static function normalizeVariables(array &$variables) {
+    if (!array_key_exists('loop', $variables)) {
+      $variables['loop'] = [
+        'index'     => 1,
+        'index0'    => 0,
+        'revindex'  => 1,
+        'revindex0' => 0,
+        'first'     => true,
+        'last'      => true,
+        'length'    => 1,
+        'parent'    => [],
+      ];
+    }
   }
 }

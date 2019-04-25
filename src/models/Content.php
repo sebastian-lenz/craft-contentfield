@@ -62,6 +62,21 @@ class Content extends Model
   }
 
   /**
+   * @param array $variables
+   */
+  public function display(array $variables = []) {
+    $model = $this->model;
+    if (!is_null($model)) {
+      $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
+        'content' => $this,
+      ]));
+
+      $model->display($variables);
+    }
+  }
+
+
+  /**
    * @return ReferenceLoader
    */
   public function getBatchLoader() {
