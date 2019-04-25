@@ -3,7 +3,7 @@
 namespace sebastianlenz\contentfield\models\fields\strings;
 
 use sebastianlenz\contentfield\models\fields\AbstractField;
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 use sebastianlenz\contentfield\models\values\StringValue;
 use craft\base\ElementInterface;
 
@@ -21,7 +21,7 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, AbstractValue $parent) {
+  public function createValue($data, ValueInterface $parent) {
     return new StringValue($data, $parent, $this);
   }
 

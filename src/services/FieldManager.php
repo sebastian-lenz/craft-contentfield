@@ -75,6 +75,13 @@ class FieldManager extends AbstractDefinitionService
   }
 
   /**
+   * @inheritDoc
+   */
+  protected function getCacheKey() {
+    return 'CONTENTFIELD_DEFS:FIELDS';
+  }
+
+  /**
    * @return string
    */
   protected function getDefinitionName() {

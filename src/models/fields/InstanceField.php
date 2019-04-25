@@ -5,7 +5,7 @@ namespace sebastianlenz\contentfield\models\fields;
 use craft\base\ElementInterface;
 
 use sebastianlenz\contentfield\models\schemas\AbstractSchema;
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 use sebastianlenz\contentfield\models\values\InstanceValue;
 use sebastianlenz\contentfield\Plugin;
 
@@ -58,7 +58,7 @@ class InstanceField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, AbstractValue $parent) {
+  public function createValue($data, ValueInterface $parent) {
     if (count($this->schemas) === 0) {
       return null;
     }

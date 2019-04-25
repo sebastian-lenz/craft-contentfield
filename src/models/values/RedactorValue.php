@@ -10,9 +10,9 @@ use sebastianlenz\contentfield\models\fields\strings\RedactorField;
 /**
  * Class RedactorValue
  *
- * @property RedactorField $__field
+ * @property RedactorField $_field
  */
-class RedactorValue extends AbstractValue
+class RedactorValue extends Value
 {
   /**
    * @var FieldData
@@ -21,13 +21,13 @@ class RedactorValue extends AbstractValue
 
 
   /**
-   * StringValue constructor.
+   * RedactorValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param RedactorField $field
    */
-  public function __construct($data, AbstractValue $parent, RedactorField $field) {
+  public function __construct($data, ValueInterface $parent, RedactorField $field) {
     parent::__construct($parent, $field);
     $this->_value = new FieldData(is_string($data) ? $data : '');
   }
@@ -72,7 +72,7 @@ class RedactorValue extends AbstractValue
    */
   public function getSerializedData() {
     try {
-      $field = $this->__field->getRedactorField();
+      $field = $this->_field->getRedactorField();
       return $field->serializeValue($this->_value, $this->getElement());
     } catch (\Throwable $error) { }
 

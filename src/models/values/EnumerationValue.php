@@ -7,9 +7,9 @@ use sebastianlenz\contentfield\models\fields\enumerations\AbstractEnumerationFie
 /**
  * Class EnumerationValue
  *
- * @property AbstractEnumerationField $__field
+ * @property AbstractEnumerationField $_field
  */
-class EnumerationValue extends AbstractValue
+class EnumerationValue extends Value
 {
   /**
    * @var string|number
@@ -21,12 +21,21 @@ class EnumerationValue extends AbstractValue
    * EnumValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param AbstractEnumerationField $field
    */
-  public function __construct($data, AbstractValue $parent, AbstractEnumerationField $field) {
+  public function __construct($data, ValueInterface $parent, AbstractEnumerationField $field) {
     parent::__construct($parent, $field);
     $this->_value = self::isValidEnumerationKey($data) ? $data : '';
+  }
+
+  /**
+   * @param string $name
+   * @return mixed
+   */
+  public function __call($name, $args) {
+    $enumeration = $this->_field->getEnumeration();
+    return $enumeration->getCustomData($this->_value, $name);
   }
 
   /**

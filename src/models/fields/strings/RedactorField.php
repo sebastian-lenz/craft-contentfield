@@ -2,7 +2,7 @@
 
 namespace sebastianlenz\contentfield\models\fields\strings;
 
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 use sebastianlenz\contentfield\models\values\RedactorValue;
 use craft\base\ElementInterface;
 
@@ -37,7 +37,7 @@ class RedactorField extends AbstractStringField
   /**
    * @inheritdoc
    */
-  public function createValue($data, AbstractValue $parent) {
+  public function createValue($data, ValueInterface $parent) {
     return new RedactorValue($data, $parent, $this);
   }
 

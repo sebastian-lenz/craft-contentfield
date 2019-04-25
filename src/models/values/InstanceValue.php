@@ -2,6 +2,7 @@
 
 namespace sebastianlenz\contentfield\models\values;
 
+use craft\base\Model;
 use sebastianlenz\contentfield\models\fields\InstanceField;
 use sebastianlenz\contentfield\models\schemas\AbstractSchema;
 use sebastianlenz\contentfield\utilities\ReferenceMap;
@@ -9,10 +10,12 @@ use sebastianlenz\contentfield\utilities\ReferenceMap;
 /**
  * Class InstanceValue
  *
- * @property InstanceField|null $__field
+ * @property InstanceField|null $_field
  */
-class InstanceValue extends AbstractValue
+class InstanceValue extends Model implements ValueInterface
 {
+  use ValueTrait;
+
   /**
    * @var string
    */
@@ -34,7 +37,7 @@ class InstanceValue extends AbstractValue
   private $_uuid;
 
   /**
-   * @var AbstractValue[]
+   * @var ValueInterface[]
    */
   private $_values = array();
 
@@ -51,12 +54,14 @@ class InstanceValue extends AbstractValue
    *
    * @param array $data
    * @param AbstractSchema $schema
-   * @param AbstractValue|null $parent
+   * @param ValueInterface|null $parent
    * @param InstanceField|null $field
    * @throws \Exception
    */
-  public function __construct(array $data, AbstractSchema $schema, AbstractValue $parent = null, InstanceField $field = null) {
-    parent::__construct($parent, $field);
+  public function __construct(array $data, AbstractSchema $schema, ValueInterface $parent = null, InstanceField $field = null) {
+    parent::__construct();
+    $this->_field = $field;
+    $this->_parent = $parent;
 
     $this->_schema = $schema;
 
@@ -191,7 +196,7 @@ class InstanceValue extends AbstractValue
    * @inheritDoc
    */
   public function getSearchKeywords() {
-    return implode(' ', array_map(function(AbstractValue $value) {
+    return implode(' ', array_map(function(ValueInterface $value) {
       $value->getSearchKeywords();
     }, $this->_values));
   }
@@ -221,7 +226,7 @@ class InstanceValue extends AbstractValue
   }
 
   /**
-   * @return AbstractValue[]
+   * @return ValueInterface[]
    */
   public function getValues() {
     return $this->_values;

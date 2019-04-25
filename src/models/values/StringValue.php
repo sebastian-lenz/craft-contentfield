@@ -7,9 +7,9 @@ use sebastianlenz\contentfield\models\fields\strings\AbstractStringField;
 /**
  * Class StringValue
  *
- * @property AbstractStringField $__field
+ * @property AbstractStringField $_field
  */
-class StringValue extends AbstractValue
+class StringValue extends Value
 {
   /**
    * @var string
@@ -21,10 +21,10 @@ class StringValue extends AbstractValue
    * StringValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param AbstractStringField $field
    */
-  public function __construct($data, AbstractValue $parent, AbstractStringField $field) {
+  public function __construct($data, ValueInterface $parent = null, AbstractStringField $field = null) {
     parent::__construct($parent, $field);
     $this->_value = is_string($data) ? $data : '';
   }
@@ -47,7 +47,7 @@ class StringValue extends AbstractValue
    * @inheritdoc
    */
   public function getHtml() {
-    return new \Twig_Markup($this->__field->isHtmlField()
+    return new \Twig_Markup($this->_field->isHtmlField()
       ? $this->_value
       : htmlentities($this->_value)
     , 'utf-8');

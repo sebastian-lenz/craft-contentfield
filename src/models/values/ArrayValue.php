@@ -3,18 +3,17 @@
 namespace sebastianlenz\contentfield\models\values;
 
 use sebastianlenz\contentfield\models\fields\ArrayField;
-use sebastianlenz\contentfield\models\fields\InstanceField;
 use sebastianlenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class ArrayValue
  *
- * @property ArrayField $__field
+ * @property ArrayField $_field
  */
-class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \IteratorAggregate
+class ArrayValue extends Value implements \ArrayAccess, \Countable, \IteratorAggregate
 {
   /**
-   * @var AbstractValue[]
+   * @var ValueInterface[]
    */
   private $__values;
 
@@ -23,16 +22,16 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
    * ArrayValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param ArrayField $field
    */
-  public function __construct($data, AbstractValue $parent, ArrayField $field) {
+  public function __construct($data, ValueInterface $parent, ArrayField $field) {
     parent::__construct($parent, $field);
 
     if (!is_array($data)) {
       $this->__values = array();
     } else {
-      $member = $this->__field->member;
+      $member = $this->_field->member;
       $this->__values = array_filter(array_map(function($value) use ($member) {
         return $member->createValue($value, $this);
       }, $data));
@@ -115,7 +114,7 @@ class ArrayValue extends AbstractValue implements \ArrayAccess, \Countable, \Ite
    * @inheritDoc
    */
   public function getSearchKeywords() {
-    return implode('', array_map(function(AbstractValue $value) {
+    return implode('', array_map(function(ValueInterface $value) {
       $value->getSearchKeywords();
     }, $this->__values));
   }

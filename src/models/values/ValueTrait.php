@@ -2,47 +2,31 @@
 
 namespace sebastianlenz\contentfield\models\values;
 
+use craft\base\ElementInterface;
 use sebastianlenz\contentfield\models\Content;
 use sebastianlenz\contentfield\models\fields\AbstractField;
-use craft\base\ElementInterface;
-use craft\base\Model;
 use sebastianlenz\contentfield\utilities\ReferenceMap;
 
 /**
- * Class AbstractValue
- *
- * Base class of all values.
+ * Trait ValueTrait
  */
-abstract class AbstractValue extends Model
+trait ValueTrait
 {
   /**
    * @var Content|null
    */
-  protected $__content = null;
+  protected $_content = null;
 
   /**
    * @var AbstractField|null
    */
-  protected $__field;
+  protected $_field;
 
   /**
-   * @var AbstractValue|null
+   * @var ValueInterface|null
    */
-  protected $__parent;
+  protected $_parent;
 
-
-  /**
-   * AbstractValue constructor.
-   *
-   * @param AbstractValue|null $parent
-   * @param AbstractField|null $field
-   */
-  public function __construct(AbstractValue $parent = null, AbstractField $field = null) {
-    parent::__construct();
-
-    $this->__field = $field;
-    $this->__parent = $parent;
-  }
 
   /**
    * @return string
@@ -61,10 +45,10 @@ abstract class AbstractValue extends Model
    * @return Content|null
    */
   public function getContent() {
-    if (!is_null($this->__content)) {
-      return $this->__content;
-    } else if (!is_null($this->__parent)) {
-      return $this->__parent->getContent();
+    if (!is_null($this->_content)) {
+      return $this->_content;
+    } else if (!is_null($this->_parent)) {
+      return $this->_parent->getContent();
     }
 
     return null;
@@ -88,7 +72,7 @@ abstract class AbstractValue extends Model
    * @return AbstractField|null
    */
   public function getField() {
-    return $this->__field;
+    return $this->_field;
   }
 
   /**
@@ -99,10 +83,10 @@ abstract class AbstractValue extends Model
   }
 
   /**
-   * @return AbstractValue|null
+   * @return ValueInterface|null
    */
   public function getParent() {
-    return $this->__parent;
+    return $this->_parent;
   }
 
   /**
@@ -149,6 +133,6 @@ abstract class AbstractValue extends Model
    * @param Content $content
    */
   public function setContent(Content $content) {
-    $this->__content = $content;
+    $this->_content = $content;
   }
 }

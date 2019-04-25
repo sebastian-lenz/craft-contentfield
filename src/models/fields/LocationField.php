@@ -3,7 +3,7 @@
 namespace sebastianlenz\contentfield\models\fields;
 
 use sebastianlenz\contentfield\models\values\ColorValue;
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 use sebastianlenz\contentfield\models\values\LocationValue;
 use sebastianlenz\contentfield\utilities\DefaultLocations;
 use craft\base\ElementInterface;
@@ -27,7 +27,7 @@ class LocationField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, AbstractValue $parent) {
+  public function createValue($data, ValueInterface $parent) {
     return new LocationValue($data, $parent, $this);
   }
 

@@ -5,7 +5,7 @@ namespace sebastianlenz\contentfield\models\fields;
 use craft\base\ElementInterface;
 
 use sebastianlenz\contentfield\models\values\OEmbedValue;
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 use sebastianlenz\contentfield\utilities\oembed\Endpoint;
 use sebastianlenz\contentfield\utilities\oembed\OEmbed;
 use sebastianlenz\contentfield\utilities\oembed\Provider;
@@ -57,7 +57,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, AbstractValue $parent) {
+  public function createValue($data, ValueInterface $parent) {
     return new OEmbedValue($data, $parent, $this);
   }
 

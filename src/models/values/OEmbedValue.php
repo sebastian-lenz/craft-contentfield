@@ -8,9 +8,9 @@ use sebastianlenz\contentfield\utilities\oembed\OEmbed;
 /**
  * Class OEmbedValue
  *
- * @property OEmbedField $__field
+ * @property OEmbedField $_field
  */
-class OEmbedValue extends AbstractValue
+class OEmbedValue extends Value
 {
   /**
    * @var string
@@ -22,10 +22,10 @@ class OEmbedValue extends AbstractValue
    * StringValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param OEmbedField $field
    */
-  public function __construct($data, AbstractValue $parent, OEmbedField $field) {
+  public function __construct($data, ValueInterface $parent, OEmbedField $field) {
     parent::__construct($parent, $field);
 
     if (is_array($data) && array_key_exists('url', $data)) {
@@ -67,7 +67,7 @@ class OEmbedValue extends AbstractValue
    * @return OEmbed|null
    */
   public function getOEmbed() {
-    return $this->__field->getOEmbed($this->_value);
+    return $this->_field->getOEmbed($this->_value);
   }
 
   /**

@@ -3,7 +3,7 @@
 namespace sebastianlenz\contentfield\models\fields;
 
 use sebastianlenz\contentfield\models\values\ColorValue;
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
 
 /**
@@ -30,7 +30,7 @@ class ColorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, AbstractValue $parent) {
+  public function createValue($data, ValueInterface $parent) {
     return new ColorValue($data, $parent, $this);
   }
 

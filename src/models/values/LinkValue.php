@@ -12,9 +12,9 @@ use sebastianlenz\contentfield\utilities\ReferenceMap;
 /**
  * Class LinkValue
  *
- * @property LinkField $__field
+ * @property LinkField $_field
  */
-class LinkValue extends AbstractValue
+class LinkValue extends Value
 {
   /**
    * @var int
@@ -46,10 +46,10 @@ class LinkValue extends AbstractValue
    * LinkValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param LinkField $field
    */
-  public function __construct($data, AbstractValue $parent, LinkField $field) {
+  public function __construct($data, ValueInterface $parent, LinkField $field) {
     parent::__construct($parent, $field);
 
     if (is_array($data)) {
@@ -159,8 +159,8 @@ class LinkValue extends AbstractValue
    * @return array|null
    */
   function getLinkType() {
-    return array_key_exists($this->type, $this->__field->linkTypes)
-      ? $this->__field->linkTypes[$this->type]
+    return array_key_exists($this->type, $this->_field->linkTypes)
+      ? $this->_field->linkTypes[$this->type]
       : null;
   }
 

@@ -68,6 +68,23 @@ class StaticEnumeration implements EnumerationInterface
   }
 
   /**
+   * @param string|int $key
+   * @param string $name
+   * @return mixed
+   */
+  function getCustomData($key, $name) {
+    foreach ($this->options as $option) {
+      if ($option['key'] === $key) {
+        return array_key_exists($name, $option)
+          ? $option[$name]
+          : null;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * @inheritdoc
    */
   function getOptions() {

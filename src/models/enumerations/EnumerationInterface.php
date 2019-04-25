@@ -8,6 +8,13 @@ namespace sebastianlenz\contentfield\models\enumerations;
 interface EnumerationInterface
 {
   /**
+   * @param string|int $key
+   * @param string $name
+   * @return mixed
+   */
+  function getCustomData($key, $name);
+
+  /**
    * Return an array of all options.
    * @return array
    */

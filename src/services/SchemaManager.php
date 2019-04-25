@@ -4,7 +4,7 @@ namespace sebastianlenz\contentfield\services;
 
 use sebastianlenz\contentfield\models\fields\InstanceField;
 use sebastianlenz\contentfield\models\schemas\AbstractSchema;
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 use sebastianlenz\contentfield\models\values\InstanceValue;
 use sebastianlenz\contentfield\services\loaders\AbstractLoader;
 use sebastianlenz\contentfield\services\loaders\TemplateLoader;
@@ -43,12 +43,12 @@ class SchemaManager
 
   /**
    * @param mixed $data
-   * @param AbstractValue|null $parent
+   * @param ValueInterface|null $parent
    * @param InstanceField|null $field
    * @return InstanceValue
    * @throws \Exception
    */
-  public function createValue($data, AbstractValue $parent = null, InstanceField $field = null) {
+  public function createValue($data, ValueInterface $parent = null, InstanceField $field = null) {
     if (!is_array($data) || !isset($data[InstanceValue::TYPE_PROPERTY])) {
       return null;
     }

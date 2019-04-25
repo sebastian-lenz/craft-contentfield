@@ -12,9 +12,9 @@ use sebastianlenz\contentfield\utilities\ReferenceMap;
 /**
  * Class ReferenceValue
  *
- * @property ReferenceField $__field
+ * @property ReferenceField $_field
  */
-class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, \IteratorAggregate
+class ReferenceValue extends Value implements \ArrayAccess, \Countable, \IteratorAggregate
 {
   /**
    * @var ElementInterface[]
@@ -31,10 +31,10 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
    * ReferenceValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param ReferenceField $field
    */
-  public function __construct($data, AbstractValue $parent, ReferenceField $field) {
+  public function __construct($data, ValueInterface $parent, ReferenceField $field) {
     parent::__construct($parent, $field);
 
     if (!is_array($data)) {
@@ -106,7 +106,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
       $map = new ReferenceMap();
     }
 
-    $elementType = $this->__field->getElementType();
+    $elementType = $this->_field->getElementType();
     foreach ($this->_values as $value) {
       $map->push($elementType, $value);
     }
@@ -127,15 +127,16 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
 
   /**
    * @param string|array $config
+   * @param array|null $extraConfig
    * @return \Twig_Markup|\Twig\Markup|null
    * @throws \Exception
    */
-  public function imageTag($config = 'default') {
+  public function imageTag($config = 'default', $extraConfig = null) {
     foreach ($this->getReferences() as $reference) {
       if ($reference instanceof Asset) {
         $result = Plugin::getInstance()
           ->imageTags
-          ->render($reference, $config);
+          ->render($reference, $config, $extraConfig);
 
         return is_null($result)
           ? null
@@ -157,7 +158,7 @@ class ReferenceValue extends AbstractValue implements \ArrayAccess, \Countable, 
    * @return ElementInterface[]
    */
   private function loadReferences() {
-    $elementType = $this->__field->getElementType();
+    $elementType = $this->_field->getElementType();
     if (is_null($elementType) || count($this->_values) === 0) {
       return array();
     }

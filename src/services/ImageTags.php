@@ -89,6 +89,13 @@ class ImageTags extends AbstractDefinitionService
   }
 
   /**
+   * @inheritDoc
+   */
+  protected function getCacheKey() {
+    return 'CONTENTFIELD_DEFS:IMAGETAGS';
+  }
+
+  /**
    * @return string
    */
   protected function getDefinitionName() {
@@ -131,17 +138,24 @@ class ImageTags extends AbstractDefinitionService
   /**
    * @param Asset $asset
    * @param array $config
+   * @param array|null $extraConfig
    * @return string|null
    * @throws \Exception
    */
-  public function render(Asset $asset, $config) {
+  public function render(Asset $asset, $config, $extraConfig = null) {
     if (!is_array($config)) {
       $config = array('type' => (string)$config);
     }
 
     $config = $this->resolveDefinition($config);
-    $imageTagClass = $this->getImageTagClass($config);
+    if (!is_null($extraConfig)) {
+      if (!isset($extraConfig['type'])) {
+        $extraConfig['type'] = $config['type'];
+      }
+      $config = $this->mergeDefinitions($config, $extraConfig);
+    }
 
+    $imageTagClass = $this->getImageTagClass($config);
     $config['asset'] = $asset;
     unset($config['type']);
 

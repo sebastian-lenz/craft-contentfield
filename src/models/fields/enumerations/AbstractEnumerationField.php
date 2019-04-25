@@ -5,7 +5,7 @@ namespace sebastianlenz\contentfield\models\fields\enumerations;
 use sebastianlenz\contentfield\models\enumerations\EnumerationInterface;
 use sebastianlenz\contentfield\models\enumerations\StaticEnumeration;
 use sebastianlenz\contentfield\models\fields\AbstractField;
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 use sebastianlenz\contentfield\models\values\EnumerationValue;
 use craft\base\ElementInterface;
 
@@ -59,7 +59,7 @@ abstract class AbstractEnumerationField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, AbstractValue $parent) {
+  public function createValue($data, ValueInterface $parent) {
     return new EnumerationValue($data, $parent, $this);
   }
 

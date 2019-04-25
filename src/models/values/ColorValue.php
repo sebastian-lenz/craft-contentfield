@@ -3,14 +3,14 @@
 namespace sebastianlenz\contentfield\models\values;
 
 use sebastianlenz\contentfield\models\fields\ColorField;
-use sebastianlenz\contentfield\models\values\AbstractValue;
+use sebastianlenz\contentfield\models\values\ValueInterface;
 
 /**
  * Class ColorValue
  *
- * @property ColorField $__field
+ * @property ColorField $_field
  */
-class ColorValue extends AbstractValue
+class ColorValue extends Value
 {
   /**
    * @var float
@@ -37,10 +37,10 @@ class ColorValue extends AbstractValue
    * ColorValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param ColorField $field
    */
-  public function __construct($data, AbstractValue $parent, ColorField $field) {
+  public function __construct($data, ValueInterface $parent, ColorField $field) {
     parent::__construct($parent, $field);
 
     if (is_array($data)) {
@@ -66,7 +66,7 @@ class ColorValue extends AbstractValue
    * @return string
    */
   function __toString() {
-    return $this->__field->disableAlpha
+    return $this->_field->disableAlpha
       ? $this->hex()
       : $this->rgba();
   }

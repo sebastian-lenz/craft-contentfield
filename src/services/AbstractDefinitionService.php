@@ -2,6 +2,7 @@
 
 namespace sebastianlenz\contentfield\services;
 
+use craft\helpers\Json;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -31,6 +32,13 @@ abstract class AbstractDefinitionService
 
 
   /**
+   * Return the cache key.
+   *
+   * @return string
+   */
+  abstract protected function getCacheKey();
+
+  /**
    * Return the blueprint field definition for the given name.
    *
    * @param string $name
@@ -55,7 +63,7 @@ abstract class AbstractDefinitionService
   abstract protected function getDefinitionName();
 
   /**
-   * @return string[]
+   * @return array
    */
   protected function getDefinitionSources() {
     $sources = array();
@@ -64,7 +72,10 @@ abstract class AbstractDefinitionService
 
     $file = $basePath . DIRECTORY_SEPARATOR . $name . self::DEFINITION_EXTENSION;
     if (file_exists($file) && is_readable($file)) {
-      $sources['*'] = $file;
+      $sources['*'] = [
+        'pathname' => $file,
+        'mtime'    => filemtime($file),
+      ];
     }
 
     $path = $basePath . DIRECTORY_SEPARATOR . $name;
@@ -76,7 +87,10 @@ abstract class AbstractDefinitionService
       /** @var \SplFileInfo $fileInfo */
       foreach ($filteredFiles as $fileInfo) {
         $key = $fileInfo->getBasename('.yml');
-        $sources[$key] = $fileInfo->getPathname();
+        $sources[$key] = [
+          'pathname' => $fileInfo->getPathname(),
+          'mtime'    => $fileInfo->getMTime(),
+        ];
       }
     }
 
@@ -113,14 +127,42 @@ abstract class AbstractDefinitionService
       return;
     }
 
-    $definitions = array();
-    $sources = $this->getDefinitionSources();
+    $cache = \Craft::$app->getCache();
+    $cacheKey = $this->getCacheKey();
+    $cachedData = $cache->get($cacheKey);
 
+    // In production mode we just return the data
+    if (
+      CRAFT_ENVIRONMENT == 'production' &&
+      is_array($cachedData) &&
+      array_key_exists('data', $cachedData)
+    ) {
+      $this->definitions = $cachedData['data'];
+      return;
+    }
+
+    // Otherwise create a hash of all files and check for updates
+    $sources = $this->getDefinitionSources();
+    $hash = md5(implode(';', array_map(function($source) {
+      return implode(',', array_values($source));
+    }, $sources)));
+
+    if (
+      is_array($cachedData) &&
+      array_key_exists('data', $cachedData) &&
+      $cachedData['hash'] == $hash
+    ) {
+      $this->definitions = $cachedData['data'];
+      return;
+    }
+
+    // Finally read all the definitions
+    $definitions = array();
     foreach ($sources as $key => $source) {
       try {
         $definitions = array_merge(
           $definitions,
-          Yaml::parseFile($source)
+          Yaml::parseFile($source['pathname'])
         );
       } catch (\Throwable $error) {
         \Craft::error($error->getMessage());
@@ -128,6 +170,10 @@ abstract class AbstractDefinitionService
     }
 
     $this->definitions = $definitions;
+    $cache->set($cacheKey, array(
+      'hash' => $hash,
+      'data' => $definitions
+    ));
   }
 
   /**

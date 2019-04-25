@@ -7,9 +7,9 @@ use sebastianlenz\contentfield\models\fields\LocationField;
 /**
  * Class LocationValue
  *
- * @property LocationField $__field
+ * @property LocationField $_field
  */
-class LocationValue extends AbstractValue
+class LocationValue extends Value
 {
   /**
    * @var float
@@ -26,10 +26,10 @@ class LocationValue extends AbstractValue
    * LocationValue constructor.
    *
    * @param mixed $data
-   * @param AbstractValue $parent
+   * @param ValueInterface $parent
    * @param LocationField $field
    */
-  public function __construct($data, AbstractValue $parent, LocationField $field) {
+  public function __construct($data, ValueInterface $parent, LocationField $field) {
     parent::__construct($parent, $field);
 
     if (is_array($data)) {
