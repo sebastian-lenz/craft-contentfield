@@ -19,40 +19,62 @@ class TemplateSchema extends AbstractSchema
    */
   public $template;
 
+  /**
+   * @var \Twig\TemplateWrapper
+   */
+  private $_template;
+
+  /**
+   * @var \craft\web\twig\Environment
+   */
+  static private $_twig;
+
+
+  /**
+   * @return \Twig\TemplateWrapper
+   * @throws \Throwable
+   */
+  private function getTemplate() {
+    if (!isset($this->_template)) {
+      $this->_template = self::getTwig()->load($this->template);
+    }
+
+    return $this->_template;
+  }
 
   /**
    * @inheritdoc
    */
   public function render(InstanceValue $instance, array $variables = []) {
-    $variables = array_merge(
+    return $this->getTemplate()->render(array_merge(
       [
         'entry' => $instance->getContent()->getOwner(),
         'node' => $instance,
       ],
       $instance->getValues(),
       $variables
-    );
+    ));
+  }
 
-    $view = \Craft::$app->getView();
-    $oldTemplateMode = $view->getTemplateMode();
-    if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
-      $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
-    }
+  /**
+   * @return \craft\web\twig\Environment
+   * @throws \yii\base\Exception
+   */
+  static function getTwig() {
+    if (!isset(self::$_twig)) {
+      $view = \Craft::$app->getView();
+      $oldTemplateMode = $view->getTemplateMode();
+      if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
+        $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
+      }
 
-    if (CRAFT_ENVIRONMENT === 'dev') {
-      $result = $view->renderTemplate($this->template, $variables);
-    } else {
-      try {
-        $result = $view->renderTemplate($this->template, $variables);
-      } catch (\Exception $exception) {
-        $result = '';
+      self::$_twig = $view->getTwig();
+
+      if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
+        $view->setTemplateMode($oldTemplateMode);
       }
     }
 
-    if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
-      $view->setTemplateMode($oldTemplateMode);
-    }
-
-    return $result;
+    return self::$_twig;
   }
 }

@@ -2,10 +2,10 @@
 
 namespace lenz\contentfield\models\values;
 
-use craft\base\Model;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\utilities\ReferenceMap;
+use yii\base\Model;
 
 /**
  * Class InstanceValue

@@ -3,11 +3,10 @@
 namespace lenz\contentfield\models\schemas;
 
 use craft\base\ElementInterface;
-use craft\base\Model;
-
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
+use yii\base\Model;
 
 /**
  * Class AbstractSchema
