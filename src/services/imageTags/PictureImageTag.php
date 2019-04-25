@@ -105,13 +105,7 @@ class PictureImageTag extends ImageTag
    * @return string|null
    */
   function renderSource($source) {
-    if (is_string($source)) {
-      $source = array('transforms' => $source);
-    }
-
-    if (isset($source['transform'])) {
-      $source['transforms'] = $source['transform'];
-    }
+    $source = self::normalizeSource($source);
 
     if (isset($source['attributes'])) {
       $attributes = self::mergeAttributes($source['attributes'], $this->sourceAttributes);
@@ -136,6 +130,27 @@ class PictureImageTag extends ImageTag
 
     return Html::tag('source', '', $attributes);
   }
+
+  /**
+   * @param array $definition
+   * @return array
+   */
+  static public function extractTransforms(array $definition): array {
+    $transforms = array();
+
+    if (array_key_exists('sources', $definition)) {
+      foreach ($definition['sources'] as $source) {
+        $source = self::normalizeSource($source);
+        $transforms = array_merge(
+          $transforms,
+          self::normalizeTransforms($source['transforms'])
+        );
+      }
+    }
+
+    return $transforms;
+  }
+
   /**
    * @param array $target
    * @param array $source
@@ -147,5 +162,24 @@ class PictureImageTag extends ImageTag
       $source,
       array('attributes', 'wrapAttributes')
     ) + $source;
+  }
+
+  /**
+   * @param mixed $source
+   * @return array
+   */
+  static public function normalizeSource($source) {
+    if (is_string($source)) {
+      $source = array('transforms' => $source);
+    }
+
+    if (!is_array($source)) $source = [];
+    if (isset($source['transform'])) {
+      $source['transforms'] = $source['transform'];
+    } elseif (!isset($source['transforms'])) {
+      $source['transforms'] = [];
+    }
+
+    return $source;
   }
 }

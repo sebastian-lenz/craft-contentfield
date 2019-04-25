@@ -19,15 +19,6 @@ class ImageTags extends AbstractDefinitionService
    */
   private $imageTags;
 
-  /**
-   * List of attributes known to contain transform names.
-   */
-  const TRANSFORM_ATTRIBUTES = [
-    'fallbackTransform',
-    'inlineTransform',
-    'transforms'
-  ];
-
 
   /**
    * ImageTags constructor.
@@ -57,35 +48,16 @@ class ImageTags extends AbstractDefinitionService
     }
 
     $transforms = array();
-
     foreach ($this->definitions as $definition) {
-      foreach (self::TRANSFORM_ATTRIBUTES as $attribute) {
-        if (!array_key_exists($attribute, $definition)) {
-          continue;
-        }
-
-        $values = $definition[$attribute];
-        if (is_string($values)) {
-          $values = [$values];
-        }
-
-        if (!is_array($values)) {
-          continue;
-        }
-
-        foreach ($values as $value) {
-          if (
-            is_string($value) &&
-            !in_array($value, $transforms) &&
-            $value != ImageTag::ORIGINAL_TRANSFORM
-          ) {
-            $transforms[] = $value;
-          }
-        }
+      foreach ($this->imageTags as $imageTag) {
+        $transforms = array_merge(
+          $transforms,
+          $imageTag::extractTransforms($definition)
+        );
       }
     }
 
-    return $transforms;
+    return array_unique($transforms);
   }
 
   /**

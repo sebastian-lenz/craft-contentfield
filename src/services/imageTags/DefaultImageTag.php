@@ -39,6 +39,15 @@ class DefaultImageTag extends ImageTag
    */
   private $sources;
 
+  /**
+   * List of attributes known to contain transform names.
+   */
+  const TRANSFORM_ATTRIBUTES = [
+    'fallbackTransform',
+    'thumbnailTransform',
+    'transforms'
+  ];
+
 
   /**
    * @inheritdoc
@@ -111,6 +120,27 @@ class DefaultImageTag extends ImageTag
     );
 
     return Html::tag('img', '', $attributes);
+  }
+
+  /**
+   * @param array $definition
+   * @return array
+   */
+  static public function extractTransforms(array $definition): array {
+    $transforms = array();
+
+    foreach (self::TRANSFORM_ATTRIBUTES as $attribute) {
+      if (!array_key_exists($attribute, $definition)) {
+        continue;
+      }
+
+      $transforms = array_merge(
+        $transforms,
+        self::normalizeTransforms($definition[$attribute])
+      );
+    }
+
+    return $transforms;
   }
 
   /**

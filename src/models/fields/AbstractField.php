@@ -2,11 +2,10 @@
 
 namespace lenz\contentfield\models\fields;
 
-use lenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
-use craft\base\Model;
-
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\values\ValueInterface;
+use yii\base\Model;
 
 /**
  * Class AbstractField

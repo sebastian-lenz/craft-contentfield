@@ -107,12 +107,13 @@ abstract class ImageTag extends BaseObject
 
     $transforms = \Craft::$app->getAssetTransforms();
     $index = $transforms->getTransformIndex($asset, $this->thumbnailTransform);
-
-    try {
-      $transforms->ensureTransformUrlByIndexModel($index);
-    } catch (\Throwable $exception) {
-      $transforms->deleteTransformIndex($index->id);
-      return null;
+    if (!$index->fileExists) {
+      try {
+        $transforms->ensureTransformUrlByIndexModel($index);
+      } catch (\Throwable $exception) {
+        $transforms->deleteTransformIndex($index->id);
+        return null;
+      }
     }
 
     $stream = $volume->getFileStream(
@@ -145,12 +146,9 @@ abstract class ImageTag extends BaseObject
    */
   protected function toSources($transforms = null) {
     $sources = array();
+    $transforms = self::normalizeTransforms($transforms);
 
-    if (is_string($transforms)) {
-      $transforms = explode(',', $transforms);
-    }
-
-    if (!is_array($transforms) || count($transforms) === 0) {
+    if (count($transforms) === 0) {
       $sources[] = $this->toSource();
     } else {
       foreach ($transforms as $transform) {
@@ -183,6 +181,14 @@ abstract class ImageTag extends BaseObject
     }
 
     return $attributes;
+  }
+
+  /**
+   * @param array $definition
+   * @return array
+   */
+  static public function extractTransforms(array $definition): array {
+    return [];
   }
 
   /**
@@ -253,6 +259,22 @@ abstract class ImageTag extends BaseObject
     }
 
     return $target;
+  }
+
+  /**
+   * @param mixed $transforms
+   * @return array
+   */
+  static public function normalizeTransforms($transforms) {
+    if (is_string($transforms)) {
+      $transforms = explode(',', $transforms);
+    }
+
+    if (!is_array($transforms)) {
+      $transforms = [];
+    }
+
+    return $transforms;
   }
 
   /**
