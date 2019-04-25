@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\events;
+namespace lenz\contentfield\events;
 
 use craft\base\ElementInterface;
 use yii\base\Event;

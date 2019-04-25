@@ -1,8 +1,8 @@
 <?php
 
-namespace sebastianlenz\contentfield\migrations;
+namespace lenz\contentfield\migrations;
 
-use sebastianlenz\contentfield\records\ContentRecord;
+use lenz\contentfield\records\ContentRecord;
 use craft\db\Migration;
 use craft\db\Table;
 

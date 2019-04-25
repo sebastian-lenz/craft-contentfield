@@ -1,11 +1,11 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\values;
+namespace lenz\contentfield\models\values;
 
 use craft\base\ElementInterface;
-use sebastianlenz\contentfield\models\Content;
-use sebastianlenz\contentfield\models\fields\AbstractField;
-use sebastianlenz\contentfield\utilities\ReferenceMap;
+use lenz\contentfield\models\Content;
+use lenz\contentfield\models\fields\AbstractField;
+use lenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Interface ValueInterface

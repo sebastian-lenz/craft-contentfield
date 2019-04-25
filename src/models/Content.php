@@ -1,15 +1,15 @@
 <?php
 
-namespace sebastianlenz\contentfield\models;
+namespace lenz\contentfield\models;
 
-use sebastianlenz\contentfield\events\RenderEvent;
-use sebastianlenz\contentfield\models\values\InstanceValue;
-use sebastianlenz\contentfield\Plugin;
+use lenz\contentfield\events\RenderEvent;
+use lenz\contentfield\models\values\InstanceValue;
+use lenz\contentfield\Plugin;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;
 use craft\elements\db\AssetQuery;
-use sebastianlenz\contentfield\utilities\ReferenceLoader;
+use lenz\contentfield\utilities\ReferenceLoader;
 
 /**
  * Class Content

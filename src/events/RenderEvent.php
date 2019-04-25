@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\events;
+namespace lenz\contentfield\events;
 
 use yii\base\Event;
 
@@ -10,7 +10,7 @@ use yii\base\Event;
 class RenderEvent extends Event
 {
   /**
-   * @var \sebastianlenz\contentfield\models\Content
+   * @var \lenz\contentfield\models\Content
    */
   public $content;
 }

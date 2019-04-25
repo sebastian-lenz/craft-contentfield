@@ -1,12 +1,12 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields\enumerations;
+namespace lenz\contentfield\models\fields\enumerations;
 
-use sebastianlenz\contentfield\models\enumerations\EnumerationInterface;
-use sebastianlenz\contentfield\models\enumerations\StaticEnumeration;
-use sebastianlenz\contentfield\models\fields\AbstractField;
-use sebastianlenz\contentfield\models\values\ValueInterface;
-use sebastianlenz\contentfield\models\values\EnumerationValue;
+use lenz\contentfield\models\enumerations\EnumerationInterface;
+use lenz\contentfield\models\enumerations\StaticEnumeration;
+use lenz\contentfield\models\fields\AbstractField;
+use lenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\models\values\EnumerationValue;
 use craft\base\ElementInterface;
 
 /**

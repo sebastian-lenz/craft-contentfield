@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\utilities;
+namespace lenz\contentfield\utilities;
 
 /**
  * Class Url

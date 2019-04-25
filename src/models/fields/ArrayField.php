@@ -1,10 +1,10 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields;
+namespace lenz\contentfield\models\fields;
 
-use sebastianlenz\contentfield\models\values\ValueInterface;
-use sebastianlenz\contentfield\models\values\ArrayValue;
-use sebastianlenz\contentfield\Plugin;
+use lenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\models\values\ArrayValue;
+use lenz\contentfield\Plugin;
 use craft\base\ElementInterface;
 
 /**

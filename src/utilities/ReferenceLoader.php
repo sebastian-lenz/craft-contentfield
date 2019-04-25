@@ -1,11 +1,11 @@
 <?php
 
-namespace sebastianlenz\contentfield\utilities;
+namespace lenz\contentfield\utilities;
 
 use craft\base\ElementInterface;
 use craft\elements\db\AssetQuery;
-use sebastianlenz\contentfield\models\Content;
-use sebastianlenz\contentfield\Plugin;
+use lenz\contentfield\models\Content;
+use lenz\contentfield\Plugin;
 
 /**
  * Class BatchLoader

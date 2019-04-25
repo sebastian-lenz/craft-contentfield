@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\services\imageTags;
+namespace lenz\contentfield\services\imageTags;
 
 use craft\helpers\Html;
 use craft\helpers\Image;

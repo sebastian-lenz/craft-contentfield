@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield;
+namespace lenz\contentfield;
 
 use craft\base\Model;
 

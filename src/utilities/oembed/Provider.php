@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\utilities\oembed;
+namespace lenz\contentfield\utilities\oembed;
 
 /**
  * Class Provider

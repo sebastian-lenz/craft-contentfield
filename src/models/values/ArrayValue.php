@@ -1,9 +1,9 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\values;
+namespace lenz\contentfield\models\values;
 
-use sebastianlenz\contentfield\models\fields\ArrayField;
-use sebastianlenz\contentfield\utilities\ReferenceMap;
+use lenz\contentfield\models\fields\ArrayField;
+use lenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class ArrayValue

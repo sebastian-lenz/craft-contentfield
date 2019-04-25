@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields\enumerations;
+namespace lenz\contentfield\models\fields\enumerations;
 
 /**
  * Class SelectField

@@ -1,14 +1,14 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields;
+namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
 
-use sebastianlenz\contentfield\models\values\OEmbedValue;
-use sebastianlenz\contentfield\models\values\ValueInterface;
-use sebastianlenz\contentfield\utilities\oembed\Endpoint;
-use sebastianlenz\contentfield\utilities\oembed\OEmbed;
-use sebastianlenz\contentfield\utilities\oembed\Provider;
+use lenz\contentfield\models\values\OEmbedValue;
+use lenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\utilities\oembed\Endpoint;
+use lenz\contentfield\utilities\oembed\OEmbed;
+use lenz\contentfield\utilities\oembed\Provider;
 
 /**
  * Class OEmbedField

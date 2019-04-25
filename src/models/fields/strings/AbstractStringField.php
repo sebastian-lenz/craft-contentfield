@@ -1,10 +1,10 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields\strings;
+namespace lenz\contentfield\models\fields\strings;
 
-use sebastianlenz\contentfield\models\fields\AbstractField;
-use sebastianlenz\contentfield\models\values\ValueInterface;
-use sebastianlenz\contentfield\models\values\StringValue;
+use lenz\contentfield\models\fields\AbstractField;
+use lenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\models\values\StringValue;
 use craft\base\ElementInterface;
 
 /**

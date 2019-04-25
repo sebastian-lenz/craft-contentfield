@@ -1,12 +1,12 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields;
+namespace lenz\contentfield\models\fields;
 
-use sebastianlenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
 use craft\base\Model;
 
-use sebastianlenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\AbstractSchema;
 
 /**
  * Class AbstractField

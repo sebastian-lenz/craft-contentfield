@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields\strings;
+namespace lenz\contentfield\models\fields\strings;
 
 /**
  * Class TextAreaField

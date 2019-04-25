@@ -1,11 +1,11 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\values;
+namespace lenz\contentfield\models\values;
 
 use craft\base\Model;
-use sebastianlenz\contentfield\models\fields\InstanceField;
-use sebastianlenz\contentfield\models\schemas\AbstractSchema;
-use sebastianlenz\contentfield\utilities\ReferenceMap;
+use lenz\contentfield\models\fields\InstanceField;
+use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class InstanceValue

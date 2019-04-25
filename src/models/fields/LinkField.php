@@ -1,13 +1,13 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields;
+namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
-use sebastianlenz\contentfield\models\values\ValueInterface;
-use sebastianlenz\contentfield\models\values\LinkValue;
+use lenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\models\values\LinkValue;
 use craft\elements\Asset;
 use craft\elements\Entry;
-use sebastianlenz\contentfield\utilities\ReferenceMap;
+use lenz\contentfield\utilities\ReferenceMap;
 
 /**
  * Class LinkField

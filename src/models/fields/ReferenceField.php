@@ -1,13 +1,13 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields;
+namespace lenz\contentfield\models\fields;
 
-use sebastianlenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\elements\Entry;
 
-use sebastianlenz\contentfield\models\values\ReferenceValue;
+use lenz\contentfield\models\values\ReferenceValue;
 
 /**
  * Class ReferenceField

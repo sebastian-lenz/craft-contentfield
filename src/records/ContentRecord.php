@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\records;
+namespace lenz\contentfield\records;
 
 use craft\db\ActiveRecord;
 use craft\db\SoftDeleteTrait;
@@ -21,7 +21,7 @@ class ContentRecord extends ActiveRecord
   /**
    * The name of the table used to store this record.
    */
-  const TABLE = '{{%contentfield}}';
+  const TABLE = '{{%lenz_contentfield}}';
 
 
   /**

@@ -1,9 +1,9 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\values;
+namespace lenz\contentfield\models\values;
 
-use sebastianlenz\contentfield\models\fields\ColorField;
-use sebastianlenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\models\fields\ColorField;
+use lenz\contentfield\models\values\ValueInterface;
 
 /**
  * Class ColorValue

@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\enumerations;
+namespace lenz\contentfield\models\enumerations;
 
 /**
  * Interface EnumerationInterface

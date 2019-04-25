@@ -1,10 +1,10 @@
 <?php
 
-namespace sebastianlenz\contentfield\migrations;
+namespace lenz\contentfield\migrations;
 
 use craft\db\Migration;
 use craft\db\Table;
-use sebastianlenz\contentfield\records\ContentRecord;
+use lenz\contentfield\records\ContentRecord;
 
 /**
  * m190408_150735_fixContentTableIndex migration.

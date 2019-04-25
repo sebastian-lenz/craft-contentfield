@@ -1,13 +1,13 @@
 <?php
 
-namespace sebastianlenz\contentfield\models\fields;
+namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
 
-use sebastianlenz\contentfield\models\schemas\AbstractSchema;
-use sebastianlenz\contentfield\models\values\ValueInterface;
-use sebastianlenz\contentfield\models\values\InstanceValue;
-use sebastianlenz\contentfield\Plugin;
+use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\models\values\InstanceValue;
+use lenz\contentfield\Plugin;
 
 /**
  * Class InstanceField

@@ -1,6 +1,6 @@
 <?php
 
-namespace sebastianlenz\contentfield\services;
+namespace lenz\contentfield\services;
 
 use craft\helpers\Json;
 use Symfony\Component\Yaml\Yaml;
