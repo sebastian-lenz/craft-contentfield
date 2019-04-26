@@ -7,10 +7,10 @@ use craft\base\ElementInterface;
 use craft\redactor\assets\field\FieldAsset;
 use craft\redactor\assets\redactor\RedactorAsset;
 use craft\redactor\Field;
+use craft\redactor\FieldData;
 
 /**
  * Class RedactorSettings
- * @package typedlinkfield\utilities
  */
 class RedactorSettings extends Field
 {
@@ -102,13 +102,6 @@ class RedactorSettings extends Field
     } catch (\Exception $e) {
       return $value;
     }
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function serializeValue($value, ElementInterface $element = null) {
-    return parent::serializeValue($value, $element);
   }
 
   /**
