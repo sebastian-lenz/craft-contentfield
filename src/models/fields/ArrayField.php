@@ -6,6 +6,7 @@ use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\ArrayValue;
 use lenz\contentfield\Plugin;
 use craft\base\ElementInterface;
+use lenz\contentfield\validators\ArrayValueValidator;
 
 /**
  * Class ArrayField
@@ -71,6 +72,16 @@ class ArrayField extends AbstractField
     return parent::getEditorData() + array(
       'collapsible' => !!$this->collapsible,
       'member'      => $this->member->getEditorData($element),
+    );
+  }
+
+  /**
+   * @return array
+   */
+  public function getValueRules() {
+    return array_merge(
+      [ArrayValueValidator::class],
+      parent::getValueRules()
     );
   }
 }

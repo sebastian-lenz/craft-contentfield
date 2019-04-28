@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
+use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use yii\base\Model;
@@ -45,6 +46,12 @@ abstract class AbstractField extends Model
   public $type;
 
   /**
+   * The validation rules applied to the values of this field.
+   * @var array
+   */
+  public $valueRules = [];
+
+  /**
    * The width of this field in the control panel.
    * @var string
    */
@@ -83,15 +90,20 @@ abstract class AbstractField extends Model
    * Field constructor.
    *
    * @param array $config
-   * @throws \Exception
+   * @throws Exception
    */
   public function __construct(array $config = []) {
     if (!isset($config['name'])) {
-      throw new \Exception('All fields must have a name.');
+      throw new Exception('All fields must have a name.');
     }
 
     if (!isset($config['label'])) {
       $config['label'] = $this->generateAttributeLabel($config['name']);
+    }
+
+    if (isset($config['rules'])) {
+      $config['valueRules'] = $config['rules'];
+      unset($config['rules']);
     }
 
     parent::__construct($config);
@@ -103,7 +115,7 @@ abstract class AbstractField extends Model
    * @param mixed $data
    * @param ValueInterface $parent
    * @return ValueInterface
-   * @throws \Exception
+   * @throws Exception
    */
   abstract function createValue($data, ValueInterface $parent);
 
@@ -133,6 +145,7 @@ abstract class AbstractField extends Model
       'group'        => $this->getEditorGroup($element),
       'label'        => $this->label,
       'name'         => $this->name,
+      'rules'        => $this->getValueRules(),
       'type'         => strtolower($this->type),
       'width'        => $width,
     );
@@ -175,6 +188,19 @@ abstract class AbstractField extends Model
     }
 
     return $group;
+  }
+
+  /**
+   * @return array
+   */
+  public function getValueRules() {
+    if (is_string($this->valueRules)) {
+      return [$this->valueRules];
+    }
+
+    return is_array($this->valueRules)
+      ? $this->valueRules
+      : [];
   }
 
   /**

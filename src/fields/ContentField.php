@@ -14,6 +14,7 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\records\ContentRecord;
+use lenz\contentfield\validators\ContentFieldValidator;
 use Throwable;
 use yii\base\Event;
 
@@ -42,21 +43,28 @@ class ContentField extends Field
    */
   public function afterElementSave(ElementInterface $element, bool $isNew) {
     $value = $element->getFieldValue($this->handle);
+    if (
+      !($value instanceof Content) ||
+      !($element instanceof Element)
+    ) {
+      throw new Exception('Invalid content field value.');
+    }
 
-    // Skip if the element is just propagating, and we're not localizing relations
-    /** @var Element $element */
-    if (!$element->propagating || $this->localizeRelations()) {
-      /** @var Content $value */
+    // Store the relations of the field. Skip if the element is just propagating,
+    // and we're not localizing relations
+    if (
+      !$element->propagating ||
+      $this->hasLocalizedRelations()
+    ) {
       $referencedIds = $value->getReferencedIds();
-
       Plugin::getInstance()
         ->relations
         ->saveRelations($this, $element, $referencedIds);
     }
 
+    // Update the content record
     $model = $value->getModel();
     $conditions = $this->getContentRecordConditions($element);
-
     if (is_null($model)) {
       ContentRecord::deleteAll($conditions);
     } else {
@@ -112,20 +120,12 @@ class ContentField extends Field
   }
 
   /**
-   * @return array
+   * @inheritDoc
+   */
   public function getElementValidationRules(): array {
-  return [
-  [LinkFieldValidator::class, 'field' => $this],
-  ];
-  }
-   */
-
-  /**
-   * Whether each site should get its own unique set of relations.
-   * @return boolean
-   */
-  public function localizeRelations() {
-    return $this->translationMethod !== Field::TRANSLATION_METHOD_NONE;
+    return [
+      [ContentFieldValidator::class],
+    ];
   }
 
   /**
@@ -133,21 +133,7 @@ class ContentField extends Field
    * @throws Throwable
    */
   public function getInputHtml($value, ElementInterface $element = null): string {
-    $view = Craft::$app->getView();
-    $data = new ContentFieldData($this, $value, $element);
-
-    if ($data->hasSchemaErrors()) {
-      return $view->renderTemplate('contentfield/_input-error', [
-        'schemas' => $data->getSchemaErrors(),
-      ]);
-    }
-
-    return $view->renderTemplate('contentfield/_input', [
-      'payload'  => $data->getPayload(),
-      'content'  => $data->getContent(),
-      'name'     => $this->handle,
-      'nameNs'   => Craft::$app->view->namespaceInputId($this->handle),
-    ]);
+    return $this->getHtml($value, $element);
   }
 
   /**
@@ -186,7 +172,7 @@ class ContentField extends Field
    * @throws Throwable
    */
   public function getStaticHtml($value, ElementInterface $element): string {
-    return $this->getInputHtml($value, $element);
+    return $this->getHtml($value, $element, true);
   }
 
   /**
@@ -195,20 +181,24 @@ class ContentField extends Field
    */
   public function getSettingsHtml() {
     $settings = $this->getSettings();
+    $templates = Plugin::getInstance()->schemas
+      ->getTemplateLoader()
+      ->getAllTemplateAsList();
 
     return Craft::$app->getView()->renderTemplate('contentfield/_settings', [
       'name'      => 'contentfield',
       'nameNs'    => Craft::$app->view->namespaceInputId('contentfield'),
       'settings'  => $settings,
-      'templates' => Plugin::getInstance()->schemas->getTemplateLoader()->getAllTemplateAsList(),
+      'templates' => $templates,
     ]);
   }
 
   /**
-   * @inheritdoc
+   * Whether each site should get its own unique set of relations.
+   * @return boolean
    */
-  public static function hasContentColumn(): bool {
-    return false;
+  public function hasLocalizedRelations() {
+    return $this->translationMethod !== Field::TRANSLATION_METHOD_NONE;
   }
 
   /**
@@ -263,6 +253,31 @@ class ContentField extends Field
     ];
   }
 
+  /**
+   * @param Content $value
+   * @param ElementInterface|null $element
+   * @param bool $disabled
+   * @return string
+   * @throws Throwable
+   */
+  private function getHtml($value, ElementInterface $element = null, $disabled = false) {
+    $view = Craft::$app->getView();
+    $data = new ContentFieldData($this, $value, $element);
+
+    if ($data->hasSchemaErrors()) {
+      return $view->renderTemplate('contentfield/_input-error', [
+        'schemas' => $data->getSchemaErrors(),
+      ]);
+    }
+
+    return $view->renderTemplate('contentfield/_input', [
+      'payload'  => $data->getPayload(),
+      'content'  => $data->getContent(),
+      'name'     => $this->handle,
+      'nameNs'   => Craft::$app->view->namespaceInputId($this->handle),
+    ]);
+  }
+
 
   // Static methods
   // --------------
@@ -272,6 +287,13 @@ class ContentField extends Field
    */
   static public function displayName(): string {
     return Craft::t('contentfield', 'Content field');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public static function hasContentColumn(): bool {
+    return false;
   }
 
   /**

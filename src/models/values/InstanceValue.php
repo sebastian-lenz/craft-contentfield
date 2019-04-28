@@ -44,9 +44,10 @@ class InstanceValue extends Model implements ValueInterface
   /**
    * @var string
    */
+  const ERRORS_PROPERTY = '__errors';
+  const ORIGINAL_UUID_PROPERTY = '__originalUuid';
   const TYPE_PROPERTY = '__type';
   const UUID_PROPERTY = '__uuid';
-  const ORIGINAL_UUID_PROPERTY = '__originalUuid';
 
 
   /**
@@ -85,7 +86,12 @@ class InstanceValue extends Model implements ValueInterface
    * @inheritdoc
    */
   public function __get($name) {
-    if (array_key_exists($name, $this->_schema->fields)) {
+    if (
+      substr($name, 0, 4) == 'raw:' &&
+      array_key_exists(substr($name, 4), $this->_schema->fields)
+    ) {
+      return $this->_values[substr($name, 4)]->getEditorData();
+    } elseif (array_key_exists($name, $this->_schema->fields)) {
       return $this->_values[$name];
     } else {
       return parent::__get($name);
@@ -120,6 +126,17 @@ class InstanceValue extends Model implements ValueInterface
    */
   public function __toString() {
     return $this->render();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function addError($attribute, $error = '') {
+    if (substr($attribute, 0, 4) == 'raw:') {
+      $attribute = substr($attribute, 4);
+    }
+
+    parent::addError($attribute, $error);
   }
 
   /**
@@ -164,19 +181,33 @@ class InstanceValue extends Model implements ValueInterface
   }
 
   /**
-   * @return array
+   * @inheritDoc
+   */
+  public function getAttributeLabel($attribute) {
+    if (substr($attribute, 0, 4) == 'raw:') {
+      $attribute = substr($attribute, 4);
+    }
+
+    return parent::getAttributeLabel($attribute);
+  }
+
+  /**
+   * @inheritDoc
    */
   public function getEditorData() {
-    $result = array();
+    $result = array(
+      self::ERRORS_PROPERTY        => $this->getErrors(),
+      self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
+      self::TYPE_PROPERTY          => $this->_schema->qualifier,
+      self::UUID_PROPERTY          => $this->_uuid,
+    );
+
     foreach ($this->_values as $name => $value) {
       if (!is_null($value)) {
         $result[$name] = $value->getEditorData();
       }
     }
 
-    $result[self::TYPE_PROPERTY] = $this->_schema->qualifier;
-    $result[self::UUID_PROPERTY] = $this->_uuid;
-    $result[self::ORIGINAL_UUID_PROPERTY] = $this->_originalUuid;
     return $result;
   }
 
@@ -272,11 +303,29 @@ class InstanceValue extends Model implements ValueInterface
   }
 
   /**
+   * @inheritDoc
+   */
+  public function rules() {
+    return $this->_schema->getValueRules();
+  }
+
+  /**
    * @param string $value
    */
   public function setCachedOutput($value) {
     $this->_output = $value;
   }
+
+  /**
+   *
+   */
+  public function validateInstance() {
+
+  }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @return string

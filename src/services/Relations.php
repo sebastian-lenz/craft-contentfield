@@ -46,7 +46,7 @@ class Relations extends Component
         ]
       ];
 
-      if ($field->localizeRelations()) {
+      if ($field->hasLocalizedRelations()) {
         $oldRelationConditions[] = [
           'or',
           ['sourceSiteId' => null],
@@ -62,7 +62,7 @@ class Relations extends Component
       if (!empty($targetIds)) {
         $values = [];
 
-        if ($field->localizeRelations()) {
+        if ($field->hasLocalizedRelations()) {
           $sourceSiteId = $source->siteId;
         } else {
           $sourceSiteId = null;

@@ -6,6 +6,7 @@ use craft\base\ElementInterface;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\validators\ValueValidator;
 use yii\base\Model;
 
 /**
@@ -195,6 +196,38 @@ abstract class AbstractSchema extends Model
    */
   public function getPreview() {
     return $this->preview;
+  }
+
+  /**
+   * @return array
+   */
+  public function getValueRules() {
+    $result = [];
+
+    foreach ($this->fields as $name => $field) {
+      $rules = $field->getValueRules();
+      if (!is_array($rules)) {
+        continue;
+      }
+
+      foreach ($rules as $key => $rule) {
+        if (is_numeric($key)) {
+          $validator = $rule;
+          $options   = [];
+        } else {
+          $validator = $key;
+          $options   = $rule;
+        }
+
+        $attribute = is_subclass_of($validator, ValueValidator::class)
+          ? $name
+          : 'raw:' . $name;
+
+        $result[] = [$attribute, $validator] + $options;
+      }
+    }
+
+    return $result;
   }
 
   /**

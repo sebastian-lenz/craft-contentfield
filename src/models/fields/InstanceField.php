@@ -8,6 +8,7 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\validators\InstanceValueValidator;
 
 /**
  * Class InstanceField
@@ -100,6 +101,16 @@ class InstanceField extends AbstractField
 
     return parent::getEditorData($element) + array(
       'schemas' => $schemas,
+    );
+  }
+
+  /**
+   * @return array
+   */
+  public function getValueRules() {
+    return array_merge(
+      [InstanceValueValidator::class],
+      parent::getValueRules()
     );
   }
 
