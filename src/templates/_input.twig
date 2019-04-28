@@ -5,6 +5,7 @@
   <div class="tcfField--app"></div>
 </div>
 
+{% do view.registerAssetBundle('lenz\\contentfield\\assets\\field\\ContentFieldAsset') %}
 {% js %}
   createContentField("{{ nameNs }}");
 {% endjs %}

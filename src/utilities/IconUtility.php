@@ -6,6 +6,7 @@ use craft\base\Utility;
 use craft\helpers\Json;
 use craft\web\assets\cp\CpAsset;
 use craft\web\View;
+use lenz\contentfield\assets\field\ContentFieldAsset;
 
 /**
  * Class IconUtility
@@ -59,10 +60,10 @@ class IconUtility extends Utility
    * @return array
    */
   public static function getMaterialIcons(View $view) {
-    /** @var CpAssetBundle $bundle */
+    /** @var ContentFieldAsset $bundle */
     try {
-      $view->registerAssetBundle(CpAssetBundle::class);
-      $bundle = $view->getAssetManager()->getBundle(CpAssetBundle::class);
+      $view->registerAssetBundle(ContentFieldAsset::class);
+      $bundle = $view->getAssetManager()->getBundle(ContentFieldAsset::class);
     } catch (\Exception $e) {
       return array();
     }

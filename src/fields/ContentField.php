@@ -13,7 +13,6 @@ use lenz\contentfield\models\Content;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\records\ContentRecord;
-use lenz\contentfield\utilities\CpAssetBundle;
 
 /**
  * Class ContentField
@@ -68,14 +67,6 @@ class ContentField extends Field
     }
 
     parent::afterElementSave($element, $isNew);
-  }
-
-  /**
-   * @param bool $isNew
-   * @return bool
-   */
-  public function beforeSave(bool $isNew): bool {
-    return parent::beforeSave($isNew);
   }
 
   /**
@@ -256,8 +247,6 @@ class ContentField extends Field
    */
   public function getInputHtml($value, ElementInterface $element = null): string {
     $view = \Craft::$app->getView();
-    $view->registerAssetBundle(CpAssetBundle::class);
-
     $schemaManager = Plugin::getInstance()->schemas;
     $rootSchemas   = $this->getRootSchemas($element);
     $allSchemas    = $schemaManager->getDependedSchemas($rootSchemas);
@@ -299,8 +288,6 @@ class ContentField extends Field
       'content'  => Json::encode(is_null($model) ? null : $model->getEditorData()),
       'name'     => $this->handle,
       'nameNs'   => \Craft::$app->view->namespaceInputId($this->handle),
-      'settings' => $this->getSettings(),
-      'value'    => $value,
     ]);
   }
 
@@ -355,7 +342,7 @@ class ContentField extends Field
       'name'      => 'contentfield',
       'nameNs'    => \Craft::$app->view->namespaceInputId('contentfield'),
       'settings'  => $settings,
-      'templates' => Plugin::getInstance()->getInstance()->schemas->getTemplateLoader()->getAllTemplateAsList(),
+      'templates' => Plugin::getInstance()->schemas->getTemplateLoader()->getAllTemplateAsList(),
     ]);
   }
 

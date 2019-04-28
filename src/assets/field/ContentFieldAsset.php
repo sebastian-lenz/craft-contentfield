@@ -1,21 +1,20 @@
 <?php
 
-namespace lenz\contentfield\utilities;
+namespace lenz\contentfield\assets\field;
 
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
- * Class CpAdminAssetBundle
- * @package typedlinkfield\utilities
+ * Class ContentFieldAsset
  */
-class CpAssetBundle extends AssetBundle
+class ContentFieldAsset extends AssetBundle
 {
   /**
    * @return void
    */
   public function init() {
-    $this->sourcePath = dirname(__DIR__) . '/resources';
+    $this->sourcePath = __DIR__ . '/resources';
     $this->depends    = [ CpAsset::class ];
     $this->js         = [ 'vendor.js', 'content-field.js' ];
     $this->css        = [ 'content-field.css' ];
