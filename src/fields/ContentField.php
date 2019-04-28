@@ -2,17 +2,20 @@
 
 namespace lenz\contentfield\fields;
 
+use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\helpers\Json;
-use yii\base\Event;
-
+use Exception;
 use lenz\contentfield\events\RootSchemasEvent;
 use lenz\contentfield\models\Content;
+use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\records\ContentRecord;
+use Throwable;
+use yii\base\Event;
 
 /**
  * Class ContentField
@@ -35,7 +38,7 @@ class ContentField extends Field
 
   /**
    * @inheritdoc
-   * @throws \Throwable
+   * @throws Throwable
    */
   public function afterElementSave(ElementInterface $element, bool $isNew) {
     $value = $element->getFieldValue($this->handle);
@@ -73,7 +76,7 @@ class ContentField extends Field
    * @param Content|string|array $value
    * @param ElementInterface|null $element
    * @return Content
-   * @throws \Exception
+   * @throws Throwable
    */
   public function normalizeValue($value, ElementInterface $element = null) {
     if ($value instanceof Content) {
@@ -95,7 +98,7 @@ class ContentField extends Field
     } else if (is_array($value) && isset($value['isCpFormData'])) {
       $model = $schemas->createValue(Json::decode($value['content'], true));
     } elseif (is_array($value)) {
-      throw new \Exception('Check me!');
+      throw new Exception('Check me!');
     }
 
     if (is_null($model)) {
@@ -118,43 +121,125 @@ class ContentField extends Field
    */
 
   /**
-   * @param Content $content
-   * @return array
-   */
-  static function loadReferences(Content $content) {
-    $model = $content->getModel();
-    if (!($model instanceof InstanceValue)) {
-      return array();
-    }
-
-    $view = \Craft::$app->getView();
-    return array_map(function(Element $element) use ($view) {
-      $context = array(
-        'element' => $element,
-        'context' => 'field',
-        'size'    => 'large'
-      );
-
-      return array(
-        'element'  => $view->invokeHook('cp.elements.element', $context),
-        'hasThumb' => false,
-        'id'       => intval($element->id),
-        'label'    => (string)$element,
-        'siteId'   => $element->siteId,
-        'status'   => $element->getStatus(),
-        'type'     => get_class($element),
-        'url'      => $element->getUrl(),
-      );
-    }, $model->getReferenceMap()->queryAll());
-  }
-
-  /**
    * Whether each site should get its own unique set of relations.
    * @return boolean
    */
   public function localizeRelations() {
     return $this->translationMethod !== Field::TRANSLATION_METHOD_NONE;
   }
+
+  /**
+   * @inheritDoc
+   * @throws Throwable
+   */
+  public function getInputHtml($value, ElementInterface $element = null): string {
+    $view = Craft::$app->getView();
+    $data = new ContentFieldData($this, $value, $element);
+
+    if ($data->hasSchemaErrors()) {
+      return $view->renderTemplate('contentfield/_input-error', [
+        'schemas' => $data->getSchemaErrors(),
+      ]);
+    }
+
+    return $view->renderTemplate('contentfield/_input', [
+      'payload'  => $data->getPayload(),
+      'content'  => $data->getContent(),
+      'name'     => $this->handle,
+      'nameNs'   => Craft::$app->view->namespaceInputId($this->handle),
+    ]);
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return AbstractSchema[]
+   * @throws Exception
+   */
+  public function getRootSchemas(ElementInterface $element = null) {
+    $schemas = $this->rootTemplates;
+
+    if (Event::hasHandlers($this, self::EVENT_ROOT_SCHEMAS)) {
+      $event = new RootSchemasEvent([
+        'element' => $element,
+        'schemas' => $this->rootTemplates,
+      ]);
+
+      Event::trigger($this, self::EVENT_ROOT_SCHEMAS, $event);
+      $schemas = $event->schemas;
+    }
+
+    return Plugin::getInstance()->schemas->getSchemas($schemas);
+  }
+
+  /**
+   * @inheritDoc
+   * @throws Throwable
+   */
+  public function getSearchKeywords($value, ElementInterface $element): string {
+    return $this
+      ->normalizeValue($value, $element)
+      ->getSearchKeywords();
+  }
+
+  /**
+   * @inheritDoc
+   * @throws Throwable
+   */
+  public function getStaticHtml($value, ElementInterface $element): string {
+    return $this->getInputHtml($value, $element);
+  }
+
+  /**
+   * @inheritdoc
+   * @throws Throwable
+   */
+  public function getSettingsHtml() {
+    $settings = $this->getSettings();
+
+    return Craft::$app->getView()->renderTemplate('contentfield/_settings', [
+      'name'      => 'contentfield',
+      'nameNs'    => Craft::$app->view->namespaceInputId('contentfield'),
+      'settings'  => $settings,
+      'templates' => Plugin::getInstance()->schemas->getTemplateLoader()->getAllTemplateAsList(),
+    ]);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public static function hasContentColumn(): bool {
+    return false;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function isValueEmpty($value, ElementInterface $element): bool {
+    if ($value instanceof Content) {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function serializeValue($value, ElementInterface $element = null) {
+    if (!($value instanceof Content)) {
+      return null;
+    }
+
+    $model = $value->getModel();
+    return Json::encode(is_null($model)
+      ? null
+      : $model->getSerializedData()
+    );
+  }
+
+
+  // Private methods
+  // ---------------
 
   /**
    * @param Element $element
@@ -178,214 +263,15 @@ class ContentField extends Field
     ];
   }
 
-  /**
-   * @param ElementInterface|null $element
-   * @return array
-   */
-  private function getElementConfig(ElementInterface $element = null) {
-    if (is_null($element)) {
-      return [
-        'elementId'      => null,
-        'elementSiteId'  => null,
-        'fieldHandle'    => $this->handle,
-        'supportedSites' => [],
-      ];
-    }
 
-    try {
-      /** @var Element $element */
-      $elementSiteId = intval($element->site->id);
-    } catch (\Throwable $error) {
-      $elementSiteId = null;
-    }
-
-    $supportedSites = [];
-    foreach ($element->getSupportedSites() as $siteInfo) {
-      $siteId = is_array($siteInfo) ? $siteInfo['siteId'] : $siteInfo;
-      $site = \Craft::$app->getSites()->getSiteById($siteId);
-      if (is_null($site)) {
-        continue;
-      }
-
-      $supportedSites[] = [
-        'id'       => intval($site->id),
-        'label'    => $site->name,
-        'language' => $site->language,
-      ];
-    }
-
-    return [
-      'elementId'      => intval($element->getId()),
-      'elementSiteId'  => $elementSiteId,
-      'fieldHandle'    => $this->handle,
-      'supportedSites' => $supportedSites
-    ];
-  }
-
-  /**
-   * @return array
-   */
-  private function getGeneralConfig() {
-    $urls = \Craft::$app->urlManager;
-
-    return [
-      'apiEndpoints'     => array(
-        'fetchSite'      => $urls->createUrl('contentfield/cp/fetch'),
-        'oembed'         => $urls->createUrl('contentfield/cp/oembed'),
-        'translate'      => $urls->createUrl('contentfield/cp/translate'),
-      ),
-      'googleMapsApiKey' => Plugin::getInstance()->getSettings()->googleMapsApiKey,
-      'i18nCategory'     => Plugin::$TRANSLATION_CATEGORY,
-    ];
-  }
-
-  /**
-   * @param Content $value
-   * @param ElementInterface|null $element
-   * @return string
-   * @throws \Exception
-   */
-  public function getInputHtml($value, ElementInterface $element = null): string {
-    $view = \Craft::$app->getView();
-    $schemaManager = Plugin::getInstance()->schemas;
-    $rootSchemas   = $this->getRootSchemas($element);
-    $allSchemas    = $schemaManager->getDependedSchemas($rootSchemas);
-    $schemaErrors  = array();
-    $jsonSchemas   = array();
-
-    foreach ($allSchemas as $name => $schema) {
-      if (!$schema->validate()) {
-        $schemaErrors[] = $schema;
-      } else {
-        $jsonSchemas[$name] = $schema->getEditorData($element);
-      }
-    }
-
-    if (count($schemaErrors) > 0) {
-      return $view->renderTemplate('contentfield/_input-error', [
-        'schemas' => $schemaErrors,
-      ]);
-    }
-
-    $data = array(
-      'config' => array_merge(
-        $this->getGeneralConfig(),
-        $this->getElementConfig($element),
-        array(
-          'references'       => $this->loadReferences($value),
-          'rootSchemas'      => array_map(function($schema) {
-            return $schema->qualifier;
-          }, $rootSchemas),
-        )
-      ),
-      'schemas' => $jsonSchemas,
-    );
-
-    $model = $value->getModel();
-
-    return $view->renderTemplate('contentfield/_input', [
-      'payload'  => Json::encode($data),
-      'content'  => Json::encode(is_null($model) ? null : $model->getEditorData()),
-      'name'     => $this->handle,
-      'nameNs'   => \Craft::$app->view->namespaceInputId($this->handle),
-    ]);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function getSearchKeywords($value, ElementInterface $element): string {
-    $content = $this->normalizeValue($value, $element);
-    return $content->getSearchKeywords();
-  }
-
-  /**
-   * @param $value
-   * @param ElementInterface $element
-   * @return string
-   * @throws \Exception
-   */
-  public function getStaticHtml($value, ElementInterface $element): string {
-    return $this->getInputHtml($value, $element);
-  }
-
-  /**
-   * @param ElementInterface|null $element
-   * @return \lenz\contentfield\models\schemas\AbstractSchema[]
-   * @throws \Exception
-   */
-  public function getRootSchemas(ElementInterface $element = null) {
-    $schemas = $this->rootTemplates;
-
-    if (Event::hasHandlers($this, self::EVENT_ROOT_SCHEMAS)) {
-      $event = new RootSchemasEvent([
-        'element' => $element,
-        'schemas' => $this->rootTemplates,
-      ]);
-
-      Event::trigger($this, self::EVENT_ROOT_SCHEMAS, $event);
-      $schemas = $event->schemas;
-    }
-
-    return Plugin::getInstance()->schemas->getSchemas($schemas);
-  }
-
-  /**
-   * @return string
-   * @throws \Twig_Error_Loader
-   * @throws \yii\base\Exception
-   */
-  public function getSettingsHtml() {
-    $settings = $this->getSettings();
-
-    return \Craft::$app->getView()->renderTemplate('contentfield/_settings', [
-      'name'      => 'contentfield',
-      'nameNs'    => \Craft::$app->view->namespaceInputId('contentfield'),
-      'settings'  => $settings,
-      'templates' => Plugin::getInstance()->schemas->getTemplateLoader()->getAllTemplateAsList(),
-    ]);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public static function hasContentColumn(): bool {
-    return false;
-  }
-
-  /**
-   * @param $value
-   * @param ElementInterface $element
-   * @return bool
-   */
-  public function isValueEmpty($value, ElementInterface $element): bool {
-    if ($value instanceof Content) {
-      return false; // $value->isEmpty();
-    }
-
-    return true;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function serializeValue($value, ElementInterface $element = null) {
-    if (!($value instanceof Content)) {
-      return null;
-    }
-
-    $model = $value->getModel();
-    return Json::encode(is_null($model)
-      ? null
-      : $model->getSerializedData()
-    );
-  }
+  // Static methods
+  // --------------
 
   /**
    * @return string
    */
   static public function displayName(): string {
-    return \Craft::t('contentfield', 'Content field');
+    return Craft::t('contentfield', 'Content field');
   }
 
   /**
