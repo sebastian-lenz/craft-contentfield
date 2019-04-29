@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\events;
 
+use lenz\contentfield\models\Content;
 use yii\base\Event;
 
 /**
@@ -10,7 +11,7 @@ use yii\base\Event;
 class RenderEvent extends Event
 {
   /**
-   * @var \lenz\contentfield\models\Content
+   * @var Content
    */
   public $content;
 }

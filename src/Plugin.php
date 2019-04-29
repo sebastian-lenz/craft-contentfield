@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield;
 
+use Craft;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\TemplateEvent;
 use craft\services\Fields;
@@ -61,50 +62,65 @@ class Plugin extends \craft\base\Plugin
       ]
     ]);
 
-    \Craft::$app->view->registerTwigExtension(new Extension());
+    Craft::$app->view->registerTwigExtension(new Extension());
 
     Event::on(
       View::class,
-      View::EVENT_AFTER_RENDER_PAGE_TEMPLATE,
-      function(TemplateEvent $event) {
-        /** @var View $view */
-        $view = $event->sender;
-        if (!in_array($view, $this->patchedViews)) {
-          $view->getTwig()->setLoader(new TemplateLoader($view));
-          $this->patchedViews[] = $view;
-        }
-      }
+      View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+      [$this, 'onBeforeRenderAnyTemplate']
     );
 
     Event::on(
       View::class,
       View::EVENT_BEFORE_RENDER_TEMPLATE,
-      function(TemplateEvent $event) {
-        /** @var View $view */
-        $view = $event->sender;
-        if (!in_array($view, $this->patchedViews)) {
-          $view->getTwig()->setLoader(new TemplateLoader($view));
-          $this->patchedViews[] = $view;
-        }
-      }
+      [$this, 'onBeforeRenderAnyTemplate']
     );
 
     Event::on(
       Fields::class,
       Fields::EVENT_REGISTER_FIELD_TYPES,
-      function(RegisterComponentTypesEvent $event) {
-        $event->types[] = ContentField::class;
-      }
+      [$this, 'onRegisterFieldTypes']
     );
 
     Event::on(
       Utilities::class,
       Utilities::EVENT_REGISTER_UTILITY_TYPES,
-      function(RegisterComponentTypesEvent $event) {
-        $event->types[] = IconUtility::class;
-      }
+      [$this, 'onRegisterUtilityTypes']
     );
   }
+
+  /**
+   * @param TemplateEvent $event
+   */
+  public function onBeforeRenderAnyTemplate(TemplateEvent $event) {
+    $view = $event->sender;
+
+    if (
+      $view instanceof View &&
+      !in_array($view, $this->patchedViews)
+    ) {
+      $view->getTwig()->setLoader(new TemplateLoader($view));
+      $this->patchedViews[] = $view;
+    }
+  }
+
+  /**
+   * @param RegisterComponentTypesEvent $event
+   */
+  public function onRegisterFieldTypes(RegisterComponentTypesEvent $event) {
+    $event->types[] = ContentField::class;
+  }
+
+  /**
+   * @param RegisterComponentTypesEvent $event
+   */
+  public function onRegisterUtilityTypes(RegisterComponentTypesEvent $event) {
+    $event->types[] = IconUtility::class;
+  }
+
+
+  // Protected methods
+  // -----------------
 
   /**
    * @inheritdoc

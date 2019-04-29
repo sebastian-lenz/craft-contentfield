@@ -6,7 +6,6 @@ use craft\web\twig\TemplateLoaderException;
 
 /**
  * Class TemplateLoader
- * @package contentfield\twig
  */
 class TemplateLoader extends \craft\web\twig\TemplateLoader
 {

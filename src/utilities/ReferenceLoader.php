@@ -4,11 +4,12 @@ namespace lenz\contentfield\utilities;
 
 use craft\base\ElementInterface;
 use craft\elements\db\AssetQuery;
+use Exception;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\Plugin;
 
 /**
- * Class BatchLoader
+ * Class ReferenceLoader
  */
 class ReferenceLoader
 {
@@ -40,11 +41,11 @@ class ReferenceLoader
 
   /**
    * @param Content $content
-   * @throws \Exception
+   * @throws Exception
    */
   public function addContent(Content $content) {
     if (isset($this->referenceMap)) {
-      throw new \Exception('This batch loader is already in used');
+      throw new Exception('This batch loader is already in used');
     }
 
     if (!in_array($content, $this->contents)) {

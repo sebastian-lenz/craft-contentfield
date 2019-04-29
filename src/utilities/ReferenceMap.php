@@ -5,7 +5,7 @@ namespace lenz\contentfield\utilities;
 use craft\base\ElementInterface;
 
 /**
- * Class BatchLoaderMap
+ * Class ReferenceMap
  */
 class ReferenceMap
 {

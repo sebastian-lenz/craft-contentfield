@@ -3,6 +3,7 @@
 namespace lenz\contentfield\controllers;
 
 use Craft;
+use craft\helpers\Json;
 use Exception;
 use lenz\contentfield\fields\ContentFieldData;
 use lenz\contentfield\models\Content;
@@ -121,7 +122,7 @@ class CpController extends Controller
     $handle = curl_init((string)$url);
     curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
     $response = curl_exec($handle);
-    $responseDecoded = json_decode($response, true);
+    $responseDecoded = Json::decode($response, true);
     $responseCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
     curl_close($handle);
 

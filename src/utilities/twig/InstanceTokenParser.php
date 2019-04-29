@@ -2,8 +2,8 @@
 
 namespace lenz\contentfield\utilities\twig;
 
-use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
+use Twig_Token;
 
 /**
  * Class InstanceTokenParser
@@ -13,12 +13,12 @@ class InstanceTokenParser extends AbstractTokenParser
   /**
    * @inheritdoc
    */
-  public function parse(Token $token) {
+  public function parse(Twig_Token $token) {
     $parser = $this->parser;
     $stream = $parser->getStream();
 
     $value = $parser->getExpressionParser()->parseExpression();
-    $stream->expect(Token::BLOCK_END_TYPE);
+    $stream->expect(Twig_Token::BLOCK_END_TYPE);
 
     return new InstanceNode($value, $token->getLine(), $this->getTag());
   }

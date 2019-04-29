@@ -2,9 +2,9 @@
 
 namespace lenz\contentfield\utilities\twig;
 
-use Twig\Compiler;
 use Twig\Node\Expression\AbstractExpression;
 use Twig\Node\Node;
+use Twig_Compiler;
 
 /**
  * Class InstanceNode
@@ -25,7 +25,7 @@ class InstanceNode extends Node
   /**
    * @inheritDoc
    */
-  public function compile(Compiler $compiler) {
+  public function compile(Twig_Compiler $compiler) {
     $compiler
       ->addDebugInfo($this)
       ->subcompile($this->getNode('value'))

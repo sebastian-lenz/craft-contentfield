@@ -2,8 +2,13 @@
 
 namespace lenz\contentfield\utilities\oembed;
 
+use DOMDocument;
+use DOMElement;
 use lenz\contentfield\utilities\HTTP;
 use craft\helpers\Json;
+use lenz\contentfield\utilities\Url;
+use Throwable;
+use Yii;
 use yii\caching\FileCache;
 
 /**
@@ -118,7 +123,7 @@ class OEmbed
    * @param array $data
    */
   public function __construct($data) {
-    \Yii::configure($this, $data);
+    Yii::configure($this, $data);
   }
 
   /**
@@ -136,7 +141,7 @@ class OEmbed
     $html = is_string($this->html) ? $this->html : '';
 
     if (!is_null($options) && !empty($html)) {
-      $doc = new \DOMDocument();
+      $doc = new DOMDocument();
       $doc->loadHTML($html, LIBXML_HTML_NOIMPLIED);
       $element = $doc->documentElement;
 
@@ -155,10 +160,10 @@ class OEmbed
   }
 
   /**
-   * @param \DOMElement $element
+   * @param DOMElement $element
    * @param array $options
    */
-  protected function modifyAttributes(\DOMElement $element, array $options) {
+  protected function modifyAttributes(DOMElement $element, array $options) {
     foreach ($options as $name => $value) {
       if (is_null($value)) {
         $element->removeAttribute($name);
@@ -173,16 +178,16 @@ class OEmbed
   }
 
   /**
-   * @param \DOMElement $element
+   * @param DOMElement $element
    * @param array $options
    */
-  protected function modifyQuery(\DOMElement $element, array $options) {
+  protected function modifyQuery(DOMElement $element, array $options) {
     $src = $element->getAttribute('src');
     if (empty($src)) {
       return;
     }
 
-    $url = new \lenz\contentfield\utilities\Url($src);
+    $url = new Url($src);
     $query = $url->getQuery();
 
     foreach ($options as $name => $value) {
@@ -210,7 +215,7 @@ class OEmbed
       if ($response !== false) {
         $result = Json::decode($response);
       }
-    } catch (\Throwable $error) {}
+    } catch (Throwable $error) {}
 
     if (is_null($result)) {
       try {
@@ -218,7 +223,7 @@ class OEmbed
         $result = Json::decode($response);
         $duration = isset($result['cache_age']) ? $result['cache_age'] : self::CACHE_DURATION;
         $cache->set($url, $response, $duration);
-      } catch (\Throwable $error) {}
+      } catch (Throwable $error) {}
     }
 
     return is_array($result) ? $result : null;

@@ -2,10 +2,12 @@
 
 namespace lenz\contentfield\utilities;
 
+use Craft;
 use craft\base\Utility;
 use craft\helpers\Json;
 use craft\web\assets\cp\CpAsset;
 use craft\web\View;
+use Exception;
 use lenz\contentfield\assets\field\ContentFieldAsset;
 
 /**
@@ -17,14 +19,14 @@ class IconUtility extends Utility
    * @inheritdoc
    */
   public static function contentHtml(): string {
-    $view = \Craft::$app->getView();
+    $view = Craft::$app->getView();
 
     try {
       return $view->renderTemplate('contentfield/_icons', array(
         'craftIcons'    => self::getCraftIcons($view),
         'materialIcons' => self::getMaterialIcons($view),
       ));
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return 'Unavailable';
     }
   }
@@ -38,7 +40,7 @@ class IconUtility extends Utility
     try {
       $view->registerAssetBundle(CpAsset::class);
       $bundle = $view->getAssetManager()->getBundle(CpAsset::class);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return array();
     }
 
@@ -64,7 +66,7 @@ class IconUtility extends Utility
     try {
       $view->registerAssetBundle(ContentFieldAsset::class);
       $bundle = $view->getAssetManager()->getBundle(ContentFieldAsset::class);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return array();
     }
 
@@ -84,7 +86,7 @@ class IconUtility extends Utility
    * @inheritdoc
    */
   public static function iconPath() {
-    return \Craft::getAlias('@app/icons/photo.svg');
+    return Craft::getAlias('@app/icons/photo.svg');
   }
 
   /**
@@ -98,6 +100,6 @@ class IconUtility extends Utility
    * @inheritdoc
    */
   public static function displayName(): string {
-    return \Craft::t('contentfield', 'Icons');
+    return Craft::t('contentfield', 'Icons');
   }
 }

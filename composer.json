@@ -8,7 +8,9 @@
     "craftcms/cms": "^3.1.1",
     "craftcms/redactor": "^2.2.0",
     "symfony/yaml": "^3.4",
-    "ext-curl": "*"
+    "ext-curl": "*",
+    "ext-dom": "*",
+    "ext-libxml": "*"
   },
   "autoload": {
     "psr-4": {

@@ -5,19 +5,20 @@ namespace lenz\contentfield\utilities;
 /**
  * Class HTTP
  */
-class HTTP {
+class HTTP
+{
   /**
    * @param string $url
    * @return mixed
    */
-  static  public function fetch($url) {
+  static public function fetch($url) {
     $channel = curl_init();
     curl_setopt($channel,CURLOPT_URL, $url);
     curl_setopt($channel,CURLOPT_CONNECTTIMEOUT, 2);
     curl_setopt($channel,CURLOPT_RETURNTRANSFER, true);
     curl_setopt($channel, CURLOPT_SSL_VERIFYPEER, false);
-    $result = curl_exec($channel);
 
+    $result = curl_exec($channel);
     if (curl_errno($channel)) {
       $result = null;
     } else {

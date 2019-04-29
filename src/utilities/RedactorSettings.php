@@ -2,12 +2,17 @@
 
 namespace lenz\contentfield\utilities;
 
+use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\errors\SiteNotFoundException;
 use craft\redactor\assets\field\FieldAsset;
 use craft\redactor\assets\redactor\RedactorAsset;
 use craft\redactor\Field;
-use craft\redactor\FieldData;
+use Exception;
+use ReflectionClass;
+use ReflectionException;
+use yii\base\InvalidConfigException;
 
 /**
  * Class RedactorSettings
@@ -15,7 +20,7 @@ use craft\redactor\FieldData;
 class RedactorSettings extends Field
 {
   /**
-   * @var \ReflectionClass
+   * @var ReflectionClass
    */
   public $reflection;
 
@@ -23,22 +28,22 @@ class RedactorSettings extends Field
   /**
    * RedactorSettings constructor.
    * @param array $config
-   * @throws \ReflectionException
+   * @throws ReflectionException
    */
   public function __construct(array $config = []) {
     parent::__construct($config);
-    $this->reflection = new \ReflectionClass($this);
+    $this->reflection = new ReflectionClass($this);
   }
 
   /**
    * @param Element|null $element
    * @return array|string
-   * @throws \craft\errors\SiteNotFoundException
-   * @throws \yii\base\InvalidConfigException
+   * @throws SiteNotFoundException
+   * @throws InvalidConfigException
    */
   public function getFieldSettings(Element $element = null) {
     // Register the asset/redactor bundles
-    $view = \Craft::$app->getView();
+    $view = Craft::$app->getView();
     $view->registerAssetBundle(FieldAsset::class);
 
     /** @var RedactorAsset $bundle */
@@ -55,7 +60,7 @@ class RedactorSettings extends Field
 
     $site = $element
       ? $element->getSite()
-      : \Craft::$app->getSites()->getCurrentSite();
+      : Craft::$app->getSites()->getCurrentSite();
 
     $settings = [
       'linkOptions'    => $this->getLinkOptions($element),
@@ -68,7 +73,7 @@ class RedactorSettings extends Field
 
     if ($this->translationMethod != self::TRANSLATION_METHOD_NONE) {
       // Explicitly set the text direction
-      $locale = \Craft::$app->getI18n()->getLocaleById($site->language);
+      $locale = Craft::$app->getI18n()->getLocaleById($site->language);
       $settings['direction'] = $locale->getOrientation();
     }
 
@@ -99,7 +104,7 @@ class RedactorSettings extends Field
       $method = $this->reflection->getMethod('_parseRefs');
       $method->setAccessible(true);
       return $method->invoke($this, $value, $element);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return $value;
     }
   }
@@ -112,7 +117,7 @@ class RedactorSettings extends Field
       $method = $this->reflection->getMethod('_getRedactorConfig');
       $method->setAccessible(true);
       return $method->invoke($this);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return array();
     }
   }
@@ -126,7 +131,7 @@ class RedactorSettings extends Field
       $method = $this->reflection->getMethod('_getLinkOptions');
       $method->setAccessible(true);
       return $method->invoke($this, $element);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return array();
     }
   }
@@ -139,7 +144,7 @@ class RedactorSettings extends Field
       $method = $this->reflection->getMethod('_getVolumeKeys');
       $method->setAccessible(true);
       return $method->invoke($this);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return array();
     }
   }
@@ -152,7 +157,7 @@ class RedactorSettings extends Field
       $method = $this->reflection->getMethod('_getTransforms');
       $method->setAccessible(true);
       return $method->invoke($this);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return array();
     }
   }
