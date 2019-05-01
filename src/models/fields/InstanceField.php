@@ -109,7 +109,7 @@ class InstanceField extends AbstractField
    */
   public function getValueRules() {
     return array_merge(
-      [InstanceValueValidator::class],
+      [[InstanceValueValidator::class]],
       parent::getValueRules()
     );
   }

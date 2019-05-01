@@ -42,6 +42,11 @@ class ContentFieldData
   private $_schemaErrors;
 
   /**
+   * @var string
+   */
+  private $_schemaScripts;
+
+  /**
    * @var array
    */
   private $_schemas;
@@ -92,6 +97,13 @@ class ContentFieldData
   }
 
   /**
+   * @return string
+   */
+  public function getScripts() {
+    return $this->_schemaScripts;
+  }
+
+  /**
    * @return bool
    */
   public function hasSchemaErrors() {
@@ -112,16 +124,21 @@ class ContentFieldData
 
     $errors  = array();
     $schemas = array();
+    $scripts = '';
+
     foreach ($allSchemas as $name => $schema) {
       if (!$schema->validate()) {
         $errors[] = $schema;
       } else {
+        $scripts .= $schema->getClientValidationScript();
         $schemas[$name] = $schema->getEditorData($this->_element);
       }
     }
 
-    $this->_schemas = $schemas;
-    $this->_schemaErrors = $errors;
+    $this->_schemas       = $schemas;
+    $this->_schemaErrors  = $errors;
+    $this->_schemaScripts = $scripts;
+
     $this->_rootSchemas = array_map(function($schema) {
       return $schema->qualifier;
     }, $rootSchemas);

@@ -109,11 +109,21 @@ class ContentField extends Field
       throw new Exception('Check me!');
     }
 
-    if (is_null($model)) {
-      $schemas = $this->getRootSchemas($element);
-      if (count($schemas) === 1) {
-        $model = new InstanceValue([], $schemas[0], null, null);
-      }
+    // If we have a model, check whether the type is allowed
+    $rootSchemas = $this->getRootSchemas($element);
+    $rootSchemasTypes = array_map(
+      function($schema) { return $schema->qualifier; },
+      $rootSchemas
+    );
+
+    if (!is_null($model) && !in_array($model->getType(), $rootSchemasTypes)) {
+      $model = null;
+    }
+
+    // If we don't have a model and there is only one schema
+    // available, create a model from it
+    if (is_null($model) && count($rootSchemas) === 1) {
+      $model = new InstanceValue([], $rootSchemas[0], null, null);
     }
 
     return new Content($model, $element);
@@ -271,10 +281,11 @@ class ContentField extends Field
     }
 
     return $view->renderTemplate('contentfield/_input', [
-      'payload'  => $data->getPayload(),
       'content'  => $data->getContent(),
       'name'     => $this->handle,
       'nameNs'   => Craft::$app->view->namespaceInputId($this->handle),
+      'payload'  => $data->getPayload(),
+      'scripts'  => $data->getScripts(),
     ]);
   }
 

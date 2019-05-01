@@ -2,12 +2,16 @@
 
 namespace lenz\contentfield\models\schemas;
 
+use Craft;
 use craft\base\ElementInterface;
+use Exception;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\validators\ValueValidator;
 use yii\base\Model;
+use yii\helpers\Html;
+use yii\web\JsExpression;
 
 /**
  * Class AbstractSchema
@@ -63,11 +67,11 @@ abstract class AbstractSchema extends Model
    * AbstractSchema constructor.
    *
    * @param array $config
-   * @throws \Exception
+   * @throws Exception
    */
   public function __construct(array $config = []) {
     if (!isset($config['qualifier'])) {
-      throw new \Exception('All schemas must have a qualifier.');
+      throw new Exception('All schemas must have a qualifier.');
     }
 
     if (isset($config['fields'])) {
@@ -83,19 +87,19 @@ abstract class AbstractSchema extends Model
         // If the field list is associative, use the keys as the field names
         if (is_string($key)) {
           if (isset($field['name'])) {
-            \Craft::warning(array('The field `$1` has multiple names.', $key), 'craft-contentfield');
+            Craft::warning(array('The field `$1` has multiple names.', $key), 'craft-contentfield');
           }
 
           $field['name'] = $key;
         }
 
         if (!is_array($field) || !isset($field['type']) || !isset($field['name'])) {
-          throw new \Exception('Invalid schema');
+          throw new Exception('Invalid schema');
         }
 
         $instance = $fieldManager->createField($field);
         if (isset($this->fields[$instance->name])) {
-          throw new \Exception('The field "' . $instance->name . '" is already set on schema "' . $config['qualifier'] . '".');
+          throw new Exception('The field "' . $instance->name . '" is already set on schema "' . $config['qualifier'] . '".');
         }
 
         $this->fields[$instance->name] = $instance;
@@ -180,7 +184,7 @@ abstract class AbstractSchema extends Model
    * @return string
    */
   public function getLabel() {
-    \Craft::$app->getView()->registerTranslations(
+    Craft::$app->getView()->registerTranslations(
       Plugin::$TRANSLATION_CATEGORY,
       array($this->label)
     );
@@ -205,26 +209,51 @@ abstract class AbstractSchema extends Model
     $result = [];
 
     foreach ($this->fields as $name => $field) {
-      $rules = $field->getValueRules();
-      if (!is_array($rules)) {
-        continue;
-      }
-
-      foreach ($rules as $key => $rule) {
-        if (is_numeric($key)) {
-          $validator = $rule;
-          $options   = [];
-        } else {
-          $validator = $key;
-          $options   = $rule;
-        }
-
+      foreach ($field->getValueRules() as $rule) {
+        $validator = $rule[0];
         $attribute = is_subclass_of($validator, ValueValidator::class)
           ? $name
           : 'raw:' . $name;
 
-        $result[] = [$attribute, $validator] + $options;
+        unset($rule[0]);
+        $result[] = [$attribute, $validator] + $rule;
       }
+    }
+
+    return $result;
+  }
+
+  /**
+   * @return string
+   * @throws Exception
+   */
+  public function getClientValidationScript() {
+    $model      = new InstanceValue([], $this);
+    $validators = [];
+    $view       = Craft::$app->getView();
+
+    foreach ($model->getActiveValidators() as $validator) {
+      foreach ($validator->attributes as $attribute) {
+        if (substr($attribute, 0, 4) == 'raw:') {
+          $attribute = substr($attribute, 4);
+        }
+
+        $js = $validator->clientValidateAttribute($model, $attribute, $view);
+        if ($validator->enableClientValidation && $js != '') {
+          if ($validator->whenClient !== null) {
+            $js = "if (({$validator->whenClient})(attribute, value)) { $js }";
+          }
+
+          $validators[$attribute][] = $js;
+        }
+      }
+    }
+
+    $result = '';
+    foreach ($validators as $name => $handlers) {
+      $callback = uniqid();
+      $this->fields[$name]->setClientValidationCallback($callback);
+      $result .= 'addContentFieldValidators("' . $callback . '", function(attribute, value, messages, deferred, $form) {' . implode('', $handlers) . '});';
     }
 
     return $result;

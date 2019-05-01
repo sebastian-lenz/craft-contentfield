@@ -80,7 +80,7 @@ class ArrayField extends AbstractField
    */
   public function getValueRules() {
     return array_merge(
-      [ArrayValueValidator::class],
+      [[ArrayValueValidator::class]],
       parent::getValueRules()
     );
   }

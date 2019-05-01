@@ -219,6 +219,32 @@ class InstanceValue extends Model implements ValueInterface
   }
 
   /**
+   * @return InstanceValue|null
+   */
+  public function getNextSibling() {
+    return $this->getSibling(1);
+  }
+
+  /**
+   * @return InstanceValue|null
+   */
+  public function getParentInstance() {
+    $parent = $this->_parent;
+    if ($parent instanceof ArrayValue) {
+      $parent = $parent->getParent();
+    }
+
+    return $parent instanceof InstanceValue ? $parent : null;
+  }
+
+  /**
+   * @return InstanceValue|null
+   */
+  public function getPreviousSibling() {
+    return $this->getSibling(-1);
+  }
+
+  /**
    * @inheritdoc
    */
   public function getReferenceMap(ReferenceMap $map = null) {
@@ -269,6 +295,13 @@ class InstanceValue extends Model implements ValueInterface
   }
 
   /**
+   * @return string
+   */
+  public function getUuid() {
+    return $this->_uuid;
+  }
+
+  /**
    * @return ValueInterface[]
    */
   public function getValues() {
@@ -280,6 +313,27 @@ class InstanceValue extends Model implements ValueInterface
    */
   public function hasCachedOutput() {
     return isset($this->_output);
+  }
+
+  /**
+   * @return boolean
+   */
+  public function hasNextSibling() {
+    return !is_null($this->getSibling(1));
+  }
+
+  /**
+   * @return bool
+   */
+  public function hasParentInstance() {
+    return !is_null($this->getParentInstance());
+  }
+
+  /**
+   * @return boolean
+   */
+  public function hasPreviousSibling() {
+    return !is_null($this->getSibling(-1));
   }
 
   /**
@@ -316,11 +370,29 @@ class InstanceValue extends Model implements ValueInterface
     $this->_output = $value;
   }
 
-  /**
-   *
-   */
-  public function validateInstance() {
 
+  // Private methods
+  // ---------------
+
+  /**
+   * @param int $offset
+   * @return InstanceValue|null
+   */
+  private function getSibling($offset) {
+    $parent = $this->_parent;
+    if (is_null($this->_parent) || !($parent instanceof ArrayValue)) {
+      return null;
+    }
+
+    for ($index = 0; $index < count($parent); $index++) {
+      if ($parent->offsetGet($index) == $this) {
+        return $parent->offsetExists($index + $offset)
+          ? $parent->offsetGet($index + $offset)
+          : null;
+      }
+    }
+
+    return null;
   }
 
 

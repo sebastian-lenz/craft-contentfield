@@ -2,7 +2,12 @@
 
 namespace lenz\contentfield\models\schemas;
 
+use Craft;
+use craft\web\twig\Environment;
 use lenz\contentfield\models\values\InstanceValue;
+use Throwable;
+use Twig\TemplateWrapper;
+use yii\base\Exception;
 
 /**
  * Class TemplateSchema
@@ -20,12 +25,12 @@ class TemplateSchema extends AbstractSchema
   public $template;
 
   /**
-   * @var \Twig\TemplateWrapper
+   * @var TemplateWrapper
    */
   private $_template;
 
   /**
-   * @var \craft\web\twig\Environment
+   * @var Environment
    */
   static private $_twig;
 
@@ -40,8 +45,8 @@ class TemplateSchema extends AbstractSchema
   }
 
   /**
-   * @return \Twig\TemplateWrapper
-   * @throws \Throwable
+   * @return TemplateWrapper
+   * @throws Throwable
    */
   private function getTemplate() {
     if (!isset($this->_template)) {
@@ -61,12 +66,12 @@ class TemplateSchema extends AbstractSchema
   }
 
   /**
-   * @return \craft\web\twig\Environment
-   * @throws \yii\base\Exception
+   * @return Environment
+   * @throws Exception
    */
   static function getTwig() {
     if (!isset(self::$_twig)) {
-      $view = \Craft::$app->getView();
+      $view = Craft::$app->getView();
       $oldTemplateMode = $view->getTemplateMode();
       if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
         $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
@@ -90,8 +95,8 @@ class TemplateSchema extends AbstractSchema
   private function getNormalizedVariables(InstanceValue $instance, array $variables) {
     return array_merge(
       [
-        'entry' => $instance->getContent()->getOwner(),
-        'node' => $instance,
+        'entry'    => $instance->getContent()->getOwner(),
+        'instance' => $instance,
       ],
       $instance->getValues(),
       $variables
