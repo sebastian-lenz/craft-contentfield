@@ -2,7 +2,7 @@
   "name": "sebastianlenz/contentfield",
   "description": "A Craft field type for editing structured content",
   "type": "craft-plugin",
-  "license": "Craft",
+  "license": "proprietary",
   "require": {
     "php": "^7.0",
     "craftcms/cms": "^3.1.1",
