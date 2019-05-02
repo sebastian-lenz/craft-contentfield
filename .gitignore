@@ -1,6 +1,7 @@
 /.idea
 /bin
 /dist
+/docs/_build
 /etc
 /vendor
 .DS_Store

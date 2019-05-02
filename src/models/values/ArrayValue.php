@@ -219,8 +219,4 @@ class ArrayValue extends Value implements \ArrayAccess, \Countable, \IteratorAgg
 
     return implode('', $result);
   }
-
-  public function validateArray() {
-
-  }
 }

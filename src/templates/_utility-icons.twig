@@ -1,0 +1,27 @@
+{% extends "contentfield/_utility.twig" %}
+
+{% block toolsContent %}
+  <h2>Craft icons</h2>
+  <ul class="tcfIconGrid">
+  {% for icon in craftIcons %}
+    <li class="tcfIconGrid--item">
+      <div class="tcfIconGrid--display">
+        <div class="tcfIcon craft large">{{ icon }}</div>
+      </div>
+      <div class="tcfIconGrid--label">craft:{{ icon }}</div>
+    </li>
+  {% endfor %}
+  </ul>
+
+  <h2>Material icons</h2>
+  <ul class="tcfIconGrid">
+    {% for icon in materialIcons %}
+      <li class="tcfIconGrid--item">
+        <div class="tcfIconGrid--display">
+          <div class="tcfIcon material large">{{ icon }}</div>
+        </div>
+        <div class="tcfIconGrid--label">material:{{ icon }}</div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

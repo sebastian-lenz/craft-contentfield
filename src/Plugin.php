@@ -9,7 +9,8 @@ use craft\services\Fields;
 use craft\services\Utilities;
 use craft\web\View;
 use lenz\contentfield\fields\ContentField;
-use lenz\contentfield\utilities\IconUtility;
+use lenz\contentfield\utilities\Utility;
+use lenz\contentfield\utilities\SourcesUtility;
 use lenz\contentfield\utilities\TemplateLoader;
 use lenz\contentfield\utilities\twig\Extension;
 use yii\base\Event;
@@ -115,7 +116,7 @@ class Plugin extends \craft\base\Plugin
    * @param RegisterComponentTypesEvent $event
    */
   public function onRegisterUtilityTypes(RegisterComponentTypesEvent $event) {
-    $event->types[] = IconUtility::class;
+    $event->types[] = Utility::class;
   }
 
 

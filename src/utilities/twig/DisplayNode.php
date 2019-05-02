@@ -7,9 +7,9 @@ use Twig\Node\Node;
 use Twig_Compiler;
 
 /**
- * Class InstanceNode
+ * Class DisplayNode
  */
-class InstanceNode extends Node
+class DisplayNode extends Node
 {
   /**
    * InstanceNode constructor.

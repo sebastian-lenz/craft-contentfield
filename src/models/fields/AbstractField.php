@@ -177,13 +177,13 @@ abstract class AbstractField extends Model
    * @return array
    */
   public function getEditorGroup(ElementInterface $element = null) {
-    if (!isset($this->group) || !is_array($this->group)) {
+    if (!isset($this->group)) {
       return null;
     }
 
     $attributes = $this->group;
     if (!is_array($attributes)) {
-      $attributes = ['label' => $attributes];
+      $attributes = ['label' => (string)$attributes];
     }
 
     $group = array();

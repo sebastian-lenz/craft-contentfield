@@ -174,6 +174,9 @@ class ReferenceField extends AbstractField
     ) {
       $config = array(
         'type'        => self::NAME,
+        'criteria'    => [
+          'kind'      => 'image',
+        ],
         'elementType' => Asset::class,
         'limit'       => $config['type'] === 'image' ? 1 : null,
       ) + $config;

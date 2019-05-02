@@ -36,6 +36,7 @@ class ArrayField extends AbstractField
    */
   public function __construct(array $config = []) {
     if (array_key_exists('member', $config)) {
+      $config['member']['name'] = $config['name'];
       $config['member'] = Plugin::getInstance()
         ->fields
         ->createField($config['member']);

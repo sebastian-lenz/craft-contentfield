@@ -6,9 +6,9 @@ use Twig\TokenParser\AbstractTokenParser;
 use Twig_Token;
 
 /**
- * Class InstanceTokenParser
+ * Class DisplayTokenParser
  */
-class InstanceTokenParser extends AbstractTokenParser
+class DisplayTokenParser extends AbstractTokenParser
 {
   /**
    * @inheritdoc
@@ -20,13 +20,13 @@ class InstanceTokenParser extends AbstractTokenParser
     $value = $parser->getExpressionParser()->parseExpression();
     $stream->expect(Twig_Token::BLOCK_END_TYPE);
 
-    return new InstanceNode($value, $token->getLine(), $this->getTag());
+    return new DisplayNode($value, $token->getLine(), $this->getTag());
   }
 
   /**
    * @inheritdoc
    */
   public function getTag() {
-    return 'instance';
+    return 'display';
   }
 }

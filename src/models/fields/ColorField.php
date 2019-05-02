@@ -71,7 +71,7 @@ class ColorField extends AbstractField
 
     $hasInvalidValue = false;
     foreach ($this->$attribute as $value) {
-      if (!self::isPresetColor($value)) {
+      if (!self::isHexColor($value)) {
         $hasInvalidValue = true;
         break;
       }
@@ -92,27 +92,5 @@ class ColorField extends AbstractField
    */
   static public function isHexColor($value) {
     return preg_match('/#([a-f0-9]{3}){1,2}\b/i', $value);
-  }
-
-  /**
-   * @param mixed $preset
-   * @return bool
-   */
-  static public function isPresetColor($preset) {
-    if (self::isHexColor($preset)) {
-      return true;
-    }
-
-    if (!is_array($preset)) {
-      return false;
-    }
-
-    foreach ($preset as $key => $value) {
-      if ($key === 'title' && is_string($value)) continue;
-      if ($key === 'color' && self::isHexColor($value)) continue;
-      return false;
-    }
-
-    return true;
   }
 }

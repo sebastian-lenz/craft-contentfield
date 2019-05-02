@@ -51,7 +51,7 @@ class LocationValue extends Value
    * @return string
    */
   function __toString() {
-    return $this->latitude . '/' . $this->longitude;
+    return $this->latitude . ',' . $this->longitude;
   }
 
 

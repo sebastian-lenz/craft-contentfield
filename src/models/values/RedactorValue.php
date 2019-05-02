@@ -196,6 +196,10 @@ class RedactorValue extends Value
     }
   }
 
+
+  // Private methods
+  // ---------------
+
   /**
    * @return string
    */

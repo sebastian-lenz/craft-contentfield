@@ -19,7 +19,7 @@ class Extension extends AbstractExtension
    */
   public function getTokenParsers() {
     return [
-      new InstanceTokenParser()
+      new DisplayTokenParser()
     ];
   }
 
