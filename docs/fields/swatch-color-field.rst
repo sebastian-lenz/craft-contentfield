@@ -39,6 +39,9 @@ Field attributes
    * - Property
      - Description
 
+   * - defaultValue
+     - The key of the preselected value.
+
    * - options
      - Defines the available static options.
 

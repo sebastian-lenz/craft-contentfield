@@ -15,6 +15,11 @@ use craft\base\ElementInterface;
 abstract class AbstractEnumerationField extends AbstractField
 {
   /**
+   * @var string|int
+   */
+  public $defaultValue;
+
+  /**
    * @var EnumerationInterface
    */
   protected $enumeration;
@@ -69,7 +74,8 @@ abstract class AbstractEnumerationField extends AbstractField
    */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData($element) + array(
-      'options' => $this->enumeration->getOptions()
+      'defaultValue' => $this->defaultValue,
+      'options'      => $this->enumeration->getOptions(),
     );
   }
 

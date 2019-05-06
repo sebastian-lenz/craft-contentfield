@@ -11,8 +11,8 @@ options from a dropdown.
     type: select
     label: My simple select
     options:
-      first: My first option
-      second: My second option
+      firstKey: My first option
+      secondKey: My second option
 
 This field definition creates the following input in the control panel:
 
@@ -35,12 +35,25 @@ Field attributes
    * - Property
      - Description
 
+   * - defaultValue
+     - The key of the preselected value.
+
    * - options
      - Defines the available static options.
 
    * - enumeration
      - The qualifier of an enumeration class that defines the available
        options. Used to programmatically declare options.
+
+
+:code:`defaultValue`
+--------------------
+
+The key of the preselected value.
+
+.. code-block:: yaml
+
+   defaultValue: firstKey
 
 
 :code:`options`
@@ -51,8 +64,8 @@ Defines the available static options. This can be given as a simple hash map.
 .. code-block:: yaml
 
   options:
-    first: My first option
-    second: My second option
+    firstKey: My first option
+    secondKey: My second option
 
 
 You can also specify the available options as an array of objects each
@@ -62,9 +75,9 @@ produces the identical result as the following notation:
 .. code-block:: yaml
 
   options:
-    - key: first
+    - key: firstKey
       label: My first option
-    - key: second
+    - key: secondKey
       label: My second option
 
 This notation allows you to attach additional values to each option which
@@ -77,10 +90,10 @@ can be accessed inside your template:
     selectField:
       type: select
       options:
-        - key: first
+        - key: firstKey
           label: My first option
           className: firstCssClass
-        - key: second
+        - key: secondKey
           label: My second option
           className: secondCssClass
   ---
@@ -154,8 +167,8 @@ Printing the select field will return the key of the selected option.
     selectField:
       type: select
       options:
-        first: My first option
-        second: My second option
+        firstKey: My first option
+        secondKey: My second option
   ---
   {{ selectField }}
 
