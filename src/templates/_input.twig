@@ -8,5 +8,5 @@
 {% do view.registerAssetBundle('lenz\\contentfield\\assets\\field\\ContentFieldAsset') %}
 {% js %}
   {{ scripts|raw }}
-  createContentField("{{ nameNs }}");
+  contentField.create("{{ nameNs }}");
 {% endjs %}

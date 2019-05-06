@@ -246,9 +246,9 @@ abstract class AbstractSchema extends Model
 
     $result = '';
     foreach ($validators as $name => $handlers) {
-      $callback = uniqid();
-      $this->fields[$name]->setClientValidationCallback($callback);
-      $result .= 'addContentFieldValidators("' . $callback . '", function(attribute, value, messages, deferred, $form) {' . implode('', $handlers) . '});';
+      $id = uniqid();
+      $this->fields[$name]->setClientValidationId($id);
+      $result .= 'contentField.registerValidator("' . $id . '", function(attribute, value, messages, deferred, $form) {' . implode('', $handlers) . '});';
     }
 
     return $result;

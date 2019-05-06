@@ -61,7 +61,7 @@ abstract class AbstractField extends Model
   /**
    * @var string
    */
-  private $_clientValidationCallback;
+  private $_clientValidationId;
 
   /**
    * The internal name of this field.
@@ -159,7 +159,7 @@ abstract class AbstractField extends Model
       'isRequired'   => $this->isRequired(),
       'label'        => Plugin::t($this->label),
       'name'         => $this->name,
-      'validation'   => $this->_clientValidationCallback,
+      'validatorId'  => $this->_clientValidationId,
       'type'         => strtolower($this->type),
       'width'        => $width,
     );
@@ -268,10 +268,10 @@ abstract class AbstractField extends Model
   }
 
   /**
-   * @param string $name
+   * @param string $id
    */
-  public function setClientValidationCallback($name) {
-    $this->_clientValidationCallback = $name;
+  public function setClientValidationId($id) {
+    $this->_clientValidationId = $id;
   }
 
   /**

@@ -19,6 +19,11 @@ class ArrayField extends AbstractField
   public $collapsible = true;
 
   /**
+   * @var int
+   */
+  public $limit = 0;
+
+  /**
    * @var AbstractField
    */
   public $member;
@@ -72,6 +77,7 @@ class ArrayField extends AbstractField
 
     return parent::getEditorData() + array(
       'collapsible' => !!$this->collapsible,
+      'limit'       => is_int($this->limit) ? $this->limit : 0,
       'member'      => $this->member->getEditorData($element),
     );
   }

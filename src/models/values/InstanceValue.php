@@ -2,8 +2,10 @@
 
 namespace lenz\contentfield\models\values;
 
+use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\Plugin;
 use lenz\contentfield\utilities\ReferenceMap;
 use yii\base\Model;
 
@@ -137,6 +139,15 @@ class InstanceValue extends Model implements ValueInterface
     }
 
     parent::addError($attribute, $error);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function attributeLabels() {
+    return array_map(function(AbstractField $field) {
+      return Plugin::t($field->label);
+    }, $this->_schema->fields);
   }
 
   /**
