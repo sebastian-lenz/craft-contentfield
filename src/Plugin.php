@@ -129,4 +129,18 @@ class Plugin extends \craft\base\Plugin
   protected function createSettingsModel() {
     return new Config();
   }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param string $value
+   * @return string
+   */
+  public static function t($value) {
+    return empty($value)
+      ? $value
+      : Craft::t(self::$TRANSLATION_CATEGORY, $value);
+  }
 }

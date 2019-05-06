@@ -163,7 +163,7 @@ abstract class AbstractSchema extends Model
       'fields'    => $fields,
       'grid'      => (string)$this->grid,
       'icon'      => $this->getIcon(),
-      'label'     => $this->getLabel(),
+      'label'     => Plugin::t($this->getLabel()),
       'preview'   => $this->getPreview(),
       'qualifier' => $this->qualifier,
     );
@@ -184,11 +184,6 @@ abstract class AbstractSchema extends Model
    * @return string
    */
   public function getLabel() {
-    Craft::$app->getView()->registerTranslations(
-      Plugin::$TRANSLATION_CATEGORY,
-      array($this->label)
-    );
-
     return $this->label;
   }
 

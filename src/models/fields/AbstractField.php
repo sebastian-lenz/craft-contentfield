@@ -6,6 +6,7 @@ use craft\base\ElementInterface;
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\Plugin;
 use yii\base\Model;
 
 /**
@@ -71,6 +72,13 @@ abstract class AbstractField extends Model
    * List of attributes allowed on groups.
    */
   const GROUP_ATTRIBUTES = [
+    'label'
+  ];
+
+  /**
+   * List of all group attributes that should be localized.
+   */
+  const GROUP_LOCALIZED_ATTRIBUTES = [
     'label'
   ];
 
@@ -147,9 +155,9 @@ abstract class AbstractField extends Model
 
     return array(
       'group'        => $this->getEditorGroup($element),
-      'instructions' => $this->instructions,
+      'instructions' => Plugin::t($this->instructions),
       'isRequired'   => $this->isRequired(),
-      'label'        => $this->label,
+      'label'        => Plugin::t($this->label),
       'name'         => $this->name,
       'validation'   => $this->_clientValidationCallback,
       'type'         => strtolower($this->type),
@@ -174,6 +182,10 @@ abstract class AbstractField extends Model
     $group = array();
     $style = array();
     foreach ($attributes as $name => $value) {
+      if (in_array($name, self::GROUP_LOCALIZED_ATTRIBUTES)) {
+        $value = Plugin::t($value);
+      }
+
       if (in_array($name, self::GROUP_STYLE_ATTRIBUTES)) {
         $style[$name] = (string)$value;
       } else if (in_array($name, self::GROUP_ATTRIBUTES)) {

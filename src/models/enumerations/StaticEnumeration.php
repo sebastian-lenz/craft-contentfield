@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\enumerations;
 
 use lenz\contentfield\models\values\EnumerationValue;
+use lenz\contentfield\Plugin;
 
 /**
  * Class StaticEnumeration
@@ -88,10 +89,15 @@ class StaticEnumeration implements EnumerationInterface
    * @inheritdoc
    */
   function getOptions() {
-    usort($this->options, function($left, $right) {
+    $options = $this->options;
+    for ($index = 0; $index < count($options); $index++) {
+      $options[$index]['label'] = Plugin::t($options[$index]['label']);
+    }
+
+    usort($options, function($left, $right) {
       return strcmp($left['label'], $right['label']);
     });
 
-    return $this->options;
+    return $options;
   }
 }
