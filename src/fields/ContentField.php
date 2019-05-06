@@ -6,6 +6,8 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\elements\db\ElementQuery;
+use craft\elements\db\ElementQueryInterface;
 use craft\helpers\Json;
 use Exception;
 use lenz\contentfield\events\RootSchemasEvent;
@@ -28,6 +30,11 @@ class ContentField extends Field
    * @var string[]
    */
   public $rootTemplates;
+
+  /**
+   * @var int
+   */
+  private static $_queryTableIndex = 0;
 
   /**
    * Event that will be fired when the content field is looking for the
@@ -157,6 +164,7 @@ class ContentField extends Field
     if (Event::hasHandlers($this, self::EVENT_ROOT_SCHEMAS)) {
       $event = new RootSchemasEvent([
         'element' => $element,
+        'field'   => $this,
         'schemas' => $this->rootTemplates,
       ]);
 
@@ -223,6 +231,31 @@ class ContentField extends Field
   }
 
   /**
+   * @inheritDoc
+   */
+  public function modifyElementsQuery(ElementQueryInterface $query, $value) {
+    if (!($query instanceof ElementQuery)) {
+      return;
+    }
+
+    if ($this->enableEagerLoad($query)) {
+      $tableName = 'contentfield_' . (self::$_queryTableIndex++);
+      $query->query->leftJoin(
+        ContentRecord::TABLE . ' ' . $tableName,
+        implode(' AND ', [
+          "[[{$tableName}.elementId]] = [[elements.id]]",
+          "[[{$tableName}.siteId]] = [[elements_sites.siteId]]",
+          "[[{$tableName}.fieldId]] = {$this->id}"
+        ])
+      );
+
+      $query->addSelect([
+        "field:{$this->handle}" => "{$tableName}.content"
+      ]);
+    }
+  }
+
+  /**
    * @inheritdoc
    */
   public function serializeValue($value, ElementInterface $element = null) {
@@ -240,6 +273,39 @@ class ContentField extends Field
 
   // Private methods
   // ---------------
+
+  /**
+   * @param ElementQuery $query
+   * @return bool
+   */
+  private function enableEagerLoad(ElementQuery $query) {
+    // Ignore count queries
+    if (
+      count($query->select) == 1 &&
+      $query->select[0] == 'COUNT(*)'
+    ) {
+      return false;
+    }
+
+    $handle = $this->handle;
+    if ($query->with == $handle) {
+      $query->with = null;
+      return true;
+    }
+
+    if (is_array($query->with) && in_array($handle, $query->with)) {
+      $query->with = array_filter(
+        $query->with,
+        function($with) use ($handle) {
+          return $with != $handle;
+        }
+      );
+
+      return true;
+    }
+
+    return false;
+  }
 
   /**
    * @param Element $element
