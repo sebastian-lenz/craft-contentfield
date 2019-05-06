@@ -16,12 +16,6 @@ use yii\base\Model;
 abstract class AbstractField extends Model
 {
   /**
-   * The default value of this field.
-   * @var mixed
-   */
-  public $defaultValue;
-
-  /**
    * The group name this field belongs to.
    * @var array|string
    */
@@ -152,7 +146,6 @@ abstract class AbstractField extends Model
     }
 
     return array(
-      'defaultValue' => $this->getEditorDefaultValue($element),
       'group'        => $this->getEditorGroup($element),
       'instructions' => $this->instructions,
       'isRequired'   => $this->isRequired(),
@@ -162,14 +155,6 @@ abstract class AbstractField extends Model
       'type'         => strtolower($this->type),
       'width'        => $width,
     );
-  }
-
-  /**
-   * @param ElementInterface|null $element
-   * @return mixed
-   */
-  public function getEditorDefaultValue(ElementInterface $element = null) {
-    return $this->defaultValue;
   }
 
   /**

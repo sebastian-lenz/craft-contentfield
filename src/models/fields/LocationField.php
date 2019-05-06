@@ -36,6 +36,7 @@ class LocationField extends AbstractField
    */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData($element) + array(
+      'defaultValue' => $this->getEditorDefaultValue($element),
     );
   }
 
