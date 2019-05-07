@@ -2,15 +2,24 @@
 
 namespace lenz\contentfield\models\values;
 
+use ArrayAccess;
+use ArrayIterator;
+use Countable;
+use Exception;
+use IteratorAggregate;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\utilities\ReferenceMap;
+use lenz\contentfield\utilities\twig\DisplayInterface;
+use Twig_Markup;
 
 /**
  * Class ArrayValue
  *
  * @property ArrayField $_field
  */
-class ArrayValue extends Value implements \ArrayAccess, \Countable, \IteratorAggregate
+class ArrayValue
+  extends Value
+  implements ArrayAccess, Countable, IteratorAggregate, DisplayInterface
 {
   /**
    * @var ValueInterface[]
@@ -111,14 +120,14 @@ class ArrayValue extends Value implements \ArrayAccess, \Countable, \IteratorAgg
    * @inheritDoc
    */
   public function getHtml(array $variables = []) {
-    return new \Twig_Markup($this->render($variables), 'utf-8');
+    return new Twig_Markup($this->render($variables), 'utf-8');
   }
 
   /**
    * @inheritdoc
    */
   public function getIterator() {
-    return new \ArrayIterator($this->__values);
+    return new ArrayIterator($this->__values);
   }
 
   /**
@@ -180,13 +189,13 @@ class ArrayValue extends Value implements \ArrayAccess, \Countable, \IteratorAgg
 
   /**
    * @inheritdoc
-   * @throws \Exception
+   * @throws Exception
    */
   public function offsetSet($offset, $value) { }
 
   /**
    * @inheritdoc
-   * @throws \Exception
+   * @throws Exception
    */
   public function offsetUnset($offset) { }
 

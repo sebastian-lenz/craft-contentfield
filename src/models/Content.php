@@ -10,12 +10,13 @@ use craft\base\ElementInterface;
 use craft\base\Model;
 use craft\elements\db\AssetQuery;
 use lenz\contentfield\utilities\ReferenceLoader;
+use lenz\contentfield\utilities\twig\DisplayInterface;
 
 /**
  * Class Content
  * @package contentfield\models
  */
-class Content extends Model
+class Content extends Model implements DisplayInterface
 {
   /**
    * @var ReferenceLoader

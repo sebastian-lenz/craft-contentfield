@@ -7,6 +7,7 @@ use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\utilities\ReferenceMap;
+use lenz\contentfield\utilities\twig\DisplayInterface;
 use yii\base\Model;
 
 /**
@@ -14,7 +15,7 @@ use yii\base\Model;
  *
  * @property InstanceField|null $_field
  */
-class InstanceValue extends Model implements ValueInterface
+class InstanceValue extends Model implements DisplayInterface, ValueInterface
 {
   use ValueTrait;
 
@@ -158,9 +159,9 @@ class InstanceValue extends Model implements ValueInterface
   }
 
   /**
-   * @param array $variables
+   * @inheritDoc
    */
-  public function display($variables = []) {
+  public function display(array $variables = []) {
     if (isset($this->_output)) {
       echo $this->_output;
     }
