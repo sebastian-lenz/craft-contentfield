@@ -4,6 +4,8 @@ namespace lenz\contentfield\services;
 
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\ArrayField;
+use lenz\contentfield\models\fields\booleans\CheckboxField;
+use lenz\contentfield\models\fields\booleans\LightswitchField;
 use lenz\contentfield\models\fields\ColorField;
 use lenz\contentfield\models\fields\enumerations\SelectField;
 use lenz\contentfield\models\fields\enumerations\SwatchColorField;
@@ -32,8 +34,10 @@ class FieldManager extends AbstractDefinitionService
    */
   static $FIELD_TYPES = array(
     ArrayField::NAME       => ArrayField::class,
+    CheckboxField::NAME    => CheckboxField::class,
     ColorField::NAME       => ColorField::class,
     InstanceField::NAME    => InstanceField::class,
+    LightswitchField::NAME => LightswitchField::class,
     LinkField::NAME        => LinkField::class,
     LocationField::NAME    => LocationField::class,
     ReferenceField::NAME   => ReferenceField::class,
@@ -42,7 +46,7 @@ class FieldManager extends AbstractDefinitionService
     SwatchColorField::NAME => SwatchColorField::class,
     TextAreaField::NAME    => TextAreaField::class,
     TextField::NAME        => TextField::class,
-    OEmbedField::NAME     => OEmbedField::class,
+    OEmbedField::NAME      => OEmbedField::class,
   );
 
 

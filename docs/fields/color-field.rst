@@ -66,7 +66,7 @@ of hex color values.
   - "#0000ff"
 
 .. warning::
-    You must quote hex color values in YAML.
+   You must quote hex color values in YAML.
 
 
 Templating
