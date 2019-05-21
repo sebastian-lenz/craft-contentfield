@@ -45,6 +45,25 @@ class TemplateSchema extends AbstractSchema
   }
 
   /**
+   * @param string $qualifier
+   * @return string
+   */
+  public function normalizeQualifier(string $qualifier) {
+    if (!preg_match('/^[^:]+:/', $qualifier)) {
+      $qualifier = 'template:' . $qualifier;
+    }
+
+    if (
+      substr($qualifier, 0, 9) == 'template:' &&
+      substr($qualifier, -5) != '.twig'
+    ) {
+      $qualifier .= '.twig';
+    }
+
+    return $qualifier;
+  }
+
+  /**
    * @return TemplateWrapper
    * @throws Throwable
    */

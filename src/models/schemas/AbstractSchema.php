@@ -260,10 +260,24 @@ abstract class AbstractSchema extends Model
    */
   public function matchesQualifier($qualifier) {
     if (is_array($qualifier)) {
-      return in_array($this->qualifier, $qualifier);
+      foreach ($qualifier as $value) {
+        if ($this->qualifier == $this->normalizeQualifier($value)) {
+          return true;
+        }
+      }
+
+      return false;
     } else {
-      return $this->qualifier == $qualifier;
+      return $this->qualifier == $this->normalizeQualifier($qualifier);
     }
+  }
+
+  /**
+   * @param string $qualifier
+   * @return string
+   */
+  public function normalizeQualifier(string $qualifier) {
+    return $qualifier;
   }
 
   /**

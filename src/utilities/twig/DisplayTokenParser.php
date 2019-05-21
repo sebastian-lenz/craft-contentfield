@@ -16,11 +16,17 @@ class DisplayTokenParser extends AbstractTokenParser
   public function parse(Twig_Token $token) {
     $parser = $this->parser;
     $stream = $parser->getStream();
+    $variables = null;
 
     $value = $parser->getExpressionParser()->parseExpression();
+
+    if ($stream->nextIf(Twig_Token::NAME_TYPE, 'with')) {
+      $variables = $this->parser->getExpressionParser()->parseExpression();
+    }
+
     $stream->expect(Twig_Token::BLOCK_END_TYPE);
 
-    return new DisplayNode($value, $token->getLine(), $this->getTag());
+    return new DisplayNode($value, $variables, $token->getLine(), $this->getTag());
   }
 
   /**

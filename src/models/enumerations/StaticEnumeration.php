@@ -13,7 +13,7 @@ class StaticEnumeration implements EnumerationInterface
   /**
    * @var array
    */
-  protected $options;
+  protected $_options;
 
 
   /**
@@ -65,7 +65,7 @@ class StaticEnumeration implements EnumerationInterface
       }
     }
 
-    $this->options = $safeOptions;
+    $this->_options = $safeOptions;
   }
 
   /**
@@ -74,7 +74,7 @@ class StaticEnumeration implements EnumerationInterface
    * @return mixed
    */
   function getCustomData($key, $name) {
-    foreach ($this->options as $option) {
+    foreach ($this->_options as $option) {
       if ($option['key'] === $key) {
         return array_key_exists($name, $option)
           ? $option[$name]
@@ -89,7 +89,7 @@ class StaticEnumeration implements EnumerationInterface
    * @inheritdoc
    */
   function getOptions() {
-    $options = $this->options;
+    $options = $this->_options;
     for ($index = 0; $index < count($options); $index++) {
       $options[$index]['label'] = Plugin::t($options[$index]['label']);
     }

@@ -22,7 +22,16 @@ abstract class AbstractEnumerationField extends AbstractField
   /**
    * @var EnumerationInterface
    */
-  protected $enumeration;
+  protected $_enumeration;
+
+  /**
+   * Defines the keys of an option array.
+   */
+  const ALLOWED_OPTION_KEYS = [
+    'indent' => true,
+    'key'    => true,
+    'label'  => true,
+  ];
 
 
   /**
@@ -33,19 +42,25 @@ abstract class AbstractEnumerationField extends AbstractField
    */
   public function __construct(array $config = []) {
     if (isset($config['options'])) {
-      $this->enumeration = new StaticEnumeration($config['options']);
+      $this->_enumeration = new StaticEnumeration($config['options']);
       unset($config['options']);
     }
 
     if (isset($config['enumeration'])) {
       try {
-        $enumClass = $config['enumeration'];
-        $enum = new $enumClass();
+        if (is_array($config['enumeration'])) {
+          $enumClass = $config['enumeration']['type'];
+          $enumOptions = $config['enumeration'];
+        } else {
+          $enumClass = (string)$config['enumeration'];
+          $enumOptions = [];
+        }
 
+        $enum = new $enumClass($enumOptions);
         if (!($enum instanceof EnumerationInterface)) {
           throw new \Exception(sprintf('Invalid enumeration class given, %s must implement EnumerationInterface.', $enumClass));
         } else {
-          $this->enumeration = $enum;
+          $this->_enumeration = $enum;
         }
       } catch (\Throwable $error) {
         \Craft::warning($error->getMessage());
@@ -54,8 +69,8 @@ abstract class AbstractEnumerationField extends AbstractField
       unset($config['enumeration']);
     }
 
-    if (!isset($this->enumeration)) {
-      $this->enumeration = new StaticEnumeration();
+    if (!isset($this->_enumeration)) {
+      $this->_enumeration = new StaticEnumeration();
     }
 
     parent::__construct($config);
@@ -73,9 +88,13 @@ abstract class AbstractEnumerationField extends AbstractField
    * @return array
    */
   public function getEditorData(ElementInterface $element = null) {
+    $options = array_map(function($option) {
+      return array_intersect_key($option, self::ALLOWED_OPTION_KEYS);
+    }, $this->_enumeration->getOptions());
+
     return parent::getEditorData($element) + array(
       'defaultValue' => $this->defaultValue,
-      'options'      => $this->enumeration->getOptions(),
+      'options'      => $options,
     );
   }
 
@@ -83,6 +102,6 @@ abstract class AbstractEnumerationField extends AbstractField
    * @return EnumerationInterface
    */
   public function getEnumeration() {
-    return $this->enumeration;
+    return $this->_enumeration;
   }
 }

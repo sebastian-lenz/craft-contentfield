@@ -6,6 +6,7 @@ use lenz\contentfield\fields\ContentField;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use Throwable;
 use yii\base\Component;
 
 /**
@@ -22,7 +23,7 @@ class Relations extends Component
    * @param ContentField $field
    * @param ElementInterface $source
    * @param array $targetIds
-   * @throws \Throwable
+   * @throws Throwable
    */
   public function saveRelations(ContentField $field, ElementInterface $source, array $targetIds)
   {
@@ -85,13 +86,14 @@ class Relations extends Component
           'targetId',
           'sortOrder'
         ];
+
         Craft::$app->getDb()->createCommand()
           ->batchInsert('{{%relations}}', $columns, $values)
           ->execute();
       }
 
       $transaction->commit();
-    } catch (\Throwable $e) {
+    } catch (Throwable $e) {
       $transaction->rollBack();
 
       throw $e;

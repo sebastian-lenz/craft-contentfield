@@ -328,24 +328,27 @@ class InstanceValue extends Model implements DisplayInterface, ValueInterface
   }
 
   /**
+   * @param string|string[]|null $qualifier
    * @return boolean
    */
-  public function hasNextSibling() {
-    return !is_null($this->getSibling(1));
+  public function hasNextSibling($qualifier = null) {
+    return $this->isInstanceWithQualifier($this->getSibling(1), $qualifier);
   }
 
   /**
+   * @param string|string[]|null $qualifier
    * @return bool
    */
-  public function hasParentInstance() {
-    return !is_null($this->getParentInstance());
+  public function hasParentInstance($qualifier = null) {
+    return $this->isInstanceWithQualifier($this->getParentInstance(), $qualifier);
   }
 
   /**
+   * @param string|string[]|null $qualifier
    * @return boolean
    */
-  public function hasPreviousSibling() {
-    return !is_null($this->getSibling(-1));
+  public function hasPreviousSibling($qualifier = null) {
+    return $this->isInstanceWithQualifier($this->getSibling(-1), $qualifier);
   }
 
   /**
@@ -405,6 +408,21 @@ class InstanceValue extends Model implements DisplayInterface, ValueInterface
     }
 
     return null;
+  }
+
+  /**
+   * @param mixed $value
+   * @param string|string[]|null $qualifier
+   * @return bool
+   */
+  private function isInstanceWithQualifier($value, $qualifier = null) {
+    if (!($value instanceof InstanceValue)) {
+      return false;
+    }
+
+    return is_null($qualifier)
+      ? true
+      : $value->_schema->matchesQualifier($qualifier);
   }
 
 
