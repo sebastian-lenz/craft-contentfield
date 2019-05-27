@@ -17,6 +17,11 @@ class TemplateSchema extends AbstractSchema
   /**
    * @var string
    */
+  public $model;
+
+  /**
+   * @var string
+   */
   public $path;
 
   /**
@@ -64,6 +69,35 @@ class TemplateSchema extends AbstractSchema
   }
 
   /**
+   * @inheritdoc
+   */
+  public function render(InstanceValue $instance, array $variables = []) {
+    return $this->getTemplate()->render(
+      $this->getNormalizedVariables($instance, $variables)
+    );
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * @param InstanceValue $instance
+   * @param array $variables
+   * @return array
+   */
+  private function getNormalizedVariables(InstanceValue $instance, array $variables) {
+    return array_merge(
+      [
+        'entry'    => $instance->getContent()->getOwner(),
+        'instance' => $instance,
+      ],
+      $instance->getValues(),
+      $variables
+    );
+  }
+
+  /**
    * @return TemplateWrapper
    * @throws Throwable
    */
@@ -75,14 +109,9 @@ class TemplateSchema extends AbstractSchema
     return $this->_template;
   }
 
-  /**
-   * @inheritdoc
-   */
-  public function render(InstanceValue $instance, array $variables = []) {
-    return $this->getTemplate()->render(
-      $this->getNormalizedVariables($instance, $variables)
-    );
-  }
+
+  // Static methods
+  // --------------
 
   /**
    * @return Environment
@@ -104,21 +133,5 @@ class TemplateSchema extends AbstractSchema
     }
 
     return self::$_twig;
-  }
-
-  /**
-   * @param InstanceValue $instance
-   * @param array $variables
-   * @return array
-   */
-  private function getNormalizedVariables(InstanceValue $instance, array $variables) {
-    return array_merge(
-      [
-        'entry'    => $instance->getContent()->getOwner(),
-        'instance' => $instance,
-      ],
-      $instance->getValues(),
-      $variables
-    );
   }
 }

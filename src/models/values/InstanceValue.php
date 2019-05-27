@@ -2,12 +2,16 @@
 
 namespace lenz\contentfield\models\values;
 
+use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\InstanceField;
+use lenz\contentfield\models\InstanceAwareInterface;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
+use yii\base\ActionEvent;
 use yii\base\Model;
 
 /**
@@ -15,9 +19,16 @@ use yii\base\Model;
  *
  * @property InstanceField|null $_field
  */
-class InstanceValue extends Model implements DisplayInterface, ValueInterface
+class InstanceValue
+  extends Model
+  implements BeforeActionInterface, DisplayInterface, ValueInterface
 {
   use ValueTrait;
+
+  /**
+   * @var Model|null
+   */
+  private $_model;
 
   /**
    * @var string
@@ -166,7 +177,7 @@ class InstanceValue extends Model implements DisplayInterface, ValueInterface
       echo $this->_output;
     }
 
-    self::normalizeVariables($variables);
+    $this->normalizeVariables($variables);
     $this->_schema->display($this, $variables);
   }
 
@@ -228,6 +239,34 @@ class InstanceValue extends Model implements DisplayInterface, ValueInterface
    */
   public function getHtml(array $variables = []) {
     return new \Twig_Markup($this->render($variables), 'utf-8');
+  }
+
+  /**
+   * @return Model|null
+   * @throws \Exception
+   */
+  public function getModel() {
+    if (!isset($this->_model)) {
+      $schema     = $this->_schema;
+      $modelClass = $schema instanceof TemplateSchema ? $schema->model : null;
+      $model      = null;
+
+      if (!empty($modelClass)) {
+        $model = new $modelClass();
+
+        if (!($model instanceof Model)) {
+          throw new \Exception('Invalid model class ' . $modelClass);
+        }
+
+        if ($model instanceof InstanceAwareInterface) {
+          $model->setInstance($this);
+        }
+      }
+
+      $this->_model = $model;
+    }
+
+    return $this->_model;
   }
 
   /**
@@ -359,6 +398,22 @@ class InstanceValue extends Model implements DisplayInterface, ValueInterface
   }
 
   /**
+   * @inheritDoc
+   */
+  public function onBeforeAction(ActionEvent $event) {
+    $model = $this->getModel();
+    if (!is_null($model) && $model instanceof BeforeActionInterface) {
+      $model->onBeforeAction($event);
+    }
+
+    foreach ($this->_values as $value) {
+      if ($value instanceof BeforeActionInterface) {
+        $value->onBeforeAction($event);
+      }
+    }
+  }
+
+  /**
    * @param array $variables
    * @return string
    */
@@ -367,7 +422,7 @@ class InstanceValue extends Model implements DisplayInterface, ValueInterface
       return $this->_output;
     }
 
-    self::normalizeVariables($variables);
+    $this->normalizeVariables($variables);
     return $this->_schema->render($this, $variables);
   }
 
@@ -425,6 +480,29 @@ class InstanceValue extends Model implements DisplayInterface, ValueInterface
       : $value->_schema->matchesQualifier($qualifier);
   }
 
+  /**
+   * @param array $variables
+   */
+  private function normalizeVariables(array &$variables) {
+    if (!array_key_exists('loop', $variables)) {
+      $variables['loop'] = [
+        'index'     => 1,
+        'index0'    => 0,
+        'revindex'  => 1,
+        'revindex0' => 0,
+        'first'     => true,
+        'last'      => true,
+        'length'    => 1,
+        'parent'    => [],
+      ];
+    }
+
+    $model = $this->getModel();
+    if (!is_null($model)) {
+      $variables['model'] = $model;
+    }
+  }
+
 
   // Static methods
   // --------------
@@ -439,23 +517,5 @@ class InstanceValue extends Model implements DisplayInterface, ValueInterface
     $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
 
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
-  }
-
-  /**
-   * @param array $variables
-   */
-  static function normalizeVariables(array &$variables) {
-    if (!array_key_exists('loop', $variables)) {
-      $variables['loop'] = [
-        'index'     => 1,
-        'index0'    => 0,
-        'revindex'  => 1,
-        'revindex0' => 0,
-        'first'     => true,
-        'last'      => true,
-        'length'    => 1,
-        'parent'    => [],
-      ];
-    }
   }
 }

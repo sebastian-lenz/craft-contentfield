@@ -11,6 +11,7 @@ use craft\base\Model;
 use craft\elements\db\AssetQuery;
 use lenz\contentfield\utilities\ReferenceLoader;
 use lenz\contentfield\utilities\twig\DisplayInterface;
+use yii\base\ActionEvent;
 
 /**
  * Class Content
@@ -156,6 +157,18 @@ class Content extends Model implements DisplayInterface
     return is_null($this->model)
       ? ''
       : $this->model->getSearchKeywords();
+  }
+
+  /**
+   * @param ActionEvent $event
+   */
+  public function onBeforeAction(ActionEvent $event) {
+    $model = $this->getModel();
+    if (!$model) {
+      return;
+    }
+
+    $model->onBeforeAction($event);
   }
 
   /**

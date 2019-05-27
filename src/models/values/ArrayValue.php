@@ -7,10 +7,12 @@ use ArrayIterator;
 use Countable;
 use Exception;
 use IteratorAggregate;
+use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
 use Twig_Markup;
+use yii\base\ActionEvent;
 
 /**
  * Class ArrayValue
@@ -19,7 +21,7 @@ use Twig_Markup;
  */
 class ArrayValue
   extends Value
-  implements ArrayAccess, Countable, IteratorAggregate, DisplayInterface
+  implements ArrayAccess, BeforeActionInterface, Countable, DisplayInterface, IteratorAggregate
 {
   /**
    * @var ValueInterface[]
@@ -198,6 +200,17 @@ class ArrayValue
    * @throws Exception
    */
   public function offsetUnset($offset) { }
+
+  /**
+   * @inheritDoc
+   */
+  public function onBeforeAction(ActionEvent $event) {
+    foreach ($this->__values as $value) {
+      if ($value instanceof BeforeActionInterface) {
+        $value->onBeforeAction($event);
+      }
+    }
+  }
 
   /**
    * @param array $variables

@@ -3,16 +3,20 @@
 namespace lenz\contentfield;
 
 use Craft;
+use craft\controllers\TemplatesController;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\TemplateEvent;
 use craft\services\Fields;
 use craft\services\Utilities;
+use craft\web\Application;
 use craft\web\View;
 use lenz\contentfield\fields\ContentField;
+use lenz\contentfield\models\Content;
 use lenz\contentfield\utilities\Utility;
 use lenz\contentfield\utilities\SourcesUtility;
 use lenz\contentfield\utilities\TemplateLoader;
 use lenz\contentfield\utilities\twig\Extension;
+use yii\base\ActionEvent;
 use yii\base\Event;
 
 /**
@@ -88,6 +92,28 @@ class Plugin extends \craft\base\Plugin
       Utilities::EVENT_REGISTER_UTILITY_TYPES,
       [$this, 'onRegisterUtilityTypes']
     );
+
+    Event::on(
+      Application::class,
+      Application::EVENT_BEFORE_ACTION,
+      [$this, 'onBeforeAction']
+    );
+  }
+
+  /**
+   * @param ActionEvent $event
+   */
+  public function onBeforeAction(ActionEvent $event) {
+    $element = Craft::$app->getUrlManager()->getMatchedElement();
+    if (!$element) {
+      return;
+    }
+
+    foreach ($element->getFieldValues() as $fieldValue) {
+      if ($fieldValue instanceof Content) {
+        $fieldValue->onBeforeAction($event);
+      }
+    };
   }
 
   /**
