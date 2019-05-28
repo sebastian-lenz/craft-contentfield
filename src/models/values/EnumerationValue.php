@@ -34,8 +34,7 @@ class EnumerationValue extends Value
    * @return mixed
    */
   public function __call($name, $args) {
-    $enumeration = $this->_field->getEnumeration();
-    return $enumeration->getCustomData($this->_value, $name);
+    return $this->getCustomData($name);
   }
 
   /**
@@ -43,6 +42,15 @@ class EnumerationValue extends Value
    */
   public function __toString() {
     return (string)$this->_value;
+  }
+
+  /**
+   * @param string $name
+   * @return mixed
+   */
+  public function getCustomData($name) {
+    $enumeration = $this->_field->getEnumeration();
+    return $enumeration->getCustomData($this->_value, $name);
   }
 
   /**
