@@ -9,15 +9,19 @@ use craft\events\TemplateEvent;
 use craft\services\Fields;
 use craft\services\Utilities;
 use craft\web\Application;
+use craft\web\Response;
 use craft\web\View;
+use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\utilities\Utility;
 use lenz\contentfield\utilities\SourcesUtility;
 use lenz\contentfield\utilities\TemplateLoader;
 use lenz\contentfield\utilities\twig\Extension;
+use Twig\Environment;
 use yii\base\ActionEvent;
 use yii\base\Event;
+use yii\web\NotFoundHttpException;
 
 /**
  * Class Plugin
@@ -36,15 +40,25 @@ class Plugin extends \craft\base\Plugin
   public $schemaVersion = '1.1.1';
 
   /**
-   * @var array
-   */
-  private $patchedViews = array();
-
-  /**
    * @var string
    */
   static $TRANSLATION_CATEGORY = 'site';
 
+  /**
+   * @var string
+   */
+  static $UUID_PARAM = 'content-uuid';
+
+
+  /**
+   * @param View $view
+   */
+  public function applyTemplateLoader(View $view) {
+    $twig = $view->getTwig();
+    if (!($twig->getLoader() instanceof TemplateLoader)) {
+      $twig->setLoader(new TemplateLoader($view));
+    }
+  }
 
   /**
    * @return void
@@ -102,6 +116,7 @@ class Plugin extends \craft\base\Plugin
 
   /**
    * @param ActionEvent $event
+   * @throws \Exception
    */
   public function onBeforeAction(ActionEvent $event) {
     $element = Craft::$app->getUrlManager()->getMatchedElement();
@@ -109,26 +124,45 @@ class Plugin extends \craft\base\Plugin
       return;
     }
 
+    $uuid = Craft::$app->getRequest()->getParam(self::$UUID_PARAM);
+    $isChunkRequest =
+      !is_null($uuid) &&
+      $event->action->controller instanceof TemplatesController &&
+      $event->action->id == 'render';
+
+    $actionEvent = new BeforeActionEvent([
+      'originalEvent' => $event,
+      'requestedUuid' => $isChunkRequest ? $uuid : null,
+    ]);
+
     foreach ($element->getFieldValues() as $fieldValue) {
       if ($fieldValue instanceof Content) {
-        $fieldValue->onBeforeAction($event);
+        $fieldValue->onBeforeAction($actionEvent);
       }
     };
+
+    if ($isChunkRequest && $event->isValid) {
+      $event->isValid = false;
+
+      if (\Craft::$app->getRequest()->getAcceptsJson()) {
+        $response = \Craft::$app->response;
+        $response->statusCode = 404;
+        $response->format = Response::FORMAT_JSON;
+        $response->data = [
+          'success' => false,
+          'uuid'    => $uuid,
+        ];
+      } else {
+        throw new NotFoundHttpException();
+      }
+    }
   }
 
   /**
    * @param TemplateEvent $event
    */
   public function onBeforeRenderAnyTemplate(TemplateEvent $event) {
-    $view = $event->sender;
-
-    if (
-      $view instanceof View &&
-      !in_array($view, $this->patchedViews)
-    ) {
-      $view->getTwig()->setLoader(new TemplateLoader($view));
-      $this->patchedViews[] = $view;
-    }
+    $this->applyTemplateLoader($event->sender);
   }
 
   /**

@@ -2,7 +2,7 @@
 
 namespace lenz\contentfield\models;
 
-use yii\base\ActionEvent;
+use lenz\contentfield\events\BeforeActionEvent;
 
 /**
  * Interface BeforeActionInterface
@@ -10,8 +10,8 @@ use yii\base\ActionEvent;
 interface BeforeActionInterface
 {
   /**
-   * @param ActionEvent $event
+   * @param BeforeActionEvent $event
    * @return void
    */
-  public function onBeforeAction(ActionEvent $event);
+  public function onBeforeAction(BeforeActionEvent $event);
 }

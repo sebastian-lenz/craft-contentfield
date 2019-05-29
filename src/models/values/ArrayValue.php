@@ -7,12 +7,12 @@ use ArrayIterator;
 use Countable;
 use Exception;
 use IteratorAggregate;
+use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
 use Twig_Markup;
-use yii\base\ActionEvent;
 
 /**
  * Class ArrayValue
@@ -26,7 +26,7 @@ class ArrayValue
   /**
    * @var ValueInterface[]
    */
-  private $__values;
+  private $_values;
 
 
   /**
@@ -40,10 +40,10 @@ class ArrayValue
     parent::__construct($parent, $field);
 
     if (!is_array($data)) {
-      $this->__values = array();
+      $this->_values = array();
     } else {
       $member = $this->_field->member;
-      $this->__values = array_filter(array_map(function($value) use ($member) {
+      $this->_values = array_filter(array_map(function($value) use ($member) {
         return $member->createValue($value, $this);
       }, $data));
     }
@@ -60,16 +60,16 @@ class ArrayValue
    * @inheritdoc
    */
   public function count() {
-    return count($this->__values);
+    return count($this->_values);
   }
 
   /**
    * @param array $variables
    */
   public function display(array $variables = []) {
-    $count = count($this->__values);
+    $count = count($this->_values);
 
-    foreach ($this->__values as $index => $value) {
+    foreach ($this->_values as $index => $value) {
       if ($value instanceof InstanceValue) {
         $value->display($variables + [
           'loop' => [
@@ -96,7 +96,7 @@ class ArrayValue
   public function findInstances($qualifier) {
     $result = array();
 
-    foreach ($this->__values as $value) {
+    foreach ($this->_values as $value) {
       $matches = $value->findInstances($qualifier);
       if (count($matches) > 0) {
         $result = array_merge($result, $matches);
@@ -107,11 +107,25 @@ class ArrayValue
   }
 
   /**
+   * @inheritDoc
+   */
+  public function findUuid(string $uuid) {
+    foreach ($this->_values as $value) {
+      $result = $value->findUuid($uuid);
+      if (!is_null($result)) {
+        return $result;
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * @return mixed
    */
   function getEditorData() {
     $result = array();
-    foreach ($this->__values as $value) {
+    foreach ($this->_values as $value) {
       $result[] = $value->getEditorData();
     }
 
@@ -129,7 +143,7 @@ class ArrayValue
    * @inheritdoc
    */
   public function getIterator() {
-    return new ArrayIterator($this->__values);
+    return new ArrayIterator($this->_values);
   }
 
   /**
@@ -140,7 +154,7 @@ class ArrayValue
       $map = new ReferenceMap();
     }
 
-    foreach ($this->__values as $value) {
+    foreach ($this->_values as $value) {
       $value->getReferenceMap($map);
     }
 
@@ -153,7 +167,7 @@ class ArrayValue
   public function getSearchKeywords() {
     return implode('', array_map(function(ValueInterface $value) {
       $value->getSearchKeywords();
-    }, $this->__values));
+    }, $this->_values));
   }
 
   /**
@@ -161,7 +175,7 @@ class ArrayValue
    */
   function getSerializedData() {
     $result = array();
-    foreach ($this->__values as $value) {
+    foreach ($this->_values as $value) {
       $result[] = $value->getSerializedData();
     }
 
@@ -179,14 +193,14 @@ class ArrayValue
    * @inheritdoc
    */
   public function offsetExists($offset) {
-    return array_key_exists($offset, $this->__values);
+    return array_key_exists($offset, $this->_values);
   }
 
   /**
    * @inheritdoc
    */
   public function offsetGet($offset) {
-    return $this->__values[$offset];
+    return $this->_values[$offset];
   }
 
   /**
@@ -204,8 +218,8 @@ class ArrayValue
   /**
    * @inheritDoc
    */
-  public function onBeforeAction(ActionEvent $event) {
-    foreach ($this->__values as $value) {
+  public function onBeforeAction(BeforeActionEvent $event) {
+    foreach ($this->_values as $value) {
       if ($value instanceof BeforeActionInterface) {
         $value->onBeforeAction($event);
       }
@@ -218,9 +232,9 @@ class ArrayValue
    */
   public function render(array $variables = []) {
     $result = array();
-    $count = count($this->__values);
+    $count = count($this->_values);
 
-    foreach ($this->__values as $index => $value) {
+    foreach ($this->_values as $index => $value) {
       if ($value instanceof InstanceValue) {
         $result[] = (string)$value->getHtml($variables + [
           'loop' => [

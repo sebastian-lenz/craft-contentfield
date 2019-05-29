@@ -6,7 +6,7 @@ use Craft;
 use craft\base\Element;
 use craft\elements\User;
 use craft\mail\Message;
-use yii\base\ActionEvent;
+use lenz\contentfield\events\BeforeActionEvent;
 
 /**
  * Class MailForm
@@ -104,7 +104,7 @@ class MailFormModel extends FormModel
   /**
    * @inheritDoc
    */
-  protected function submit(ActionEvent $event) {
+  protected function submit(BeforeActionEvent $event) {
     $options = [
       'from'     => $this->getMessageFom(),
       'subject'  => $this->getMessageSubject(),

@@ -2,16 +2,14 @@
 
 namespace lenz\contentfield\models;
 
+use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\events\RenderEvent;
 use lenz\contentfield\models\values\InstanceValue;
-use lenz\contentfield\Plugin;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Model;
-use craft\elements\db\AssetQuery;
 use lenz\contentfield\utilities\ReferenceLoader;
 use lenz\contentfield\utilities\twig\DisplayInterface;
-use yii\base\ActionEvent;
 
 /**
  * Class Content
@@ -77,6 +75,14 @@ class Content extends Model implements DisplayInterface
     }
   }
 
+  /**
+   * @param string $uuid
+   * @return InstanceValue|null
+   */
+  public function findUuid(string $uuid) {
+    $model = $this->getModel();
+    return is_null($model) ? null : $model->findUuid($uuid);
+  }
 
   /**
    * @return ReferenceLoader
@@ -160,9 +166,9 @@ class Content extends Model implements DisplayInterface
   }
 
   /**
-   * @param ActionEvent $event
+   * @param BeforeActionEvent $event
    */
-  public function onBeforeAction(ActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event) {
     $model = $this->getModel();
     if (!$model) {
       return;

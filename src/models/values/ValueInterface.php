@@ -24,6 +24,12 @@ interface ValueInterface
   public function findInstances($qualifier);
 
   /**
+   * @param string $uuid
+   * @return InstanceValue|null
+   */
+  public function findUuid(string $uuid);
+
+  /**
    * @return Content|null
    */
   public function getContent();

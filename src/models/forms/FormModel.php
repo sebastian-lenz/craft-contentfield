@@ -5,12 +5,12 @@ namespace lenz\contentfield\models\forms;
 use Craft;
 use craft\base\Model;
 use craft\web\Request;
+use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\InstanceAwareInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\models\values\LinkValue;
 use lenz\contentfield\models\values\ReferenceValue;
-use yii\base\ActionEvent;
 
 /**
  * Class FormModel
@@ -68,10 +68,10 @@ abstract class FormModel
   }
 
   /**
-   * @param ActionEvent $event
+   * @param BeforeActionEvent $event
    * @return void
    */
-  public function onBeforeAction(ActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event) {
     $request = Craft::$app->getRequest();
     if (!$request->isPost) {
       return;
@@ -166,23 +166,23 @@ abstract class FormModel
   }
 
   /**
-   * @param ActionEvent $event
+   * @param BeforeActionEvent $event
    * @return bool
    */
-  protected function redirect(ActionEvent $event) {
+  protected function redirect(BeforeActionEvent $event) {
     $url = $this->getRedirectUrl();
     if (empty($url)) {
       return false;
     }
 
     Craft::$app->getResponse()->redirect($url);
-    $event->isValid = false;
+    $event->originalEvent->isValid = false;
     return true;
   }
 
   /**
-   * @param ActionEvent $event
+   * @param BeforeActionEvent $event
    * @return bool
    */
-  abstract protected function submit(ActionEvent $event);
+  abstract protected function submit(BeforeActionEvent $event);
 }

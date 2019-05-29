@@ -2,6 +2,9 @@
 
 namespace lenz\contentfield\models\values;
 
+use craft\helpers\UrlHelper;
+use craft\web\Response;
+use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\InstanceField;
@@ -11,7 +14,6 @@ use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
-use yii\base\ActionEvent;
 use yii\base\Model;
 
 /**
@@ -182,6 +184,26 @@ class InstanceValue
   }
 
   /**
+   * @inheritDoc
+   */
+  public function findUuid(string $uuid) {
+    if ($this->_uuid == $uuid) {
+      return $this;
+    }
+
+    foreach ($this->_values as $value) {
+      if (!is_null($value)) {
+        $result = $value->findUuid($uuid);
+        if (!is_null($result)) {
+          return $result;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * @param string|string[] $qualifier
    * @return InstanceValue[]
    */
@@ -212,6 +234,25 @@ class InstanceValue
     }
 
     return parent::getAttributeLabel($attribute);
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getChunkUrl() {
+    $element = $this->getElement();
+    if (is_null($element)) {
+      return null;
+    }
+
+    $url = $element->getUrl();
+    if (is_null($url)) {
+      return null;
+    }
+
+    return UrlHelper::urlWithParams($url, [
+      Plugin::$UUID_PARAM => $this->_uuid,
+    ]);
   }
 
   /**
@@ -400,7 +441,7 @@ class InstanceValue
   /**
    * @inheritDoc
    */
-  public function onBeforeAction(ActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event) {
     $model = $this->getModel();
     if (!is_null($model) && $model instanceof BeforeActionInterface) {
       $model->onBeforeAction($event);
@@ -409,6 +450,25 @@ class InstanceValue
     foreach ($this->_values as $value) {
       if ($value instanceof BeforeActionInterface) {
         $value->onBeforeAction($event);
+      }
+    }
+
+    if ($event->requestedUuid == $this->_uuid) {
+      $event->originalEvent->isValid = false;
+      $response = \Craft::$app->response;
+      $content = $this->render([
+        'isChunkRequest' => true
+      ]);
+
+      if (\Craft::$app->getRequest()->getAcceptsJson()) {
+        $response->format = Response::FORMAT_JSON;
+        $response->data = [
+          'success' => true,
+          'uuid'    => $this->_uuid,
+          'content' => $content,
+        ];
+      } else {
+        $response->data = $content;
       }
     }
   }
@@ -484,6 +544,11 @@ class InstanceValue
    * @param array $variables
    */
   private function normalizeVariables(array &$variables) {
+    $variables += [
+      'isChunkRequest' => false,
+      'model'          => $this->getModel(),
+    ];
+
     if (!array_key_exists('loop', $variables)) {
       $variables['loop'] = [
         'index'     => 1,
@@ -495,11 +560,6 @@ class InstanceValue
         'length'    => 1,
         'parent'    => [],
       ];
-    }
-
-    $model = $this->getModel();
-    if (!is_null($model)) {
-      $variables['model'] = $model;
     }
   }
 

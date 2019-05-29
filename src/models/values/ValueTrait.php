@@ -42,6 +42,13 @@ trait ValueTrait
   }
 
   /**
+   * @inheritDoc
+   */
+  public function findUuid(string $uuid) {
+    return null;
+  }
+
+  /**
    * @return Content|null
    */
   public function getContent() {
