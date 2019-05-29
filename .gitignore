@@ -1,6 +1,5 @@
 /.idea
-/bin
-/dist
+/bin/branch-*
 /docs/_build
 /etc
 /vendor
