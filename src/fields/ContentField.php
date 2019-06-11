@@ -6,35 +6,25 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Field;
-use craft\elements\db\ElementQuery;
-use craft\elements\db\ElementQueryInterface;
-use craft\helpers\Json;
 use Exception;
 use lenz\contentfield\events\RootSchemasEvent;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\schemas\AbstractSchema;
-use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\records\ContentRecord;
-use lenz\contentfield\validators\ContentFieldValidator;
+use lenz\craft\utils\foreignField\ForeignField;
 use Throwable;
 use yii\base\Event;
 
 /**
  * Class ContentField
- * @package contentfield\fields
  */
-class ContentField extends Field
+class ContentField extends ForeignField
 {
   /**
    * @var string[]
    */
   public $rootTemplates;
-
-  /**
-   * @var int
-   */
-  private static $_queryTableIndex = 0;
 
   /**
    * Event that will be fired when the content field is looking for the
@@ -49,6 +39,8 @@ class ContentField extends Field
    * @throws Throwable
    */
   public function afterElementSave(ElementInterface $element, bool $isNew) {
+    parent::afterElementSave($element, $isNew);
+
     $value = $element->getFieldValue($this->handle);
     if (
       !($value instanceof Content) ||
@@ -68,89 +60,16 @@ class ContentField extends Field
         ->relations
         ->saveRelations($this, $element, $referencedIds);
     }
-
-    // Update the content record
-    $model = $value->getModel();
-    $conditions = $this->getContentRecordConditions($element);
-    if (is_null($model)) {
-      ContentRecord::deleteAll($conditions);
-    } else {
-      $record = $this->getContentRecord($element);
-      if (is_null($record)) {
-        $record = new ContentRecord($conditions);
-      }
-
-      $record->content = $this->serializeValue($value, $element);
-      $record->save();
-    }
-
-    parent::afterElementSave($element, $isNew);
   }
 
   /**
-   * @param Content|string|array $value
+   * @param Content $value
    * @param ElementInterface|null $element
-   * @return Content
+   * @return ContentFieldData
    * @throws Throwable
    */
-  public function normalizeValue($value, ElementInterface $element = null) {
-    if ($value instanceof Content) {
-      return $value;
-    }
-
-    $model = null;
-    $schemas = Plugin::getInstance()->schemas;
-
-    if (is_null($value) && $element instanceof Element) {
-      $record = $this->getContentRecord($element);
-      if (!is_null($record)) {
-        $value = $record->content;
-      }
-    }
-
-    if (is_string($value)) {
-      $model = $schemas->createValue(Json::decode($value, true));
-    } else if (is_array($value) && isset($value['isCpFormData'])) {
-      $model = $schemas->createValue(Json::decode($value['content'], true));
-    } elseif (is_array($value)) {
-      throw new Exception('Check me!');
-    }
-
-    // If we have a model, check whether the type is allowed
-    $rootSchemas = $this->getRootSchemas($element);
-    $rootSchemasTypes = array_map(
-      function($schema) { return $schema->qualifier; },
-      $rootSchemas
-    );
-
-    if (!is_null($model) && !in_array($model->getType(), $rootSchemasTypes)) {
-      $model = null;
-    }
-
-    // If we don't have a model and there is only one schema
-    // available, create a model from it
-    if (is_null($model) && count($rootSchemas) === 1) {
-      $model = new InstanceValue([], $rootSchemas[0], null, null);
-    }
-
-    return new Content($model, $element);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function getElementValidationRules(): array {
-    return [
-      [ContentFieldValidator::class],
-    ];
-  }
-
-  /**
-   * @inheritDoc
-   * @throws Throwable
-   */
-  public function getInputHtml($value, ElementInterface $element = null): string {
-    return $this->getHtml($value, $element);
+  public function getInputData(Content $value, ElementInterface $element = null) {
+    return new ContentFieldData($this, $value, $element);
   }
 
   /**
@@ -186,14 +105,6 @@ class ContentField extends Field
   }
 
   /**
-   * @inheritDoc
-   * @throws Throwable
-   */
-  public function getStaticHtml($value, ElementInterface $element): string {
-    return $this->getHtml($value, $element, true);
-  }
-
-  /**
    * @inheritdoc
    * @throws Throwable
    */
@@ -219,140 +130,23 @@ class ContentField extends Field
     return $this->translationMethod !== Field::TRANSLATION_METHOD_NONE;
   }
 
-  /**
-   * @inheritdoc
-   */
-  public function isValueEmpty($value, ElementInterface $element): bool {
-    if ($value instanceof Content) {
-      return false;
-    }
 
-    return true;
-  }
+  // Protected methods
+  // -----------------
 
   /**
    * @inheritDoc
    */
-  public function modifyElementsQuery(ElementQueryInterface $query, $value) {
-    if (!($query instanceof ElementQuery)) {
-      return;
-    }
+  protected function toRecordAttributes($model, ElementInterface $element = null) {
+    $contentModel = $model instanceof Content
+      ? $model->getModel()
+      : null;
 
-    if ($this->enableEagerLoad($query)) {
-      $tableName = 'contentfield_' . (self::$_queryTableIndex++);
-      $query->query->leftJoin(
-        ContentRecord::TABLE . ' ' . $tableName,
-        implode(' AND ', [
-          "[[{$tableName}.elementId]] = [[elements.id]]",
-          "[[{$tableName}.siteId]] = [[elements_sites.siteId]]",
-          "[[{$tableName}.fieldId]] = {$this->id}"
-        ])
-      );
-
-      $query->addSelect([
-        "field:{$this->handle}" => "{$tableName}.content"
-      ]);
-    }
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function serializeValue($value, ElementInterface $element = null) {
-    if (!($value instanceof Content)) {
-      return null;
-    }
-
-    $model = $value->getModel();
-    return Json::encode(is_null($model)
-      ? null
-      : $model->getSerializedData()
-    );
-  }
-
-
-  // Private methods
-  // ---------------
-
-  /**
-   * @param ElementQuery $query
-   * @return bool
-   */
-  private function enableEagerLoad(ElementQuery $query) {
-    // Ignore count queries
-    if (
-      count($query->select) == 1 &&
-      $query->select[0] == 'COUNT(*)'
-    ) {
-      return false;
-    }
-
-    $handle = $this->handle;
-    if ($query->with == $handle) {
-      $query->with = null;
-      return true;
-    }
-
-    if (is_array($query->with) && in_array($handle, $query->with)) {
-      $query->with = array_filter(
-        $query->with,
-        function($with) use ($handle) {
-          return $with != $handle;
-        }
-      );
-
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-   * @param Element $element
-   * @return ContentRecord|null
-   */
-  private function getContentRecord(Element $element) {
-    return ContentRecord::findOne(
-      $this->getContentRecordConditions($element)
-    );
-  }
-
-  /**
-   * @param Element $element
-   * @return array
-   */
-  private function getContentRecordConditions(Element $element) {
     return [
-      'elementId' => $element->id,
-      'siteId'    => $element->site->id,
-      'fieldId'   => $this->id,
+      'model' => is_null($contentModel)
+        ? null
+        : $contentModel->getSerializedData()
     ];
-  }
-
-  /**
-   * @param Content $value
-   * @param ElementInterface|null $element
-   * @param bool $disabled
-   * @return string
-   * @throws Throwable
-   */
-  private function getHtml($value, ElementInterface $element = null, $disabled = false) {
-    $view = Craft::$app->getView();
-    $data = new ContentFieldData($this, $value, $element);
-
-    if ($data->hasSchemaErrors()) {
-      return $view->renderTemplate('contentfield/_input-error', [
-        'schemas' => $data->getSchemaErrors(),
-      ]);
-    }
-
-    return $view->renderTemplate('contentfield/_input', [
-      'content'  => $data->getContent(),
-      'name'     => $this->handle,
-      'nameNs'   => Craft::$app->view->namespaceInputId($this->handle),
-      'payload'  => $data->getPayload(),
-      'scripts'  => $data->getScripts(),
-    ]);
   }
 
 
@@ -363,14 +157,42 @@ class ContentField extends Field
    * @return string
    */
   static public function displayName(): string {
-    return Craft::t('contentfield', 'Content field');
+    return self::t('Content field');
+  }
+
+  /**
+   * @return string
+   */
+  public static function inputTemplate(): string {
+    return 'contentfield/_input';
   }
 
   /**
    * @inheritdoc
    */
-  public static function hasContentColumn(): bool {
-    return false;
+  public static function modelClass(): string {
+    return Content::class;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function recordClass(): string {
+    return ContentRecord::class;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function recordModelAttributes(): array {
+    return ['model'];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function settingsTemplate() {
+    return 'contentfield/_settings';
   }
 
   /**
@@ -384,5 +206,12 @@ class ContentField extends Field
       self::TRANSLATION_METHOD_LANGUAGE,
       self::TRANSLATION_METHOD_CUSTOM,
     ];
+  }
+
+  /**
+   * @inheritdoc
+   */
+  static public function t(string $message): string {
+    return Craft::t('contentfield', $message);
   }
 }

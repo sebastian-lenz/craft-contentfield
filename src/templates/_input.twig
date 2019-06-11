@@ -1,12 +1,37 @@
-<div class="tcfField" id="{{ name }}">
-  <script type="application/json">{{ payload|raw }}</script>
-  <input type="hidden" id="{{ name }}-content" name="{{ name }}[content]" value="{{ content }}" class="tcfField--content" />
-  <input type="hidden" id="{{ name }}-isCpFormData" name="{{ name }}[isCpFormData]" value="true" />
-  <div class="tcfField--app"></div>
-</div>
-
 {% do view.registerAssetBundle('lenz\\contentfield\\assets\\field\\ContentFieldAsset') %}
-{% js %}
-  {{ scripts|raw }}
-  contentField.create("{{ nameNs }}");
-{% endjs %}
+
+{% set data = field.getInputData(value, element) %}
+
+{% namespace field.handle %}
+  {% if data.hasSchemaErrors %}
+    <div class="contentfield">
+      <p>This field could not be rendered as one or more schemas contain errors:</p>
+      {% for schema in data.schemaErrors %}
+        <p>
+          <strong>{{ schema.label }} ({{ schema.qualifier }})</strong>
+          {% for errors in schema.errors %}
+            {% for error in errors %}
+              <br>{{ error }}
+            {% endfor %}
+          {% endfor %}
+        </p>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="tcfField" id="{{ name }}">
+      <script type="application/json">{{ data.payload|raw }}</script>
+      <input
+        type="hidden" id="{{ name }}-model"
+        name="model"
+        value="{{ data.content }}"
+        class="tcfField--model"
+      />
+      <div class="tcfField--app"></div>
+    </div>
+
+    {% js %}
+      {{ data.scripts|raw }}
+      contentField.create("{{ name|namespaceInputId }}");
+    {% endjs %}
+  {% endif %}
+{% endnamespace %}

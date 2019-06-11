@@ -2,32 +2,29 @@
 
 namespace lenz\contentfield\records;
 
-use craft\db\ActiveRecord;
-use craft\db\SoftDeleteTrait;
-use craft\db\Table;
-use yii\db\ActiveQueryInterface;
+use craft\db\Migration;
+use lenz\craft\utils\foreignField\ForeignFieldRecord;
 
 /**
  * Class ContentRecord
- *
- * @property int $id
- * @property int $elementId
- * @property int $siteId
- * @property int $fieldId
- * @property string $content
+ * @property string $model
  */
-class ContentRecord extends ActiveRecord
+class ContentRecord extends ForeignFieldRecord
 {
   /**
-   * The name of the table used to store this record.
+   * @param Migration $migration
+   * @param array $columns
    */
-  const TABLE = '{{%lenz_contentfield}}';
-
+  public static function createTable(Migration $migration, array $columns = []) {
+    return parent::createTable($migration, $columns + [
+      'model' => $migration->longText()
+    ]);
+  }
 
   /**
-   * @inheritdoc
+   * @inheritDoc
    */
-  public static function tableName(): string {
-    return self::TABLE;
+  public static function tableName() {
+    return '{{%lenz_contentfield}}';
   }
 }

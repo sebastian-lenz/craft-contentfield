@@ -15,16 +15,18 @@ class m190408_150735_fixContentTableIndex extends Migration
    * @inheritdoc
    */
   public function safeUp() {
+    $tableName = ContentRecord::tableName();
+
     try {
-      $this->dropForeignKey('contentfield_elementId_fk', ContentRecord::TABLE);
+      $this->dropForeignKey('contentfield_elementId_fk', $tableName);
     } catch (\Throwable $error) {}
     
     try {
-      $this->dropIndex('contentfield_elementId_siteId_unq_idx', ContentRecord::TABLE);
+      $this->dropIndex('contentfield_elementId_siteId_unq_idx', $tableName);
     } catch (\Throwable $error) {}
 
-    $this->createIndex(null, ContentRecord::TABLE, ['elementId', 'siteId', 'fieldId'], true);
-    $this->addForeignKey(null, ContentRecord::TABLE, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE', null);
+    $this->createIndex(null, $tableName, ['elementId', 'siteId', 'fieldId'], true);
+    $this->addForeignKey(null, $tableName, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE', null);
   }
 
   /**

@@ -15,6 +15,10 @@ class Install extends Migration
    * @inheritdoc
    */
   public function safeUp() {
+    ContentRecord::createTable($this, [
+      'model' => $this->longText(),
+    ]);
+
     if (!$this->db->tableExists(ContentRecord::TABLE)) {
       $this->createTable(ContentRecord::TABLE, [
         'id'          => $this->primaryKey(),

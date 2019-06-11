@@ -2,35 +2,38 @@
 
 namespace lenz\contentfield\models;
 
+use Craft;
+use craft\helpers\Json;
+use craft\models\Site;
+use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\events\RenderEvent;
+use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\values\InstanceValue;
 use craft\base\Element;
 use craft\base\ElementInterface;
-use craft\base\Model;
+use lenz\contentfield\Plugin;
 use lenz\contentfield\utilities\ReferenceLoader;
 use lenz\contentfield\utilities\twig\DisplayInterface;
+use lenz\craft\utils\foreignField\ForeignField;
+use lenz\craft\utils\foreignField\ForeignFieldModel;
+use Twig\Markup;
 
 /**
  * Class Content
- * @package contentfield\models
+ * @property ContentField $_field
  */
-class Content extends Model implements DisplayInterface
+class Content extends ForeignFieldModel implements DisplayInterface
 {
   /**
    * @var ReferenceLoader
    */
-  private $batchLoader;
+  private $_batchLoader;
 
   /**
    * @var values\InstanceValue|null
    */
-  private $model;
-
-  /**
-   * @var ElementInterface|null
-   */
-  private $owner;
+  private $_model;
 
   /**
    * Event triggered before some content is rendered.
@@ -40,18 +43,18 @@ class Content extends Model implements DisplayInterface
 
   /**
    * Content constructor.
-   *
-   * @param values\InstanceValue|null $model
-   * @param ElementInterface|null $element
+   * @param ForeignField $field
+   * @param ElementInterface|null $owner
+   * @param array $config
    */
-  public function __construct(
-    values\InstanceValue $model = null,
-    ElementInterface $element = null
-  ) {
-    $this->owner = $element;
-    $this->setModel($model);
+  public function __construct(ForeignField $field, ElementInterface $owner = null, array $config = []) {
+    // Legacy support: we serialized the entire model directly to the
+    // revision table in past versions
+    if (array_key_exists('__type', $config)) {
+      $config = ['model' => $config];
+    }
 
-    parent::__construct();
+    parent::__construct($field, $owner, $config);
   }
 
   /**
@@ -62,10 +65,17 @@ class Content extends Model implements DisplayInterface
   }
 
   /**
-   * @param array $variables
+   * @inheritDoc
+   */
+  public function attributes() {
+    return ['model'];
+  }
+
+  /**
+   * @inheritDoc
    */
   public function display(array $variables = []) {
-    $model = $this->model;
+    $model = $this->_model;
     if (!is_null($model)) {
       $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
         'content' => $this,
@@ -88,21 +98,21 @@ class Content extends Model implements DisplayInterface
    * @return ReferenceLoader
    */
   public function getBatchLoader() {
-    if (!isset($this->batchLoader)) {
-      $this->batchLoader = new ReferenceLoader($this);
+    if (!isset($this->_batchLoader)) {
+      $this->_batchLoader = new ReferenceLoader($this);
     }
 
-    return $this->batchLoader;
+    return $this->_batchLoader;
   }
 
   /**
    * @param array $variables
-   * @return \Twig_Markup
+   * @return Markup
    */
   public function getHtml(array $variables = []) {
-    $model = $this->model;
+    $model = $this->_model;
     if (is_null($model)) {
-      return new \Twig_Markup('', 'utf-8');
+      return new Markup('', 'utf-8');
     }
 
     $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
@@ -116,27 +126,27 @@ class Content extends Model implements DisplayInterface
    * @return values\InstanceValue|null
    */
   public function getModel() {
-    return $this->model;
+    return $this->_model;
   }
 
   /**
    * @return ElementInterface|null
    */
   public function getOwner() {
-    return $this->owner;
+    return $this->_owner;
   }
 
   /**
-   * @return \craft\models\Site
+   * @return Site
    */
   public function getOwnerSite() {
-    if ($this->owner instanceof Element) {
+    if ($this->_owner instanceof Element) {
       try {
-        return $this->owner->getSite();
-      } catch (\Exception $e) { }
+        return $this->_owner->getSite();
+      } catch (Exception $e) { }
     }
 
-    return \Craft::$app->sites->currentSite;
+    return Craft::$app->sites->currentSite;
   }
 
   /**
@@ -145,24 +155,24 @@ class Content extends Model implements DisplayInterface
   public function getReferencedIds() {
     $result = array();
     if (
-      is_null($this->model) ||
-      !($this->model instanceof values\InstanceValue)
+      is_null($this->_model) ||
+      !($this->_model instanceof values\InstanceValue)
     ) {
       return $result;
     }
 
     return array_map(function(ElementInterface $element) {
       return $element->getId();
-    }, $this->model->getReferenceMap()->queryAll());
+    }, $this->_model->getReferenceMap()->queryAll());
   }
 
   /**
    * @return string
    */
   public function getSearchKeywords() {
-    return is_null($this->model)
+    return is_null($this->_model)
       ? ''
-      : $this->model->getSearchKeywords();
+      : $this->_model->getSearchKeywords();
   }
 
   /**
@@ -179,21 +189,50 @@ class Content extends Model implements DisplayInterface
 
   /**
    * @param ReferenceLoader $batchLoader
-   * @throws \Exception
+   * @throws Exception
    */
   public function setBatchLoader(ReferenceLoader $batchLoader) {
     $batchLoader->addContent($this);
-    $this->batchLoader = $batchLoader;
+    $this->_batchLoader = $batchLoader;
   }
 
   /**
-   * @param InstanceValue|null $model
+   * @param InstanceValue|string|null $value
+   * @throws Exception
    */
-  public function setModel(InstanceValue $model = null) {
-    $this->model = $model;
+  public function setModel($value = null) {
+    $model   = null;
+    $schemas = Plugin::getInstance()->schemas;
+
+    if ($value instanceof InstanceValue) {
+      $model = $value;
+    } elseif (is_string($value)) {
+      $model = $schemas->createValue(Json::decode($value, true));
+    } elseif (is_array($value)) {
+      $model = $schemas->createValue($value);
+    }
+
+    // If we have a model, check whether the type is allowed
+    $schemas = $this->_field->getRootSchemas($this->_owner);
+    $schemaTypes = array_map(
+      function($schema) { return $schema->qualifier; },
+      $schemas
+    );
+
+    if (!is_null($model) && !in_array($model->getType(), $schemaTypes)) {
+      $model = null;
+    }
+
+    // If we don't have a model and there is only one schema
+    // available, create a model from it
+    if (is_null($model) && count($schemas) === 1) {
+      $model = new InstanceValue([], $schemas[0], null, null);
+    }
 
     if (!is_null($model)) {
       $model->setContent($this);
     }
+
+    $this->_model = $model;
   }
 }

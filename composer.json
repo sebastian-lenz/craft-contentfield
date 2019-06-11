@@ -4,13 +4,14 @@
   "type": "craft-plugin",
   "license": "proprietary",
   "require": {
+    "ext-curl": "*",
+    "ext-dom": "*",
+    "ext-libxml": "*",
     "php": "^7.0",
     "craftcms/cms": "^3.1.1",
     "craftcms/redactor": "^2.2.0",
-    "symfony/yaml": "^3.4",
-    "ext-curl": "*",
-    "ext-dom": "*",
-    "ext-libxml": "*"
+    "sebastianlenz/craft-utils": "^2.0.1",
+    "symfony/yaml": "^3.4"
   },
   "autoload": {
     "psr-4": {

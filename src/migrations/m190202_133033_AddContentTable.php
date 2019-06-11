@@ -2,10 +2,12 @@
 
 namespace lenz\contentfield\migrations;
 
+use Craft;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\records\ContentRecord;
 use craft\db\Migration;
 use craft\db\Table;
+use yii\db\Query;
 
 /**
  * m190202_133033_AddContentTable migration.
@@ -16,42 +18,26 @@ class m190202_133033_AddContentTable extends Migration
    * @inheritdoc
    */
   public function safeUp() {
-    $this->createTable(ContentRecord::TABLE, [
-      'id'          => $this->primaryKey(),
-      'elementId'   => $this->integer()->notNull(),
-      'siteId'      => $this->integer()->notNull(),
-      'fieldId'     => $this->integer()->notNull(),
-      'dateCreated' => $this->dateTime()->notNull(),
-      'dateUpdated' => $this->dateTime()->notNull(),
-      'uid'         => $this->uid(),
-      'content'     => $this->longText(),
-    ]);
+    ContentRecord::createTable($this);
 
-    $this->createIndex('contentfield_elementId_siteId_unq_idx', ContentRecord::TABLE, ['elementId', 'siteId'], true);
-    $this->createIndex('contentfield_siteId_idx', ContentRecord::TABLE, ['siteId'], false);
-    $this->createIndex('contentfield_fieldId_idx', ContentRecord::TABLE, ['fieldId'], false);
-
-    $this->addForeignKey(null, ContentRecord::TABLE, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE', null);
-    $this->addForeignKey(null, ContentRecord::TABLE, ['fieldId'], Table::FIELDS, ['id'], 'CASCADE', null);
-
-    foreach (\Craft::$app->getFields()->getAllFields() as $field) {
+    foreach (Craft::$app->getFields()->getAllFields() as $field) {
       if (!($field instanceof ContentField)) {
         continue;
       }
 
       $columnName = 'field_' . $field->handle;
-      $rows = (new \yii\db\Query())
+      $rows = (new Query())
         ->select(['elementId', 'siteId', $columnName])
         ->from(Table::CONTENT)
         ->where(['not', [$columnName => null]])
         ->all();
 
       foreach ($rows as $row) {
-        $this->db->createCommand()->insert(ContentRecord::TABLE, [
+        $this->db->createCommand()->insert(ContentRecord::tableName(), [
           'elementId' => $row['elementId'],
           'siteId'    => $row['siteId'],
           'fieldId'   => $field->id,
-          'content'   => $row[$columnName]
+          'model'     => $row[$columnName]
         ])->execute();
       }
 
