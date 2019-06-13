@@ -2,6 +2,16 @@
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR="$(dirname "$BASEDIR")"
+BUILD_UI=true
+
+
+# Read options
+while getopts s option
+do
+  case "${option}" in
+    s) BUILD_UI=false;;
+  esac
+done
 
 
 # Make sure we have a path to the ui part
@@ -38,11 +48,14 @@ git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" merge origin/master
 
 
 # Build UI
-cd "$UIDIR" && npm run build
+if [ "$BUILD_UI" = true ] ; then
+  cd "$UIDIR" && npm run build
 
-# Copy new files
-rm -rf "$RELEASEDIR/src/assets/field/resources"
-cp -r "$UIDIR/dist" "$RELEASEDIR/src/assets/field/resources"
+  # Copy new files
+  rm -rf "$RELEASEDIR/src/assets/field/resources"
+  cp -r "$UIDIR/dist" "$RELEASEDIR/src/assets/field/resources"
+fi
+
 
 # Remove everything not intended for release
 rm -rf "$RELEASEDIR/bin"
