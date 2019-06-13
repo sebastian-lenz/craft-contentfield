@@ -10,15 +10,15 @@ if [ ! -d "$PAGESDIR" ]; then
   git clone git@github.com:sebastian-lenz/craft-contentfield.git "$PAGESDIR"
 fi
 
-git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" checkout --orphan gh-pages
-# git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" pull
+git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" checkout gh-pages
+git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" pull
 
 
 # Compile the docs
-# sphinx-build "$ROOTDIR/docs" "$PAGESDIR"
+sphinx-build -d "$ROOTDIR/etc/.doctrees" "$ROOTDIR/docs" "$PAGESDIR"
 
 
 # Commit changes
-# git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" add -A
-# git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" commit -m "Compiled documentation"
-# git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" push -u origin gh-pages
+git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" add -A
+git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" commit -m "Compiled documentation"
+git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" push -u origin gh-pages

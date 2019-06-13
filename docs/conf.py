@@ -88,10 +88,16 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 html_context = {
-    'css_files': [
-        '_static/theme_overrides.css',  # override wide tables in RTD theme
-        ],
-     }
+  'css_files': [
+    '_static/theme_overrides.css',
+  ],
+  'display_github': True,
+  'github_user': 'sebastian-lenz',
+  'github_repo': 'craft-contentfield',
+  'github_version': 'master',
+  'conf_py_path': '/docs/',
+  'source_suffix': source_suffix,
+}
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -102,6 +108,8 @@ html_context = {
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
+
+html_copy_source = False
 
 
 # -- Options for HTMLHelp output ---------------------------------------------

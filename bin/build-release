@@ -7,11 +7,10 @@ UIDIR="$ROOTDIR/../contentfield-ui"
 
 
 # Read options
-while getopts su option
-do
-  case "${option}" in
+while getopts "su:" OPTION; do
+  case "${OPTION}" in
     s) UIBUILD=false;;
-    u) UIDIR="$OPTARG";;
+    u) UIDIR=${OPTARG};;
   esac
 done
 
