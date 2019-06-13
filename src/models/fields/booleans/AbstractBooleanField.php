@@ -17,11 +17,6 @@ abstract class AbstractBooleanField extends AbstractField
    */
   public $defaultValue = false;
 
-  /**
-   * @var bool
-   */
-  public $translatable = false;
-
 
   /**
    * @inheritdoc

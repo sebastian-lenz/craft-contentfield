@@ -15,7 +15,7 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @var bool
    */
-  public $translatable = false;
+  public $translatable = true;
 
 
   /**

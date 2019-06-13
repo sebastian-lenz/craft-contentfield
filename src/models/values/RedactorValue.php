@@ -6,7 +6,7 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\StringHelper;
 use lenz\contentfield\utilities\RedactorFieldData;
-use lenz\contentfield\models\fields\strings\RedactorField;
+use lenz\contentfield\models\fields\RedactorField;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
 use yii\base\Exception;

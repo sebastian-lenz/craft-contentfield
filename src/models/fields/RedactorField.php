@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\models\fields\strings;
+namespace lenz\contentfield\models\fields;
 
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\RedactorValue;
@@ -13,7 +13,7 @@ use Throwable;
  *
  * Displays a redactor input field.
  */
-class RedactorField extends AbstractStringField
+class RedactorField extends AbstractField
 {
   /**
    * @var string|null
@@ -24,6 +24,11 @@ class RedactorField extends AbstractStringField
    * @var string|null
    */
   public $redactorConfig = 'Standard.json';
+
+  /**
+   * @var bool
+   */
+  public $translatable = true;
 
   /**
    * The internal name of this widget.
@@ -48,7 +53,8 @@ class RedactorField extends AbstractStringField
    */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData($element) + array(
-      'redactor' => $this->getRedactorSettings($element)
+      'redactor'     => $this->getRedactorSettings($element),
+      'translatable' => !!$this->translatable,
     );
   }
 
