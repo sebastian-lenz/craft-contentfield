@@ -26,6 +26,7 @@ class EnumerationValue extends Value
    */
   public function __construct($data, ValueInterface $parent, AbstractEnumerationField $field) {
     parent::__construct($parent, $field);
+
     $this->_value = self::isValidEnumerationKey($data) ? $data : '';
   }
 
@@ -42,6 +43,14 @@ class EnumerationValue extends Value
    */
   public function __toString() {
     return (string)$this->_value;
+  }
+
+  /**
+   * @param string|number $value
+   * @return bool
+   */
+  public function contains($value) {
+    return $this->_value == $value;
   }
 
   /**
@@ -68,11 +77,15 @@ class EnumerationValue extends Value
   }
 
   /**
-   * @return bool
+   * @inheritDoc
    */
   public function isEmpty() {
     return empty($this->_value);
   }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @param mixed $value

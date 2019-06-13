@@ -12,7 +12,7 @@ use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
-use Twig_Markup;
+use Twig\Markup;
 
 /**
  * Class ArrayValue
@@ -50,7 +50,8 @@ class ArrayValue
   }
 
   /**
-   * @return string
+   * @inheritDoc
+   * @throws Exception
    */
   public function __toString() {
     return $this->render();
@@ -64,7 +65,8 @@ class ArrayValue
   }
 
   /**
-   * @param array $variables
+   * @inheritDoc
+   * @throws Exception
    */
   public function display(array $variables = []) {
     $count = count($this->_values);
@@ -90,8 +92,7 @@ class ArrayValue
   }
 
   /**
-   * @param string|string[] $qualifier
-   * @return InstanceValue[]
+   * @inheritDoc
    */
   public function findInstances($qualifier) {
     $result = array();
@@ -121,7 +122,7 @@ class ArrayValue
   }
 
   /**
-   * @return mixed
+   * @inheritDoc
    */
   function getEditorData() {
     $result = array();
@@ -133,10 +134,20 @@ class ArrayValue
   }
 
   /**
+   * @return ValueInterface
+   */
+  public function getFirst() {
+    return count($this->_values) > 0
+      ? $this->_values[0]
+      : null;
+  }
+
+  /**
    * @inheritDoc
+   * @throws Exception
    */
   public function getHtml(array $variables = []) {
-    return new Twig_Markup($this->render($variables), 'utf-8');
+    return new Markup($this->render($variables), 'utf-8');
   }
 
   /**
@@ -171,7 +182,7 @@ class ArrayValue
   }
 
   /**
-   * @return mixed
+   * @inheritDoc
    */
   function getSerializedData() {
     $result = array();
@@ -183,7 +194,7 @@ class ArrayValue
   }
 
   /**
-   * @return bool
+   * @inheritDoc
    */
   public function isEmpty() {
     return $this->count() == 0;
@@ -229,6 +240,7 @@ class ArrayValue
   /**
    * @param array $variables
    * @return string
+   * @throws Exception
    */
   public function render(array $variables = []) {
     $result = array();
@@ -254,5 +266,12 @@ class ArrayValue
     }
 
     return implode('', $result);
+  }
+
+  /**
+   * @return ValueInterface[]
+   */
+  public function toArray() {
+    return $this->_values;
   }
 }

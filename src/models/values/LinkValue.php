@@ -53,7 +53,7 @@ class LinkValue extends Value
     parent::__construct($parent, $field);
 
     if (is_array($data)) {
-      if (is_numeric($data['elementId'])) {
+      if (isset($data['elementId']) && is_numeric($data['elementId'])) {
         $this->elementId = $data['elementId'];
       }
 

@@ -140,6 +140,7 @@ class InstanceField extends AbstractField
         'group'       => true,
         'name'        => true,
         'label'       => true,
+        'limit'       => true,
         'width'       => true,
       )) + array(
         'type'  => ArrayField::NAME,

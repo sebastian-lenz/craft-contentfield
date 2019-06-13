@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\values;
 
 use lenz\contentfield\models\fields\strings\AbstractStringField;
+use Twig\Markup;
 
 /**
  * Class StringValue
@@ -47,7 +48,7 @@ class StringValue extends Value
    * @inheritdoc
    */
   public function getHtml() {
-    return new \Twig_Markup($this->_field->isHtmlField()
+    return new Markup($this->_field->isHtmlField()
       ? $this->_value
       : htmlentities($this->_value)
     , 'utf-8');

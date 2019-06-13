@@ -1,0 +1,104 @@
+{% macro usageHeaders(usages) %}
+  <div class="tcfSchemas--cell global">Default</div>
+
+  {%- for usage in usages -%}
+    <div class="tcfSchemas--cell {{ usage.type }}">
+      {{- usage.name -}}
+    </div>
+  {%- endfor -%}
+{% endmacro %}
+
+{% macro usageEnabled(field, usages) %}
+  {% import '_includes/forms' as forms %}
+  {% set byUsage = field.rootSchemasByUsage %}
+
+  <div class="tcfSchemas--cell content global"></div>
+
+  {%- for usage in usages -%}
+    <div class="tcfSchemas--cell content {{ usage.type }}" data-uid-controller="{{ usage.uid }}">
+      {{- forms.checkbox({
+        checked: byUsage[usage.uid] is defined,
+        name:    'cpRootSchemasByUsage['~usage.uid~'][]',
+        value:   '@enabled',
+      }) -}}
+    </div>
+  {%- endfor -%}
+{% endmacro %}
+
+{% macro usageCells(field, usages, value) %}
+  {% import '_includes/forms' as forms %}
+  {% set byUsage = field.rootSchemasByUsage %}
+
+  <div class="tcfSchemas--cell content global">
+    {{- forms.checkbox({
+      checked: value in field.rootSchemas,
+      name:    'rootSchemas[]',
+      value:   value,
+    }) -}}
+  </div>
+
+  {%- for usage in usages -%}
+    <div class="tcfSchemas--cell content {{ usage.type }}" data-uid-child="{{ usage.uid }}">
+      {{- forms.checkbox({
+        checked: byUsage[usage.uid] is defined and value in byUsage[usage.uid],
+        class:   byUsage[usage.uid] is defined ? '' : 'hidden',
+        name:    'cpRootSchemasByUsage['~usage.uid~'][]',
+        value:   value,
+      }) -}}
+    </div>
+  {%- endfor -%}
+{% endmacro %}
+
+{% macro table(field) %}
+  {% import _self as self %}
+  {% set groups = field.allRootSchemasGrouped %}
+  {% set usages = field.usages %}
+
+  <div class="tcfSchemas" id="{{ field.handle }}">
+    <div class="tcfSchemas--legend">
+      <div class="tcfSchemas--legendCell enabled">
+        <span>Enable override</span>
+      </div>
+
+      {% for group, schemas in groups %}
+        <div class="tcfSchemas--legendCell group">
+          <span class="icon" data-icon="category"></span>
+          <span>{{- group -}}</span>
+        </div>
+
+        {% for schema in schemas %}
+          <div class="tcfSchemas--legendCell schema">
+            {{- schema.label -}}
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+    <div class="tcfSchemas--viewport">
+      <div class="tcfSchemas--content">
+        <div class="tcfSchemas--row tcfSchemas--row__header">
+          {{ self.usageHeaders(usages) }}
+        </div>
+
+        <div class="tcfSchemas--row">
+          {{ self.usageEnabled(field, usages) }}
+        </div>
+
+        {% for group, schemas in groups %}
+          <div class="tcfSchemas--row content group">
+            {{ self.usageCells(field, usages, group~'/*.twig') }}
+          </div>
+
+          {% for schema in schemas %}
+            <div class="tcfSchemas--row content">
+              {{ self.usageCells(field, usages, schema.qualifier) }}
+            </div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  {% js %}
+    new contentField.SettingsTable("{{ field.handle|namespaceInputId }}");
+  {% endjs %}
+{% endmacro %}

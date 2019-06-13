@@ -1,10 +1,16 @@
 {% import '_includes/forms' as forms %}
+{% import 'contentfield/_settings-macros' as macros %}
 
-<div id="{{ name }}">
-  {{- forms.checkboxSelectField({
-    label: 'Root templates',
-    name: 'rootTemplates',
-    options: templates,
-    values: settings.rootTemplates,
-  }) -}}
-</div>
+{% do view.registerAssetBundle('lenz\\contentfield\\assets\\settings\\ContentFieldSettingsAsset') %}
+
+{{- forms.lightswitchField({
+  label:        'Use as page template',
+  instructions: 'When enabled, the template of this field replaces the default element template.',
+  name:         'useAsPageTemplate',
+  on:           field.useAsPageTemplate,
+}) -}}
+
+{{- forms.field({
+  label:        'Templates',
+  instructions: 'Mark templates with the property `rootTemplate: true` to filter this list. Assign this field to entries to see additional settings.',
+}, macros.table(field)) -}}

@@ -63,7 +63,7 @@ class ColorValue extends Value
   }
 
   /**
-   * @return string
+   * @inheritDoc
    */
   function __toString() {
     return $this->_field->disableAlpha
@@ -73,8 +73,7 @@ class ColorValue extends Value
 
 
   /**
-   * Returns the data of this value as required by the cp editor.
-   * @return mixed
+   * @inheritDoc
    */
   function getEditorData() {
     return array(
@@ -93,7 +92,7 @@ class ColorValue extends Value
   }
 
   /**
-   * @return bool
+   * @inheritDoc
    */
   public function isEmpty() {
     return false;

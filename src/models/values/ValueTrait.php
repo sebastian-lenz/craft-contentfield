@@ -6,6 +6,7 @@ use craft\base\ElementInterface;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\utilities\ReferenceMap;
+use Twig\Markup;
 
 /**
  * Trait ValueTrait
@@ -83,10 +84,10 @@ trait ValueTrait
   }
 
   /**
-   * @return \Twig_Markup
+   * @return Markup
    */
   public function getHtml() {
-    return new \Twig_Markup((string)$this, 'utf-8');
+    return new Markup((string)$this, 'utf-8');
   }
 
   /**

@@ -1,0 +1,56 @@
+#!/bin/bash
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOTDIR="$(dirname "$BASEDIR")"
+
+
+# Make sure we have a path to the ui part
+if [ "$1" != "" ]; then
+  UIDIR="$1"
+else
+  UIDIR="$ROOTDIR/../contentfield-ui"
+fi
+
+if [ ! -d "$UIDIR" ]; then
+  echo ERROR: Missing ui source 1>&2
+  exit 1
+fi
+
+UINAME=`cd "$UIDIR" && node -p "require('./package.json').name"`
+if [ "$UINAME" != "craft-contentfield-ui" ]; then
+  echo ERROR: Missing ui source 1>&2
+  exit 1
+fi
+
+
+# Checkout the release branch
+RELEASEDIR="$BASEDIR/branch-release"
+if [ ! -d "$RELEASEDIR" ]; then
+  git clone git@github.com:sebastian-lenz/craft-contentfield.git "$RELEASEDIR"
+fi
+
+git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" checkout release
+git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" pull
+
+
+# Sync with master
+git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" merge origin/master
+
+
+# Build UI
+cd "$UIDIR" && npm run build
+
+# Copy new files
+rm -rf "$RELEASEDIR/src/assets/field/resources"
+cp -r "$UIDIR/dist" "$RELEASEDIR/src/assets/field/resources"
+
+# Remove everything not intended for release
+rm -rf "$RELEASEDIR/bin"
+rm -rf "$RELEASEDIR/docs"
+rm -f "$RELEASEDIR/src/assets/field/.gitignore"
+
+
+# Commit changes
+git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" add -A
+git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" commit -m "Compiled resources"
+git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" push -u origin release

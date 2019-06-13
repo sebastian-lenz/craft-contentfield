@@ -10,8 +10,6 @@ use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\validators\ValueValidator;
 use yii\base\Model;
-use yii\helpers\Html;
-use yii\web\JsExpression;
 
 /**
  * Class AbstractSchema
@@ -21,10 +19,16 @@ use yii\web\JsExpression;
 abstract class AbstractSchema extends Model
 {
   /**
+   * Custom data attached to this schema.
+   * @var array
+   */
+  public $constants = [];
+
+  /**
    * A list of all fields attached to this schema.
    * @var AbstractField[]
    */
-  public $fields = array();
+  public $fields = [];
 
   /**
    * Defines the css grid layout of this schema. Grid layout is used
@@ -50,6 +54,12 @@ abstract class AbstractSchema extends Model
    * @var string
    */
   public $preview;
+
+  /**
+   * Marks this schema as a root schema. Only used to tidy up the cp field settings.
+   * @var bool
+   */
+  public $rootSchema = false;
 
   /**
    * The internal name of this schema.
@@ -117,6 +127,16 @@ abstract class AbstractSchema extends Model
    */
   public function display(InstanceValue $instance, array $variables = []) {
     echo $this->render($instance, $variables);
+  }
+
+  /**
+   * @param string $name
+   * @return mixed|null
+   */
+  public function getConstant(string $name) {
+    return array_key_exists($name, $this->constants)
+      ? $this->constants[$name]
+      : null;
   }
 
   /**
@@ -255,6 +275,14 @@ abstract class AbstractSchema extends Model
   }
 
   /**
+   * @param string $name
+   * @return bool
+   */
+  public function hasConstant(string $name) {
+    return array_key_exists($name, $this->constants);
+  }
+
+  /**
    * @param string|string[] $qualifier
    * @return boolean
    */
@@ -296,8 +324,18 @@ abstract class AbstractSchema extends Model
     return [
       ['qualifier', 'required'],
       [['icon', 'grid', 'label', 'preview', 'qualifier'], 'string'],
+      ['constants', 'validateArray'],
       ['fields', 'validateFields'],
     ];
+  }
+
+  /**
+   * @param string $attribute
+   */
+  public function validateArray($attribute) {
+    if (!is_array($this->$attribute)){
+      $this->addError($attribute, '{attribute} must be an array.');
+    }
   }
 
   /**

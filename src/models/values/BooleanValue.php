@@ -13,7 +13,7 @@ use lenz\contentfield\models\fields\booleans\AbstractBooleanField;
 class BooleanValue extends Value
 {
   /**
-   * @var boolean
+   * @var bool
    */
   private $_value;
 
@@ -52,7 +52,7 @@ class BooleanValue extends Value
   }
 
   /**
-   * @return bool
+   * @inheritDoc
    */
   public function isEmpty() {
     return !$this->_value;

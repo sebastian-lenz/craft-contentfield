@@ -25,8 +25,15 @@ abstract class AbstractLoader
    * @throws \Exception
    */
   public function findNames($pattern) {
-    throw new \Exception('Wildcard search is not supported bx this loader.');
+    throw new \Exception('Wildcard search is not supported by this loader.');
   }
+
+  /**
+   * Return a list of all available schemas.
+   *
+   * @return AbstractSchema[]
+   */
+  abstract function getAllSchemas();
 
   /**
    * Load the schema with the given name.

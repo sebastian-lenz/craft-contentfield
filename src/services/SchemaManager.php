@@ -15,19 +15,24 @@ use lenz\contentfield\services\loaders\TemplateLoader;
 class SchemaManager
 {
   /**
+   * @var AbstractSchema[]
+   */
+  private $_allSchemas;
+
+  /**
    * @var AbstractLoader[]
    */
-  private $loaders;
+  private $_loaders;
 
   /**
    * @var AbstractSchema[]
    */
-  private $schemas = array();
+  private $_schemas = array();
 
   /**
    * @var TemplateLoader
    */
-  private $templateLoader;
+  private $_templateLoader;
 
 
   /**
@@ -35,9 +40,9 @@ class SchemaManager
    * @throws \yii\base\Exception
    */
   public function __construct() {
-    $this->templateLoader = new TemplateLoader();
-    $this->loaders = array(
-      TemplateLoader::NAME_PREFIX => $this->templateLoader
+    $this->_templateLoader = new TemplateLoader();
+    $this->_loaders = array(
+      TemplateLoader::NAME_PREFIX => $this->_templateLoader
     );
   }
 
@@ -59,6 +64,22 @@ class SchemaManager
     }
 
     return new InstanceValue($data, $schema, $parent, $field);
+  }
+
+  /**
+   * @return AbstractSchema[]
+   */
+  public function getAllSchemas() {
+    if (!isset($this->_allSchemas)) {
+      $schemas = [];
+      foreach ($this->_loaders as $loader) {
+        $schemas = array_merge($schemas, $loader->getAllSchemas());
+      }
+
+      $this->_allSchemas = $schemas;
+    }
+
+    return $this->_allSchemas;
   }
 
   /**
@@ -97,12 +118,12 @@ class SchemaManager
       ? $qualifier
       : $this->parseSchemaQualifier($qualifier);
 
-    if (array_key_exists($parsed['uri'], $this->schemas)) {
-      return $this->schemas[$parsed['uri']];
+    if (array_key_exists($parsed['uri'], $this->_schemas)) {
+      return $this->_schemas[$parsed['uri']];
     }
 
     $schema = $parsed['loader']->load($parsed['name']);
-    $this->schemas[$parsed['uri']] = $schema;
+    $this->_schemas[$parsed['uri']] = $schema;
     return $schema;
   }
 
@@ -161,7 +182,7 @@ class SchemaManager
    * @return TemplateLoader
    */
   public function getTemplateLoader() {
-    return $this->templateLoader;
+    return $this->_templateLoader;
   }
 
   /**
@@ -173,18 +194,18 @@ class SchemaManager
     $divider = strpos($qualifier, ':');
     if ($divider === false) {
       return array(
-        'loader' => $this->templateLoader,
+        'loader' => $this->_templateLoader,
         'name'   => $qualifier,
         'uri'    => TemplateLoader::NAME_PREFIX . $qualifier,
       );
     }
 
     $loaderName = substr($qualifier, 0, $divider + 1);
-    if (!array_key_exists($loaderName, $this->loaders)) {
+    if (!array_key_exists($loaderName, $this->_loaders)) {
       throw new \Exception('Invalid schema name "' . $qualifier . '"');
     }
 
-    $loader = $this->loaders[$loaderName];
+    $loader = $this->_loaders[$loaderName];
     $name   = $loader->normalizeName(substr($qualifier, $divider + 1));
     $uri    = $loader::NAME_PREFIX . $name;
 

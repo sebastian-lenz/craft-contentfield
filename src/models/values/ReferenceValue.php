@@ -2,19 +2,26 @@
 
 namespace lenz\contentfield\models\values;
 
+use ArrayAccess;
+use ArrayIterator;
+use Countable;
+use Exception;
+use IteratorAggregate;
 use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\Plugin;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\helpers\Template;
 use lenz\contentfield\utilities\ReferenceMap;
+use Twig\Markup;
+use Twig_Markup;
 
 /**
  * Class ReferenceValue
  *
  * @property ReferenceField $_field
  */
-class ReferenceValue extends Value implements \ArrayAccess, \Countable, \IteratorAggregate
+class ReferenceValue extends Value implements ArrayAccess, Countable, IteratorAggregate
 {
   /**
    * @var ElementInterface[]
@@ -88,7 +95,7 @@ class ReferenceValue extends Value implements \ArrayAccess, \Countable, \Iterato
    * @inheritdoc
    */
   public function getIterator() {
-    return new \ArrayIterator($this->getReferences());
+    return new ArrayIterator($this->getReferences());
   }
 
   /**
@@ -128,8 +135,8 @@ class ReferenceValue extends Value implements \ArrayAccess, \Countable, \Iterato
   /**
    * @param string|array $config
    * @param array|null $extraConfig
-   * @return \Twig_Markup|\Twig\Markup|null
-   * @throws \Exception
+   * @return Twig_Markup|Markup|null
+   * @throws Exception
    */
   public function imageTag($config = 'default', $extraConfig = null) {
     foreach ($this->getReferences() as $reference) {
@@ -213,13 +220,13 @@ class ReferenceValue extends Value implements \ArrayAccess, \Countable, \Iterato
 
   /**
    * @inheritdoc
-   * @throws \Exception
+   * @throws Exception
    */
   public function offsetSet($offset, $value) { }
 
   /**
    * @inheritdoc
-   * @throws \Exception
+   * @throws Exception
    */
   public function offsetUnset($offset) { }
 }

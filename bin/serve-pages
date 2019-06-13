@@ -1,0 +1,7 @@
+#!/bin/bash
+
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOTDIR="$(dirname "$BASEDIR")"
+
+
+cd "$ROOTDIR" && sphinx-autobuild docs docs/_build/html

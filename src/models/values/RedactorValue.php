@@ -8,14 +8,14 @@ use craft\helpers\StringHelper;
 use lenz\contentfield\utilities\RedactorFieldData;
 use lenz\contentfield\models\fields\strings\RedactorField;
 use lenz\contentfield\utilities\ReferenceMap;
+use lenz\contentfield\utilities\twig\DisplayInterface;
 use yii\base\Exception;
 
 /**
  * Class RedactorValue
- *
  * @property RedactorField $_field
  */
-class RedactorValue extends Value
+class RedactorValue extends Value implements DisplayInterface
 {
   /**
    * @var string
@@ -61,6 +61,13 @@ class RedactorValue extends Value
    */
   public function __toString() {
     return (string)$this->getRedactorFieldData();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function display(array $variables = []) {
+    echo $this->getRedactorFieldData();
   }
 
   /**

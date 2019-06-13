@@ -4,6 +4,7 @@ namespace lenz\contentfield\models\values;
 
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\utilities\oembed\OEmbed;
+use Twig\Markup;
 
 /**
  * Class OEmbedValue
@@ -57,7 +58,7 @@ class OEmbedValue extends Value
    */
   public function getHtml($options = null) {
     $oembed = $this->getOEmbed();
-    return new \Twig_Markup(is_null($oembed)
+    return new Markup(is_null($oembed)
       ? ''
       : $oembed->getHtml($options)
     , 'utf-8');

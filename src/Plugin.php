@@ -11,6 +11,7 @@ use craft\services\Utilities;
 use craft\web\Application;
 use craft\web\Response;
 use craft\web\View;
+use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\Content;
@@ -116,45 +117,41 @@ class Plugin extends \craft\base\Plugin
 
   /**
    * @param ActionEvent $event
-   * @throws \Exception
+   * @throws Exception
    */
   public function onBeforeAction(ActionEvent $event) {
     $element = Craft::$app->getUrlManager()->getMatchedElement();
-    if (!$element) {
+    $isRenderRequest = (
+      $event->action->controller instanceof TemplatesController &&
+      $event->action->id == 'render'
+    );
+
+    if (!$element || !$isRenderRequest) {
       return;
     }
 
     $uuid = Craft::$app->getRequest()->getParam(self::$UUID_PARAM);
-    $isChunkRequest =
-      !is_null($uuid) &&
-      $event->action->controller instanceof TemplatesController &&
-      $event->action->id == 'render';
-
-    $actionEvent = new BeforeActionEvent([
-      'originalEvent' => $event,
-      'requestedUuid' => $isChunkRequest ? $uuid : null,
-    ]);
+    $isChunkRequest = $isRenderRequest && !is_null($uuid);
+    $pageTemplate = null;
 
     foreach ($element->getFieldValues() as $fieldValue) {
       if ($fieldValue instanceof Content) {
-        $fieldValue->onBeforeAction($actionEvent);
+        $fieldValue->onBeforeAction(new BeforeActionEvent([
+          'originalEvent' => $event,
+          'requestedUuid' => $isChunkRequest ? $uuid : null,
+        ]));
+
+        if ($fieldValue->getField()->useAsPageTemplate) {
+          $pageTemplate = $fieldValue;
+        }
       }
     };
 
     if ($isChunkRequest && $event->isValid) {
+      throw new NotFoundHttpException();
+    } elseif (!is_null($pageTemplate)) {
       $event->isValid = false;
-
-      if (\Craft::$app->getRequest()->getAcceptsJson()) {
-        $response = \Craft::$app->response;
-        $response->statusCode = 404;
-        $response->format = Response::FORMAT_JSON;
-        $response->data = [
-          'success' => false,
-          'uuid'    => $uuid,
-        ];
-      } else {
-        throw new NotFoundHttpException();
-      }
+      $this->sendPageTemplate($pageTemplate);
     }
   }
 
@@ -188,6 +185,19 @@ class Plugin extends \craft\base\Plugin
    */
   protected function createSettingsModel() {
     return new Config();
+  }
+
+  /**
+   * @param Content $content
+   */
+  protected function sendPageTemplate(Content $content) {
+    $routeParams = Craft::$app->getUrlManager()->getRouteParams();
+
+    $response = Craft::$app->getResponse();
+    $response->format = Response::FORMAT_HTML;
+    $response->data = $content->render(
+      $routeParams['variables']
+    );
   }
 
 

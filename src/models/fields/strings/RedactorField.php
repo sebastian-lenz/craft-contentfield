@@ -5,6 +5,8 @@ namespace lenz\contentfield\models\fields\strings;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\RedactorValue;
 use craft\base\ElementInterface;
+use lenz\contentfield\utilities\RedactorSettings;
+use Throwable;
 
 /**
  * Class RedactorField
@@ -51,15 +53,15 @@ class RedactorField extends AbstractStringField
   }
 
   /**
-   * @return \lenz\contentfield\utilities\RedactorSettings|null
+   * @return RedactorSettings|null
    */
   public function getRedactorField() {
     try {
-      return new \lenz\contentfield\utilities\RedactorSettings([
+      return new RedactorSettings([
         'purifierConfig' => $this->purifierConfig,
         'redactorConfig' => $this->redactorConfig,
       ]);
-    } catch (\Throwable $error) { }
+    } catch (Throwable $error) { }
 
     return null;
   }
@@ -71,7 +73,7 @@ class RedactorField extends AbstractStringField
   public function getRedactorSettings(ElementInterface $element = null) {
     try {
       return $this->getRedactorField()->getFieldSettings($element);
-    } catch (\Throwable $error) { }
+    } catch (Throwable $error) { }
 
     return array();
   }

@@ -21,6 +21,7 @@ use Twig\Markup;
 
 /**
  * Class Content
+ * @method ContentField getField()
  * @property ContentField $_field
  */
 class Content extends ForeignFieldModel implements DisplayInterface
@@ -110,16 +111,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
    * @return Markup
    */
   public function getHtml(array $variables = []) {
-    $model = $this->_model;
-    if (is_null($model)) {
-      return new Markup('', 'utf-8');
-    }
-
-    $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
-      'content' => $this,
-    ]));
-
-    return $model->getHtml($variables);
+    return new Markup($this->render($variables), 'utf-8');
   }
 
   /**
@@ -185,6 +177,23 @@ class Content extends ForeignFieldModel implements DisplayInterface
     }
 
     $model->onBeforeAction($event);
+  }
+
+  /**
+   * @param array $variables
+   * @return string
+   */
+  public function render($variables = []) {
+    $model = $this->_model;
+    if (is_null($model)) {
+      return '';
+    }
+
+    $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
+      'content' => $this,
+    ]));
+
+    return $model->render($variables);
   }
 
   /**

@@ -2,8 +2,10 @@
 
 namespace lenz\contentfield\models\values;
 
+use Craft;
 use craft\helpers\UrlHelper;
 use craft\web\Response;
+use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\fields\AbstractField;
@@ -14,6 +16,7 @@ use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
+use Twig\Markup;
 use yii\base\Model;
 
 /**
@@ -73,13 +76,13 @@ class InstanceValue
    * @param AbstractSchema $schema
    * @param ValueInterface|null $parent
    * @param InstanceField|null $field
-   * @throws \Exception
+   * @throws Exception
    */
   public function __construct(array $data, AbstractSchema $schema, ValueInterface $parent = null, InstanceField $field = null) {
     parent::__construct();
+
     $this->_field = $field;
     $this->_parent = $parent;
-
     $this->_schema = $schema;
 
     if (array_key_exists(self::UUID_PROPERTY, $data)) {
@@ -93,7 +96,7 @@ class InstanceValue
       $this->_originalUuid = $data[self::ORIGINAL_UUID_PROPERTY];
     }
 
-    foreach ($schema->fields as $name => $field) {
+    foreach ($this->_schema->fields as $name => $field) {
       $this->$name = array_key_exists($name, $data) ? $data[$name] : null;
     }
   }
@@ -109,6 +112,8 @@ class InstanceValue
       return $this->_values[substr($name, 4)]->getEditorData();
     } elseif (array_key_exists($name, $this->_schema->fields)) {
       return $this->_values[$name];
+    } elseif ($this->_schema->hasConstant($name)) {
+      return $this->_schema->getConstant($name);
     } else {
       return parent::__get($name);
     }
@@ -116,7 +121,7 @@ class InstanceValue
 
   /**
    * @inheritdoc
-   * @throws \Exception
+   * @throws Exception
    */
   public function __set($name, $value) {
     if (array_key_exists($name, $this->_schema->fields)) {
@@ -132,6 +137,8 @@ class InstanceValue
   public function __isset($name) {
     if (array_key_exists($name, $this->_schema->fields)) {
       return true;
+    } elseif ($this->_schema->hasConstant($name)) {
+      return true;
     } else {
       return parent::__isset($name);
     }
@@ -139,6 +146,7 @@ class InstanceValue
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function __toString() {
     return $this->render();
@@ -173,6 +181,7 @@ class InstanceValue
 
   /**
    * @inheritDoc
+   * @throws Exception
    */
   public function display(array $variables = []) {
     if (isset($this->_output)) {
@@ -277,14 +286,15 @@ class InstanceValue
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function getHtml(array $variables = []) {
-    return new \Twig_Markup($this->render($variables), 'utf-8');
+    return new Markup($this->render($variables), 'utf-8');
   }
 
   /**
    * @return Model|null
-   * @throws \Exception
+   * @throws Exception
    */
   public function getModel() {
     if (!isset($this->_model)) {
@@ -296,7 +306,7 @@ class InstanceValue
         $model = new $modelClass();
 
         if (!($model instanceof Model)) {
-          throw new \Exception('Invalid model class ' . $modelClass);
+          throw new Exception('Invalid model class ' . $modelClass);
         }
 
         if ($model instanceof InstanceAwareInterface) {
@@ -354,6 +364,13 @@ class InstanceValue
   }
 
   /**
+   * @return AbstractSchema
+   */
+  public function getSchema() {
+    return $this->_schema;
+  }
+
+  /**
    * @inheritDoc
    */
   public function getSearchKeywords() {
@@ -363,7 +380,7 @@ class InstanceValue
   }
 
   /**
-   * @return array
+   * @inheritDoc
    */
   public function getSerializedData() {
     $result = array();
@@ -432,14 +449,23 @@ class InstanceValue
   }
 
   /**
-   * @return bool
+   * @inheritDoc
    */
   public function isEmpty() {
     return false;
   }
 
   /**
+   * @param string|string[] $qualifier
+   * @return bool
+   */
+  public function isOfType($qualifier) {
+    return $this->_schema->matchesQualifier($qualifier);
+  }
+
+  /**
    * @inheritDoc
+   * @throws Exception
    */
   public function onBeforeAction(BeforeActionEvent $event) {
     $model = $this->getModel();
@@ -455,12 +481,12 @@ class InstanceValue
 
     if ($event->requestedUuid == $this->_uuid) {
       $event->originalEvent->isValid = false;
-      $response = \Craft::$app->response;
+      $response = Craft::$app->response;
       $content = $this->render([
         'isChunkRequest' => true
       ]);
 
-      if (\Craft::$app->getRequest()->getAcceptsJson()) {
+      if (Craft::$app->getRequest()->getAcceptsJson()) {
         $response->format = Response::FORMAT_JSON;
         $response->data = [
           'success' => true,
@@ -476,6 +502,7 @@ class InstanceValue
   /**
    * @param array $variables
    * @return string
+   * @throws Exception
    */
   public function render(array $variables = []) {
     if (isset($this->_output)) {
@@ -542,6 +569,7 @@ class InstanceValue
 
   /**
    * @param array $variables
+   * @throws Exception
    */
   private function normalizeVariables(array &$variables) {
     $variables += [
@@ -569,7 +597,7 @@ class InstanceValue
 
   /**
    * @return string
-   * @throws \Exception
+   * @throws Exception
    */
   static function uuid() {
     $data = random_bytes(16);

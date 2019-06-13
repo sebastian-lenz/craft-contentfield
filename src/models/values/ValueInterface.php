@@ -6,6 +6,7 @@ use craft\base\ElementInterface;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\utilities\ReferenceMap;
+use Twig\Markup;
 
 /**
  * Interface ValueInterface
@@ -51,7 +52,7 @@ interface ValueInterface
   public function getField();
 
   /**
-   * @return \Twig_Markup
+   * @return Markup
    */
   public function getHtml();
 
