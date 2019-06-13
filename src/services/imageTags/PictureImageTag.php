@@ -2,12 +2,11 @@
 
 namespace lenz\contentfield\services\imageTags;
 
-
 use craft\helpers\Html;
 use craft\helpers\Image;
 
 /**
- * Interface PictureImageTag
+ * Class PictureImageTag
  */
 class PictureImageTag extends ImageTag
 {
@@ -62,7 +61,7 @@ class PictureImageTag extends ImageTag
   /**
    * @inheritdoc
    */
-  function isSupported() {
+  public function isSupported() {
     $ext = $this->asset->getExtension();
     return Image::canManipulateAsImage($ext);
   }
@@ -70,7 +69,7 @@ class PictureImageTag extends ImageTag
   /**
    * @inheritdoc
    */
-  function render() {
+  public function render() {
     $content = array();
     foreach ($this->sources as $source) {
       $sourceTag = $this->renderSource($source);
@@ -104,7 +103,7 @@ class PictureImageTag extends ImageTag
    * @param array|string $source
    * @return string|null
    */
-  function renderSource($source) {
+  public function renderSource($source) {
     $source = self::normalizeSource($source);
 
     if (isset($source['attributes'])) {
@@ -131,6 +130,10 @@ class PictureImageTag extends ImageTag
     return Html::tag('source', '', $attributes);
   }
 
+
+  // Static methods
+  // --------------
+
   /**
    * @param array $definition
    * @return array
@@ -152,16 +155,17 @@ class PictureImageTag extends ImageTag
   }
 
   /**
-   * @param array $target
-   * @param array $source
+   * @param array $config
+   * @param array $parent
    * @return array
    */
-  static public function mergeConfig($target, $source) {
-    return self::mergeAttributes(
-      $target,
-      $source,
-      array('attributes', 'wrapAttributes')
-    ) + $source;
+  static public function mergeConfig(array $config, array $parent) {
+    return array_merge(
+      $parent,
+      self::mergeAttributes($config, $parent, [
+        'attributes', 'wrapAttributes'
+      ])
+    );
   }
 
   /**

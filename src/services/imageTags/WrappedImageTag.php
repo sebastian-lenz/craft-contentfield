@@ -92,16 +92,21 @@ class WrappedImageTag extends DefaultImageTag
     );
   }
 
+
+  // Static methods
+  // --------------
+
   /**
-   * @param array $target
-   * @param array $source
+   * @param array $config
+   * @param array $parent
    * @return array
    */
-  static public function mergeConfig($target, $source) {
-    return self::mergeAttributes(
-      $target,
-      $source,
-      array('attributes', 'wrapAttributes')
-    ) + $source;
+  static public function mergeConfig(array $config, array $parent) {
+    return array_merge(
+      $parent,
+      self::mergeAttributes($config, $parent, [
+        'attributes', 'wrapAttributes'
+      ])
+    );
   }
 }

@@ -2,8 +2,15 @@
 
 namespace lenz\contentfield\services;
 
-use craft\helpers\Json;
+use Craft;
+use Exception;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RecursiveRegexIterator;
+use RegexIterator;
+use SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
+use Throwable;
 
 /**
  * Class AbstractDefinitionService
@@ -16,9 +23,9 @@ abstract class AbstractDefinitionService
   protected $definitions;
 
   /**
-   * @var string[]
+   * @var string
    */
-  const DEFINITION_ATTRIBUTES = ['extends', 'type'];
+  const DEFINITION_TYPE = 'type';
 
   /**
    * @var string
@@ -30,13 +37,6 @@ abstract class AbstractDefinitionService
    */
   const DEFINITION_EXTENSION = '.yml';
 
-
-  /**
-   * Return the cache key.
-   *
-   * @return string
-   */
-  abstract protected function getCacheKey();
 
   /**
    * Return the blueprint field definition for the given name.
@@ -57,6 +57,17 @@ abstract class AbstractDefinitionService
     return is_array($definition) ? $definition : [];
   }
 
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * Return the cache key.
+   *
+   * @return string
+   */
+  abstract protected function getCacheKey();
+
   /**
    * @return string
    */
@@ -66,25 +77,26 @@ abstract class AbstractDefinitionService
    * @return array
    */
   protected function getDefinitionSources() {
-    $sources = array();
-    $basePath = \Craft::$app->getConfig()->configDir . DIRECTORY_SEPARATOR . self::DEFINITION_BASE_PATH;
-    $name = $this->getDefinitionName();
+    $sources = [];
+    $name    = $this->getDefinitionName();
+    $path    = implode(DIRECTORY_SEPARATOR, [
+      Craft::$app->getConfig()->configDir,
+      self::DEFINITION_BASE_PATH,
+      $name
+    ]);
 
-    $file = $basePath . DIRECTORY_SEPARATOR . $name . self::DEFINITION_EXTENSION;
+    $file = $path . self::DEFINITION_EXTENSION;
     if (file_exists($file) && is_readable($file)) {
       $sources['*'] = [
         'pathname' => $file,
         'mtime'    => filemtime($file),
       ];
-    }
+    } elseif (file_exists($path) && is_dir($path)) {
+      $paths = new RecursiveDirectoryIterator($path);
+      $files = new RecursiveIteratorIterator($paths);
+      $filteredFiles = new RegexIterator($files, '/^.+\.yml$/i', RecursiveRegexIterator::GET_MATCH);
 
-    $path = $basePath . DIRECTORY_SEPARATOR . $name;
-    if (file_exists($path) && is_dir($path)) {
-      $paths = new \RecursiveDirectoryIterator($path);
-      $files = new \RecursiveIteratorIterator($paths);
-      $filteredFiles = new \RegexIterator($files, '/^.+\.yml$/i', \RecursiveRegexIterator::GET_MATCH);
-
-      /** @var \SplFileInfo $fileInfo */
+      /** @var SplFileInfo $fileInfo */
       foreach ($filteredFiles as $fileInfo) {
         $key = $fileInfo->getBasename('.yml');
         $sources[$key] = [
@@ -127,17 +139,17 @@ abstract class AbstractDefinitionService
       return;
     }
 
-    $cache = \Craft::$app->getCache();
-    $cacheKey = $this->getCacheKey();
-    $cachedData = $cache->get($cacheKey);
+    $cache     = Craft::$app->getCache();
+    $cacheKey  = $this->getCacheKey();
+    $cacheData = $cache->get($cacheKey);
 
     // In production mode we just return the data
     if (
       CRAFT_ENVIRONMENT == 'production' &&
-      is_array($cachedData) &&
-      array_key_exists('data', $cachedData)
+      is_array($cacheData) &&
+      array_key_exists('data', $cacheData)
     ) {
-      $this->definitions = $cachedData['data'];
+      $this->definitions = $cacheData['data'];
       return;
     }
 
@@ -148,11 +160,11 @@ abstract class AbstractDefinitionService
     }, $sources)));
 
     if (
-      is_array($cachedData) &&
-      array_key_exists('data', $cachedData) &&
-      $cachedData['hash'] == $hash
+      is_array($cacheData) &&
+      array_key_exists('data', $cacheData) &&
+      $cacheData['hash'] == $hash
     ) {
-      $this->definitions = $cachedData['data'];
+      $this->definitions = $cacheData['data'];
       return;
     }
 
@@ -164,8 +176,8 @@ abstract class AbstractDefinitionService
           $definitions,
           Yaml::parseFile($source['pathname'])
         );
-      } catch (\Throwable $error) {
-        \Craft::error($error->getMessage());
+      } catch (Throwable $error) {
+        Craft::error($error->getMessage());
       }
     }
 
@@ -178,49 +190,49 @@ abstract class AbstractDefinitionService
 
   /**
    * @param array $config
-   * @param array $definition
+   * @param array $parent
    * @return array
    */
-  protected function mergeDefinitions($config, $definition) {
-    return array_merge($definition, $config);
+  protected function mergeDefinitions(array $config, array $parent) {
+    return array_merge($parent, $config);
   }
 
   /**
    * @param array $config
+   * @param array $stack
    * @return array
-   * @throws \Exception
+   * @throws Exception
    */
-  protected function resolveDefinition(array $config) {
-    $stack = array();
+  protected function resolveDefinition(array $config, array $stack = []) {
+    if (
+      !array_key_exists(static::DEFINITION_TYPE, $config) ||
+      !is_string($config[static::DEFINITION_TYPE])
+    ) {
+      throw new Exception(sprintf(
+        'A definition must contain a `%s` type attribute.',
+        static::DEFINITION_TYPE
+      ));
+    }
 
-    do {
-      $hasChanged = false;
-      foreach (self::DEFINITION_ATTRIBUTES as $attribute) {
-        if (!isset($config[$attribute])) {
-          continue;
-        }
+    // If the definition is of a native type or we don't know about
+    // it we are done
+    $type = $config[static::DEFINITION_TYPE];
+    if (
+      $this->isNativeType($type) ||
+      !$this->hasDefinition($type)
+    ) {
+      return $config;
+    }
 
-        $value = $config[$attribute];
-        if (
-          !is_string($value) ||
-          !$this->hasDefinition($value) ||
-          $this->isNativeType($value)
-        ) {
-          continue;
-        }
+    // If we have already have that type in out stack, bail out
+    if (in_array($type, $stack)) {
+      throw new Exception('Recursive definition inheritance.');
+    }
 
-        if (in_array($value, $stack)) {
-          throw new \Exception('Found recursive definition inheritance.');
-        }
+    unset($config[static::DEFINITION_TYPE]);
+    $stack[] = $type;
+    $parent  = $this->resolveDefinition($this->getDefinition($type), $stack);
 
-        $stack[] = $value;
-        $hasChanged = true;
-
-        unset($config[$attribute]);
-        $config = $this->mergeDefinitions($config, $this->getDefinition($value));
-      }
-    } while ($hasChanged);
-
-    return $config;
+    return $this->mergeDefinitions($config, $parent);
   }
 }

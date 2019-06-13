@@ -68,6 +68,14 @@ class DefaultImageTag extends ImageTag
   /**
    * @return array
    */
+  public function getMaxSource() {
+    $sources = $this->getSources();
+    return $sources[count($sources) - 1];
+  }
+
+  /**
+   * @return array
+   */
   public function getSources() {
     if (!isset($this->sources)) {
       $this->sources = $this->toSources($this->transforms);
@@ -84,14 +92,6 @@ class DefaultImageTag extends ImageTag
   }
 
   /**
-   * @return array
-   */
-  public function getMaxSource() {
-    $sources = $this->getSources();
-    return $sources[count($sources) - 1];
-  }
-
-  /**
    * @inheritdoc
    */
   public function isSupported() {
@@ -100,9 +100,9 @@ class DefaultImageTag extends ImageTag
   }
 
   /**
-   * @return string
+   * @inheritDoc
    */
-  function render() {
+  public function render() {
     $sources = $this->getSources();
     $maxSource = array_pop($sources);
 
@@ -121,6 +121,10 @@ class DefaultImageTag extends ImageTag
 
     return Html::tag('img', '', $attributes);
   }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @param array $definition
@@ -144,11 +148,16 @@ class DefaultImageTag extends ImageTag
   }
 
   /**
-   * @param array $target
-   * @param array $source
+   * @param array $config
+   * @param array $parent
    * @return array
    */
-  static public function mergeConfig($target, $source) {
-    return self::mergeAttributes($target, $source) + $source;
+  static public function mergeConfig(array $config, array $parent) {
+    return array_merge(
+      $parent,
+      self::mergeAttributes($config, $parent, [
+        'attributes',
+      ])
+    );
   }
 }

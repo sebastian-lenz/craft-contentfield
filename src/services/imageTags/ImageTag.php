@@ -2,8 +2,12 @@
 
 namespace lenz\contentfield\services\imageTags;
 
+use Craft;
 use craft\elements\Asset;
+use craft\errors\AssetException;
+use craft\errors\AssetTransformException;
 use craft\helpers\Image;
+use Throwable;
 use yii\base\BaseObject;
 
 /**
@@ -28,6 +32,53 @@ abstract class ImageTag extends BaseObject
 
 
   /**
+   * @return string|null
+   * @throws AssetException
+   * @throws AssetTransformException
+   */
+  public function getThumbnail() {
+    $asset = $this->asset;
+    $volume = $asset->volume;
+
+    if (
+      $this->thumbnailTransform === null ||
+      !Image::canManipulateAsImage(pathinfo($asset->filename, PATHINFO_EXTENSION)))
+    {
+      return null;
+    }
+
+    $transforms = Craft::$app->getAssetTransforms();
+    $index = $transforms->getTransformIndex($asset, $this->thumbnailTransform);
+    if (!$index->fileExists) {
+      try {
+        $transforms->ensureTransformUrlByIndexModel($index);
+      } catch (Throwable $exception) {
+        $transforms->deleteTransformIndex($index->id);
+        return null;
+      }
+    }
+
+    $stream = $volume->getFileStream(
+      $asset->folderPath .
+      $transforms->getTransformSubpath($this->asset, $index)
+    );
+
+    return "url('data:image/gif;base64," . base64_encode(stream_get_contents($stream)) . "')";
+  }
+
+  /**
+   * @return string
+   */
+  public function getThumbnailStyle() {
+    try {
+      $thumbnail = $this->getThumbnail();
+      return is_null($thumbnail) ? '' : 'background-image:' . $thumbnail . ';';
+    } catch (Throwable $error) {
+      return '';
+    }
+  }
+
+  /**
    * @return boolean
    */
   abstract function isSupported();
@@ -36,6 +87,10 @@ abstract class ImageTag extends BaseObject
    * @return string
    */
   abstract function render();
+
+
+  // Protected methods
+  // -----------------
 
   /**
    * @param array $attributes
@@ -75,53 +130,6 @@ abstract class ImageTag extends BaseObject
     }
 
     return $result;
-  }
-
-  /**
-   * @return string
-   */
-  public function getThumbnailStyle() {
-    try {
-      $thumbnail = $this->getThumbnail();
-      return is_null($thumbnail) ? '' : 'background-image:' . $thumbnail . ';';
-    } catch (\Throwable $error) {
-      return '';
-    }
-  }
-
-  /**
-   * @return string|null
-   * @throws \craft\errors\AssetException
-   * @throws \craft\errors\AssetTransformException
-   */
-  public function getThumbnail() {
-    $asset = $this->asset;
-    $volume = $asset->volume;
-
-    if (
-      $this->thumbnailTransform === null ||
-      !Image::canManipulateAsImage(pathinfo($asset->filename, PATHINFO_EXTENSION)))
-    {
-      return null;
-    }
-
-    $transforms = \Craft::$app->getAssetTransforms();
-    $index = $transforms->getTransformIndex($asset, $this->thumbnailTransform);
-    if (!$index->fileExists) {
-      try {
-        $transforms->ensureTransformUrlByIndexModel($index);
-      } catch (\Throwable $exception) {
-        $transforms->deleteTransformIndex($index->id);
-        return null;
-      }
-    }
-
-    $stream = $volume->getFileStream(
-      $asset->folderPath .
-      $transforms->getTransformSubpath($this->asset, $index)
-    );
-
-    return "url('data:image/gif;base64," . base64_encode(stream_get_contents($stream)) . "')";
   }
 
   /**
@@ -166,6 +174,10 @@ abstract class ImageTag extends BaseObject
     return $sources;
   }
 
+
+  // Static methods
+  // --------------
+
   /**
    * @var array $attributes
    * @var boolean $useSourceSet
@@ -206,59 +218,64 @@ abstract class ImageTag extends BaseObject
   }
 
   /**
-   * @param mixed $target
-   * @param mixed $source
-   * @param string|string[] $keys
+   * @param mixed $config
+   * @param mixed $parent
+   * @param string|string[] $attributeKeys
    * @return array
    */
-  static protected function mergeAttributes($target, $source, $keys = 'attributes') {
-    if (!is_array($target)) $target = array();
-    if (!is_array($source)) $source = array();
-    if (!is_array($keys)) $keys = array($keys);
+  static public function mergeAttributes(array $config, array $parent, $attributeKeys = ['attributes']) {
+    if (!is_array($attributeKeys)) {
+      $attributeKeys = [$attributeKeys];
+    }
 
-    foreach ($keys as $key) {
-      $hasTarget = array_key_exists($key, $target);
-      $hasSource = array_key_exists($key, $source);
+    foreach ($attributeKeys as $attributeKey) {
+      $hasTarget = array_key_exists($attributeKey, $config);
+      $hasSource = array_key_exists($attributeKey, $parent);
 
       if ($hasTarget && $hasSource) {
-        $target[$key] = self::mergeClassNames($target[$key], $source[$key]) + $source[$key];
+        $config[$attributeKey] = array_merge(
+          $parent[$attributeKey],
+          self::mergeClassNames($config[$attributeKey], $parent[$attributeKey])
+        );
       } elseif ($hasSource) {
-        $target[$key] = $source[$key];
+        $config[$attributeKey] = $parent[$attributeKey];
       }
     }
 
-    return $target;
+    return $config;
   }
 
   /**
-   * @param array $target
-   * @param array $source
+   * @param array $config
+   * @param array $parent
    * @return array
    */
-  static public function mergeConfig($target, $source) {
-    return $target + $source;
+  static public function mergeConfig(array $config, array $parent) {
+    return array_merge($parent, $config);
   }
 
   /**
-   * @param array $target
-   * @param array $source
+   * @param array $config
+   * @param array $parent
    * @param string $key
    * @return array
    */
-  static protected function mergeClassNames($target, $source, $key = 'class') {
-    $hasTarget = array_key_exists($key, $target);
-    $hasSource = array_key_exists($key, $source);
-
-    if ($hasTarget && $hasSource) {
-      $target[$key] = implode(' ', array_unique(array_merge(
-        explode(' ', $source[$key]),
-        explode(' ', $target[$key])
-      )));
-    } elseif ($hasSource) {
-      $target[$key] = $source[$key];
+  static public function mergeClassNames(array $config, array $parent, $key = 'class') {
+    if (
+      array_key_exists($key, $config) &&
+      array_key_exists($key, $parent)
+    ) {
+      if ($config[$key]{0} == '=') {
+        $config[$key] = substr($config[$key], 1);
+      } else {
+        $config[$key] = implode(' ', array_unique(array_merge(
+          explode(' ', $parent[$key]),
+          explode(' ', $config[$key])
+        )));
+      }
     }
 
-    return $target;
+    return array_merge($parent, $config);
   }
 
   /**
@@ -281,9 +298,10 @@ abstract class ImageTag extends BaseObject
    * @param array $sources
    * @return string
    */
-  static protected function toSourceSet($sources) {
+  static public function toSourceSet($sources) {
     $maxSource = array_pop($sources);
-    $srcSet = array();
+    $srcSet    = [];
+
     foreach ($sources as $source) {
       $srcSet[] = $source['src'] . ' ' . $source['width'] . 'w';
     }

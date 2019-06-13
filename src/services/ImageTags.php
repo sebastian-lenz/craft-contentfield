@@ -4,6 +4,7 @@ namespace lenz\contentfield\services;
 
 use craft\elements\Asset;
 
+use Exception;
 use lenz\contentfield\services\imageTags\DefaultImageTag;
 use lenz\contentfield\services\imageTags\PictureImageTag;
 use lenz\contentfield\services\imageTags\ImageTag;
@@ -17,14 +18,14 @@ class ImageTags extends AbstractDefinitionService
   /**
    * @var ImageTag[]
    */
-  private $imageTags;
+  private $_imageTags;
 
 
   /**
    * ImageTags constructor.
    */
   public function __construct() {
-    $this->imageTags = array(
+    $this->_imageTags = array(
       'default' => DefaultImageTag::class,
       'picture' => PictureImageTag::class,
       'wrapped' => WrappedImageTag::class
@@ -36,7 +37,7 @@ class ImageTags extends AbstractDefinitionService
    * @param string $imageTagClass
    */
   public function addImageTag($type, $imageTagClass) {
-    $this->imageTags[$type] = $imageTagClass;
+    $this->_imageTags[$type] = $imageTagClass;
   }
 
   /**
@@ -49,7 +50,7 @@ class ImageTags extends AbstractDefinitionService
 
     $transforms = array();
     foreach ($this->definitions as $definition) {
-      foreach ($this->imageTags as $imageTag) {
+      foreach ($this->_imageTags as $imageTag) {
         $transforms = array_merge(
           $transforms,
           $imageTag::extractTransforms($definition)
@@ -77,15 +78,15 @@ class ImageTags extends AbstractDefinitionService
   /**
    * @param $config
    * @return ImageTag|mixed
-   * @throws \Exception
+   * @throws Exception
    */
   protected function getImageTagClass($config) {
     $type = $config['type'];
-    if (!array_key_exists($type, $this->imageTags)) {
-      throw new \Exception('Invalid image tag type: ' .  $type);
+    if (!array_key_exists($type, $this->_imageTags)) {
+      throw new Exception('Invalid image tag type: ' .  $type);
     }
 
-    return $this->imageTags[$type];
+    return $this->_imageTags[$type];
   }
 
   /**
@@ -93,26 +94,26 @@ class ImageTags extends AbstractDefinitionService
    * @return boolean
    */
   protected function isNativeType($type) {
-    return array_key_exists($type, $this->imageTags);
+    return array_key_exists($type, $this->_imageTags);
   }
 
   /**
    * @param array $config
-   * @param array $definition
+   * @param array $parent
    * @return array
-   * @throws \Exception
+   * @throws Exception
    */
-  protected function mergeDefinitions($config, $definition) {
-    $imageTagClass = $this->getImageTagClass($definition);
-    return $imageTagClass::mergeConfig($config, $definition);
+  protected function mergeDefinitions(array $config, array $parent) {
+    $imageTagClass = $this->getImageTagClass($parent);
+    return $imageTagClass::mergeConfig($config, $parent);
   }
 
   /**
    * @param Asset $asset
-   * @param array $config
+   * @param array|string $config
    * @param array|null $extraConfig
    * @return string|null
-   * @throws \Exception
+   * @throws Exception
    */
   public function render(Asset $asset, $config, $extraConfig = null) {
     if (!is_array($config)) {
@@ -124,16 +125,21 @@ class ImageTags extends AbstractDefinitionService
       if (!isset($extraConfig['type'])) {
         $extraConfig['type'] = $config['type'];
       }
-      $config = $this->mergeDefinitions($config, $extraConfig);
+
+      $config = $this->mergeDefinitions($extraConfig, $config);
     }
 
-    $imageTagClass = $this->getImageTagClass($config);
+    $imageTagClass   = $this->getImageTagClass($config);
+    $type            = $config['type'];
     $config['asset'] = $asset;
+
     unset($config['type']);
 
     $imageTag = new $imageTagClass($config);
     if (!($imageTag instanceof ImageTag)) {
-      throw new \Exception('Invalid image tag class ' .  $imageTagClass . ' for type ' . $type);
+      throw new Exception(sprintf(
+        'Invalid image tag class `%s` for type %s.', $imageTagClass, $type)
+      );
     }
 
     return $imageTag->isSupported()

@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\services;
 
+use Exception;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
@@ -51,7 +52,7 @@ class SchemaManager
    * @param ValueInterface|null $parent
    * @param InstanceField|null $field
    * @return InstanceValue
-   * @throws \Exception
+   * @throws Exception
    */
   public function createValue($data, ValueInterface $parent = null, InstanceField $field = null) {
     if (!is_array($data) || !isset($data[InstanceValue::TYPE_PROPERTY])) {
@@ -111,7 +112,7 @@ class SchemaManager
    *
    * @param string|array $qualifier
    * @return null|AbstractSchema
-   * @throws \Exception
+   * @throws Exception
    */
   public function getSchema($qualifier) {
     $parsed = is_array($qualifier)
@@ -133,7 +134,7 @@ class SchemaManager
    *
    * @param string[] $qualifiers
    * @return AbstractSchema[]
-   * @throws \Exception
+   * @throws Exception
    */
   public function getSchemas($qualifiers) {
     $result = array();
@@ -153,9 +154,53 @@ class SchemaManager
   }
 
   /**
+   * Return the template loader instance.
+   *
+   * @return TemplateLoader
+   */
+  public function getTemplateLoader() {
+    return $this->_templateLoader;
+  }
+
+  /**
+   * @param string $qualifier
+   * @return array
+   * @throws Exception
+   */
+  public function parseSchemaQualifier($qualifier) {
+    $divider = strpos($qualifier, ':');
+    if ($divider === false) {
+      return array(
+        'loader' => $this->_templateLoader,
+        'name'   => $qualifier,
+        'uri'    => TemplateLoader::NAME_PREFIX . $qualifier,
+      );
+    }
+
+    $loaderName = substr($qualifier, 0, $divider + 1);
+    if (!array_key_exists($loaderName, $this->_loaders)) {
+      throw new Exception('Invalid schema name "' . $qualifier . '"');
+    }
+
+    $loader = $this->_loaders[$loaderName];
+    $name   = $loader->normalizeName(substr($qualifier, $divider + 1));
+    $uri    = $loader::NAME_PREFIX . $name;
+
+    return array(
+      'loader' => $loader,
+      'name'   => $name,
+      'uri'    => $uri,
+    );
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
    * @param string $qualifier
    * @return AbstractSchema[]
-   * @throws \Exception
+   * @throws Exception
    */
   private function getSchemasWithWildcard($qualifier) {
     $parsed = $this->parseSchemaQualifier($qualifier);
@@ -176,45 +221,9 @@ class SchemaManager
     return $result;
   }
 
-  /**
-   * Return the template loader instance.
-   *
-   * @return TemplateLoader
-   */
-  public function getTemplateLoader() {
-    return $this->_templateLoader;
-  }
 
-  /**
-   * @param string $qualifier
-   * @return array
-   * @throws \Exception
-   */
-  public function parseSchemaQualifier($qualifier) {
-    $divider = strpos($qualifier, ':');
-    if ($divider === false) {
-      return array(
-        'loader' => $this->_templateLoader,
-        'name'   => $qualifier,
-        'uri'    => TemplateLoader::NAME_PREFIX . $qualifier,
-      );
-    }
-
-    $loaderName = substr($qualifier, 0, $divider + 1);
-    if (!array_key_exists($loaderName, $this->_loaders)) {
-      throw new \Exception('Invalid schema name "' . $qualifier . '"');
-    }
-
-    $loader = $this->_loaders[$loaderName];
-    $name   = $loader->normalizeName(substr($qualifier, $divider + 1));
-    $uri    = $loader::NAME_PREFIX . $name;
-
-    return array(
-      'loader' => $loader,
-      'name'   => $name,
-      'uri'    => $uri,
-    );
-  }
+  // Static methods
+  // --------------
 
   /**
    * @param string $value
