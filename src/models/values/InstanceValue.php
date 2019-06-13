@@ -11,8 +11,10 @@ use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\InstanceAwareInterface;
+use lenz\contentfield\models\ReferenceMapValueInterface;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\schemas\TemplateSchema;
+use lenz\contentfield\models\TraversableValueInterface;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
@@ -26,7 +28,12 @@ use yii\base\Model;
  */
 class InstanceValue
   extends Model
-  implements BeforeActionInterface, DisplayInterface, ValueInterface
+  implements
+    BeforeActionInterface,
+    DisplayInterface,
+    ReferenceMapValueInterface,
+    TraversableValueInterface,
+    ValueInterface
 {
   use ValueTrait;
 
@@ -43,7 +50,7 @@ class InstanceValue
   /**
    * @var string
    */
-  private $_originalUuid;
+  private $_originalUuid = null;
 
   /**
    * @var AbstractSchema
@@ -56,9 +63,9 @@ class InstanceValue
   private $_uuid;
 
   /**
-   * @var ValueInterface[]
+   * @var array
    */
-  private $_values = array();
+  private $_values = [];
 
   /**
    * @var string
@@ -201,7 +208,7 @@ class InstanceValue
     }
 
     foreach ($this->_values as $value) {
-      if (!is_null($value)) {
+      if ($value instanceof TraversableValueInterface) {
         $result = $value->findUuid($uuid);
         if (!is_null($result)) {
           return $result;
@@ -223,7 +230,7 @@ class InstanceValue
     }
 
     foreach ($this->_values as $value) {
-      if (!is_null($value)) {
+      if ($value instanceof TraversableValueInterface) {
         $matches = $value->findInstances($qualifier);
         if (count($matches) > 0) {
           $result = array_merge($result, $matches);
@@ -267,7 +274,7 @@ class InstanceValue
   /**
    * @inheritDoc
    */
-  public function getEditorData() {
+  public function getEditorValue() {
     $result = array(
       self::ERRORS_PROPERTY        => $this->getErrors(),
       self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
@@ -275,10 +282,8 @@ class InstanceValue
       self::UUID_PROPERTY          => $this->_uuid,
     );
 
-    foreach ($this->_values as $name => $value) {
-      if (!is_null($value)) {
-        $result[$name] = $value->getEditorData();
-      }
+    foreach ($this->_schema->fields as $name => $field) {
+      $result[$name] = $field->getEditorValue($this->_values[$name]);
     }
 
     return $result;
@@ -328,6 +333,13 @@ class InstanceValue
   }
 
   /**
+   * @return string|null
+   */
+  public function getOriginalUuid() {
+    return $this->_originalUuid;
+  }
+
+  /**
    * @return InstanceValue|null
    */
   public function getParentInstance() {
@@ -354,9 +366,9 @@ class InstanceValue
       $map = new ReferenceMap();
     }
 
-    foreach ($this->_values as $field) {
-      if (!is_null($field)) {
-        $field->getReferenceMap($map);
+    foreach ($this->_values as $value) {
+      if ($value instanceof ReferenceMapValueInterface) {
+        $value->getReferenceMap($map);
       }
     }
 
@@ -374,25 +386,25 @@ class InstanceValue
    * @inheritDoc
    */
   public function getSearchKeywords() {
-    return implode(' ', array_map(function(ValueInterface $value) {
-      $value->getSearchKeywords();
-    }, $this->_values));
+    return implode(' ', array_map(function(AbstractField $field) {
+      return $field->getSearchKeywords($this->_values[$field->name]);
+    }, $this->_schema->fields));
   }
 
   /**
    * @inheritDoc
    */
-  public function getSerializedData() {
-    $result = array();
-    foreach ($this->_values as $name => $value) {
-      if (!is_null($value)) {
-        $result[$name] = $value->getSerializedData();
-      }
+  public function getSerializedValue() {
+    $result = array(
+      self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
+      self::TYPE_PROPERTY          => $this->_schema->qualifier,
+      self::UUID_PROPERTY          => $this->_uuid,
+    );
+
+    foreach ($this->_schema->fields as $name => $field) {
+      $result[$name] = $field->getSerializedValue($this->_values[$name]);
     }
 
-    $result[self::TYPE_PROPERTY] = $this->_schema->qualifier;
-    $result[self::UUID_PROPERTY] = $this->_uuid;
-    $result[self::ORIGINAL_UUID_PROPERTY] = $this->_originalUuid;
     return $result;
   }
 
@@ -411,7 +423,7 @@ class InstanceValue
   }
 
   /**
-   * @return ValueInterface[]
+   * @return mixed[]
    */
   public function getValues() {
     return $this->_values;

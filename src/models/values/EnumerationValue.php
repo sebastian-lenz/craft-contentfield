@@ -63,13 +63,6 @@ class EnumerationValue extends Value
   }
 
   /**
-   * @inheritdoc
-   */
-  public function getEditorData() {
-    return $this->_value;
-  }
-
-  /**
    * @return number|string
    */
   public function getValue() {

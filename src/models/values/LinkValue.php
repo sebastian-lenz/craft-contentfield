@@ -4,9 +4,9 @@ namespace lenz\contentfield\models\values;
 
 use lenz\contentfield\models\fields\LinkField;
 use craft\base\ElementInterface;
-use craft\elements\Entry;
 use craft\helpers\Html;
 use craft\helpers\Template;
+use lenz\contentfield\models\ReferenceMapValueInterface;
 use lenz\contentfield\utilities\ReferenceMap;
 
 /**
@@ -14,7 +14,7 @@ use lenz\contentfield\utilities\ReferenceMap;
  *
  * @property LinkField $_field
  */
-class LinkValue extends Value
+class LinkValue extends Value implements ReferenceMapValueInterface
 {
   /**
    * @var int
@@ -104,19 +104,6 @@ class LinkValue extends Value
     }
 
     return Template::raw(Html::renderTagAttributes($attribs));
-  }
-
-  /**
-   * Returns the data of this value as required by the cp editor.
-   * @return mixed
-   */
-  function getEditorData() {
-    return array(
-      'elementId'       => $this->elementId,
-      'openInNewWindow' => $this->openInNewWindow,
-      'type'            => $this->type,
-      'url'             => $this->url,
-    );
   }
 
   /**

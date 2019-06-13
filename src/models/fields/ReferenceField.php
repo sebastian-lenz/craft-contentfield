@@ -2,12 +2,12 @@
 
 namespace lenz\contentfield\models\fields;
 
+use Exception;
+use lenz\contentfield\models\values\ReferenceValue;
 use lenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\elements\Entry;
-
-use lenz\contentfield\models\values\ReferenceValue;
 
 /**
  * Class ReferenceField
@@ -50,6 +50,34 @@ class ReferenceField extends AbstractField
    */
   public function createValue($data, ValueInterface $parent) {
     return new ReferenceValue($data, $parent, $this);
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return array|null
+   * @throws Exception
+   */
+  public function getEditorData(ElementInterface $element = null) {
+    return parent::getEditorData() + array(
+        'criteria'    => is_array($this->criteria) ? $this->criteria : null,
+        'elementType' => $this->getElementType(),
+        'limit'       => $this->getLimit(),
+        'sources'     => $this->getSources(),
+        'viewMode'    => $this->viewMode,
+      );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getEditorValue($value) {
+    if (!($value instanceof ReferenceValue)) {
+      return null;
+    }
+
+    return array_map(function(ElementInterface $element) {
+      return intval($element->getId());
+    }, $value->getReferences());
   }
 
   /**
@@ -111,21 +139,6 @@ class ReferenceField extends AbstractField
         array('viewMode',    'default', 'value' => 'large'),
         array('viewMode',    'in', 'range' => array('large', 'small'))
       )
-    );
-  }
-
-  /**
-   * @param ElementInterface|null $element
-   * @return array|null
-   * @throws \Exception
-   */
-  public function getEditorData(ElementInterface $element = null) {
-    return parent::getEditorData() + array(
-      'criteria'    => is_array($this->criteria) ? $this->criteria : null,
-      'elementType' => $this->getElementType(),
-      'limit'       => $this->getLimit(),
-      'sources'     => $this->getSources(),
-      'viewMode'    => $this->viewMode,
     );
   }
 

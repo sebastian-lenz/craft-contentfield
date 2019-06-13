@@ -5,17 +5,19 @@ namespace lenz\contentfield\models\values;
 use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\StringHelper;
+use lenz\contentfield\models\ReferenceMapValueInterface;
 use lenz\contentfield\utilities\RedactorFieldData;
 use lenz\contentfield\models\fields\RedactorField;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
+use Throwable;
 use yii\base\Exception;
 
 /**
  * Class RedactorValue
  * @property RedactorField $_field
  */
-class RedactorValue extends Value implements DisplayInterface
+class RedactorValue extends Value implements DisplayInterface, ReferenceMapValueInterface
 {
   /**
    * @var string
@@ -73,13 +75,6 @@ class RedactorValue extends Value implements DisplayInterface
   /**
    * @inheritdoc
    */
-  public function getEditorData() {
-    return $this->_rawContent;
-  }
-
-  /**
-   * @inheritdoc
-   */
   public function getHtml() {
     return $this->getRedactorFieldData();
   }
@@ -125,25 +120,6 @@ class RedactorValue extends Value implements DisplayInterface
   }
 
   /**
-   * @return string
-   */
-  public function getSearchKeywords() {
-    return (string)$this->getRedactorFieldData();
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function getSerializedData() {
-    try {
-      $field = $this->_field->getRedactorField();
-      return $field->serializeValue($this, $this->getElement());
-    } catch (\Throwable $error) { }
-
-    return $this->_rawContent;
-  }
-
-  /**
    * @return bool
    */
   public function isEmpty() {
@@ -157,7 +133,7 @@ class RedactorValue extends Value implements DisplayInterface
     unset($this->_value);
     $this->_rawContent = $str;
 
-    $elements = \Craft::$app->getElements();
+    $elements = Craft::$app->getElements();
     if (self::$forceNativeRefParse) {
       $this->_parsedContent = $elements->parseRefs($str);
       $this->_parsedTokens = null;
@@ -197,7 +173,7 @@ class RedactorValue extends Value implements DisplayInterface
 
       $this->_parsedContent = $str;
       $this->_parsedTokens = $count == 0 ? null : $allRefTagTokens;
-    } catch (\Throwable $error) {
+    } catch (Throwable $error) {
       $this->_parsedContent = $elements->parseRefs($str);
       $this->_parsedTokens = null;
     }
@@ -217,7 +193,7 @@ class RedactorValue extends Value implements DisplayInterface
 
     $content = $this->getContent();
     if (is_null($content)) {
-      return \Craft::$app->getElements()->parseRefs($this->_rawContent);
+      return Craft::$app->getElements()->parseRefs($this->_rawContent);
     }
 
     $loader = $content->getBatchLoader();
@@ -268,8 +244,8 @@ class RedactorValue extends Value implements DisplayInterface
         throw new Exception('Object of class ' . get_class($value) . ' could not be converted to string');
       }
 
-      return \Craft::$app->getElements()->parseRefs((string)$value);
-    } catch (\Throwable $e) {
+      return Craft::$app->getElements()->parseRefs((string)$value);
+    } catch (Throwable $e) {
       // Log it
       Craft::error('An exception was thrown when parsing the ref tag "' . $matches[0] . "\":\n" . $e->getMessage(), __METHOD__);
 

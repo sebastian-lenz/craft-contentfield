@@ -54,18 +54,6 @@ class LocationValue extends Value
     return $this->latitude . ',' . $this->longitude;
   }
 
-
-  /**
-   * Returns the data of this value as required by the cp editor.
-   * @return mixed
-   */
-  function getEditorData() {
-    return array(
-      'latitude'  => $this->latitude,
-      'longitude' => $this->longitude,
-    );
-  }
-
   /**
    * @return bool
    */

@@ -76,4 +76,20 @@ class LinkField extends AbstractField
       'linkTypes'      => $linkTypes,
     );
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEditorValue($value) {
+    if (!($value instanceof LinkValue)) {
+      return null;
+    }
+
+    return array(
+      'elementId'       => $value->elementId,
+      'openInNewWindow' => $value->openInNewWindow,
+      'type'            => $value->type,
+      'url'             => $value->url,
+    );
+  }
 }

@@ -3,7 +3,6 @@
 namespace lenz\contentfield\models\values;
 
 use lenz\contentfield\models\fields\ColorField;
-use lenz\contentfield\models\values\ValueInterface;
 
 /**
  * Class ColorValue
@@ -69,19 +68,6 @@ class ColorValue extends Value
     return $this->_field->disableAlpha
       ? $this->hex()
       : $this->rgba();
-  }
-
-
-  /**
-   * @inheritDoc
-   */
-  function getEditorData() {
-    return array(
-      'alpha' => $this->alpha,
-      'blue'  => $this->blue,
-      'green' => $this->green,
-      'red'   => $this->red,
-    );
   }
 
   /**

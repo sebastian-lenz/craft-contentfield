@@ -35,21 +35,6 @@ trait ValueTrait
   abstract function __toString();
 
   /**
-   * @param string|string[] $qualifier
-   * @return InstanceValue[]
-   */
-  public function findInstances($qualifier) {
-    return array();
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function findUuid(string $uuid) {
-    return null;
-  }
-
-  /**
    * @return Content|null
    */
   public function getContent() {
@@ -61,12 +46,6 @@ trait ValueTrait
 
     return null;
   }
-
-  /**
-   * Returns the data of this value as required by the cp editor.
-   * @return mixed
-   */
-  abstract function getEditorData();
 
   /**
    * @return ElementInterface|null
@@ -95,34 +74,6 @@ trait ValueTrait
    */
   public function getParent() {
     return $this->_parent;
-  }
-
-  /**
-   * Return a list of all referenced entries by this field.
-   *
-   * @param ReferenceMap $map
-   * @return ReferenceMap
-   */
-  public function getReferenceMap(ReferenceMap $map = null) {
-    return is_null($map)
-      ? new ReferenceMap()
-      : $map;
-  }
-
-  /**
-   * @return string
-   */
-  public function getSearchKeywords() {
-    return '';
-  }
-
-  /**
-   * Returns the data of this value for storing in the database. By default,
-   * this is the same as `$this->getEditorData()`.
-   * @return mixed
-   */
-  public function getSerializedData() {
-    return $this->getEditorData();
   }
 
   /**

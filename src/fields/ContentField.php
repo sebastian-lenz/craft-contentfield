@@ -231,7 +231,7 @@ class ContentField extends ForeignField
     return [
       'model' => is_null($contentModel)
         ? null
-        : $contentModel->getSerializedData()
+        : $contentModel->getSerializedValue()
     ];
   }
 

@@ -15,6 +15,11 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @var bool
    */
+  public $searchable = true;
+
+  /**
+   * @var bool
+   */
   public $translatable = true;
 
 
@@ -22,7 +27,7 @@ abstract class AbstractStringField extends AbstractField
    * @inheritdoc
    */
   public function createValue($data, ValueInterface $parent) {
-    return new StringValue($data, $parent, $this);
+    return is_string($data) ? $data : null;
   }
 
   /**
@@ -32,5 +37,20 @@ abstract class AbstractStringField extends AbstractField
     return parent::getEditorData($element) + array(
       'translatable' => !!$this->translatable
     );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEditorValue($value) {
+    return is_string($value) ? $value : null;
+  }
+
+  /**
+   * @param mixed $value
+   * @return string
+   */
+  public function getSearchKeywords($value) {
+    return $this->searchable ? (string)$value : '';
   }
 }

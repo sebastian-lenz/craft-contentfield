@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\fields;
 
+use Craft;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\RedactorValue;
 use craft\base\ElementInterface;
@@ -24,6 +25,11 @@ class RedactorField extends AbstractField
    * @var string|null
    */
   public $redactorConfig = 'Standard.json';
+
+  /**
+   * @var bool
+   */
+  public $searchable = true;
 
   /**
    * @var bool
@@ -59,6 +65,17 @@ class RedactorField extends AbstractField
   }
 
   /**
+   * @inheritdoc
+   */
+  public function getEditorValue($value) {
+    if (!($value instanceof RedactorValue)) {
+      return null;
+    }
+
+    return $value->getRawContent();
+  }
+
+  /**
    * @return RedactorSettings|null
    */
   public function getRedactorField() {
@@ -85,16 +102,38 @@ class RedactorField extends AbstractField
   }
 
   /**
-   * @return bool
+   * @inheritDoc
    */
-  public function hasRedactor() {
-    return class_exists(self::REDACTOR_FIELD_CLASS);
+  public function getSearchKeywords($value) {
+    if (!$this->searchable || !($value instanceof RedactorValue)) {
+      return '';
+    }
+
+    return (string)$value->getRedactorFieldData();
   }
 
   /**
    * @inheritdoc
    */
-  public function isHtmlField() {
-    return true;
+  public function getSerializedValue($value) {
+    if (!($value instanceof RedactorValue)) {
+      return null;
+    }
+
+    try {
+      $field = $this->getRedactorField();
+      return $field->serializeValue($value, $value->getElement());
+    } catch (Throwable $error) {
+      Craft::error($error->getMessage());
+    }
+
+    return $value->getRawContent();
+  }
+
+  /**
+   * @return bool
+   */
+  public function hasRedactor() {
+    return class_exists(self::REDACTOR_FIELD_CLASS);
   }
 }

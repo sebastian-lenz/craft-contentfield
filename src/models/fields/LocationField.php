@@ -2,7 +2,6 @@
 
 namespace lenz\contentfield\models\fields;
 
-use lenz\contentfield\models\values\ColorValue;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\LocationValue;
 use lenz\contentfield\utilities\DefaultLocations;
@@ -58,5 +57,19 @@ class LocationField extends AbstractField
     }
 
     return DefaultLocations::get($element);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEditorValue($value) {
+    if (!($value instanceof LocationValue)) {
+      return null;
+    }
+
+    return array(
+      'latitude'  => $value->latitude,
+      'longitude' => $value->longitude,
+    );
   }
 }

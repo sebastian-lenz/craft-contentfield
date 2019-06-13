@@ -16,7 +16,7 @@ class OEmbedValue extends Value
   /**
    * @var string
    */
-  private $_value = '';
+  private $_url = '';
 
 
   /**
@@ -30,9 +30,9 @@ class OEmbedValue extends Value
     parent::__construct($parent, $field);
 
     if (is_array($data) && array_key_exists('url', $data)) {
-      $this->_value = (string)$data['url'];
+      $this->_url = (string)$data['url'];
     } elseif (is_string($data)) {
-      $this->_value = $data;
+      $this->_url = $data;
     }
   }
 
@@ -40,17 +40,7 @@ class OEmbedValue extends Value
    * @inheritdoc
    */
   public function __toString() {
-    return $this->_value;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function getEditorData() {
-    return array(
-      'url'  => $this->_value,
-      'info' => $this->getOEmbed(),
-    );
+    return $this->_url;
   }
 
   /**
@@ -68,14 +58,14 @@ class OEmbedValue extends Value
    * @return OEmbed|null
    */
   public function getOEmbed() {
-    return $this->_field->getOEmbed($this->_value);
+    return $this->_field->getOEmbed($this->_url);
   }
 
   /**
-   * @return mixed
+   * @return string
    */
-  public function getSerializedData() {
-    return $this->_value;
+  public function getUrl() {
+    return $this->_url;
   }
 
   /**

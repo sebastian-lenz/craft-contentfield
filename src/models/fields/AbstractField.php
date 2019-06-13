@@ -127,7 +127,7 @@ abstract class AbstractField extends Model
    *
    * @param mixed $data
    * @param ValueInterface $parent
-   * @return ValueInterface
+   * @return mixed
    * @throws Exception
    */
   abstract function createValue($data, ValueInterface $parent);
@@ -201,6 +201,33 @@ abstract class AbstractField extends Model
   }
 
   /**
+   * Returns the data of this value as required by the cp editor.
+   *
+   * @param mixed $value
+   * @return mixed
+   */
+  abstract function getEditorValue($value);
+
+  /**
+   * @param mixed $value
+   * @return string
+   */
+  public function getSearchKeywords($value) {
+    return '';
+  }
+
+  /**
+   * Returns the data of this value for storing in the database. By default,
+   * this is the same as `$this->getEditorData()`.
+   *
+   * @param mixed $value
+   * @return mixed
+   */
+  public function getSerializedValue($value) {
+    return $this->getEditorValue($value);
+  }
+
+  /**
    * @return array
    */
   public function getValueRules() {
@@ -234,15 +261,6 @@ abstract class AbstractField extends Model
     }
 
     return $result;
-  }
-
-  /**
-   * Return whether this fields stores html output.
-   *
-   * @return boolean
-   */
-  public function isHtmlField() {
-    return false;
   }
 
   /**

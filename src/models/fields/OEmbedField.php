@@ -62,6 +62,20 @@ class OEmbedField extends AbstractField
   }
 
   /**
+   * @inheritdoc
+   */
+  public function getEditorValue($value) {
+    if (!($value instanceof OEmbedValue)) {
+      return null;
+    }
+
+    return array(
+      'url'  => $value->getUrl(),
+      'info' => $value->getOEmbed(),
+    );
+  }
+
+  /**
    * @param string $url
    * @return Endpoint|null
    */
@@ -86,6 +100,21 @@ class OEmbedField extends AbstractField
       ? null
       : $endpoint->getOEmbed($url);
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSerializedValue($value) {
+    if (!($value instanceof OEmbedValue)) {
+      return null;
+    }
+
+    return $value->getUrl();
+  }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @inheritdoc

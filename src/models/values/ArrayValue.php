@@ -10,6 +10,8 @@ use IteratorAggregate;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\fields\ArrayField;
+use lenz\contentfield\models\ReferenceMapValueInterface;
+use lenz\contentfield\models\TraversableValueInterface;
 use lenz\contentfield\utilities\ReferenceMap;
 use lenz\contentfield\utilities\twig\DisplayInterface;
 use Twig\Markup;
@@ -21,7 +23,14 @@ use Twig\Markup;
  */
 class ArrayValue
   extends Value
-  implements ArrayAccess, BeforeActionInterface, Countable, DisplayInterface, IteratorAggregate
+  implements
+    ArrayAccess,
+    BeforeActionInterface,
+    Countable,
+    DisplayInterface,
+    ReferenceMapValueInterface,
+    IteratorAggregate,
+    TraversableValueInterface
 {
   /**
    * @var ValueInterface[]
@@ -98,6 +107,10 @@ class ArrayValue
     $result = array();
 
     foreach ($this->_values as $value) {
+      if (!($value instanceof TraversableValueInterface)) {
+        continue;
+      }
+
       $matches = $value->findInstances($qualifier);
       if (count($matches) > 0) {
         $result = array_merge($result, $matches);
@@ -112,6 +125,10 @@ class ArrayValue
    */
   public function findUuid(string $uuid) {
     foreach ($this->_values as $value) {
+      if (!($value instanceof TraversableValueInterface)) {
+        continue;
+      }
+
       $result = $value->findUuid($uuid);
       if (!is_null($result)) {
         return $result;
@@ -119,18 +136,6 @@ class ArrayValue
     }
 
     return null;
-  }
-
-  /**
-   * @inheritDoc
-   */
-  function getEditorData() {
-    $result = array();
-    foreach ($this->_values as $value) {
-      $result[] = $value->getEditorData();
-    }
-
-    return $result;
   }
 
   /**
@@ -166,31 +171,12 @@ class ArrayValue
     }
 
     foreach ($this->_values as $value) {
-      $value->getReferenceMap($map);
+      if ($value instanceof ReferenceMapValueInterface) {
+        $value->getReferenceMap($map);
+      }
     }
 
     return $map;
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function getSearchKeywords() {
-    return implode('', array_map(function(ValueInterface $value) {
-      $value->getSearchKeywords();
-    }, $this->_values));
-  }
-
-  /**
-   * @inheritDoc
-   */
-  function getSerializedData() {
-    $result = array();
-    foreach ($this->_values as $value) {
-      $result[] = $value->getSerializedData();
-    }
-
-    return $result;
   }
 
   /**

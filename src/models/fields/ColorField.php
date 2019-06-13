@@ -45,6 +45,22 @@ class ColorField extends AbstractField
   }
 
   /**
+   * @inheritDoc
+   */
+  public function getEditorValue($value) {
+    if (!($value instanceof ColorValue)) {
+      return null;
+    }
+
+    return array(
+      'alpha' => $value->alpha,
+      'blue'  => $value->blue,
+      'green' => $value->green,
+      'red'   => $value->red,
+    );
+  }
+
+  /**
    * @inheritdoc
    */
   public function rules() {

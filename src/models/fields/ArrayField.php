@@ -72,8 +72,7 @@ class ArrayField extends AbstractField
   }
 
   /**
-   * @param ElementInterface|null $element
-   * @return array|null
+   * @inheritDoc
    */
   public function getEditorData(ElementInterface $element = null) {
     if (is_null($this->member)) {
@@ -86,6 +85,45 @@ class ArrayField extends AbstractField
       'limit'       => is_int($this->limit) ? $this->limit : 0,
       'member'      => $this->member->getEditorData($element),
     );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEditorValue($value) {
+    if (!($value instanceof ArrayValue)) {
+      return null;
+    }
+
+    return array_map(function($value) {
+      return $this->member->getEditorValue($value);
+    }, $value->toArray());
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSearchKeywords($value) {
+    if (!($value instanceof ArrayValue)) {
+      return '';
+    }
+
+    return implode('', array_map(function($value) {
+      return $this->member->getSearchKeywords($value);
+    }, $value->toArray()));
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSerializedValue($value) {
+    if (!($value instanceof ArrayValue)) {
+      return null;
+    }
+
+    return array_map(function($value) {
+      return $this->member->getSerializedValue($value);
+    }, $value->toArray());
   }
 
   /**

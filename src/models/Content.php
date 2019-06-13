@@ -107,6 +107,15 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
+   * @return mixed
+   */
+  public function getEditorValue() {
+    return is_null($this->_model)
+      ? null
+      : $this->_model->getEditorValue();
+  }
+
+  /**
    * @param array $variables
    * @return Markup
    */

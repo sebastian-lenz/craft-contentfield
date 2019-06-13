@@ -99,6 +99,17 @@ abstract class AbstractEnumerationField extends AbstractField
   }
 
   /**
+   * @inheritDoc
+   */
+  public function getEditorValue($value) {
+    if (!($value instanceof EnumerationValue)) {
+      return null;
+    }
+
+    return $value->getValue();
+  }
+
+  /**
    * @return EnumerationInterface
    */
   public function getEnumeration() {

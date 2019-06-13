@@ -19,27 +19,9 @@ interface ValueInterface
   public function __toString();
 
   /**
-   * @param string|string[] $qualifier
-   * @return InstanceValue[]
-   */
-  public function findInstances($qualifier);
-
-  /**
-   * @param string $uuid
-   * @return InstanceValue|null
-   */
-  public function findUuid(string $uuid);
-
-  /**
    * @return Content|null
    */
   public function getContent();
-
-  /**
-   * Returns the data of this value as required by the cp editor.
-   * @return mixed
-   */
-  public function getEditorData();
 
   /**
    * @return ElementInterface|null
@@ -60,26 +42,6 @@ interface ValueInterface
    * @return ValueInterface|null
    */
   public function getParent();
-
-  /**
-   * Return a list of all referenced entries by this field.
-   *
-   * @param ReferenceMap $map
-   * @return ReferenceMap
-   */
-  public function getReferenceMap(ReferenceMap $map = null);
-
-  /**
-   * @return string
-   */
-  public function getSearchKeywords();
-
-  /**
-   * Returns the data of this value for storing in the database. By default,
-   * this is the same as `$this->getEditorData()`.
-   * @return mixed
-   */
-  public function getSerializedData();
 
   /**
    * @return bool

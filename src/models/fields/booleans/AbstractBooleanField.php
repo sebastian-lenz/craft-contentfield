@@ -3,7 +3,6 @@
 namespace lenz\contentfield\models\fields\booleans;
 
 use lenz\contentfield\models\fields\AbstractField;
-use lenz\contentfield\models\values\BooleanValue;
 use lenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
 
@@ -22,7 +21,7 @@ abstract class AbstractBooleanField extends AbstractField
    * @inheritdoc
    */
   public function createValue($data, ValueInterface $parent) {
-    return new BooleanValue($data, $parent, $this);
+    return !!$data;
   }
 
   /**
@@ -32,5 +31,12 @@ abstract class AbstractBooleanField extends AbstractField
     return parent::getEditorData($element) + array(
       'defaultValue' => !!$this->defaultValue
     );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getEditorValue($value) {
+    return !!$value;
   }
 }

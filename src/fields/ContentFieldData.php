@@ -72,8 +72,7 @@ class ContentFieldData
    * @return string
    */
   public function getContent() {
-    $model = $this->_value->getModel();
-    return Json::encode(is_null($model) ? null : $model->getEditorData());
+    return Json::encode($this->_value->getEditorValue());
   }
 
   /**

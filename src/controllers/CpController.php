@@ -56,7 +56,7 @@ class CpController extends Controller
 
     return $this->asJson([
       'result'     => true,
-      'data'       => $value->getModel()->getEditorData(),
+      'data'       => $value->getEditorValue(),
       'references' => ContentFieldData::loadReferences($value),
     ]);
   }

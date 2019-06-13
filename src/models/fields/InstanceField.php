@@ -105,7 +105,25 @@ class InstanceField extends AbstractField
   }
 
   /**
-   * @return array
+   * @inheritDoc
+   */
+  public function getEditorValue($value) {
+    return $value instanceof InstanceValue
+      ? $value->getEditorValue()
+      : null;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSerializedValue($value) {
+    return $value instanceof InstanceValue
+      ? $value->getSerializedValue()
+      : null;
+  }
+
+  /**
+   * @inheritDoc
    */
   public function getValueRules() {
     return array_merge(
