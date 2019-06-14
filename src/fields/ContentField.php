@@ -210,6 +210,17 @@ class ContentField extends ForeignField
   }
 
   /**
+   * This settings has been renamed to `rootSchemas`. This method
+   * helps bootstrapping old installs before the migration has run.
+   *
+   * @param array $value
+   * @deprecated
+   */
+  public function setRootTemplates($value) {
+    $this->rootSchemas = $value;
+  }
+
+  /**
    * @return array
    */
   public function settingsAttributes(): array {
