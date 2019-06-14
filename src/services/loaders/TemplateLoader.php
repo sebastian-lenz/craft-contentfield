@@ -4,14 +4,13 @@ namespace lenz\contentfield\services\loaders;
 
 use Craft;
 use craft\helpers\FileHelper;
-use craft\helpers\Json;
 use Exception;
+use lenz\contentfield\models\schemas\TemplateSchema;
+use lenz\contentfield\utilities\twig\YamlAwareTemplateLoader;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use Symfony\Component\Yaml\Yaml;
-
-use lenz\contentfield\models\schemas\TemplateSchema;
+use Throwable;
 
 /**
  * Class TemplateLoader
@@ -24,6 +23,11 @@ class TemplateLoader extends AbstractLoader
    * @var string
    */
   private $_basePath;
+
+  /**
+   * @var YamlAwareTemplateLoader
+   */
+  private $_loader;
 
   /**
    * @var array
@@ -43,13 +47,21 @@ class TemplateLoader extends AbstractLoader
 
   /**
    * TemplateLoader constructor.
-   * @throws \yii\base\Exception
+   * @throws Throwable
    */
   public function __construct() {
-    $this->_basePath = FileHelper::normalizePath(
+    $basePath = FileHelper::normalizePath(
       Craft::$app->getPath()->getSiteTemplatesPath(),
       self::SEPARATOR
     );
+
+    $loader = TemplateSchema::getTwig()->getLoader();
+    if (!($loader instanceof YamlAwareTemplateLoader)) {
+      throw new Exception('Twig template loader is not patched correctly.');
+    }
+
+    $this->_basePath = $basePath;
+    $this->_loader   = $loader;
   }
 
   /**
@@ -70,19 +82,22 @@ class TemplateLoader extends AbstractLoader
 
   /**
    * @inheritDoc
+   * @throws \yii\base\Exception
    */
   public function getAllSchemas() {
-    $schemas = [];
+    return YamlAwareTemplateLoader::withSiteView(function() {
+      $schemas = [];
 
-    foreach ($this->getAllTemplates() as $template) {
-      try {
-        $schemas[] = $this->load($template['name']);
-      } catch (Exception $error) {
-        // Just skip errors, there may be templates without a yaml header
+      foreach ($this->getAllTemplates() as $template) {
+        try {
+          $schemas[] = $this->load($template['name']);
+        } catch (Throwable $error) {
+          // Just skip errors, there may be templates without a yaml header
+        }
       }
-    }
 
-    return $schemas;
+      return $schemas;
+    });
   }
 
   /**
@@ -112,14 +127,16 @@ class TemplateLoader extends AbstractLoader
    * @inheritdoc
    */
   public function load($name) {
-    $path = $this->getTemplatePath($name);
-    $data = $this->loadFromCache($name, $path);
-    if (is_null($data)) {
-      $data = $this->loadFromSource($name, $path);
+    $data = $this->_loader->getMetaData($name);
+    if (is_null($data['preamble'])) {
+      throw new Exception(sprintf(
+        'The template `%s` does not contain a yaml preamble.',
+        $name
+      ));
     }
 
-    return new TemplateSchema($data + array(
-      'path'      => $path,
+    return new TemplateSchema($data['preamble'] + array(
+      'path'      => $data['path'],
       'qualifier' => self::NAME_PREFIX . $name,
       'template'  => $name
     ));
@@ -192,65 +209,5 @@ class TemplateLoader extends AbstractLoader
     }
 
     return $result;
-  }
-
-  /**
-   * @param string $name
-   * @return string
-   */
-  private function getCacheKey($name) {
-    return static::class . '::getCacheKey(' . $name . ')';
-  }
-
-  /**
-   * @param string $name
-   * @param string $path
-   * @return array|null
-   */
-  private function loadFromCache($name, $path) {
-    $data = Craft::$app->getCache()->get($this->getCacheKey($name));
-    if ($data === false) {
-      return null;
-    }
-
-    try {
-      $data = Json::decode($data);
-
-      // If we are not in production mode, check filemtime
-      if (CRAFT_ENVIRONMENT != 'production') {
-        if ($data['filemtime'] != filemtime($path)) {
-          return null;
-        }
-      }
-
-      // Return the cached data
-      if (array_key_exists('data', $data)) {
-        return $data['data'];
-      }
-    } catch (Exception $error) { }
-
-    return null;
-  }
-
-  /**
-   * @param string $name
-   * @param string $path
-   * @return array
-   * @throws Exception
-   */
-  private function loadFromSource($name, $path) {
-    $contents = file_get_contents($path);
-
-    if (!preg_match('/^---+/m', $contents, $match, PREG_OFFSET_CAPTURE)) {
-      throw new Exception('The template "' . $name . '" does not contain a yaml preamble.');
-    }
-
-    $data = Yaml::parse(substr($contents, 0, $match[0][1]));
-    Craft::$app->getCache()->set($this->getCacheKey($name), Json::encode([
-      'filemtime' => filemtime($path),
-      'data'      => $data,
-    ]));
-
-    return $data;
   }
 }

@@ -9,6 +9,7 @@ use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\services\loaders\AbstractLoader;
 use lenz\contentfield\services\loaders\TemplateLoader;
+use Throwable;
 
 /**
  * Class SchemaManager
@@ -38,7 +39,7 @@ class SchemaManager
 
   /**
    * SchemaManager constructor.
-   * @throws \yii\base\Exception
+   * @throws Throwable
    */
   public function __construct() {
     $this->_templateLoader = new TemplateLoader();
@@ -134,7 +135,7 @@ class SchemaManager
    *
    * @param string[] $qualifiers
    * @return AbstractSchema[]
-   * @throws Exception
+   * @throws Throwable
    */
   public function getSchemas($qualifiers) {
     $result = array();
@@ -200,7 +201,7 @@ class SchemaManager
   /**
    * @param string $qualifier
    * @return AbstractSchema[]
-   * @throws Exception
+   * @throws Throwable
    */
   private function getSchemasWithWildcard($qualifier) {
     $parsed = $this->parseSchemaQualifier($qualifier);

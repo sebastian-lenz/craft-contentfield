@@ -4,22 +4,23 @@ namespace lenz\contentfield;
 
 use Craft;
 use craft\controllers\TemplatesController;
+use craft\events\ExceptionEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\TemplateEvent;
 use craft\services\Fields;
 use craft\services\Utilities;
 use craft\web\Application;
+use craft\web\ErrorHandler;
 use craft\web\Response;
 use craft\web\View;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\Content;
-use lenz\contentfield\utilities\Utility;
-use lenz\contentfield\utilities\SourcesUtility;
-use lenz\contentfield\utilities\TemplateLoader;
 use lenz\contentfield\utilities\twig\Extension;
-use Twig\Environment;
+use lenz\contentfield\utilities\twig\YamlAwareTemplateLoader;
+use lenz\contentfield\utilities\Utility;
+use Twig\Error\RuntimeError;
 use yii\base\ActionEvent;
 use yii\base\Event;
 use yii\web\NotFoundHttpException;
@@ -50,16 +51,6 @@ class Plugin extends \craft\base\Plugin
    */
   static $UUID_PARAM = 'content-uuid';
 
-
-  /**
-   * @param View $view
-   */
-  public function applyTemplateLoader(View $view) {
-    $twig = $view->getTwig();
-    if (!($twig->getLoader() instanceof TemplateLoader)) {
-      $twig->setLoader(new TemplateLoader($view));
-    }
-  }
 
   /**
    * @return void
@@ -113,6 +104,12 @@ class Plugin extends \craft\base\Plugin
       Application::EVENT_BEFORE_ACTION,
       [$this, 'onBeforeAction']
     );
+
+    Event::on(
+      ErrorHandler::class,
+      ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION,
+      [$this, 'onBeforeHandleException']
+    );
   }
 
   /**
@@ -130,9 +127,9 @@ class Plugin extends \craft\base\Plugin
       return;
     }
 
-    $uuid = Craft::$app->getRequest()->getParam(self::$UUID_PARAM);
+    $uuid           = Craft::$app->getRequest()->getParam(self::$UUID_PARAM);
     $isChunkRequest = $isRenderRequest && !is_null($uuid);
-    $pageTemplate = null;
+    $pageTemplate   = null;
 
     foreach ($element->getFieldValues() as $fieldValue) {
       if ($fieldValue instanceof Content) {
@@ -156,10 +153,34 @@ class Plugin extends \craft\base\Plugin
   }
 
   /**
+   * @param ExceptionEvent $event
+   */
+  public function onBeforeHandleException(ExceptionEvent $event) {
+    if ($event->exception instanceof RuntimeError) {
+      $error  = $event->exception;
+      $source = $error->getSourceContext();
+      $loader = Craft::$app->getView()->getTwig()->getLoader();
+
+      if ($loader instanceof YamlAwareTemplateLoader) {
+        $offset = $loader->getSourceOffset($source->getName());
+        $error->setTemplateLine($error->getLine() + $offset);
+      }
+    }
+  }
+
+  /**
    * @param TemplateEvent $event
    */
   public function onBeforeRenderAnyTemplate(TemplateEvent $event) {
-    $this->applyTemplateLoader($event->sender);
+    $view = $event->sender;
+
+    if ($view instanceof View) {
+      $twig = $view->getTwig();
+
+      if (!($twig->getLoader() instanceof YamlAwareTemplateLoader)) {
+        $twig->setLoader(new YamlAwareTemplateLoader($view));
+      }
+    }
   }
 
   /**

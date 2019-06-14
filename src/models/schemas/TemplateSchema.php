@@ -6,6 +6,7 @@ use Craft;
 use craft\web\twig\Environment;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\utilities\twig\YamlAwareTemplateLoader;
 use Throwable;
 use Twig\TemplateWrapper;
 use yii\base\Exception;
@@ -120,19 +121,9 @@ class TemplateSchema extends AbstractSchema
    */
   static function getTwig() {
     if (!isset(self::$_twig)) {
-      $view = Craft::$app->getView();
-      Plugin::getInstance()->applyTemplateLoader($view);
-
-      $oldTemplateMode = $view->getTemplateMode();
-      if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
-        $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
-      }
-
-      self::$_twig = $view->getTwig();
-
-      if ($oldTemplateMode !== $view::TEMPLATE_MODE_SITE) {
-        $view->setTemplateMode($oldTemplateMode);
-      }
+      self::$_twig = YamlAwareTemplateLoader::getSiteTwig(
+        Craft::$app->getView()
+      );
     }
 
     return self::$_twig;
