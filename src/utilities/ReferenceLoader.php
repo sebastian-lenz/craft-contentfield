@@ -48,7 +48,7 @@ class ReferenceLoader
       throw new Exception('This batch loader is already in used');
     }
 
-    if (!in_array($content, $this->contents)) {
+    if (!in_array($content, $this->contents, true)) {
       $this->contents[] = $content;
     }
   }
