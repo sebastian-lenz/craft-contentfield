@@ -1,0 +1,1158 @@
+.tcfUtility {
+  position: relative;
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
+}
+.tcfUtility--wrap {
+  position: absolute;
+  top: -24px;
+  right: -24px;
+  bottom: 0;
+  left: -24px;
+  display: flex;
+  flex-flow: column nowrap;
+}
+.tcfUtility--tabs {
+  padding: 16px 0 0 0;
+  background: #f1f5f8;
+}
+.tcfUtility--content {
+  overflow: auto;
+  flex: 1;
+  padding: 24px;
+}
+.tcfUtility--sourceTitle {
+  font-weight: bold;
+}
+.tcfUtility--sourceTitle:not(:first-child) {
+  margin-top: 16px;
+}
+.tcfIconGrid {
+  display: flex;
+  flex-flow: row wrap;
+}
+.tcfIconGrid--item {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 160px;
+  height: 96px;
+  margin: 10px 5px;
+  border-radius: 2px;
+  background: #fbfcfd;
+}
+.tcfIconGrid--display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+.tcfIconGrid--label {
+  overflow: hidden;
+  padding: 5px;
+  font-size: 75%;
+  white-space: nowrap;
+  text-align: center;
+  text-overflow: ellipsis;
+}
+
+.tcfButton {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfButton > .tcfIcon {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+.tcfButton > .tcfIcon:first-child {
+  margin-left: 0;
+}
+.tcfButton > .tcfIcon:last-child {
+  margin-right: 0;
+}
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url("fonts/MaterialIcons-Regular.woff2") format('woff2'), url("fonts/MaterialIcons-Regular.woff") format('woff'), url("fonts/MaterialIcons-Regular.ttf") format('truetype');
+}
+.tcfIcon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  speak: none;
+  user-select: none;
+  line-height: 18px;
+  font-weight: normal;
+  font-variant: normal;
+  font-style: normal;
+  font-feature-settings: "liga", "dlig";
+  text-transform: none;
+  letter-spacing: normal;
+  text-align: center;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  vertical-align: midle;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+}
+.tcfIcon.craft {
+  position: relative;
+  top: 1px;
+  font-family: 'Craft';
+  font-size: 14px;
+}
+.tcfIcon.material {
+  font-family: 'Material Icons';
+  font-size: 18px;
+}
+.tcfIcon.medium {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  line-height: 24px;
+}
+.tcfIcon.large {
+  width: 36px;
+  height: 36px;
+  font-size: 36px;
+  line-height: 36px;
+}
+.tcfIcon.huge {
+  width: 48px;
+  height: 48px;
+  font-size: 48px;
+  line-height: 48px;
+}
+
+.tcfRoot--options {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.tcfSynchronize {
+  width: 50%;
+  max-height: 80%;
+  min-width: 500px;
+  max-width: 800px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+.tcfSynchronize--message {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+.tcfSynchronize--messageIcon {
+  margin-bottom: 10px;
+}
+.tcfSynchronize--messageIcon.error {
+  color: #c00;
+}
+.tcfSynchronize--messageIcon.finished {
+  color: #0c0;
+}
+.tcfSynchronize--title {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+.tcfSynchronize--actions {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,20,0.1);
+}
+.tcfSynchronize--working {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+}
+
+.tcfInstance--typeSelect:not(:last-child) {
+  margin-bottom: 12px;
+}
+
+.tcfOverlay {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1024;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0,0,0,0.1);
+}
+
+.tcfFieldPanel {
+  width: 100%;
+}
+.tcfFieldPanel--label {
+  margin: 0 0 5px;
+  color: #576575;
+  font-weight: bold;
+}
+.tcfFieldPanel--label.hasErrors {
+  color: #da5a47;
+}
+.tcfFieldPanel--label.isRequired:after {
+  content: 'asterisk';
+  display: inline-block;
+  margin: -2px 0 0 7px;
+  color: #da5a47;
+  font-family: 'Craft';
+  font-size: 7px;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  line-height: 1;
+  text-transform: none;
+  text-align: center;
+  vertical-align: middle;
+  word-wrap: normal !important;
+  -webkit-font-feature-settings: "liga", "dlig";
+  -ms-font-feature-settings: "liga", "dlig";
+  -o-font-feature-settings: "liga", "dlig";
+  font-feature-settings: "liga", "dlig";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.tcfFieldPanel--instructions {
+  margin: -5px 0 5px;
+  color: #8f98a3;
+}
+.tcfFieldPanel--errors {
+  margin: 5px 0;
+  padding: 0 0 0 20px;
+  list-style: square;
+}
+.tcfFieldPanel--error {
+  color: #da5a47;
+}
+
+.tcfSelect {
+  position: relative;
+}
+.tcfSelect:after {
+  content: 'downangle';
+  display: inline-block;
+  position: absolute;
+  z-index: 1;
+  top: calc(50% - 5px);
+  right: 9px;
+  direction: ltr;
+  font-size: 10px;
+  font-family: 'Craft';
+  font-weight: normal;
+  font-variant: normal;
+  font-style: normal;
+  line-height: 1;
+  speak: none;
+  text-align: center;
+  text-transform: none;
+  vertical-align: middle;
+  word-wrap: normal !important;
+  -webkit-font-feature-settings: "liga", "dlig";
+  -ms-font-feature-settings: "liga", "dlig";
+  -o-font-feature-settings: "liga", "dlig";
+  font-feature-settings: "liga", "dlig";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+.tcfSelect--select {
+  display: block;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 22px 0 10px;
+  background: linear-gradient(#fff, #fafafa);
+  border: none;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px transparent, 0 0 0 1px rgba(0,0,0,0.025), 0 1px 1px rgba(0,0,0,0.1);
+  transition: box-shadow linear 50ms;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  color: #29323d;
+  font-size: 14px;
+  line-height: 32px;
+  white-space: pre;
+}
+
+.tcfFieldGroup {
+  padding: 12px;
+  border: 1px solid rgba(0,0,20,0.1);
+  border-radius: 2px;
+}
+.tcfFieldGroup--label {
+  margin: 0 0 12px;
+  font-weight: bold;
+}
+.tcfFieldGroup--content {
+  display: flex;
+  flex-flow: row wrap;
+}
+.tcfFieldGroup--content.isBorderless {
+  margin: -20px;
+}
+.tcfFieldGroup--content:not(.isBorderless) {
+  margin: -12px -10px;
+}
+.tcfFieldGroup--content:not(.isBorderless) > * {
+  box-sizing: border-box;
+  margin: 12px 0;
+  padding: 0 10px;
+}
+
+.tcfInstanceForm {
+  display: grid;
+  grid-gap: 20px;
+}
+
+.tcfActivityIndicator {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.tcfActivityIndicator--bounce {
+  width: 12px;
+  height: 12px;
+  margin: 0 2px;
+  background-color: #333f4d;
+  border-radius: 100%;
+  animation: tcfActivityIndicator--keyframes 1.4s infinite ease-in-out both;
+}
+.tcfActivityIndicator--bounce.first {
+  animation-delay: -0.32s;
+}
+.tcfActivityIndicator--bounce.second {
+  animation-delay: -0.16s;
+}
+@-moz-keyframes tcfActivityIndicator--keyframes {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+@-webkit-keyframes tcfActivityIndicator--keyframes {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+@-o-keyframes tcfActivityIndicator--keyframes {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+@keyframes tcfActivityIndicator--keyframes {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+.tcfCheckbox {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfCheckbox--input {
+  margin-right: 6px;
+}
+.tcfCheckbox--label {
+  flex: 1;
+}
+
+.tcfFactory {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+}
+.tcfFactory > .tcfSelect > .tcfSelect--select {
+  border-radius: 2px 0 0 2px;
+  border-right: none;
+}
+.tcfFactory > .tcfSelect + .tcfButton {
+  border-radius: 0 2px 2px 0;
+  border-left: none;
+}
+
+.tcfFlyout {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.tcfFlyout--panel {
+  position: absolute;
+  background: #fff;
+  border-radius: 5px;
+  filter: drop-shadow(0 0 5px rgba(0,0,0,0.2));
+}
+.tcfFlyout--handle {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  width: 0;
+  height: 0;
+  margin-left: -8px;
+  border: 8px solid transparent;
+}
+.above > .tcfFlyout--handle {
+  bottom: -16px;
+  border-top-color: #fff;
+}
+.below > .tcfFlyout--handle {
+  top: -16px;
+  border-bottom-color: #fff;
+}
+
+.tcfColorInput {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfColorInput--swatch {
+  position: relative;
+  width: 48px;
+  height: 32px;
+  margin-right: 10px;
+  border-radius: 3px;
+}
+
+.tcfInput {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 3px;
+  padding: 5px 7px;
+  border: 1px solid rgba(0,0,20,0.1);
+  border-radius: 2px;
+  transition: border linear 50ms;
+  color: #29323d;
+  font-size: 14px;
+  line-height: 20px;
+}
+.tcfInput:focus {
+  border-color: #0d99f2;
+  outline: none;
+}
+
+.tcfTextAndIcon {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfTextAndIcon--icon {
+  margin-right: 5px;
+}
+.tcfTextAndIcon--text {
+  overflow: hidden;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tcfInstancePreview > * {
+  user-select: none;
+  pointer-events: none;
+}
+.tcfInstancePreview .row {
+  display: flex;
+  flex-flow: row;
+  margin: 0 -10px;
+}
+.tcfInstancePreview .col-1 {
+  box-sizing: border-box;
+  width: 8.333333%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-2 {
+  box-sizing: border-box;
+  width: 16.666666%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-3 {
+  box-sizing: border-box;
+  width: 24.999999%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-4 {
+  box-sizing: border-box;
+  width: 33.333332%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-5 {
+  box-sizing: border-box;
+  width: 41.666664999999995%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-6 {
+  box-sizing: border-box;
+  width: 49.999998%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-7 {
+  box-sizing: border-box;
+  width: 58.333331%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-8 {
+  box-sizing: border-box;
+  width: 66.666664%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-9 {
+  box-sizing: border-box;
+  width: 74.999997%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-10 {
+  box-sizing: border-box;
+  width: 83.33332999999999%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-11 {
+  box-sizing: border-box;
+  width: 91.666663%;
+  padding: 0 10px;
+}
+.tcfInstancePreview .col-12 {
+  box-sizing: border-box;
+  width: 99.999996%;
+  padding: 0 10px;
+}
+.tcfInstancePreview dl {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfInstancePreview dt,
+.tcfInstancePreview dd {
+  margin-right: 10px;
+}
+.tcfInstancePreview dt:last-child,
+.tcfInstancePreview dd:last-child {
+  margin-right: 0;
+}
+.tcfInstancePreview dt {
+  flex: 1;
+}
+.tcfInstancePreview .snippet {
+  overflow: hidden;
+  max-height: 100px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 50px, rgba(0,0,0,0) 100px);
+  mask-image: linear-gradient(to bottom, #000 50px, rgba(0,0,0,0) 100px);
+  pointer-events: none;
+  user-select: none;
+}
+.tcfInstancePreview .stack > * {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.tcfInstancePreview .stack > *:first-child {
+  margin-top: 0;
+}
+.tcfInstancePreview .stack > *:last-child {
+  margin-bottom: 0;
+}
+.tcfInstancePreview--elements {
+  overflow: hidden;
+  margin-top: -7px;
+}
+.tcfInstancePreview--elements > .tcfInstancePreview--thumb,
+.tcfInstancePreview--elements > .element {
+  float: left;
+  margin: 7px 7px 0 0;
+}
+.tcfInstancePreview--thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  background: #f1f5f8;
+}
+.tcfInstancePreview--thumb.large {
+  width: 100px;
+  height: 100px;
+}
+.tcfInstancePreview--background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-size: cover;
+  background-position: center center;
+}
+.tcfInstancePreview--background.blur {
+  filter: blur(2px);
+}
+
+.tcfLinkWidget {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+}
+.tcfLinkWidget--type {
+  width: 100px;
+  margin-right: 10px;
+}
+.tcfLinkWidget--editor {
+  flex: 1;
+  margin-right: 10px;
+}
+.tcfLinkWidget--editor:last-child {
+  margin-right: 0;
+}
+
+.tcfDetailsPanel {
+  position: relative;
+  overflow: hidden;
+  will-change: height;
+}
+.tcfDetailsPanel--item {
+  position: relative;
+  will-change: opacity;
+}
+.tcfDetailsPanel--item.to {
+  animation: tcfDetailsPanel--fadeIn 250ms both;
+}
+.tcfDetailsPanel--item.from {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  animation: tcfDetailsPanel--fadeOut 250ms both;
+}
+@-moz-keyframes tcfDetailsPanel--fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes tcfDetailsPanel--fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-o-keyframes tcfDetailsPanel--fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes tcfDetailsPanel--fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-moz-keyframes tcfDetailsPanel--fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@-webkit-keyframes tcfDetailsPanel--fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@-o-keyframes tcfDetailsPanel--fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes tcfDetailsPanel--fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.tcfOEmbedWidget--input {
+  margin-bottom: 10px;
+}
+.tcfOEmbedWidget--info {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 10px;
+  background: #f1f5f8;
+  border-radius: 3px;
+}
+.tcfOEmbedWidget--infoImage {
+  width: 100px;
+  height: auto;
+  margin-right: 10px;
+  align-self: center;
+}
+.tcfOEmbedWidget--infoContent {
+  flex: 1;
+}
+.tcfOEmbedWidget--infoTitle {
+  font-weight: bold;
+}
+.tcfOEmbedWidget--activity {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  height: 20px;
+}
+.tcfOEmbedWidget--activityBounce {
+  width: 8px;
+  height: 8px;
+  margin: 0 2px;
+  background-color: #333f4d;
+  border-radius: 100%;
+  animation: tcfOEmbedWidget--activityKeyframes 1.4s infinite ease-in-out both;
+}
+.tcfOEmbedWidget--activityBounce.first {
+  animation-delay: -0.32s;
+}
+.tcfOEmbedWidget--activityBounce.second {
+  animation-delay: -0.16s;
+}
+@-moz-keyframes tcfOEmbedWidget--activityKeyframes {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+@-webkit-keyframes tcfOEmbedWidget--activityKeyframes {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+@-o-keyframes tcfOEmbedWidget--activityKeyframes {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+@keyframes tcfOEmbedWidget--activityKeyframes {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+.tcfInstanceWidget {
+  padding: 15px;
+  border: 1px solid rgba(0,0,20,0.1);
+}
+
+.tcfLocation {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 400px;
+}
+.tcfLocation--map {
+  position: relative;
+  flex: 1;
+  width: 100%;
+}
+.tcfLocation--mapInstance {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.tcfRedactorWidget {
+  width: 100%;
+}
+.tcfFieldGroup--content.isCompact .redactor-box {
+  border: none !important;
+}
+
+.tcfSwatchColorWidget {
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  height: 32px;
+  max-width: 64px;
+  border: 1px solid rgba(0,0,20,0.1);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.tcfSwatchColorWidget.isUndecided {
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiID48cGF0aCBkPSJtMCAwIDcuNjggNy42OCIgc3Ryb2tlPSIjN2UwMDAwIiBzdHJva2Utd2lkdGg9IjEiIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIvPjwvc3ZnPg==");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+.tcfSwatchColorWidget--swatches {
+  display: flex;
+  flex-flow: row wrap;
+  max-width: 290px;
+  padding: 15px;
+}
+.tcfSwatchColorWidget--swatch {
+  box-sizing: border-box;
+  height: 32px;
+  width: 48px;
+  margin: 5px;
+  border: 1px solid rgba(0,0,20,0.1);
+  border-radius: 3px;
+  cursor: pointer;
+}
+.tcfSwatchColorWidget--swatch.isSelected {
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 2px #0d99f2;
+}
+
+.tcfColorInputPicker {
+  width: 300px;
+  padding: 15px;
+}
+.tcfColorInputPicker--controls {
+  display: flex;
+  flex-flow: row nowrap;
+  margin-top: 10px;
+}
+.tcfColorInputPicker--sliders {
+  flex: 1;
+}
+.tcfColorInputPicker--sliders > * {
+  margin: 5px 0;
+}
+.tcfColorInputPicker--sliders > *:first-child {
+  margin-top: 0;
+}
+.tcfColorInputPicker--sliders > *:last-child {
+  margin-bottom: 0;
+}
+.tcfColorInputPicker--swatch {
+  width: 37px;
+  align-self: stretch;
+  margin-left: 10px;
+  border-radius: 3px;
+}
+.tcfColorInputPicker--values {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 10px -5px 0 -5px;
+}
+.tcfColorInputPicker--value {
+  flex: 1;
+  padding: 0 5px;
+  text-align: center;
+}
+.tcfColorInputPicker--value.wide {
+  flex: 2;
+}
+.tcfColorInputPicker--value .tcfColorInputInput {
+  text-align: center;
+}
+.tcfColorInputPicker--presets {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 5px -5px -5px;
+}
+.tcfColorInputPicker--presetsSwatch {
+  height: 30px;
+  width: 50px;
+  margin: 5px;
+}
+
+.tcfColorInputSwatch {
+  position: relative;
+  overflow: hidden;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgAQMAAACxAfVuAAAABlBMVEW/v7////+Zw/90AAAAL0lEQVR4AWJg+I8JB6MgoB06IAEAAAAQ9P91OwIfiBOmT58+ffr06fP76dOnT58BbhM6GwUtLbwAAAAASUVORK5CYII=");
+}
+.tcfColorInputSwatch--color {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 1px solid rgba(0,0,20,0.1);
+}
+
+.tcfColorInputSaturation {
+  position: relative;
+  height: 0;
+  padding-bottom: 75%;
+  user-select: none;
+}
+.tcfColorInputSaturation:before,
+.tcfColorInputSaturation:after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.tcfColorInputSaturation:before {
+  background: linear-gradient(to right, #fff, rgba(255,255,255,0));
+}
+.tcfColorInputSaturation:after {
+  background: linear-gradient(to bottom, rgba(0,0,0,0), #000);
+}
+.tcfColorInputSaturation--value {
+  position: absolute;
+  box-sizing: border-box;
+  z-index: 2;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 1px 1px #000;
+}
+
+.tcfColorInputSlider {
+  position: relative;
+  overflow: hidden;
+  height: 16px;
+  border-radius: 3px;
+}
+.tcfColorInputSlider.hue {
+  background: linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%);
+}
+.tcfColorInputSlider.alpha {
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgAQMAAACxAfVuAAAABlBMVEW/v7////+Zw/90AAAAL0lEQVR4AWJg+I8JB6MgoB06IAEAAAAQ9P91OwIfiBOmT58+ffr06fP76dOnT58BbhM6GwUtLbwAAAAASUVORK5CYII=");
+}
+.tcfColorInputSlider--gradient {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.tcfColorInputSlider--track {
+  position: relative;
+  height: 100%;
+  margin: 0 5px;
+}
+.tcfColorInputSlider--handle {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 8px;
+  margin-left: -4px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 0 1px #000;
+}
+
+
+.tcfArrayWidgetMember {
+  padding: 5px 0;
+}
+.tcfArrayWidgetMember.isDragging {
+  opacity: 0.5;
+}
+.tcfArrayWidgetMember.isCompact {
+  padding: 0;
+}
+.tcfArrayWidgetMember.hasDropTarget {
+  display: none;
+}
+.tcfArrayWidgetMember--panel {
+  position: relative;
+  overflow: hidden;
+  background: #f1f5f8;
+  border: 1px solid #dedee1;
+}
+.tcfArrayWidgetMember--panel.isExpanded {
+  background: #fff;
+}
+.tcfArrayWidgetMember--panel.isExpanded:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 3px solid #0d78f2;
+}
+.isCompact > .tcfArrayWidgetMember--panel {
+  border-top: none;
+}
+.isCompact:first-of-type > .tcfArrayWidgetMember--panel {
+  border-top: 1px solid #dedee1;
+}
+.tcfArrayWidgetMember--header {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  background: #e7eef3;
+  border-bottom: 1px solid #dedee1;
+}
+.tcfArrayWidgetMember--headerHandle {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  flex: 1;
+  padding: 0 10px;
+  cursor: move;
+}
+.tcfArrayWidgetMember--headerHandle > .tcfIcon {
+  margin-right: 5px;
+}
+.tcfArrayWidgetMember--headerHandleIcon {
+  color: rgba(0,0,0,0.25);
+}
+*:hover > .tcfArrayWidgetMember--headerHandleIcon {
+  color: #0d78f2;
+}
+.tcfArrayWidgetMember--headerActions {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 0 0 0 10px;
+}
+.tcfArrayWidgetMember--headerActionsButton {
+  padding: 8px 10px;
+  border-left: 1px solid #dedee1;
+  cursor: pointer;
+}
+.tcfArrayWidgetMember--headerActionsButton > .tcfIcon {
+  margin: 0 3px;
+}
+.tcfArrayWidgetMember--headerActionsButton > .tcfIcon:first-child {
+  margin-left: 0;
+}
+.tcfArrayWidgetMember--headerActionsButton > .tcfIcon:last-child {
+  margin-right: 0;
+}
+.tcfArrayWidgetMember--body {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+}
+.tcfArrayWidgetMember--preview {
+  cursor: pointer;
+}
+
+.tcfLocationFieldSearch {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.tcfLocationFieldSearch--resolve {
+  position: relative;
+  margin-right: 10px;
+}
+.tcfLocationFieldSearch--input {
+  flex: 1;
+}
+
+.tcfArrayWidgetList {
+  min-height: 100px;
+}
+.tcfArrayWidgetList--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 75px;
+  background: #f1f5f8;
+  border-radius: 5px;
+}
+.tcfArrayWidgetList--placeholder {
+  position: relative;
+  display: block;
+}
+.tcfArrayWidgetList--placeholder:after {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 5px;
+  right: 0;
+  bottom: 5px;
+  left: 0;
+  background: #f1f5f8;
+  border-radius: 5px;
+}
+.tcfArrayWidgetList--placeholder.isCompact:after {
+  top: 0;
+  bottom: 0;
+}
+.tcfArrayWidgetList--footer {
+  padding: 5px 0;
+}
