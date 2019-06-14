@@ -14,4 +14,9 @@ class RenderEvent extends Event
    * @var Content
    */
   public $content;
+
+  /**
+   * @var array
+   */
+  public $options;
 }

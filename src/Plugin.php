@@ -137,18 +137,13 @@ class Plugin extends \craft\base\Plugin
           'originalEvent' => $event,
           'requestedUuid' => $isChunkRequest ? $uuid : null,
         ]));
-
-        if ($fieldValue->getField()->useAsPageTemplate) {
-          $pageTemplate = $fieldValue;
-        }
       }
     };
 
+    // If this was a chunk request and we did not resolve it, raise
+    // an error
     if ($isChunkRequest && $event->isValid) {
       throw new NotFoundHttpException();
-    } elseif (!is_null($pageTemplate)) {
-      $event->isValid = false;
-      $this->sendPageTemplate($pageTemplate);
     }
   }
 
