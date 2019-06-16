@@ -25,11 +25,6 @@ class TemplatesController extends BaseTemplatesController
    */
   public $mimeType = 'text/html';
 
-  /**
-   * @var TemplateSchema
-   */
-  public $schema;
-
 
   /**
    * Renders a template.

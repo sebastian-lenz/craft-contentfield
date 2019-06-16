@@ -3,6 +3,7 @@
 namespace lenz\contentfield;
 
 use Craft;
+use craft\controllers\EntriesController;
 use craft\controllers\TemplatesController;
 use craft\events\ExceptionEvent;
 use craft\events\RegisterComponentTypesEvent;
@@ -76,38 +77,32 @@ class Plugin extends \craft\base\Plugin
     Craft::$app->view->registerTwigExtension(new Extension());
 
     Event::on(
-      View::class,
-      View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
+      View::class, View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
       [$this, 'onBeforeRenderAnyTemplate']
     );
 
     Event::on(
-      View::class,
-      View::EVENT_BEFORE_RENDER_TEMPLATE,
+      View::class, View::EVENT_BEFORE_RENDER_TEMPLATE,
       [$this, 'onBeforeRenderAnyTemplate']
     );
 
     Event::on(
-      Fields::class,
-      Fields::EVENT_REGISTER_FIELD_TYPES,
+      Fields::class, Fields::EVENT_REGISTER_FIELD_TYPES,
       [$this, 'onRegisterFieldTypes']
     );
 
     Event::on(
-      Utilities::class,
-      Utilities::EVENT_REGISTER_UTILITY_TYPES,
+      Utilities::class, Utilities::EVENT_REGISTER_UTILITY_TYPES,
       [$this, 'onRegisterUtilityTypes']
     );
 
     Event::on(
-      Application::class,
-      Application::EVENT_BEFORE_ACTION,
+      Application::class, Application::EVENT_BEFORE_ACTION,
       [$this, 'onBeforeAction']
     );
 
     Event::on(
-      ErrorHandler::class,
-      ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION,
+      ErrorHandler::class, ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION,
       [$this, 'onBeforeHandleException']
     );
   }
@@ -123,7 +118,12 @@ class Plugin extends \craft\base\Plugin
       $event->action->id == 'render'
     );
 
-    if (!$element || !$isRenderRequest) {
+    $isPreviewRequest = (
+      $event->action->controller instanceof EntriesController &&
+      $event->action->id == 'preview-entry'
+    );
+
+    if (!$element || (!$isRenderRequest && !$isPreviewRequest)) {
       return;
     }
 
@@ -134,8 +134,9 @@ class Plugin extends \craft\base\Plugin
     foreach ($element->getFieldValues() as $fieldValue) {
       if ($fieldValue instanceof Content) {
         $fieldValue->onBeforeAction(new BeforeActionEvent([
-          'originalEvent' => $event,
-          'requestedUuid' => $isChunkRequest ? $uuid : null,
+          'isPreviewRequest' => $isPreviewRequest,
+          'originalEvent'    => $event,
+          'requestedUuid'    => $isChunkRequest ? $uuid : null,
         ]));
       }
     };

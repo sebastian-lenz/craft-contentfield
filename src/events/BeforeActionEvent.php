@@ -11,6 +11,11 @@ use yii\base\Event;
 class BeforeActionEvent extends Event
 {
   /**
+   * @var bool
+   */
+  public $isPreviewRequest;
+
+  /**
    * @var ActionEvent
    */
   public $originalEvent;
