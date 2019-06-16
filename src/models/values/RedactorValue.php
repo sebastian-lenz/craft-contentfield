@@ -196,7 +196,7 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
       return Craft::$app->getElements()->parseRefs($this->_rawContent);
     }
 
-    $loader = $content->getBatchLoader();
+    $loader = $content->getReferenceLoader();
     $replace = [];
     $search = [];
     $str = $this->_parsedContent;

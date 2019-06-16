@@ -29,7 +29,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @var ReferenceLoader
    */
-  private $_batchLoader;
+  private $_referenceLoader;
 
   /**
    * @var values\InstanceValue|null
@@ -98,17 +98,6 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
-   * @return ReferenceLoader
-   */
-  public function getBatchLoader() {
-    if (!isset($this->_batchLoader)) {
-      $this->_batchLoader = new ReferenceLoader($this);
-    }
-
-    return $this->_batchLoader;
-  }
-
-  /**
    * @return mixed
    */
   public function getEditorValue() {
@@ -171,6 +160,17 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
+   * @return ReferenceLoader
+   */
+  public function getReferenceLoader() {
+    if (!isset($this->_referenceLoader)) {
+      $this->_referenceLoader = new ReferenceLoader($this);
+    }
+
+    return $this->_referenceLoader;
+  }
+
+  /**
    * @return string
    */
   public function getSearchKeywords() {
@@ -217,15 +217,6 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
-   * @param ReferenceLoader $batchLoader
-   * @throws Exception
-   */
-  public function setBatchLoader(ReferenceLoader $batchLoader) {
-    $batchLoader->addContent($this);
-    $this->_batchLoader = $batchLoader;
-  }
-
-  /**
    * @param InstanceValue|string|null $value
    * @throws Exception
    */
@@ -263,5 +254,14 @@ class Content extends ForeignFieldModel implements DisplayInterface
     }
 
     $this->_model = $model;
+  }
+  
+  /**
+   * @param ReferenceLoader $referenceLoader
+   * @throws Exception
+   */
+  public function setReferenceLoader(ReferenceLoader $referenceLoader) {
+    $referenceLoader->addContent($this);
+    $this->_referenceLoader = $referenceLoader;
   }
 }

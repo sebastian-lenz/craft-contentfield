@@ -163,7 +163,7 @@ class ReferenceValue extends Value implements
 
     $content = $this->getContent();
     if (!is_null($content)) {
-      $elements = $content->getBatchLoader()->getElements($elementType);
+      $elements = $content->getReferenceLoader()->getElements($elementType);
       $result = array();
 
       foreach ($this->_values as $id) {
