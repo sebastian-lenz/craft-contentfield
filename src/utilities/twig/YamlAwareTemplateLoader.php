@@ -122,6 +122,8 @@ class YamlAwareTemplateLoader extends TemplateLoader
     $key  = $this->getMetaDataKey($name);
     $data = $this->getMetaDataCache()->get($key);
 
+    // The cache data might be out of date, so check this
+    // when not in production mode
     if (
       $data !== false &&
       CRAFT_ENVIRONMENT != 'production' &&
@@ -131,18 +133,28 @@ class YamlAwareTemplateLoader extends TemplateLoader
     }
 
     if ($data === false) {
-      YamlAwareTemplateLoader::withSiteView(function(View $view) use ($name) {
+      $data = YamlAwareTemplateLoader::withSiteView(function(View $view) use ($name) {
+        // Try to load the template normally, if we have to compile it
+        // we'll load the metadata with it
         $view->getTwig()->load($name);
+
+        // We loaded the template but did not get the metadata, this happens
+        // if the template is already compiled, so we must fetch the metadata
+        // on our own
+        if (!isset($this->_metaData[$name])) {
+          $this->getSourceContext($name);
+        }
+
+        // Still no luck, something went south
+        if (!isset($this->_metaData[$name])) {
+          throw new Exception(sprintf(
+            'Could not load meta data for template `%s`.',
+            $name
+          ));
+        }
+
+        return $this->_metaData[$name];
       });
-
-      if (!isset($this->_metaData[$name])) {
-        throw new Exception(sprintf(
-          'Could not load meta data for template `%s`.',
-          $name
-        ));
-      }
-
-      $data = $this->_metaData[$name];
     }
 
     return $data;
