@@ -281,6 +281,13 @@ class ContentField extends ForeignField
   /**
    * @inheritDoc
    */
+  public static function queryExtensionClass(): string {
+    return ContentFieldQueryExtension::class;
+  }
+
+  /**
+   * @inheritDoc
+   */
   public static function recordModelAttributes(): array {
     return ['model'];
   }

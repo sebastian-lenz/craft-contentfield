@@ -129,7 +129,7 @@ class LinkValue extends Value implements ReferenceMapValueInterface
         $content = $this->getContent();
 
         if (!is_null($content)) {
-          $this->_element = $content->getBatchLoader()->getElement($elementType, $elementId);
+          $this->_element = $content->getReferenceLoader()->getElement($elementType, $elementId);
         } else {
           /** @var ElementInterface $elementType */
           $this->_element = $elementType::findOne(array(

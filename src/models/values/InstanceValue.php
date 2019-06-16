@@ -513,16 +513,17 @@ class InstanceValue
 
   /**
    * @param array $variables
+   * @param array $options
    * @return string
    * @throws Exception
    */
-  public function render(array $variables = []) {
+  public function render(array $variables = [], array $options = []) {
     if (isset($this->_output)) {
       return $this->_output;
     }
 
     $this->normalizeVariables($variables);
-    return $this->_schema->render($this, $variables);
+    return $this->_schema->render($this, $variables, $options);
   }
 
   /**

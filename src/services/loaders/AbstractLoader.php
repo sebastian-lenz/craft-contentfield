@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\services\loaders;
 
+use Throwable;
 use lenz\contentfield\models\schemas\AbstractSchema;
 
 /**
@@ -22,10 +23,10 @@ abstract class AbstractLoader
    *
    * @param string $pattern
    * @return string[]
-   * @throws \Exception
+   * @throws Throwable
    */
   public function findNames($pattern) {
-    throw new \Exception('Wildcard search is not supported by this loader.');
+    throw new Exception('Wildcard search is not supported by this loader.');
   }
 
   /**
@@ -40,7 +41,7 @@ abstract class AbstractLoader
    *
    * @param string $name
    * @return AbstractSchema
-   * @throws \Exception
+   * @throws Throwable
    */
   abstract function load($name);
 

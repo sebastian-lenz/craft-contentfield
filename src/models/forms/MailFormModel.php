@@ -7,6 +7,7 @@ use craft\base\Element;
 use craft\elements\User;
 use craft\mail\Message;
 use lenz\contentfield\events\BeforeActionEvent;
+use Throwable;
 
 /**
  * Class MailForm
@@ -75,10 +76,11 @@ class MailFormModel extends FormModel
       return static::MESSAGE_SUBJECT;
     }
 
-    $subject = 'Submission';
+    $subject  = 'Submission';
+    $instance = $this->getInstance();
 
-    if ($this->_instance) {
-      $element = $this->_instance->getElement();
+    if ($instance) {
+      $element = $instance->getElement();
 
       if ($element && $element instanceof Element) {
         $subject .= ': ' . $element->title;
@@ -114,14 +116,14 @@ class MailFormModel extends FormModel
 
     try {
       $message = new Message($options);
-      $result  = \Craft::$app->mailer->send($message);
+      $result  = Craft::$app->mailer->send($message);
 
       if ($result) {
         $this->redirect($event);
       }
 
       return $result;
-    } catch (\Throwable $error) {
+    } catch (Throwable $error) {
       return false;
     }
   }

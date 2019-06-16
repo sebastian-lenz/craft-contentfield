@@ -41,14 +41,9 @@ git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" pull
 # Sync with master
 git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" merge origin/master
 
-# Remove everything not intended for release
-rm -rf "$RELEASEDIR/bin"
-rm -rf "$RELEASEDIR/docs"
-rm -f "$RELEASEDIR/src/assets/field/.gitignore"
-
 
 # Build UI
-if [ "UIBUILD" = true ] ; then
+if [ "$UIBUILD" = true ] ; then
   cd "$UIDIR" && npm run build
 
   # Copy new files

@@ -29,7 +29,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @var ReferenceLoader
    */
-  private $_batchLoader;
+  private $_referenceLoader;
 
   /**
    * @var values\InstanceValue|null
@@ -60,6 +60,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
 
   /**
    * @return string
+   * @throws Exception
    */
   public function __toString() {
     return (string)$this->getHtml();
@@ -74,6 +75,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
 
   /**
    * @inheritDoc
+   * @throws Exception
    */
   public function display(array $variables = []) {
     $model = $this->_model;
@@ -96,17 +98,6 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
-   * @return ReferenceLoader
-   */
-  public function getBatchLoader() {
-    if (!isset($this->_batchLoader)) {
-      $this->_batchLoader = new ReferenceLoader($this);
-    }
-
-    return $this->_batchLoader;
-  }
-
-  /**
    * @return mixed
    */
   public function getEditorValue() {
@@ -118,6 +109,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @param array $variables
    * @return Markup
+   * @throws Exception
    */
   public function getHtml(array $variables = []) {
     return new Markup($this->render($variables), 'utf-8');
@@ -168,6 +160,17 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
+   * @return ReferenceLoader
+   */
+  public function getReferenceLoader() {
+    if (!isset($this->_referenceLoader)) {
+      $this->_referenceLoader = new ReferenceLoader($this);
+    }
+
+    return $this->_referenceLoader;
+  }
+
+  /**
    * @return string
    */
   public function getSearchKeywords() {
@@ -178,6 +181,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
 
   /**
    * @param BeforeActionEvent $event
+   * @throws Exception
    */
   public function onBeforeAction(BeforeActionEvent $event) {
     $model = $this->getModel();
@@ -185,14 +189,20 @@ class Content extends ForeignFieldModel implements DisplayInterface
       return;
     }
 
+    if ($this->_field->useAsPageTemplate) {
+      $model->getSchema()->applyPageTemplate($event, $this);
+    }
+
     $model->onBeforeAction($event);
   }
 
   /**
    * @param array $variables
+   * @param array $options
    * @return string
+   * @throws Exception
    */
-  public function render($variables = []) {
+  public function render(array $variables = [], array $options = []) {
     $model = $this->_model;
     if (is_null($model)) {
       return '';
@@ -200,18 +210,10 @@ class Content extends ForeignFieldModel implements DisplayInterface
 
     $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
       'content' => $this,
+      'options' => $options,
     ]));
 
-    return $model->render($variables);
-  }
-
-  /**
-   * @param ReferenceLoader $batchLoader
-   * @throws Exception
-   */
-  public function setBatchLoader(ReferenceLoader $batchLoader) {
-    $batchLoader->addContent($this);
-    $this->_batchLoader = $batchLoader;
+    return $model->render($variables, $options);
   }
 
   /**
@@ -252,5 +254,14 @@ class Content extends ForeignFieldModel implements DisplayInterface
     }
 
     $this->_model = $model;
+  }
+  
+  /**
+   * @param ReferenceLoader $referenceLoader
+   * @throws Exception
+   */
+  public function setReferenceLoader(ReferenceLoader $referenceLoader) {
+    $referenceLoader->addContent($this);
+    $this->_referenceLoader = $referenceLoader;
   }
 }

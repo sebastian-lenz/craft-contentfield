@@ -16,17 +16,17 @@ class ReferenceLoader
   /**
    * @var Content[]
    */
-  private $contents = [];
+  private $_contents = [];
 
   /**
    * @var ElementInterface[][]
    */
-  private $elements = [];
+  private $_elements = [];
 
   /**
    * @var ReferenceMap
    */
-  private $referenceMap;
+  private $_referenceMap;
 
 
   /**
@@ -35,7 +35,7 @@ class ReferenceLoader
    */
   public function __construct(Content $content = null) {
     if (!is_null($content)) {
-      $this->contents[] = $content;
+      $this->_contents[] = $content;
     }
   }
 
@@ -44,12 +44,12 @@ class ReferenceLoader
    * @throws Exception
    */
   public function addContent(Content $content) {
-    if (isset($this->referenceMap)) {
+    if (isset($this->_referenceMap)) {
       throw new Exception('This batch loader is already in used');
     }
 
-    if (!in_array($content, $this->contents)) {
-      $this->contents[] = $content;
+    if (!in_array($content, $this->_contents, true)) {
+      $this->_contents[] = $content;
     }
   }
 
@@ -71,17 +71,17 @@ class ReferenceLoader
    * @return ElementInterface[]
    */
   public function getElements($elementType) {
-    if (!(array_key_exists($elementType, $this->elements))) {
+    if (!(array_key_exists($elementType, $this->_elements))) {
       $result = array();
       $elements = $this->queryElements($elementType);
       foreach ($elements as $element) {
         $result[intval($element->getId())] = $element;
       }
 
-      $this->elements[$elementType] = $result;
+      $this->_elements[$elementType] = $result;
     }
 
-    return $this->elements[$elementType];
+    return $this->_elements[$elementType];
   }
 
 
@@ -91,20 +91,20 @@ class ReferenceLoader
    * @return ReferenceMap
    */
   private function getReferenceMap() {
-    if (!isset($this->referenceMap)) {
+    if (!isset($this->_referenceMap)) {
       $referenceMap = new ReferenceMap();
 
-      foreach ($this->contents as $content) {
+      foreach ($this->_contents as $content) {
         $model = $content->getModel();
         if (!is_null($model)) {
           $model->getReferenceMap($referenceMap);
         }
       }
 
-      $this->referenceMap = $referenceMap;
+      $this->_referenceMap = $referenceMap;
     }
 
-    return $this->referenceMap;
+    return $this->_referenceMap;
   }
 
 

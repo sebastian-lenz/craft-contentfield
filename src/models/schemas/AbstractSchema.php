@@ -5,6 +5,8 @@ namespace lenz\contentfield\models\schemas;
 use Craft;
 use craft\base\ElementInterface;
 use Exception;
+use lenz\contentfield\events\BeforeActionEvent;
+use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
@@ -48,6 +50,11 @@ abstract class AbstractSchema extends Model
    * @var string
    */
   public $label;
+
+  /**
+   * @var string
+   */
+  public $mimeType = 'text/html';
 
   /**
    * A handlebars template used to display instances of this schema in the editor.
@@ -120,6 +127,12 @@ abstract class AbstractSchema extends Model
 
     parent::__construct($config);
   }
+
+  /**
+   * @param BeforeActionEvent $event
+   * @param Content $content
+   */
+  abstract function applyPageTemplate(BeforeActionEvent $event, Content $content);
 
   /**
    * @param InstanceValue $instance
@@ -313,9 +326,10 @@ abstract class AbstractSchema extends Model
    *
    * @param InstanceValue $instance
    * @param array $variables
+   * @param array $options
    * @return string
    */
-  abstract function render(InstanceValue $instance, array $variables = []);
+  abstract function render(InstanceValue $instance, array $variables = [], array $options = []);
 
   /**
    * @inheritdoc
