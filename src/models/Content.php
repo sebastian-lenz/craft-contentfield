@@ -193,7 +193,9 @@ class Content extends ForeignFieldModel implements DisplayInterface
       $model->getSchema()->applyPageTemplate($event, $this);
     }
 
-    $model->onBeforeAction($event);
+    if (!$event->isPreviewRequest) {
+      $model->onBeforeAction($event);
+    }
   }
 
   /**
