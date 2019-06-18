@@ -2,12 +2,14 @@
 
 namespace lenz\contentfield\models\fields;
 
+use craft\base\Element;
 use Exception;
 use lenz\contentfield\models\values\ReferenceValue;
 use lenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\elements\Entry;
+use yii\base\InvalidConfigException;
 
 /**
  * Class ReferenceField
@@ -62,7 +64,7 @@ class ReferenceField extends AbstractField
         'criteria'    => is_array($this->criteria) ? $this->criteria : null,
         'elementType' => $this->getElementType(),
         'limit'       => $this->getLimit(),
-        'sources'     => $this->getSources(),
+        'sources'     => $this->getSources($element),
         'viewMode'    => $this->viewMode,
       );
   }
@@ -111,17 +113,12 @@ class ReferenceField extends AbstractField
   }
 
   /**
+   * @param ElementInterface|null $element
    * @return string[]|null
    */
-  public function getSources() {
+  public function getSources(ElementInterface $element = null) {
     if (isset($this->sources)) {
-      if (is_array($this->sources)) {
-        return $this->sources;
-      } elseif (is_string($this->sources) && !empty($this->sources)) {
-        return array_filter(array_map(function($value) {
-          return trim($value);
-        }, explode(',', $this->sources)));
-      }
+      return self::extractSources($this->sources, $element);
     }
 
     return null;
@@ -176,6 +173,10 @@ class ReferenceField extends AbstractField
       : null;
   }
 
+
+  // Static methods
+  // --------------
+
   /**
    * @inheritdoc
    */
@@ -218,5 +219,104 @@ class ReferenceField extends AbstractField
         'viewMode'    => 'small'
       ) + $config;
     }
+  }
+
+  /**
+   * @param string $rawValue
+   * @param ElementInterface|null $element
+   * @return string[]|null
+   */
+  static function extractSources($rawValue, ElementInterface $element = null) {
+    $sources = self::parseSources($rawValue);
+
+    try {
+      $site = $element instanceof Element
+        ? $element->getSite()->handle
+        : '*';
+    } catch (InvalidConfigException $error) {
+      $site = '*';
+    }
+
+    if (array_key_exists($site, $sources)) {
+      return $sources[$site];
+    }
+
+    return array_key_exists('*', $sources)
+      ? $sources['*']
+      : null;
+  }
+
+  /**
+   * Parses the sources attribute of a reference field. Returns
+   * an array which keys contain site handles and the value a list
+   * of sources. The key `*` contains the default sources.
+   *
+   * We accept the following formats:
+   *
+   * - Single source as string, e.g.:
+   *   ```
+   *   sources: section:8e15181e-dd0c-49a3-9741-e9bdbf39ad23
+   *   ```
+   *
+   * - Multiple sources, comma separated, e.g.:
+   *   ```
+   *   sources: section:8e15181e-dd0c-49a3-9741-e9bdbf39ad23,section:a976f2d5-928e-4040-ad10-00fd6e3011d3
+   *   ```
+   *
+   * - Multiple sources, as array, e.g.:
+   *   ```
+   *   sources:
+   *   - section:8e15181e-dd0c-49a3-9741-e9bdbf39ad23
+   *   - section:a976f2d5-928e-4040-ad10-00fd6e3011d3
+   *   ```
+   *
+   * - Sources per site, e.g.:
+   *   ```
+   *   sources:
+   *     "*": section:2c6692f4-0116-4f9a-b1cb-b61f72b2031e
+   *     "firstSite": section:5766d986-886f-45d5-8e11-26076cf2bef6,section:18562552-2f6d-45c9-bb8d-ea693ec345b4
+   *     "secondSite,thirdSite":
+   *       - section:8e15181e-dd0c-49a3-9741-e9bdbf39ad23
+   *       - section:a976f2d5-928e-4040-ad10-00fd6e3011d3
+   *   ```
+   *
+   * @param string[]|string|null $rawValue
+   * @return array|string|string[]|null
+   */
+  static function parseSources($rawValue) {
+    if (is_array($rawValue)) {
+      $sources = [];
+
+      foreach ($rawValue as $key => $value) {
+        $siteSources = is_array($value) ? $value : self::splitSourcesString($value);
+        $sites = is_numeric($key) ? '*' : $key;
+
+        foreach (explode(',', $sites) as $site) {
+          $sources[$site] = !isset($sources[$site])
+            ? $siteSources
+            : array_merge($sources[$site], $siteSources);
+        }
+      }
+
+      return $sources;
+    }
+
+    return [
+      '*' => self::splitSourcesString($rawValue)
+    ];
+  }
+
+  /**
+   * @param string $rawValue
+   * @return string[]
+   */
+  static public function splitSourcesString($rawValue) {
+    if (!is_string($rawValue) || !empty($rawValue)) {
+      return [];
+    }
+
+    return array_filter(array_map(function($value) {
+      return trim($value);
+    }, explode(',', $rawValue)));
   }
 }
