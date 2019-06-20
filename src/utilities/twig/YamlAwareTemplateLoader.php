@@ -229,8 +229,12 @@ class YamlAwareTemplateLoader extends TemplateLoader
     }
 
     $view->setTemplateMode($view::TEMPLATE_MODE_SITE);
-    $result = $callback($view);
-    $view->setTemplateMode($templateMode);
+
+    try {
+      $result = $callback($view);
+    } finally {
+      $view->setTemplateMode($templateMode);
+    }
 
     return $result;
   }
