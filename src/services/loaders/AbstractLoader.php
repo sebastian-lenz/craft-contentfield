@@ -2,8 +2,9 @@
 
 namespace lenz\contentfield\services\loaders;
 
-use Throwable;
+use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use Throwable;
 
 /**
  * Class AbstractLoader
@@ -26,7 +27,7 @@ abstract class AbstractLoader
    * @throws Throwable
    */
   public function findNames($pattern) {
-    throw new Exception('Wildcard search is not supported by this loader.');
+    return [];
   }
 
   /**
@@ -34,7 +35,9 @@ abstract class AbstractLoader
    *
    * @return AbstractSchema[]
    */
-  abstract function getAllSchemas();
+  public function getAllSchemas() {
+    return [];
+  }
 
   /**
    * Load the schema with the given name.

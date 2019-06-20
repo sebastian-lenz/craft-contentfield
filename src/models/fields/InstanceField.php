@@ -9,6 +9,7 @@ use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\validators\InstanceValueValidator;
+use Throwable;
 
 /**
  * Class InstanceField
@@ -34,26 +35,38 @@ class InstanceField extends AbstractField
 
 
   /**
-   * ArrayField constructor.
+   * InstanceField constructor.
    *
+   * @param AbstractSchema $schema
    * @param array $config
-   * @throws \Exception
+   * @throws Throwable
    */
-  public function __construct(array $config = []) {
+  public function __construct(AbstractSchema $schema, array $config = []) {
     if (array_key_exists('schemas', $config)) {
       $schemaManager = Plugin::getInstance()->schemas;
-      $schemas = is_array($config['schemas'])
+      $specs = is_array($config['schemas'])
         ? $config['schemas']
         : explode(',', $config['schemas']);
 
-      $specs = array_filter(array_map(function($spec) {
-        return trim($spec);
-      }, $schemas));
+      $resolvedSchemas    = [];
+      $resolvedQualifiers = [];
 
-      $config['schemas'] = $schemaManager->getSchemas($specs);
+      foreach ($specs as $name => $spec) {
+        $spec = trim((string)$spec);
+        if ($schema->hasLocalStructure($spec)) {
+          $resolvedSchemas[] = $schema->getLocalStructure($spec);
+        } elseif (!empty($spec)) {
+          $resolvedQualifiers[] = $spec;
+        }
+      }
+
+      $config['schemas'] = array_merge(
+        $resolvedSchemas,
+        $schemaManager->getSchemas($resolvedQualifiers)
+      );
     }
 
-    parent::__construct($config);
+    parent::__construct($schema, $config);
   }
 
   /**

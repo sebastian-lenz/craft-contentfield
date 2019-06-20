@@ -2,12 +2,16 @@
 
 namespace lenz\contentfield\models\fields\enumerations;
 
+use Craft;
+use Exception;
 use lenz\contentfield\models\enumerations\EnumerationInterface;
 use lenz\contentfield\models\enumerations\StaticEnumeration;
 use lenz\contentfield\models\fields\AbstractField;
+use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\EnumerationValue;
 use craft\base\ElementInterface;
+use Throwable;
 
 /**
  * Class AbstractEnumField
@@ -37,10 +41,11 @@ abstract class AbstractEnumerationField extends AbstractField
   /**
    * AbstractEnumField constructor.
    *
+   * @param AbstractSchema $schema
    * @param array $config
-   * @throws \Exception
+   * @throws Exception
    */
-  public function __construct(array $config = []) {
+  public function __construct(AbstractSchema $schema, array $config = []) {
     if (isset($config['options'])) {
       $this->_enumeration = new StaticEnumeration($config['options']);
       unset($config['options']);
@@ -58,12 +63,12 @@ abstract class AbstractEnumerationField extends AbstractField
 
         $enum = new $enumClass($enumOptions);
         if (!($enum instanceof EnumerationInterface)) {
-          throw new \Exception(sprintf('Invalid enumeration class given, %s must implement EnumerationInterface.', $enumClass));
+          throw new Exception(sprintf('Invalid enumeration class given, %s must implement EnumerationInterface.', $enumClass));
         } else {
           $this->_enumeration = $enum;
         }
-      } catch (\Throwable $error) {
-        \Craft::warning($error->getMessage());
+      } catch (Throwable $error) {
+        Craft::warning($error->getMessage());
       }
 
       unset($config['enumeration']);
@@ -73,7 +78,7 @@ abstract class AbstractEnumerationField extends AbstractField
       $this->_enumeration = new StaticEnumeration();
     }
 
-    parent::__construct($config);
+    parent::__construct($schema, $config);
   }
 
   /**

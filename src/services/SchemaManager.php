@@ -8,6 +8,7 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\services\loaders\AbstractLoader;
+use lenz\contentfield\services\loaders\StructureLoader;
 use lenz\contentfield\services\loaders\TemplateLoader;
 use Throwable;
 
@@ -32,6 +33,11 @@ class SchemaManager
   private $_schemas = array();
 
   /**
+   * @var StructureLoader
+   */
+  private $_structureLoader;
+
+  /**
    * @var TemplateLoader
    */
   private $_templateLoader;
@@ -42,10 +48,12 @@ class SchemaManager
    * @throws Throwable
    */
   public function __construct() {
+    $this->_structureLoader = new StructureLoader();
     $this->_templateLoader = new TemplateLoader();
-    $this->_loaders = array(
-      TemplateLoader::NAME_PREFIX => $this->_templateLoader
-    );
+    $this->_loaders = [
+      StructureLoader::NAME_PREFIX => $this->_structureLoader,
+      TemplateLoader::NAME_PREFIX  => $this->_templateLoader,
+    ];
   }
 
   /**
@@ -152,6 +160,15 @@ class SchemaManager
     }
 
     return $result;
+  }
+
+  /**
+   * Return the structure loader instance.
+   *
+   * @return StructureLoader
+   */
+  public function getStructureLoader() {
+    return $this->_structureLoader;
   }
 
   /**

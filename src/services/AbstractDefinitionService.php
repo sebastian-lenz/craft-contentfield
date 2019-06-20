@@ -39,7 +39,7 @@ abstract class AbstractDefinitionService
 
 
   /**
-   * Return the blueprint field definition for the given name.
+   * Return the definition for the given name.
    *
    * @param string $name
    * @return array
@@ -57,6 +57,20 @@ abstract class AbstractDefinitionService
     return is_array($definition) ? $definition : [];
   }
 
+  /**
+   * Test whether the definition with the given name exists.
+   *
+   * @param string $name
+   * @return bool
+   */
+  public function hasDefinition($name) {
+    if (!isset($this->definitions)) {
+      $this->loadDefinitions();
+    }
+
+    return isset($this->definitions[$name]);
+  }
+
 
   // Protected methods
   // -----------------
@@ -66,7 +80,9 @@ abstract class AbstractDefinitionService
    *
    * @return string
    */
-  abstract protected function getCacheKey();
+  protected function getCacheKey() {
+    return static::class;
+  }
 
   /**
    * @return string
@@ -110,24 +126,17 @@ abstract class AbstractDefinitionService
   }
 
   /**
-   * Test whether the blueprint with the given name exists.
-   *
-   * @param string $name
-   * @return bool
-   */
-  protected function hasDefinition($name) {
-    if (!isset($this->definitions)) {
-      $this->loadDefinitions();
-    }
-
-    return isset($this->definitions[$name]);
-  }
-
-  /**
    * @param string $type
    * @return boolean
    */
   abstract protected function isNativeType($type);
+
+  /**
+   * @return bool
+   */
+  protected function isTypeRequired() {
+    return true;
+  }
 
   /**
    * Loads all blueprints.
@@ -208,6 +217,10 @@ abstract class AbstractDefinitionService
       !array_key_exists(static::DEFINITION_TYPE, $config) ||
       !is_string($config[static::DEFINITION_TYPE])
     ) {
+      if (!$this->isTypeRequired()) {
+        return $config;
+      }
+
       throw new Exception(sprintf(
         'A definition must contain a `%s` type attribute.',
         static::DEFINITION_TYPE

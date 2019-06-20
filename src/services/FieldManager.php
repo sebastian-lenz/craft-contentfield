@@ -19,6 +19,7 @@ use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\models\fields\strings\TextAreaField;
 use lenz\contentfield\models\fields\strings\TextField;
 use lenz\contentfield\models\fields\OEmbedField;
+use lenz\contentfield\models\schemas\AbstractSchema;
 
 /**
  * Class FieldManager
@@ -55,12 +56,14 @@ class FieldManager extends AbstractDefinitionService
   /**
    * Creates a new field instance from the given configuration.
    *
+   * @param AbstractSchema $schema
    * @param array $config
    * @return AbstractField
+   * @throws FieldConfigException
    * @throws Exception
    */
-  public function createField($config) {
-    $type = strtolower($config['type']);
+  public function createField(AbstractSchema $schema, $config) {
+    $type   = strtolower($config['type']);
     $config = $this->resolveDefinition($config);
 
     // We don't know the field type, let the widgets try to expand
@@ -77,14 +80,7 @@ class FieldManager extends AbstractDefinitionService
     }
 
     $fieldClass = self::$FIELD_TYPES[$type];
-    return new $fieldClass($config);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected function getCacheKey() {
-    return 'CONTENTFIELD_DEFS:FIELDS';
+    return new $fieldClass($schema, $config);
   }
 
   /**

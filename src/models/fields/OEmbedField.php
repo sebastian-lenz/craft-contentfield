@@ -4,6 +4,7 @@ namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
 
+use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\OEmbedValue;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\utilities\oembed\Endpoint;
@@ -29,7 +30,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function __construct(array $config = []) {
+  public function __construct(AbstractSchema $schema, array $config = []) {
     if (array_key_exists('providers', $config)) {
       if (!is_array($config['providers'])) {
         $config['providers'] = explode(',', (string)$config['providers']);
@@ -51,7 +52,7 @@ class OEmbedField extends AbstractField
       $config['providers'] = $providers;
     }
 
-    parent::__construct($config);
+    parent::__construct($schema, $config);
   }
 
   /**

@@ -102,10 +102,11 @@ abstract class AbstractField extends Model
   /**
    * Field constructor.
    *
+   * @param AbstractSchema $schema
    * @param array $config
    * @throws Exception
    */
-  public function __construct(array $config = []) {
+  public function __construct(AbstractSchema $schema, array $config = []) {
     if (!isset($config['name'])) {
       throw new Exception('All fields must have a name.');
     }

@@ -2,6 +2,8 @@
 
 namespace lenz\contentfield\models\fields;
 
+use Exception;
+use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\ArrayValue;
 use lenz\contentfield\Plugin;
@@ -41,18 +43,19 @@ class ArrayField extends AbstractField
 
   /**
    * ArrayField constructor.
+   * @param AbstractSchema $schema
    * @param array $config
-   * @throws \Exception
+   * @throws Exception
    */
-  public function __construct(array $config = []) {
+  public function __construct(AbstractSchema $schema, array $config = []) {
     if (array_key_exists('member', $config)) {
       $config['member']['name'] = $config['name'];
       $config['member'] = Plugin::getInstance()
         ->fields
-        ->createField($config['member']);
+        ->createField($schema, $config['member']);
     }
 
-    parent::__construct($config);
+    parent::__construct($schema, $config);
   }
 
   /**

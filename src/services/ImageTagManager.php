@@ -11,9 +11,9 @@ use lenz\contentfield\services\imageTags\ImageTag;
 use lenz\contentfield\services\imageTags\WrappedImageTag;
 
 /**
- * Class ImageTags
+ * Class ImageTagManager
  */
-class ImageTags extends AbstractDefinitionService
+class ImageTagManager extends AbstractDefinitionService
 {
   /**
    * @var ImageTag[]
@@ -62,11 +62,49 @@ class ImageTags extends AbstractDefinitionService
   }
 
   /**
-   * @inheritDoc
+   * @param Asset $asset
+   * @param array|string $config
+   * @param array|null $extraConfig
+   * @return string|null
+   * @throws Exception
    */
-  protected function getCacheKey() {
-    return 'CONTENTFIELD_DEFS:IMAGETAGS';
+  public function render(Asset $asset, $config, $extraConfig = null) {
+    if (!is_array($config)) {
+      $config = [
+        'type' => (string)$config
+      ];
+    }
+
+    $config = $this->resolveDefinition($config);
+    if (!is_null($extraConfig)) {
+      if (!isset($extraConfig['type'])) {
+        $extraConfig['type'] = $config['type'];
+      }
+
+      $config = $this->mergeDefinitions($extraConfig, $config);
+    }
+
+    $imageTagClass   = $this->getImageTagClass($config);
+    $type            = $config['type'];
+    $config['asset'] = $asset;
+
+    unset($config['type']);
+
+    $imageTag = new $imageTagClass($config);
+    if (!($imageTag instanceof ImageTag)) {
+      throw new Exception(sprintf(
+        'Invalid image tag class `%s` for type %s.', $imageTagClass, $type)
+      );
+    }
+
+    return $imageTag->isSupported()
+      ? $imageTag->render()
+      : null;
   }
+
+
+  // Protected methods
+  // -----------------
 
   /**
    * @return string
@@ -106,44 +144,5 @@ class ImageTags extends AbstractDefinitionService
   protected function mergeDefinitions(array $config, array $parent) {
     $imageTagClass = $this->getImageTagClass($parent);
     return $imageTagClass::mergeConfig($config, $parent);
-  }
-
-  /**
-   * @param Asset $asset
-   * @param array|string $config
-   * @param array|null $extraConfig
-   * @return string|null
-   * @throws Exception
-   */
-  public function render(Asset $asset, $config, $extraConfig = null) {
-    if (!is_array($config)) {
-      $config = array('type' => (string)$config);
-    }
-
-    $config = $this->resolveDefinition($config);
-    if (!is_null($extraConfig)) {
-      if (!isset($extraConfig['type'])) {
-        $extraConfig['type'] = $config['type'];
-      }
-
-      $config = $this->mergeDefinitions($extraConfig, $config);
-    }
-
-    $imageTagClass   = $this->getImageTagClass($config);
-    $type            = $config['type'];
-    $config['asset'] = $asset;
-
-    unset($config['type']);
-
-    $imageTag = new $imageTagClass($config);
-    if (!($imageTag instanceof ImageTag)) {
-      throw new Exception(sprintf(
-        'Invalid image tag class `%s` for type %s.', $imageTagClass, $type)
-      );
-    }
-
-    return $imageTag->isSupported()
-      ? $imageTag->render()
-      : null;
   }
 }
