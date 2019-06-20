@@ -3,6 +3,7 @@
 namespace lenz\contentfield\services;
 
 use Exception;
+use lenz\contentfield\exceptions\FieldConfigException;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\models\fields\booleans\CheckboxField;
@@ -72,7 +73,7 @@ class FieldManager extends AbstractDefinitionService
 
     $type = strtolower($config['type']);
     if (!array_key_exists($type, self::$FIELD_TYPES)) {
-      throw new Exception('Invalid field type "' . $type . '".');
+      throw new FieldConfigException($config, 'Invalid field type "' . $type . '".');
     }
 
     $fieldClass = self::$FIELD_TYPES[$type];

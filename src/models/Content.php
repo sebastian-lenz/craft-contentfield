@@ -17,6 +17,7 @@ use lenz\contentfield\utilities\ReferenceLoader;
 use lenz\contentfield\utilities\twig\DisplayInterface;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
+use Throwable;
 use Twig\Markup;
 
 /**
@@ -220,39 +221,42 @@ class Content extends ForeignFieldModel implements DisplayInterface
 
   /**
    * @param InstanceValue|string|null $value
-   * @throws Exception
    */
   public function setModel($value = null) {
     $model   = null;
     $schemas = Plugin::getInstance()->schemas;
 
-    if ($value instanceof InstanceValue) {
-      $model = $value;
-    } elseif (is_string($value)) {
-      $model = $schemas->createValue(Json::decode($value, true));
-    } elseif (is_array($value)) {
-      $model = $schemas->createValue($value);
-    }
+    try {
+      if ($value instanceof InstanceValue) {
+        $model = $value;
+      } elseif (is_string($value)) {
+        $model = $schemas->createValue(Json::decode($value, true));
+      } elseif (is_array($value)) {
+        $model = $schemas->createValue($value);
+      }
 
-    // If we have a model, check whether the type is allowed
-    $schemas = $this->_field->getRootSchemas($this->_owner);
-    $schemaTypes = array_map(
-      function($schema) { return $schema->qualifier; },
-      $schemas
-    );
+      // If we have a model, check whether the type is allowed
+      $schemas = $this->_field->getRootSchemas($this->_owner);
+      $schemaTypes = array_map(
+        function($schema) { return $schema->qualifier; },
+        $schemas
+      );
 
-    if (!is_null($model) && !in_array($model->getType(), $schemaTypes)) {
-      $model = null;
-    }
+      if (!is_null($model) && !in_array($model->getType(), $schemaTypes)) {
+        $model = null;
+      }
 
-    // If we don't have a model and there is only one schema
-    // available, create a model from it
-    if (is_null($model) && count($schemas) === 1) {
-      $model = new InstanceValue([], $schemas[0], null, null);
-    }
+      // If we don't have a model and there is only one schema
+      // available, create a model from it
+      if (is_null($model) && count($schemas) === 1) {
+        $model = new InstanceValue([], $schemas[0], null, null);
+      }
 
-    if (!is_null($model)) {
-      $model->setContent($this);
+      if (!is_null($model)) {
+        $model->setContent($this);
+      }
+    } catch (Throwable $error) {
+      Craft::error($error->getMessage());
     }
 
     $this->_model = $model;

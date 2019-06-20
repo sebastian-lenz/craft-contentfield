@@ -136,7 +136,7 @@ class ContentField extends ForeignField
   /**
    * @param ElementInterface|null $element
    * @return AbstractSchema[]
-   * @throws Exception
+   * @throws Throwable
    */
   public function getRootSchemas(ElementInterface $element = null) {
     $schemas = $this->rootSchemas;
