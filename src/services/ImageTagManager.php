@@ -58,7 +58,7 @@ class ImageTagManager extends AbstractDefinitionService
       }
     }
 
-    return array_unique($transforms);
+    return $transforms;
   }
 
   /**
