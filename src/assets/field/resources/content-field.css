@@ -58,20 +58,11 @@
   text-overflow: ellipsis;
 }
 
-.tcfButton {
-  display: inline-flex;
+.tcfRoot--options {
+  display: flex;
   flex-flow: row nowrap;
   align-items: center;
-}
-.tcfButton > .tcfIcon {
-  margin-right: 5px;
-  margin-left: 5px;
-}
-.tcfButton > .tcfIcon:first-child {
-  margin-left: 0;
-}
-.tcfButton > .tcfIcon:last-child {
-  margin-right: 0;
+  justify-content: center;
 }
 
 @font-face {
@@ -131,11 +122,33 @@
   line-height: 48px;
 }
 
-.tcfRoot--options {
+.tcfOverlay {
+  position: fixed;
   display: flex;
-  flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
+  z-index: 100;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(255,255,255,0.2);
+}
+
+.tcfButton {
+  display: inline-flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfButton > .tcfIcon {
+  margin-right: 5px;
+  margin-left: 5px;
+}
+.tcfButton > .tcfIcon:first-child {
+  margin-left: 0;
+}
+.tcfButton > .tcfIcon:last-child {
+  margin-right: 0;
 }
 
 .tcfSynchronize {
@@ -187,17 +200,9 @@
   margin-bottom: 12px;
 }
 
-.tcfOverlay {
-  position: fixed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1024;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: rgba(0,0,0,0.1);
+.tcfInstanceForm {
+  display: grid;
+  grid-gap: 20px;
 }
 
 .tcfFieldPanel {
@@ -331,9 +336,16 @@
   padding: 0 10px;
 }
 
-.tcfInstanceForm {
-  display: grid;
-  grid-gap: 20px;
+.tcfCheckbox {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfCheckbox--input {
+  margin-right: 6px;
+}
+.tcfCheckbox--label {
+  flex: 1;
 }
 
 .tcfActivityIndicator {
@@ -394,18 +406,6 @@
   }
 }
 
-.tcfCheckbox {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-}
-.tcfCheckbox--input {
-  margin-right: 6px;
-}
-.tcfCheckbox--label {
-  flex: 1;
-}
-
 .tcfFactory {
   display: flex;
   flex-flow: row nowrap;
@@ -419,6 +419,46 @@
 .tcfFactory > .tcfSelect + .tcfButton {
   border-radius: 0 2px 2px 0;
   border-left: none;
+}
+
+.tcfWindow {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 1280px;
+  max-width: calc(100% - 40px);
+  max-height: calc(100% - 40px);
+  background: #fff;
+  border: 1px solid rgba(0,0,20,0.1);
+  border-radius: 5px;
+  box-shadow: 0 25px 100px rgba(0,0,0,0.5);
+}
+.tcfWindow--content {
+  position: relative;
+  overflow: auto;
+  padding: 20px;
+  flex: 1;
+}
+.tcfWindow--footer {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 14px 24px;
+  background: linear-gradient(#ecedef, #e9eaec);
+  box-shadow: inset 0 2px 1px -2px rgba(0,0,0,0.2);
+}
+
+.tcfColorInput {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfColorInput--swatch {
+  position: relative;
+  width: 48px;
+  height: 32px;
+  margin-right: 10px;
+  border-radius: 3px;
 }
 
 .tcfFlyout {
@@ -453,17 +493,19 @@
   border-bottom-color: #fff;
 }
 
-.tcfColorInput {
+.tcfTextAndIcon {
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
 }
-.tcfColorInput--swatch {
-  position: relative;
-  width: 48px;
-  height: 32px;
-  margin-right: 10px;
-  border-radius: 3px;
+.tcfTextAndIcon--icon {
+  margin-right: 5px;
+}
+.tcfTextAndIcon--text {
+  overflow: hidden;
+  font-weight: bold;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .tcfInput {
@@ -481,21 +523,6 @@
 .tcfInput:focus {
   border-color: #0d99f2;
   outline: none;
-}
-
-.tcfTextAndIcon {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-}
-.tcfTextAndIcon--icon {
-  margin-right: 5px;
-}
-.tcfTextAndIcon--text {
-  overflow: hidden;
-  font-weight: bold;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .tcfInstancePreview > * {
@@ -635,23 +662,6 @@
 }
 .tcfInstancePreview--background.blur {
   filter: blur(2px);
-}
-
-.tcfLinkWidget {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: stretch;
-}
-.tcfLinkWidget--type {
-  width: 100px;
-  margin-right: 10px;
-}
-.tcfLinkWidget--editor {
-  flex: 1;
-  margin-right: 10px;
-}
-.tcfLinkWidget--editor:last-child {
-  margin-right: 0;
 }
 
 .tcfDetailsPanel {
@@ -814,6 +824,23 @@
   }
 }
 
+.tcfLinkWidget {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+}
+.tcfLinkWidget--type {
+  width: 100px;
+  margin-right: 10px;
+}
+.tcfLinkWidget--editor {
+  flex: 1;
+  margin-right: 10px;
+}
+.tcfLinkWidget--editor:last-child {
+  margin-right: 0;
+}
+
 .tcfInstanceWidget {
   padding: 15px;
   border: 1px solid rgba(0,0,20,0.1);
@@ -882,6 +909,54 @@
   box-shadow: 0 0 0 2px #0d99f2;
 }
 
+.tcfColorInputSaturation {
+  position: relative;
+  height: 0;
+  padding-bottom: 75%;
+  user-select: none;
+}
+.tcfColorInputSaturation:before,
+.tcfColorInputSaturation:after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.tcfColorInputSaturation:before {
+  background: linear-gradient(to right, #fff, rgba(255,255,255,0));
+}
+.tcfColorInputSaturation:after {
+  background: linear-gradient(to bottom, rgba(0,0,0,0), #000);
+}
+.tcfColorInputSaturation--value {
+  position: absolute;
+  box-sizing: border-box;
+  z-index: 2;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 1px 1px #000;
+}
+
+.tcfColorInputSwatch {
+  position: relative;
+  overflow: hidden;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgAQMAAACxAfVuAAAABlBMVEW/v7////+Zw/90AAAAL0lEQVR4AWJg+I8JB6MgoB06IAEAAAAQ9P91OwIfiBOmT58+ffr06fP76dOnT58BbhM6GwUtLbwAAAAASUVORK5CYII=");
+}
+.tcfColorInputSwatch--color {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 1px solid rgba(0,0,20,0.1);
+}
+
 .tcfColorInputPicker {
   width: 300px;
   padding: 15px;
@@ -936,54 +1011,6 @@
   margin: 5px;
 }
 
-.tcfColorInputSwatch {
-  position: relative;
-  overflow: hidden;
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgAQMAAACxAfVuAAAABlBMVEW/v7////+Zw/90AAAAL0lEQVR4AWJg+I8JB6MgoB06IAEAAAAQ9P91OwIfiBOmT58+ffr06fP76dOnT58BbhM6GwUtLbwAAAAASUVORK5CYII=");
-}
-.tcfColorInputSwatch--color {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  border: 1px solid rgba(0,0,20,0.1);
-}
-
-.tcfColorInputSaturation {
-  position: relative;
-  height: 0;
-  padding-bottom: 75%;
-  user-select: none;
-}
-.tcfColorInputSaturation:before,
-.tcfColorInputSaturation:after {
-  content: '';
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-.tcfColorInputSaturation:before {
-  background: linear-gradient(to right, #fff, rgba(255,255,255,0));
-}
-.tcfColorInputSaturation:after {
-  background: linear-gradient(to bottom, rgba(0,0,0,0), #000);
-}
-.tcfColorInputSaturation--value {
-  position: absolute;
-  box-sizing: border-box;
-  z-index: 2;
-  width: 8px;
-  height: 8px;
-  margin: -4px 0 0 -4px;
-  border: 1px solid #fff;
-  border-radius: 4px;
-  box-shadow: 0 0 1px 1px #000;
-}
-
 .tcfColorInputSlider {
   position: relative;
   overflow: hidden;
@@ -1019,95 +1046,6 @@
   box-shadow: 0 0 1px #000;
 }
 
-
-.tcfArrayWidgetMember {
-  padding: 5px 0;
-}
-.tcfArrayWidgetMember.isDragging {
-  opacity: 0.5;
-}
-.tcfArrayWidgetMember.isCompact {
-  padding: 0;
-}
-.tcfArrayWidgetMember.hasDropTarget {
-  display: none;
-}
-.tcfArrayWidgetMember--panel {
-  position: relative;
-  overflow: hidden;
-  background: #f1f5f8;
-  border: 1px solid #dedee1;
-}
-.tcfArrayWidgetMember--panel.isExpanded {
-  background: #fff;
-}
-.tcfArrayWidgetMember--panel.isExpanded:before {
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  border-left: 3px solid #0d78f2;
-}
-.isCompact > .tcfArrayWidgetMember--panel {
-  border-top: none;
-}
-.isCompact:first-of-type > .tcfArrayWidgetMember--panel {
-  border-top: 1px solid #dedee1;
-}
-.tcfArrayWidgetMember--header {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: stretch;
-  background: #e7eef3;
-  border-bottom: 1px solid #dedee1;
-}
-.tcfArrayWidgetMember--headerHandle {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  flex: 1;
-  padding: 0 10px;
-  cursor: move;
-}
-.tcfArrayWidgetMember--headerHandle > .tcfIcon {
-  margin-right: 5px;
-}
-.tcfArrayWidgetMember--headerHandleIcon {
-  color: rgba(0,0,0,0.25);
-}
-*:hover > .tcfArrayWidgetMember--headerHandleIcon {
-  color: #0d78f2;
-}
-.tcfArrayWidgetMember--headerActions {
-  display: flex;
-  flex-flow: row nowrap;
-  padding: 0 0 0 10px;
-}
-.tcfArrayWidgetMember--headerActionsButton {
-  padding: 8px 10px;
-  border-left: 1px solid #dedee1;
-  cursor: pointer;
-}
-.tcfArrayWidgetMember--headerActionsButton > .tcfIcon {
-  margin: 0 3px;
-}
-.tcfArrayWidgetMember--headerActionsButton > .tcfIcon:first-child {
-  margin-left: 0;
-}
-.tcfArrayWidgetMember--headerActionsButton > .tcfIcon:last-child {
-  margin-right: 0;
-}
-.tcfArrayWidgetMember--body {
-  position: relative;
-  overflow: hidden;
-  padding: 16px;
-}
-.tcfArrayWidgetMember--preview {
-  cursor: pointer;
-}
-
 .tcfLocationFieldSearch {
   display: flex;
   flex-flow: row nowrap;
@@ -1122,6 +1060,7 @@
 .tcfLocationFieldSearch--input {
   flex: 1;
 }
+
 
 .tcfArrayWidgetList {
   min-height: 100px;
@@ -1155,4 +1094,138 @@
 }
 .tcfArrayWidgetList--footer {
   padding: 5px 0;
+}
+
+.tcfArrayWidgetMember {
+  padding: 5px 0;
+}
+.tcfArrayWidgetMember.isDragging {
+  opacity: 0.5;
+}
+.tcfArrayWidgetMember.isCompact {
+  padding: 0;
+}
+.tcfArrayWidgetMember.hasDropTarget {
+  display: none;
+}
+.tcfArrayWidgetMember--panel {
+  position: relative;
+  overflow: hidden;
+  background: #f1f5f8;
+  border: 1px solid #dedee1;
+}
+.tcfArrayWidgetMember--panel.isExpanded {
+  background: #fff;
+}
+.tcfArrayWidgetMember--panel.isExpanded:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 3px solid #00b008;
+}
+.isCompact > .tcfArrayWidgetMember--panel {
+  border-top: none;
+}
+.isCompact:first-of-type > .tcfArrayWidgetMember--panel {
+  border-top: 1px solid #dedee1;
+}
+.tcfArrayWidgetMember--header {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  min-height: 36px;
+  background: #e7eef3;
+  border-bottom: 1px solid #dedee1;
+}
+.tcfArrayWidgetMember--headerHandle {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  flex: 1;
+  padding: 0 10px;
+  font-weight: bold;
+  cursor: move;
+}
+.tcfArrayWidgetMember--headerHandle > .tcfIcon {
+  margin-right: 8px;
+}
+.tcfArrayWidgetMember--headerHandleIcon {
+  color: rgba(0,0,0,0.25);
+}
+*:hover > .tcfArrayWidgetMember--headerHandleIcon {
+  color: #0d78f2;
+}
+.tcfArrayWidgetMember--headerActions {
+  display: flex;
+  flex-flow: row nowrap;
+  padding: 0 0 0 10px;
+}
+.tcfArrayWidgetMember--headerActionsButton {
+  padding: 8px 10px;
+  border-left: 1px solid #dedee1;
+  cursor: pointer;
+}
+.tcfArrayWidgetMember--headerActionsButton > .tcfIcon {
+  margin: 0 8px;
+}
+.tcfArrayWidgetMember--headerActionsButton > .tcfIcon:first-child {
+  margin-left: 0;
+}
+.tcfArrayWidgetMember--headerActionsButton > .tcfIcon:last-child {
+  margin-right: 0;
+}
+.tcfArrayWidgetMember--headerActionsButton.primary {
+  background: #00b008;
+  color: #fff;
+  font-weight: bold;
+}
+.tcfArrayWidgetMember--body {
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+}
+.tcfArrayWidgetMember--preview {
+  cursor: pointer;
+}
+
+.tcfArrayWidgetMember--headerMore {
+  position: relative;
+}
+.tcfArrayWidgetMember--headerMoreButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 38px;
+  background: #616e7d;
+  color: #fff;
+  cursor: pointer;
+}
+.tcfArrayWidgetMember--headerMoreMenu {
+  background: #fff;
+  border-radius: 3px;
+}
+.tcfArrayWidgetMember--headerMoreDivider {
+  margin: 8px 0;
+  border-top: 1px solid #dedee1;
+}
+.tcfArrayWidgetMember--headerMoreItem {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.tcfArrayWidgetMember--headerMoreItem:hover {
+  background: #00b008;
+  color: #fff;
+}
+.tcfArrayWidgetMember--headerMoreItemIcon {
+  margin-right: 8px;
+}
+.tcfArrayWidgetMember--headerMoreItemLabel {
+  flex: 1;
 }
