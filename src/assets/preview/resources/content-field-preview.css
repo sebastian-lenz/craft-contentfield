@@ -1,0 +1,121 @@
+.tcfPreview {
+  position: absolute;
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(97, 110, 125, 0.5);
+}
+
+.tcfPreview.compact {
+  flex-flow: row nowrap;
+}
+
+.tcfPreview--button {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 24px;
+}
+
+.tcfPreview--commandGroup {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.tcfPreview.compact .tcfPreview--commandGroup:first-child {
+  margin-right: 16px;
+  padding-right: 16px;
+
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.tcfPreview:not(.compact) .tcfPreview--commandGroup {
+  width: 100%;
+  margin: 16px 0;
+}
+
+.tcfPreview--commandDivider {
+  align-self: stretch;
+  margin: 0 16px;
+
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.tcfPreview--command {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  width: 64px;
+
+  cursor: pointer;
+}
+
+.tcfPreview.compact .tcfPreview--command {
+  width: 40px;
+}
+
+.tcfPreview--commandIcon {
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+
+  background: var(--contentfield-primary-color, #00B008);
+  border-radius: 100%;
+
+  color: var(--contentfield-primary-text-color, #FFFFFF);
+}
+
+.tcfPreview.compact .tcfPreview--commandIcon {
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+}
+
+.tcfPreview--commandIcon > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tcfPreview--commandLabel {
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin: 8px 0 0;
+  padding: 4px 8px;
+
+  background: #fff;
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.333);
+
+  color: var(--contentfield-text-color, #29323D);
+  text-align: center;
+
+  transform: translate(-50%, 0);
+  opacity: 0;
+  visibility: hidden;
+}
+
+.tcfPreview--command:hover .tcfPreview--commandLabel {
+  opacity: 1;
+  visibility: inherit;
+}
+
+.tcfPreview--commandLabel:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 0;
+  margin: -12px 0 0 -6px;
+
+  border: 6px solid transparent;
+  border-bottom-color: #fff;
+}

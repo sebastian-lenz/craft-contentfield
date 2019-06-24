@@ -5,6 +5,7 @@ namespace lenz\contentfield;
 use Craft;
 use craft\controllers\EntriesController;
 use craft\controllers\TemplatesController;
+use craft\events\ElementEvent;
 use craft\events\ExceptionEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\TemplateEvent;
@@ -12,9 +13,9 @@ use craft\services\Fields;
 use craft\services\Utilities;
 use craft\web\Application;
 use craft\web\ErrorHandler;
-use craft\web\Response;
 use craft\web\View;
 use Exception;
+use lenz\contentfield\assets\preview\ContentFieldPreviewAsset;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\Content;
@@ -30,9 +31,10 @@ use yii\web\NotFoundHttpException;
  * Class Plugin
  *
  * @property services\FieldManager $fields
- * @property services\ImageTags $imageTags
+ * @property services\ImageTagManager $imageTags
  * @property services\Relations $relations
  * @property services\SchemaManager $schemas
+ * @property services\StructureManager $structures
  * @method Config getSettings()
  */
 class Plugin extends \craft\base\Plugin
@@ -41,6 +43,11 @@ class Plugin extends \craft\base\Plugin
    * @inheritdoc
    */
   public $schemaVersion = '1.1.2';
+
+  /**
+   * @var bool
+   */
+  static $IS_ELEMENT_PREVIEW = false;
 
   /**
    * @var string
@@ -64,13 +71,16 @@ class Plugin extends \craft\base\Plugin
         'class' => services\FieldManager::class
       ],
       'imageTags' => [
-        'class' => services\ImageTags::class
+        'class' => services\ImageTagManager::class
       ],
       'relations' => [
         'class' => services\Relations::class
       ],
       'schemas' => [
         'class' => services\SchemaManager::class
+      ],
+      'structures' => [
+        'class' => services\StructureManager::class
       ]
     ]);
 
@@ -104,6 +114,11 @@ class Plugin extends \craft\base\Plugin
     Event::on(
       ErrorHandler::class, ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION,
       [$this, 'onBeforeHandleException']
+    );
+
+    Event::on(
+      EntriesController::class, EntriesController::EVENT_PREVIEW_ENTRY,
+      [$this, 'onPreviewEntry']
     );
   }
 
@@ -180,6 +195,15 @@ class Plugin extends \craft\base\Plugin
   }
 
   /**
+   * @param ElementEvent $event
+   * @throws \yii\base\InvalidConfigException
+   */
+  public function onPreviewEntry(ElementEvent $event) {
+    self::$IS_ELEMENT_PREVIEW = true;
+    Craft::$app->getView()->registerAssetBundle(ContentFieldPreviewAsset::class);
+  }
+
+  /**
    * @param RegisterComponentTypesEvent $event
    */
   public function onRegisterFieldTypes(RegisterComponentTypesEvent $event) {
@@ -202,19 +226,6 @@ class Plugin extends \craft\base\Plugin
    */
   protected function createSettingsModel() {
     return new Config();
-  }
-
-  /**
-   * @param Content $content
-   */
-  protected function sendPageTemplate(Content $content) {
-    $routeParams = Craft::$app->getUrlManager()->getRouteParams();
-
-    $response = Craft::$app->getResponse();
-    $response->format = Response::FORMAT_HTML;
-    $response->data = $content->render(
-      $routeParams['variables']
-    );
   }
 
 
