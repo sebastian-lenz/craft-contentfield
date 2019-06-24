@@ -19,7 +19,7 @@ use yii\base\Exception;
 /**
  * Class TemplateSchema
  */
-class TemplateSchema extends AbstractSchema
+class TemplateSchema extends AbstractSchemaContainer
 {
   /**
    * @var string

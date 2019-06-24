@@ -5,6 +5,7 @@ namespace lenz\contentfield\services\loaders;
 use Craft;
 use craft\helpers\FileHelper;
 use Exception;
+use lenz\contentfield\exceptions\TemplateConfigException;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\utilities\twig\YamlAwareTemplateLoader;
 use RecursiveDirectoryIterator;
@@ -135,11 +136,24 @@ class TemplateLoader extends AbstractLoader
       ));
     }
 
-    return new TemplateSchema($data['preamble'] + array(
-      'path'      => $data['path'],
-      'qualifier' => self::NAME_PREFIX . $name,
-      'template'  => $name
-    ));
+    try {
+      return new TemplateSchema($data['preamble'] + array(
+        'path'      => $data['path'],
+        'qualifier' => self::NAME_PREFIX . $name,
+        'template'  => $name
+      ));
+    } catch (Exception $error) {
+      if ($error instanceof TemplateConfigException) {
+        throw $error;
+      } else {
+        throw new TemplateConfigException(
+          $data['preamble'],
+          sprintf('The template schema `%s` could not be loaded: %s.', $name, $error->getMessage()),
+          0,
+          $error
+        );
+      }
+    }
   }
 
   /**

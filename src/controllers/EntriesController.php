@@ -5,7 +5,9 @@ namespace lenz\contentfield\controllers;
 use Craft;
 use craft\controllers\EntriesController as BaseEntriesController;
 use craft\elements\Entry;
+use Exception;
 use lenz\contentfield\models\Content;
+use Throwable;
 use yii\web\Response as YiiResponse;
 
 /**
@@ -26,7 +28,7 @@ class EntriesController extends BaseEntriesController
 
   /**
    * @inheritDoc
-   * @throws \Throwable
+   * @throws Throwable
    */
   public function renderTemplate(string $template, array $variables = []): YiiResponse {
     $response = Craft::$app->getResponse();
@@ -34,10 +36,13 @@ class EntriesController extends BaseEntriesController
     $entry    = $variables['entry'];
 
     if (!($entry instanceof Entry)) {
-      throw new \Exception('Missing preview entry.');
+      throw new Exception('Missing preview entry.');
     }
 
     $content = $entry->getFieldValue($this->content->getField()->handle);
+    if (!($content instanceof Content)) {
+      throw new Exception('Missing preview content.');
+    }
 
     if (!$headers->has('content-type')) {
       $headers->set('content-type', $this->mimeType . '; charset=' . $response->charset);

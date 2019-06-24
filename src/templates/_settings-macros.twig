@@ -99,6 +99,6 @@
   </div>
 
   {% js %}
-    new contentField.SettingsTable("{{ field.handle|namespaceInputId }}");
+    new contentField.SettingsTable("{{ field.handle|default('')|namespaceInputId }}");
   {% endjs %}
 {% endmacro %}

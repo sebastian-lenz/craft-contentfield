@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\values;
 
 use Craft;
+use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\web\Response;
 use Exception;
@@ -545,6 +546,13 @@ class InstanceValue
   // ---------------
 
   /**
+   * @return Markup
+   */
+  private function getEditAttributes() {
+    return Template::raw(' data-contentfield-edit-uuid="' . $this->_uuid . '" ');
+  }
+
+  /**
    * @param int $offset
    * @return InstanceValue|null
    */
@@ -588,6 +596,9 @@ class InstanceValue
     $variables += [
       'isChunkRequest' => false,
       'model'          => $this->getModel(),
+      'editAttributes' => Plugin::$IS_ELEMENT_PREVIEW
+        ? $this->getEditAttributes()
+        : '',
     ];
 
     if (!array_key_exists('loop', $variables)) {

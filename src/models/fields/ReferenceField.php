@@ -182,40 +182,31 @@ class ReferenceField extends AbstractField
    */
   static function expandFieldConfig(&$config) {
     // Expand the type `instances` to an array of instance fields
-    if (
-      $config['type'] === 'image' ||
-      $config['type'] === 'images'
-    ) {
+    if (in_array($config['type'], ['image', 'images'])) {
       $config = array(
         'type'        => self::NAME,
         'criteria'    => [
           'kind'      => 'image',
         ],
         'elementType' => Asset::class,
-        'limit'       => $config['type'] === 'image' ? 1 : null,
+        'limit'       => $config['type'] == 'image' ? 1 : null,
       ) + $config;
     }
 
-    if (
-      $config['type'] === 'file' ||
-      $config['type'] === 'files'
-    ) {
+    if (in_array($config['type'], ['asset', 'assets', 'file', 'files'])) {
       $config = array(
         'type'        => self::NAME,
         'elementType' => Asset::class,
-        'limit'       => $config['type'] === 'file' ? 1 : null,
+        'limit'       => in_array($config['type'], ['asset', 'file']) ? 1 : null,
         'viewMode'    => 'small'
       ) + $config;
     }
 
-    if (
-      $config['type'] === 'entry' ||
-      $config['type'] === 'entries'
-    ) {
+    if (in_array($config['type'], ['entry', 'entries'])) {
       $config = array(
         'type'        => self::NAME,
         'elementType' => Entry::class,
-        'limit'       => $config['type'] === 'entry' ? 1 : null,
+        'limit'       => $config['type'] == 'entry' ? 1 : null,
         'viewMode'    => 'small'
       ) + $config;
     }

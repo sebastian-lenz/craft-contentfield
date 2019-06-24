@@ -114,7 +114,7 @@ abstract class AbstractSchema extends Model
           throw new Exception('Invalid schema');
         }
 
-        $instance = $fieldManager->createField($field);
+        $instance = $fieldManager->createField($this, $field);
         if (isset($this->fields[$instance->name])) {
           throw new Exception('The field "' . $instance->name . '" is already set on schema "' . $config['qualifier'] . '".');
         }
@@ -221,6 +221,12 @@ abstract class AbstractSchema extends Model
   }
 
   /**
+   * @param string $name
+   * @return AbstractSchema|null
+   */
+  abstract public function getLocalStructure($name);
+
+  /**
    * Return the handlebars template used to preview instances of this
    * schema in the editor.
    *
@@ -294,6 +300,12 @@ abstract class AbstractSchema extends Model
   public function hasConstant(string $name) {
     return array_key_exists($name, $this->constants);
   }
+
+  /**
+   * @param string $name
+   * @return bool
+   */
+  abstract public function hasLocalStructure($name);
 
   /**
    * @param string|string[] $qualifier
