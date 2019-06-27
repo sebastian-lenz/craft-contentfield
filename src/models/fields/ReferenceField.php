@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\fields;
 
+use Craft;
 use craft\base\Element;
 use Exception;
 use lenz\contentfield\models\values\ReferenceValue;
@@ -61,12 +62,31 @@ class ReferenceField extends AbstractField
    */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData() + array(
-        'criteria'    => is_array($this->criteria) ? $this->criteria : null,
-        'elementType' => $this->getElementType(),
-        'limit'       => $this->getLimit(),
-        'sources'     => $this->getSources($element),
-        'viewMode'    => $this->viewMode,
-      );
+      'criteria'    => $this->getCriteria($element),
+      'elementType' => $this->getElementType(),
+      'limit'       => $this->getLimit(),
+      'sources'     => $this->getSources($element),
+      'viewMode'    => $this->viewMode,
+    );
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return array
+   * @throws Exception
+   */
+  public function getCriteria(ElementInterface $element = null) {
+    $criteria = is_array($this->criteria)
+      ? $this->criteria
+      : [];
+
+    if (is_null($element) || !($element instanceof Element)) {
+      $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+    } else {
+      $criteria['siteId'] = $element->siteId;
+    }
+
+    return $criteria;
   }
 
   /**
