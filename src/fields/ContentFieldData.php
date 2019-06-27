@@ -222,6 +222,7 @@ class ContentFieldData
       return array();
     }
 
+    $siteId = $content->getOwnerSite()->id;
     $view = Craft::$app->getView();
     return array_map(function(Element $element) use ($view) {
       $context = array(
@@ -240,6 +241,6 @@ class ContentFieldData
         'type'     => get_class($element),
         'url'      => $element->getUrl(),
       );
-    }, $model->getReferenceMap()->queryAll());
+    }, $model->getReferenceMap()->queryAll($siteId));
   }
 }

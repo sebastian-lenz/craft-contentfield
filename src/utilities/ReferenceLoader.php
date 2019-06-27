@@ -2,6 +2,8 @@
 
 namespace lenz\contentfield\utilities;
 
+use Craft;
+use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\elements\db\AssetQuery;
 use Exception;
@@ -28,14 +30,20 @@ class ReferenceLoader
    */
   private $_referenceMap;
 
+  /**
+   * @var int|null
+   */
+  private $_siteId = null;
+
 
   /**
    * BatchLoader constructor.
    * @param Content|null $content
+   * @throws Exception
    */
   public function __construct(Content $content = null) {
     if (!is_null($content)) {
-      $this->_contents[] = $content;
+      $this->addContent($content);
     }
   }
 
@@ -46,6 +54,15 @@ class ReferenceLoader
   public function addContent(Content $content) {
     if (isset($this->_referenceMap)) {
       throw new Exception('This batch loader is already in used');
+    }
+
+    $element = $content->getOwner();
+    if (!is_null($element) && $element instanceof Element) {
+      if (is_null($this->_siteId)) {
+        $this->_siteId = $element->siteId;
+      } else if ($this->_siteId !== $element->siteId) {
+        throw new Exception('Site ID mismatch, all contents added to the reference loader must be from the same site.');
+      }
     }
 
     if (!in_array($content, $this->_contents, true)) {
@@ -120,7 +137,15 @@ class ReferenceLoader
     }
 
     /** @var ElementInterface $elementType */
-    $query = $elementType::find()->id($ids);
+    $query = $elementType::find()
+      ->id($ids)
+      ->siteId($this->_siteId);
+
+    // Within the control panel we'll ignore statuses
+    if (Craft::$app->getRequest()->getIsCpRequest()) {
+      $query->status(null);
+    }
+
     if ($query instanceof AssetQuery) {
       $transforms = Plugin::getInstance()->imageTags->getAllTransforms();
       if (count($transforms)) {

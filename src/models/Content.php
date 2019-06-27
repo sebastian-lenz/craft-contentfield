@@ -155,13 +155,16 @@ class Content extends ForeignFieldModel implements DisplayInterface
       return $result;
     }
 
+    $siteId = $this->getOwnerSite()->id;
+
     return array_map(function(ElementInterface $element) {
       return $element->getId();
-    }, $this->_model->getReferenceMap()->queryAll());
+    }, $this->_model->getReferenceMap()->queryAll($siteId));
   }
 
   /**
    * @return ReferenceLoader
+   * @throws Exception
    */
   public function getReferenceLoader() {
     if (!isset($this->_referenceLoader)) {
