@@ -2,7 +2,10 @@
 
 namespace lenz\contentfield\models\fields;
 
+use Craft;
+use craft\base\Element;
 use craft\base\ElementInterface;
+use Exception;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\LinkValue;
 use craft\elements\Asset;
@@ -62,12 +65,25 @@ class LinkField extends AbstractField
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function getEditorData(ElementInterface $element = null) {
     $linkTypes = $this->linkTypes;
-    foreach ($linkTypes as $key => $linkType) {
+    foreach ($linkTypes as $key => &$linkType) {
       if (isset($linkType['elementType'])) {
-        $linkTypes[$key]['elementType'] = ReferenceMap::normalizeElementType($linkType['elementType']);
+        $elementType = ReferenceMap::normalizeElementType($linkType['elementType']);
+        $criteria = isset($linkType['criteria']) && is_array($linkType['criteria'])
+          ? $linkType['criteria']
+          : [];
+
+        if (is_null($element) || !($element instanceof Element)) {
+          $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+        } else {
+          $criteria['siteId'] = $element->siteId;
+        }
+
+        $linkType['elementType'] = $elementType;
+        $linkType['criteria'] = $criteria;
       }
     }
 
