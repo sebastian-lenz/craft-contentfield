@@ -12,7 +12,7 @@ class ReferenceMap
   /**
    * @var array
    */
-  private $elementTypes = [];
+  private $_elementTypes = [];
 
 
   /**
@@ -22,8 +22,8 @@ class ReferenceMap
   public function getElementIds($elementType) {
     $elementType = self::normalizeElementType($elementType);
 
-    return array_key_exists($elementType, $this->elementTypes)
-      ? $this->elementTypes[$elementType]
+    return array_key_exists($elementType, $this->_elementTypes)
+      ? $this->_elementTypes[$elementType]
       : array();
   }
 
@@ -34,25 +34,28 @@ class ReferenceMap
   public function push($elementType, $id) {
     $elementType = self::normalizeElementType($elementType);
 
-    if (!array_key_exists($elementType, $this->elementTypes)) {
-      $this->elementTypes[$elementType] = array();
+    if (!array_key_exists($elementType, $this->_elementTypes)) {
+      $this->_elementTypes[$elementType] = array();
     }
 
-    if (!in_array($id, $this->elementTypes[$elementType])) {
-      $this->elementTypes[$elementType][] = $id;
+    if (!in_array($id, $this->_elementTypes[$elementType])) {
+      $this->_elementTypes[$elementType][] = $id;
     }
   }
 
   /**
+   * @param int|null $siteId
    * @return ElementInterface[]
    */
-  public function queryAll() {
+  public function queryAll($siteId = null) {
     $result = array();
 
-    foreach ($this->elementTypes as $elementType => $ids) {
+    foreach ($this->_elementTypes as $elementType => $ids) {
       /** @var ElementInterface $elementType */
       $elements = $elementType::find()
         ->id($ids)
+        ->siteId($siteId)
+        ->status(null)
         ->all();
 
       $result = array_merge($result, $elements);
