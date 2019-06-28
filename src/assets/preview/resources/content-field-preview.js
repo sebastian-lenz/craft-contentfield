@@ -129,7 +129,7 @@
     }
 
     function onMouseLeave() {
-      // dispose();
+      dispose();
     }
 
     function render() {

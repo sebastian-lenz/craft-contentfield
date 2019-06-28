@@ -4,6 +4,7 @@
   flex-flow: column wrap;
   align-items: center;
   justify-content: center;
+  z-index: 2048;
 
   background: rgba(97, 110, 125, 0.5);
 }
