@@ -33,6 +33,7 @@ class ContentFieldQueryExtension extends ForeignFieldQueryExtension
 
   /**
    * @param PopulateElementEvent $event
+   * @throws \Exception
    */
   public function onAfterPopulateElement(PopulateElementEvent $event) {
     $content = is_null($event->element)
