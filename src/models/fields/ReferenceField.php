@@ -43,6 +43,11 @@ class ReferenceField extends AbstractField
   public $viewMode;
 
   /**
+   * @var string|string[]
+   */
+  public $with;
+
+  /**
    * The internal name of this field.
    */
   const NAME = 'reference';
