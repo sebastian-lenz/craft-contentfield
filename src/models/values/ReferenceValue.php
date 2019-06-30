@@ -59,6 +59,7 @@ class ReferenceValue extends Value implements
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function __toString() {
     return implode('', array_map(function($value) {
@@ -68,6 +69,7 @@ class ReferenceValue extends Value implements
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function count() {
     $references = $this->getReferences();
@@ -76,6 +78,7 @@ class ReferenceValue extends Value implements
 
   /**
    * @return ElementInterface
+   * @throws Exception
    */
   public function getFirst() {
     $references = $this->getReferences();
@@ -84,6 +87,7 @@ class ReferenceValue extends Value implements
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function getIterator() {
     return new ArrayIterator($this->getReferences());
@@ -109,11 +113,16 @@ class ReferenceValue extends Value implements
       $map->push($elementType, $value);
     }
 
+    if (isset($this->_field->with)) {
+      $map->with($elementType, $this->_field->with);
+    }
+
     return $map;
   }
 
   /**
    * @return ElementInterface[]
+   * @throws Exception
    */
   public function getReferences() {
     if (!isset($this->_references)) {
@@ -147,6 +156,7 @@ class ReferenceValue extends Value implements
 
   /**
    * @return bool
+   * @throws Exception
    */
   public function isEmpty() {
     return $this->count() == 0;
@@ -154,6 +164,7 @@ class ReferenceValue extends Value implements
 
   /**
    * @return ElementInterface[]
+   * @throws Exception
    */
   private function loadReferences() {
     $elementType = $this->_field->getElementType();
@@ -195,6 +206,7 @@ class ReferenceValue extends Value implements
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function offsetExists($offset) {
     $references = $this->getReferences();
@@ -203,6 +215,7 @@ class ReferenceValue extends Value implements
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function offsetGet($offset) {
     $references = $this->getReferences();

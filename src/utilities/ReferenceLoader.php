@@ -141,6 +141,10 @@ class ReferenceLoader
       ->id($ids)
       ->siteId($this->_siteId);
 
+    if ($referenceMap->hasWith($elementType)) {
+      $query->with($referenceMap->getWith($elementType));
+    }
+
     // Within the control panel we'll ignore statuses
     if (Craft::$app->getRequest()->getIsCpRequest()) {
       $query->status(null);

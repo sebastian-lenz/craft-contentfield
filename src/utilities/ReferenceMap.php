@@ -14,6 +14,11 @@ class ReferenceMap
    */
   private $_elementTypes = [];
 
+  /**
+   * @var array
+   */
+  private $_with = [];
+
 
   /**
    * @param string $elementType
@@ -25,6 +30,27 @@ class ReferenceMap
     return array_key_exists($elementType, $this->_elementTypes)
       ? $this->_elementTypes[$elementType]
       : array();
+  }
+
+  /**
+   * @param string $elementType
+   * @return array
+   */
+  public function getWith(string $elementType) {
+    return array_key_exists($elementType, $this->_with)
+      ? $this->_with[$elementType]
+      : [];
+  }
+
+  /**
+   * @param string $elementType
+   * @return bool
+   */
+  public function hasWith(string $elementType) {
+    return (
+      array_key_exists($elementType, $this->_with) &&
+      count($this->_with[$elementType]) > 0
+    );
   }
 
   /**
@@ -63,6 +89,34 @@ class ReferenceMap
 
     return $result;
   }
+
+  /**
+   * @param string $elementType
+   * @param string|string[] $values
+   */
+  public function with($elementType, $values) {
+    if (!is_array($values)) {
+      $values = [$values];
+    }
+
+    $with = array_key_exists($elementType, $this->_with)
+      ? $this->_with[$elementType]
+      : [];
+
+    foreach ($values as $value) {
+      if (!is_string($value) || empty($value) || in_array($value, $with)) {
+        continue;
+      }
+
+      $with[] = $value;
+    }
+
+    $this->_with[$elementType] = $with;
+  }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @param string $elementType
