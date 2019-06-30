@@ -1,11 +1,14 @@
 <?php
 
-namespace lenz\contentfield\utilities\twig;
+namespace lenz\contentfield\twig;
 
 use craft\elements\Asset;
 use craft\elements\db\AssetQuery;
 use craft\helpers\Template;
+use Exception;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\twig\nodeVisitors\DisplayNodeVisitor;
+use lenz\contentfield\twig\tokenParsers\DisplayTokenParser;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -23,6 +26,12 @@ class Extension extends AbstractExtension
     ];
   }
 
+  public function getNodeVisitors() {
+    return [
+      new DisplayNodeVisitor()
+    ];
+  }
+
   /**
    * @inheritDoc
    */
@@ -37,7 +46,7 @@ class Extension extends AbstractExtension
    * @param string|array $config
    * @param array|null $extraConfig
    * @return string|null
-   * @throws \Exception
+   * @throws Exception
    */
   static function imageTag($asset, $config, $extraConfig = null) {
     if ($asset instanceof AssetQuery) {

@@ -17,8 +17,8 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\models\TraversableValueInterface;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\twig\DisplayInterface;
 use lenz\contentfield\utilities\ReferenceMap;
-use lenz\contentfield\utilities\twig\DisplayInterface;
 use Twig\Markup;
 use yii\base\Model;
 
@@ -256,6 +256,15 @@ class InstanceValue
   /**
    * @return string|null
    */
+  public function getCachedOutput() {
+    return isset($this->_output)
+      ? $this->_output
+      : null;
+  }
+
+  /**
+   * @return string|null
+   */
   public function getChunkUrl() {
     $element = $this->getElement();
     if (is_null($element)) {
@@ -270,6 +279,13 @@ class InstanceValue
     return UrlHelper::urlWithParams($url, [
       Plugin::$UUID_PARAM => $this->_uuid,
     ]);
+  }
+
+  /**
+   * @return Markup
+   */
+  public function getEditAttributes() {
+    return Template::raw(' data-contentfield-edit-uuid="' . $this->_uuid . '" ');
   }
 
   /**
@@ -544,13 +560,6 @@ class InstanceValue
 
   // Private methods
   // ---------------
-
-  /**
-   * @return Markup
-   */
-  private function getEditAttributes() {
-    return Template::raw(' data-contentfield-edit-uuid="' . $this->_uuid . '" ');
-  }
 
   /**
    * @param int $offset

@@ -7,7 +7,7 @@ use craft\helpers\FileHelper;
 use Exception;
 use lenz\contentfield\exceptions\TemplateConfigException;
 use lenz\contentfield\models\schemas\TemplateSchema;
-use lenz\contentfield\utilities\twig\YamlAwareTemplateLoader;
+use lenz\contentfield\twig\YamlAwareTemplateLoader;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;

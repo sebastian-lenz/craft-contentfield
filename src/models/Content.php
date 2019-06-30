@@ -3,6 +3,8 @@
 namespace lenz\contentfield\models;
 
 use Craft;
+use craft\base\Element;
+use craft\base\ElementInterface;
 use craft\helpers\Json;
 use craft\models\Site;
 use Exception;
@@ -10,11 +12,9 @@ use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\events\RenderEvent;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\values\InstanceValue;
-use craft\base\Element;
-use craft\base\ElementInterface;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\twig\DisplayInterface;
 use lenz\contentfield\utilities\ReferenceLoader;
-use lenz\contentfield\utilities\twig\DisplayInterface;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
 use Throwable;

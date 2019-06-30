@@ -11,7 +11,7 @@ use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\utilities\twig\YamlAwareTemplateLoader;
+use lenz\contentfield\twig\YamlAwareTemplateLoader;
 use Throwable;
 use Twig\TemplateWrapper;
 use yii\base\Exception;
@@ -21,6 +21,11 @@ use yii\base\Exception;
  */
 class TemplateSchema extends AbstractSchemaContainer
 {
+  /**
+   * @var bool
+   */
+  public $inline;
+
   /**
    * @var string
    */

@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\utilities\twig;
+namespace lenz\contentfield\twig;
 
 use Craft;
 use craft\web\twig\Environment;
