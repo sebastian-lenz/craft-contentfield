@@ -193,10 +193,10 @@ class InstanceValue
   public function display(array $variables = []) {
     if (isset($this->_output)) {
       echo $this->_output;
+    } else {
+      $this->normalizeVariables($variables);
+      $this->_schema->display($this, $variables);
     }
-
-    $this->normalizeVariables($variables);
-    $this->_schema->display($this, $variables);
   }
 
   /**
