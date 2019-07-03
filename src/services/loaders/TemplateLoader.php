@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\services\loaders;
 
+use CallbackFilterIterator;
 use Craft;
 use craft\helpers\FileHelper;
 use Exception;
@@ -109,22 +110,6 @@ class TemplateLoader extends AbstractLoader
   }
 
   /**
-   * Return the real path of the given schema name.
-   *
-   * @param string $name
-   * @return null|string
-   * @throws Exception
-   */
-  public function getTemplatePath($name) {
-    $realPath = $this->_basePath . DIRECTORY_SEPARATOR . FileHelper::normalizePath($name);
-    if (!file_exists($realPath) || !is_readable($realPath)) {
-      throw new Exception('The template "' . $name . '" does not exist.');
-    }
-
-    return $realPath;
-  }
-
-  /**
    * @inheritdoc
    */
   public function load($name) {
@@ -168,6 +153,28 @@ class TemplateLoader extends AbstractLoader
   // ---------------
 
   /**
+   * @param string $basePath
+   * @return CallbackFilterIterator
+   */
+  private function getTemplateIterator(string $basePath) {
+    $extensions = Craft::$app->getConfig()
+      ->getGeneral()
+      ->defaultTemplateExtensions;
+
+    return new CallbackFilterIterator(
+      new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($basePath)
+      ),
+      function(SplFileInfo $fileInfo) use ($basePath, $extensions) {
+        return (
+          $fileInfo->isFile() &&
+          in_array($fileInfo->getExtension(), $extensions)
+        );
+      }
+    );
+  }
+
+  /**
    * Returns a flat list of all available templates.
    *
    * @return array
@@ -191,24 +198,11 @@ class TemplateLoader extends AbstractLoader
    * @return array
    */
   private function getAllTemplatesFromDisk() {
-    $generalConfig = Craft::$app->getConfig()->getGeneral();
-    $extensions    = $generalConfig->defaultTemplateExtensions;
-    $basePath      = $this->getBasePath();
-    $result        = array();
-
-    $iterator = new RecursiveIteratorIterator(
-      new RecursiveDirectoryIterator($this->_basePath)
-    );
+    $basePath = $this->getBasePath();
+    $result   = array();
 
     /** @var SplFileInfo $file */
-    foreach ($iterator as $file) {
-      if (
-        !$file->isFile() ||
-        !in_array($file->getExtension(), $extensions)
-      ) {
-        continue;
-      }
-
+    foreach ($this->getTemplateIterator($basePath) as $file) {
       $fullPath = FileHelper::normalizePath($file->getRealPath(), self::SEPARATOR);
       if (substr($fullPath, 0, strlen($basePath)) !== $basePath) {
         continue;

@@ -13,7 +13,6 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
 use Twig\Source;
-use yii\caching\CacheInterface;
 
 /**
  * Class YamlAwareTemplateLoader
@@ -21,9 +20,14 @@ use yii\caching\CacheInterface;
 class YamlAwareTemplateLoader extends TemplateLoader
 {
   /**
+   * @var bool
+   */
+  private $_hasMetaDataChanged = false;
+
+  /**
    * @var array
    */
-  private $_metaData = [];
+  private $_metaData;
 
 
   /**
@@ -32,6 +36,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @throws Throwable
    */
   public function getMetaData($name) {
+    $this->loadCachedMetaData();
     if (!isset($this->_metaData[$name])) {
       $this->_metaData[$name] = $this->loadMetaData($name);
     }
@@ -54,7 +59,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
 
   /**
    * @inheritdoc
-   * @throws YamlException
+   * @throws Throwable
    */
   public function getSourceContext($name) {
     $template = $this->view->resolveTemplate($name);
@@ -99,18 +104,25 @@ class YamlAwareTemplateLoader extends TemplateLoader
   // ---------------
 
   /**
-   * @return CacheInterface
+   * @throws Throwable
    */
-  private function getMetaDataCache() {
-    return Craft::$app->getCache();
-  }
+  private function loadCachedMetaData() {
+    if (isset($this->_metaData)) {
+      return;
+    }
 
-  /**
-   * @param string $name
-   * @return string
-   */
-  private function getMetaDataKey($name) {
-    return self::class . '::getMetadataKey(' . $name . ')';
+    $metaData = Craft::$app->getCache()->get(self::class);
+    $this->_metaData = is_array($metaData)
+      ? $metaData
+      : [];
+
+    if (CRAFT_ENVIRONMENT != 'production') {
+      foreach ($this->_metaData as $name => $metaData) {
+        if ($metaData['mtime'] != filemtime($metaData['path'])) {
+          $this->loadMetaData($name);
+        }
+      }
+    }
   }
 
   /**
@@ -119,54 +131,41 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @throws Throwable
    */
   private function loadMetaData($name) {
-    $key  = $this->getMetaDataKey($name);
-    $data = $this->getMetaDataCache()->get($key);
+    $this->loadCachedMetaData();
 
-    // The cache data might be out of date, so check this
-    // when not in production mode
-    if (
-      $data !== false &&
-      CRAFT_ENVIRONMENT != 'production' &&
-      $data['mtime'] != filemtime($data['path'])
-    ) {
-      $data = false;
-    }
+    return YamlAwareTemplateLoader::withSiteView(function(View $view) use ($name) {
+      // Try to load the template normally, if we have to compile it
+      // we'll load the metadata with it
+      $view->getTwig()->load($name);
 
-    if ($data === false) {
-      $data = YamlAwareTemplateLoader::withSiteView(function(View $view) use ($name) {
-        // Try to load the template normally, if we have to compile it
-        // we'll load the metadata with it
-        $view->getTwig()->load($name);
+      // We loaded the template but did not get the metadata, this happens
+      // if the template is already compiled, so we must fetch the metadata
+      // on our own
+      if (!isset($this->_metaData[$name])) {
+        $this->getSourceContext($name);
+      }
 
-        // We loaded the template but did not get the metadata, this happens
-        // if the template is already compiled, so we must fetch the metadata
-        // on our own
-        if (!isset($this->_metaData[$name])) {
-          $this->getSourceContext($name);
-        }
+      // Still no luck, something went south
+      if (!isset($this->_metaData[$name])) {
+        throw new Exception(sprintf(
+          'Could not load meta data for template `%s`.',
+          $name
+        ));
+      }
 
-        // Still no luck, something went south
-        if (!isset($this->_metaData[$name])) {
-          throw new Exception(sprintf(
-            'Could not load meta data for template `%s`.',
-            $name
-          ));
-        }
-
-        return $this->_metaData[$name];
-      });
-    }
-
-    return $data;
+      return $this->_metaData[$name];
+    });
   }
 
   /**
    * @param string $name
    * @param string $path
    * @param string|null $yaml
-   * @throws YamlException
+   * @throws Throwable
    */
   private function saveMetaData($name, $path, $yaml = null) {
+    $this->loadCachedMetaData();
+
     if (is_null($yaml)) {
       $sourceOffset = 0;
       $preamble = null;
@@ -179,17 +178,20 @@ class YamlAwareTemplateLoader extends TemplateLoader
       }
     }
 
-    $key  = $this->getMetaDataKey($name);
-    $data = [
+    if (!$this->_hasMetaDataChanged) {
+      $this->_hasMetaDataChanged = true;
+      register_shutdown_function(function() {
+        Craft::$app->getCache()->set(self::class, $this->_metaData);
+      });
+    }
+
+    $this->_metaData[$name] = [
       'mtime'        => filemtime($path),
       'name'         => $name,
       'path'         => $path,
       'preamble'     => $preamble,
       'sourceOffset' => $sourceOffset,
     ];
-
-    $this->_metaData[$name] = $data;
-    $this->getMetaDataCache()->set($key, $data);
   }
 
 
