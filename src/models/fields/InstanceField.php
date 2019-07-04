@@ -8,6 +8,7 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\services\SchemaManager;
 use lenz\contentfield\validators\InstanceValueValidator;
 use Throwable;
 
@@ -19,9 +20,19 @@ use Throwable;
 class InstanceField extends AbstractField
 {
   /**
-   * @var AbstractSchema[]
+   * @var string[]
    */
   public $schemas;
+
+  /**
+   * @var AbstractSchema
+   */
+  private $_parentSchema;
+
+  /**
+   * @var AbstractSchema[]
+   */
+  private $_resolvedSchemas;
 
   /**
    * The internal name of this field.
@@ -42,28 +53,12 @@ class InstanceField extends AbstractField
    * @throws Throwable
    */
   public function __construct(AbstractSchema $schema, array $config = []) {
+    $this->_parentSchema = $schema;
+
     if (array_key_exists('schemas', $config)) {
-      $schemaManager = Plugin::getInstance()->schemas;
-      $specs = is_array($config['schemas'])
+      $config['schemas'] = is_array($config['schemas'])
         ? $config['schemas']
         : explode(',', $config['schemas']);
-
-      $resolvedSchemas    = [];
-      $resolvedQualifiers = [];
-
-      foreach ($specs as $name => $spec) {
-        $spec = trim((string)$spec);
-        if ($schema->hasLocalStructure($spec)) {
-          $resolvedSchemas[] = $schema->getLocalStructure($spec);
-        } elseif (!empty($spec)) {
-          $resolvedQualifiers[] = $spec;
-        }
-      }
-
-      $config['schemas'] = array_merge(
-        $resolvedSchemas,
-        $schemaManager->getSchemas($resolvedQualifiers)
-      );
     }
 
     parent::__construct($schema, $config);
@@ -71,6 +66,7 @@ class InstanceField extends AbstractField
 
   /**
    * @inheritdoc
+   * @throws Throwable
    */
   public function createValue($data, ValueInterface $parent) {
     if (count($this->schemas) === 0) {
@@ -86,7 +82,8 @@ class InstanceField extends AbstractField
       : null;
 
     if (is_null($schema) || !$this->isValidSchema($schema)) {
-      $data[InstanceValue::TYPE_PROPERTY] = $this->schemas[0]->qualifier;
+      $schemas = $this->getDependedSchemas();
+      $data[InstanceValue::TYPE_PROPERTY] = $schemas[0]->qualifier;
     }
 
     return Plugin::getInstance()->schemas->createValue($data, $parent, $this);
@@ -94,26 +91,48 @@ class InstanceField extends AbstractField
 
   /**
    * @inheritdoc
+   * @throws Throwable
    */
   public function getDependedSchemas() {
-    return $this->schemas;
+    if (!isset($this->_resolvedSchemas)) {
+      $schemaManager = Plugin::getInstance()->schemas;
+      $parentSchema  = $this->_parentSchema;
+      $localSchemas  = [];
+      $qualifiers    = [];
+
+      foreach ($this->schemas as $schema) {
+        $schema = trim((string)$schema);
+        if ($parentSchema->hasLocalStructure($schema)) {
+          $localSchemas[] = $parentSchema->getLocalStructure($schema);
+        } elseif (!empty($schema)) {
+          $qualifiers[] = $schema;
+        }
+      }
+
+      $this->_resolvedSchemas = array_merge(
+        $localSchemas,
+        $schemaManager->getSchemas($qualifiers)
+      );
+    }
+
+    return $this->_resolvedSchemas;
   }
 
   /**
    * @inheritdoc
+   * @throws Throwable
    */
   public function getEditorData(ElementInterface $element = null) {
-    if (!is_array($this->schemas) || count($this->schemas) === 0) {
+    $qualifiers = array_map(function(AbstractSchema $schema) {
+      return $schema->qualifier;
+    }, $this->getDependedSchemas());
+
+    if (count($qualifiers) === 0) {
       return null;
     }
 
-    $schemas = array();
-    foreach ($this->schemas as $schema) {
-      $schemas[] = $schema->qualifier;
-    }
-
     return parent::getEditorData($element) + array(
-      'schemas' => $schemas,
+      'schemas' => $qualifiers,
     );
   }
 
@@ -148,10 +167,17 @@ class InstanceField extends AbstractField
   /**
    * @param string $qualifier
    * @return bool
+   * @throws Throwable
    */
   public function isValidSchema($qualifier) {
+    $schemaManager = Plugin::getInstance()->schemas;
+
     foreach ($this->schemas as $schema) {
-      if ($schema->qualifier === $qualifier) {
+      $schemaInfo = $schemaManager->parseSchemaQualifier($schema);
+      if (SchemaManager::isPattern($schemaInfo['name'])
+        ? preg_match(SchemaManager::toPattern($schemaInfo['name']), $qualifier)
+        : $qualifier == $schema
+      ) {
         return true;
       }
     }

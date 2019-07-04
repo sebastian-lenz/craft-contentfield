@@ -148,9 +148,9 @@ class SchemaManager
   public function getSchemas($qualifiers) {
     $result = array();
     foreach ($qualifiers as $qualifier) {
-      $schemas = strpos($qualifier, '*') === false
-        ? array($this->getSchema($qualifier))
-        : $this->getSchemasWithWildcard($qualifier);
+      $schemas = self::isPattern($qualifier)
+        ? $this->getSchemasWithWildcard($qualifier)
+        : array($this->getSchema($qualifier));
 
       foreach ($schemas as $schema) {
         if (!in_array($schema, $result)) {
@@ -242,6 +242,14 @@ class SchemaManager
 
   // Static methods
   // --------------
+
+  /**
+   * @param string $value
+   * @return bool
+   */
+  static public function isPattern($value) {
+    return strpos($value, '*') !== false;
+  }
 
   /**
    * @param string $value
