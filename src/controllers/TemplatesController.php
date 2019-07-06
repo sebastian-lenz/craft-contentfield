@@ -5,6 +5,7 @@ namespace lenz\contentfield\controllers;
 use Craft;
 use craft\controllers\TemplatesController as BaseTemplatesController;
 use lenz\contentfield\models\Content;
+use Throwable;
 use yii\web\Response as YiiResponse;
 
 /**
@@ -25,7 +26,7 @@ class TemplatesController extends BaseTemplatesController
 
   /**
    * @inheritDoc
-   * @throws \Throwable
+   * @throws Throwable
    */
   public function renderTemplate(string $template, array $variables = []): YiiResponse {
     $response = Craft::$app->getResponse();

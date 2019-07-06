@@ -11,7 +11,7 @@ use Throwable;
 use yii\web\Response as YiiResponse;
 
 /**
- * Class TemplatesController
+ * Class EntriesController
  */
 class EntriesController extends BaseEntriesController
 {
