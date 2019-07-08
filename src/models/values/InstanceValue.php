@@ -95,7 +95,6 @@ class InstanceValue
 
     if (array_key_exists(self::UUID_PROPERTY, $data)) {
       $this->_uuid = $data[self::UUID_PROPERTY];
-      unset($data[self::UUID_PROPERTY]);
     } else {
       $this->_uuid = self::uuid();
     }
@@ -194,10 +193,10 @@ class InstanceValue
   public function display(array $variables = []) {
     if (isset($this->_output)) {
       echo $this->_output;
+    } else {
+      $this->normalizeVariables($variables);
+      $this->_schema->display($this, $variables);
     }
-
-    $this->normalizeVariables($variables);
-    $this->_schema->display($this, $variables);
   }
 
   /**

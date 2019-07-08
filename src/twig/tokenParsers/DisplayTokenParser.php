@@ -30,11 +30,11 @@ class DisplayTokenParser extends AbstractTokenParser
     $variables = null;
     $forceInline = false;
 
-    $value = $parser->getExpressionParser()->parseExpression();
-
     if ($stream->nextIf(Token::NAME_TYPE, 'inline')) {
       $forceInline = true;
     }
+
+    $value = $parser->getExpressionParser()->parseExpression();
 
     if ($stream->nextIf(Token::NAME_TYPE, 'with')) {
       $variables = $this->parser->getExpressionParser()->parseExpression();

@@ -25,6 +25,7 @@ class ArrayValueValidator extends ValueValidator
         $hasErrors = true;
       }
     }
+
     return $hasErrors
       ? ['One or more values contain errors.', []]
       : null;

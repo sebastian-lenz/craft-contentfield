@@ -100,7 +100,15 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
         $error->setSourceContext($source);
         throw $error;
       } catch (Exception $error) {
-        throw new SyntaxError(sprintf('An exception has been thrown during the compilation of a template ("%s").', $error->getMessage()), -1, $source, $error);
+        throw new SyntaxError(
+          sprintf(
+            'An exception has been thrown during the compilation of a template ("%s").',
+            $error->getMessage()
+          ),
+          -1,
+          $source,
+          $error
+        );
       }
     }
 
