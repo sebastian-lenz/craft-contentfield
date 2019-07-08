@@ -25,6 +25,7 @@ use lenz\contentfield\utilities\Utility;
 use Twig\Error\RuntimeError;
 use yii\base\ActionEvent;
 use yii\base\Event;
+use yii\base\InvalidConfigException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -185,7 +186,10 @@ class Plugin extends \craft\base\Plugin
   public function onBeforeRenderAnyTemplate(TemplateEvent $event) {
     $view = $event->sender;
 
-    if ($view instanceof View) {
+    if (
+      $view instanceof View &&
+      $view->getTemplateMode() == View::TEMPLATE_MODE_SITE
+    ) {
       $twig = $view->getTwig();
 
       if (!($twig->getLoader() instanceof YamlAwareTemplateLoader)) {
@@ -196,7 +200,7 @@ class Plugin extends \craft\base\Plugin
 
   /**
    * @param ElementEvent $event
-   * @throws \yii\base\InvalidConfigException
+   * @throws InvalidConfigException
    */
   public function onPreviewEntry(ElementEvent $event) {
     self::$IS_ELEMENT_PREVIEW = true;
