@@ -36,10 +36,12 @@ class TemplatesController extends BaseTemplatesController
       $headers->set('content-type', $this->mimeType . '; charset=' . $response->charset);
     }
 
-    $response->format = YiiResponse::FORMAT_RAW;
     $response->data = $this->content->render($variables, [
       'view' => $this->view
     ]);
+
+    // Must be set after the template is rendered so Yii creates nice error responses
+    $response->format = YiiResponse::FORMAT_RAW;
 
     return $response;
   }
