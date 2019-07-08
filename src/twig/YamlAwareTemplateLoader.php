@@ -118,7 +118,11 @@ class YamlAwareTemplateLoader extends TemplateLoader
 
     if (CRAFT_ENVIRONMENT != 'production') {
       foreach ($this->_metaData as $name => $metaData) {
-        if ($metaData['mtime'] != filemtime($metaData['path'])) {
+        $path = $metaData['path'];
+
+        if (!is_file($path) || !is_readable($path)) {
+          unset($this->_metaData[$name]);
+        } elseif ($metaData['mtime'] != filemtime($path)) {
           $this->loadMetaData($name);
         }
       }
