@@ -5,17 +5,24 @@ namespace lenz\contentfield\models\forms;
 use Craft;
 use craft\base\Model;
 use craft\web\Request;
+use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\BeforeActionInterface;
 use lenz\contentfield\models\InstanceAwareInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\models\values\LinkValue;
 use lenz\contentfield\models\values\ReferenceValue;
+use Throwable;
 
 /**
- * Class FormModel
+ * Class AbstractForm
+ *
+ * An abstract base class for models used to represent form inputs.
+ *
+ * Either extend this class or use it as a rough guide on how to
+ * implement your own form models.
  */
-abstract class FormModel
+abstract class AbstractForm
   extends Model
   implements BeforeActionInterface, InstanceAwareInterface
 {
@@ -47,13 +54,13 @@ abstract class FormModel
    */
   const PARAM_NAME = 'form';
 
-  /**
-   * A static url the user will be redirected to after form submission.
-   */
-  const REDIRECT_URL = null;
-
 
   /**
+   * Retrieves the generic errors.
+   *
+   * A generic error is an error that is not directly bound to an
+   * attribute, e.g. if the csrf token validation fails.
+   *
    * @return string|null
    */
   public function getGenericError() {
@@ -61,6 +68,8 @@ abstract class FormModel
   }
 
   /**
+   * Retrieves the instance value this model is attached to.
+   *
    * @return InstanceValue|null
    */
   public function getInstance() {
@@ -68,8 +77,7 @@ abstract class FormModel
   }
 
   /**
-   * @param BeforeActionEvent $event
-   * @return void
+   * @inheritDoc
    */
   public function onBeforeAction(BeforeActionEvent $event) {
     $request = Craft::$app->getRequest();
@@ -96,7 +104,7 @@ abstract class FormModel
       } else {
         $this->_isSubmitted = true;
       }
-    } catch (\Throwable $error) {
+    } catch (Throwable $error) {
       $this->_genericError = self::ERROR_UNKNOWN;
     }
   }
@@ -113,6 +121,11 @@ abstract class FormModel
   }
 
   /**
+   * Returns whether the form has a generic error.
+   *
+   * A generic error is an error that is not directly bound to an
+   * attribute, e.g. if the csrf token validation fails.
+   *
    * @return bool
    */
   public function hasGenericError(): bool {
@@ -120,6 +133,11 @@ abstract class FormModel
   }
 
   /**
+   * Return whether this form has been successfully submitted or not.
+   *
+   * Use this in templates to decide whether the form or a success
+   * message should be displayed.
+   *
    * @return bool
    */
   public function isSubmitted(): bool {
@@ -138,6 +156,8 @@ abstract class FormModel
   // -----------------
 
   /**
+   * Returns the posted form data.
+   *
    * @param Request $request
    * @return array|null
    */
@@ -146,30 +166,45 @@ abstract class FormModel
   }
 
   /**
+   * Tries to find the url the user should be redirected to
+   * upon submitting the form.
+   *
+   * The default implementation looks for a field named `redirect`
+   * on the instance, it should be either a link or reference field.
+   *
+   * Override this function to implement custom redirect logic.
+   *
    * @return string|null
    */
   protected function getRedirectUrl() {
-    $instance = $this->getInstance();
+    try {
+      $instance = $this->getInstance();
 
-    if (!is_null($instance) && isset($instance->redirect)) {
-      $redirect = $instance->redirect;
+      if (!is_null($instance) && isset($instance->redirect)) {
+        $redirect = $instance->redirect;
 
-      if ($redirect instanceof ReferenceValue) {
-        $element = $redirect->getFirst();
-        return $element ? $element->getUrl() : null;
-      } elseif ($redirect instanceof LinkValue) {
-        return $redirect->getUrl();
+        if ($redirect instanceof ReferenceValue) {
+          $element = $redirect->getFirst();
+          return $element ? $element->getUrl() : null;
+        } elseif ($redirect instanceof LinkValue) {
+          return $redirect->getUrl();
+        }
       }
+    } catch (Throwable $error) {
+      // Silently ignore errors
     }
 
-    return static::REDIRECT_URL;
+    return null;
   }
 
   /**
+   * Tries to redirect the user.
+   *
    * @param BeforeActionEvent $event
    * @return bool
+   * @throws Exception
    */
-  protected function redirect(BeforeActionEvent $event) {
+  protected function tryRedirect(BeforeActionEvent $event) {
     $url = $this->getRedirectUrl();
     if (empty($url)) {
       return false;
@@ -181,6 +216,13 @@ abstract class FormModel
   }
 
   /**
+   * Callback invoked when this form is being submitted.
+   *
+   * This is only invoked if
+   * - The current request is a post request.
+   * - The form data is present in the submitted post data.
+   * - The posted data could be validated.
+   *
    * @param BeforeActionEvent $event
    * @return bool
    */
