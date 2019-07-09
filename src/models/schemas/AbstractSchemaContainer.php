@@ -22,6 +22,14 @@ abstract class AbstractSchemaContainer extends AbstractSchema
    * @throws Exception
    */
   public function __construct(array $config = []) {
+    // Set the qualifier early as we'll need it to resolve local
+    // structure qualifiers which must be resolved before we create fields
+    if (!isset($config['qualifier'])) {
+      throw new Exception('All schemas must have a qualifier.');
+    } else {
+      $this->qualifier = $config['qualifier'];
+    }
+
     if (isset($config['structures'])) {
       foreach ($config['structures'] as $name => $schema) {
         $this->addLocalStructure($name, $schema);

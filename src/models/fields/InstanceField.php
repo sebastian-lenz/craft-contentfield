@@ -95,23 +95,14 @@ class InstanceField extends AbstractField
    */
   public function getDependedSchemas() {
     if (!isset($this->_resolvedSchemas)) {
-      $schemaManager = Plugin::getInstance()->schemas;
-      $parentSchema  = $this->_parentSchema;
-      $localSchemas  = [];
-      $qualifiers    = [];
+      $manager = Plugin::getInstance()->schemas;
+      $parent  = $this->_parentSchema;
 
-      foreach ($this->schemas as $schema) {
-        $schema = trim((string)$schema);
-        if ($parentSchema->hasLocalStructure($schema)) {
-          $localSchemas[] = $parentSchema->getLocalStructure($schema);
-        } elseif (!empty($schema)) {
-          $qualifiers[] = $schema;
-        }
-      }
-
-      $this->_resolvedSchemas = array_merge(
-        $localSchemas,
-        $schemaManager->getSchemas($qualifiers)
+      $this->_resolvedSchemas = $manager->getSchemas(
+        array_map(function($schema) use ($parent, $manager) {
+          return $manager->parseSchemaQualifier($schema, $parent);
+        },
+        $this->schemas)
       );
     }
 
@@ -170,11 +161,12 @@ class InstanceField extends AbstractField
    * @throws Throwable
    */
   public function isValidSchema($qualifier) {
-    $schemaManager = Plugin::getInstance()->schemas;
-    $qualifierInfo = $schemaManager->parseSchemaQualifier($qualifier);
+    $manager = Plugin::getInstance()->schemas;
+    $parent = $this->_parentSchema;
+    $qualifierInfo = $manager->parseSchemaQualifier($qualifier, $parent);
 
     foreach ($this->schemas as $schema) {
-      $schemaInfo = $schemaManager->parseSchemaQualifier($schema);
+      $schemaInfo = $manager->parseSchemaQualifier($schema, $parent);
 
       if ($qualifierInfo['uri'] == $schemaInfo['uri']) {
         return true;
