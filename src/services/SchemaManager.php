@@ -141,12 +141,13 @@ class SchemaManager
    * Returns a list of schemas.
    * Supports wildcards in qualifier names.
    *
-   * @param string[] $qualifiers
+   * @param array $qualifiers
    * @return AbstractSchema[]
    * @throws Throwable
    */
   public function getSchemas($qualifiers) {
     $result = array();
+
     foreach ($qualifiers as $qualifier) {
       $schemas = self::isPattern($qualifier)
         ? $this->getSchemasWithWildcard($qualifier)
@@ -182,11 +183,30 @@ class SchemaManager
 
   /**
    * @param string $qualifier
+   * @param AbstractSchema|null $scope
    * @return array
    * @throws Exception
    */
-  public function parseSchemaQualifier($qualifier) {
+  public function parseSchemaQualifier($qualifier, AbstractSchema $scope = null) {
     $divider = strpos($qualifier, ':');
+    $name = $divider === false
+      ? trim($qualifier)
+      : trim(substr($qualifier, $divider + 1));
+
+    // Check if the name is a local structure
+    if (
+      !is_null($scope) &&
+      $scope->hasLocalStructure($name)
+    ) {
+      $name = $this->_structureLoader->normalizeName($name);
+      return array(
+        'loader' => $this->_structureLoader,
+        'name'   => $name,
+        'uri'    => StructureLoader::createQualifier($name, $scope),
+      );
+    }
+
+    // If no loader is given, assume it is a template
     if ($divider === false) {
       return array(
         'loader' => $this->_templateLoader,
@@ -195,13 +215,14 @@ class SchemaManager
       );
     }
 
+    // Otherwise delegate to the loader
     $loaderName = substr($qualifier, 0, $divider + 1);
     if (!array_key_exists($loaderName, $this->_loaders)) {
       throw new Exception('Invalid schema name "' . $qualifier . '"');
     }
 
     $loader = $this->_loaders[$loaderName];
-    $name   = $loader->normalizeName(substr($qualifier, $divider + 1));
+    $name   = $loader->normalizeName($name);
     $uri    = $loader::NAME_PREFIX . $name;
 
     return array(
@@ -216,12 +237,14 @@ class SchemaManager
   // ---------------
 
   /**
-   * @param string $qualifier
+   * @param string|array $qualifier
    * @return AbstractSchema[]
    * @throws Throwable
    */
   private function getSchemasWithWildcard($qualifier) {
-    $parsed = $this->parseSchemaQualifier($qualifier);
+    $parsed = is_array($qualifier)
+      ? $qualifier
+      : $this->parseSchemaQualifier($qualifier);
 
     /** @var AbstractLoader $loader */
     $loader = $parsed['loader'];
@@ -248,7 +271,7 @@ class SchemaManager
    * @return bool
    */
   static public function isPattern($value) {
-    return strpos($value, '*') !== false;
+    return strpos(is_array($value) ? $value['name'] : $value, '*') !== false;
   }
 
   /**
