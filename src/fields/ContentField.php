@@ -126,11 +126,12 @@ class ContentField extends ForeignField
   /**
    * @param Content $value
    * @param ElementInterface|null $element
+   * @param bool $disabled
    * @return ContentFieldData
    * @throws Throwable
    */
-  public function getInputData(Content $value, ElementInterface $element = null) {
-    return new ContentFieldData($this, $value, $element);
+  public function getInputData(Content $value, ElementInterface $element = null, $disabled = false) {
+    return new ContentFieldData($this, $value, $element, $disabled);
   }
 
   /**

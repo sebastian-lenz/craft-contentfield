@@ -1,8 +1,10 @@
 <?php
 
 return [
-  'ARRAY_MEMBER_COLLAPSE' => 'Anwenden',
-  'ARRAY_MEMBER_EXPAND' => 'Bearbeiten',
+  'ARRAY_MEMBER_DISABLED_COLLAPSE' => 'Schließen',
+  'ARRAY_MEMBER_DISABLED_EXPAND' => 'Erweitern',
+  'ARRAY_MEMBER_ENABLED_COLLAPSE' => 'Anwenden',
+  'ARRAY_MEMBER_ENABLED_EXPAND' => 'Bearbeiten',
 
   'COMMAND_COPY_LABEL' => 'Kopieren',
   'COMMAND_CREATE_LABEL' => 'Hinzufügen...',

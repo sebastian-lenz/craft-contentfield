@@ -43,8 +43,10 @@ class ContentFieldAsset extends AssetBundle
    */
   private function _registerTranslations(View $view) {
     $view->registerTranslations('contentfield', [
-      'ARRAY_MEMBER_COLLAPSE',
-      'ARRAY_MEMBER_EXPAND',
+      'ARRAY_MEMBER_DISABLED_COLLAPSE',
+      'ARRAY_MEMBER_DISABLED_EXPAND',
+      'ARRAY_MEMBER_ENABLED_COLLAPSE',
+      'ARRAY_MEMBER_ENABLED_EXPAND',
 
       'COMMAND_COPY_LABEL',
       'COMMAND_CREATE_LABEL',

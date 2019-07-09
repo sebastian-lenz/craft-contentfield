@@ -17,6 +17,11 @@ use Throwable;
 class ContentFieldData
 {
   /**
+   * @var bool
+   */
+  private $_disabled;
+
+  /**
    * @var ElementInterface|null
    */
   private $_element;
@@ -58,9 +63,16 @@ class ContentFieldData
    * @param ContentField $field
    * @param Content|null $value
    * @param ElementInterface|null $element
+   * @param bool $disabled
    * @throws Throwable
    */
-  public function __construct(ContentField $field, Content $value = null, ElementInterface $element = null) {
+  public function __construct(
+    ContentField $field,
+    Content $value = null,
+    ElementInterface $element = null,
+    $disabled = false
+  ) {
+    $this->_disabled = $disabled;
     $this->_element = $element;
     $this->_field = $field;
     $this->_value = $value;
@@ -151,6 +163,7 @@ class ContentFieldData
 
     if (is_null($element)) {
       return [
+        'disabled'       => $this->_disabled,
         'elementId'      => null,
         'elementSiteId'  => null,
         'fieldHandle'    => $this->_field->handle,
@@ -182,6 +195,7 @@ class ContentFieldData
     }
 
     return [
+      'disabled'       => $this->_disabled,
       'elementId'      => intval($element->getId()),
       'elementSiteId'  => $elementSiteId,
       'fieldHandle'    => $this->_field->handle,

@@ -1,6 +1,6 @@
 {% do view.registerAssetBundle('lenz\\contentfield\\assets\\field\\ContentFieldAsset') %}
 
-{% set data = field.getInputData(value, element) %}
+{% set data = field.getInputData(value, element, disabled) %}
 
 {% namespace field.handle %}
   {% if data.hasSchemaErrors %}
