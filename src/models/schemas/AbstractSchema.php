@@ -35,7 +35,15 @@ abstract class AbstractSchema extends Model
   /**
    * Defines the css grid layout of this schema. Grid layout is used
    * to place the field groups within the schema form.
-   * @var string
+   *
+   * This is a shorthand for:
+   * ```
+   * style:
+   *   medium:
+   *     grid: <value>
+   * ```
+   *
+   * @var string|array
    */
   public $grid;
 
@@ -69,6 +77,12 @@ abstract class AbstractSchema extends Model
   public $rootSchema = false;
 
   /**
+   * The css styles applied to form of this instance, grouped by breakpoint.
+   * @var array
+   */
+  public $style;
+
+  /**
    * The internal name of this schema.
    * @var string
    */
@@ -78,6 +92,29 @@ abstract class AbstractSchema extends Model
    * The default icon to use if no icon is specified.
    */
   const DEFAULT_ICON = 'material:check_box_outline_blank';
+
+  /**
+   * List of allowed style attributes.
+   */
+  const STYLE_ATTRIBUTES = [
+    'alignContent',
+    'alignItems',
+    'grid',
+    'gridAutoColumns',
+    'gridAutoFlow',
+    'gridAutoRows',
+    'gridColumnGap',
+    'gridGap',
+    'gridRowGap',
+    'gridTemplate',
+    'gridTemplateAreas',
+    'gridTemplateColumns',
+    'gridTemplateRows',
+    'justifyContent',
+    'justifyItems',
+    'placeContent',
+    'placeItems',
+  ];
 
 
   /**
@@ -194,11 +231,11 @@ abstract class AbstractSchema extends Model
 
     return array(
       'fields'    => $fields,
-      'grid'      => (string)$this->grid,
       'icon'      => $this->getIcon(),
       'label'     => Plugin::t($this->getLabel()),
       'preview'   => $this->getPreview(),
       'qualifier' => $this->qualifier,
+      'style'     => $this->getEditorStyle(),
     );
   }
 
@@ -385,5 +422,24 @@ abstract class AbstractSchema extends Model
         }
       }
     }
+  }
+
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @return array|null
+   */
+  protected function getEditorStyle() {
+    $style = isset($this->style) && is_array($this->style)
+      ? $this->style
+      : [];
+
+    if (isset($this->grid) && !empty($this->grid)) {
+      $style[AbstractField::DEFAULT_BREAKPOINT]['grid'] = $this->grid;
+    }
+
+    return AbstractField::createBreakpoints($style, self::STYLE_ATTRIBUTES);
   }
 }

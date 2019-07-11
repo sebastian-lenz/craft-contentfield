@@ -41,6 +41,12 @@ abstract class AbstractField extends Model
   public $name;
 
   /**
+   * The css styles applied to this field, grouped by breakpoint.
+   * @var array
+   */
+  public $style;
+
+  /**
    * The type of this field.
    * @var string
    */
@@ -54,9 +60,17 @@ abstract class AbstractField extends Model
 
   /**
    * The width of this field in the control panel.
+   *
+   * This is a shorthand for:
+   * ```
+   * style:
+   *   medium:
+   *     width: <value>
+   * ```
+   *
    * @var string
    */
-  public $width = '12/12';
+  public $width;
 
   /**
    * @var string
@@ -67,6 +81,33 @@ abstract class AbstractField extends Model
    * The internal name of this field.
    */
   const NAME = '@invalid';
+
+  /**
+   * The breakpoint unbound styles will be assigned to.
+   */
+  const DEFAULT_BREAKPOINT = 'medium';
+
+  /**
+   * List of available responsive breakpoints.
+   */
+  const STYLE_BREAKPOINTS = [
+    'small',
+    'medium',
+    'large',
+  ];
+
+  /**
+   * List of style attributes allowed on fields.
+   */
+  const FIELD_STYLE_ATTRIBUTES = [
+    'alignSelf',
+    'flex',
+    'flexBasis',
+    'flexGrow',
+    'flexShrink',
+    'justifySelf',
+    'width'
+  ];
 
   /**
    * List of attributes allowed on groups.
@@ -149,56 +190,16 @@ abstract class AbstractField extends Model
    * @return array
    */
   public function getEditorData(ElementInterface $element = null) {
-    $width = (string)$this->width;
-    if (preg_match('/(\d+)\/(\d+)/', $this->width, $match)) {
-      $width = floor(intval($match[1]) / intval($match[2]) * 1000000) / 10000;
-    }
-
     return array(
-      'group'        => $this->getEditorGroup($element),
+      'group'        => $this->getEditorGroupStyle($element),
       'instructions' => Plugin::t($this->instructions),
       'isRequired'   => $this->isRequired(),
       'label'        => Plugin::t($this->label),
       'name'         => $this->name,
       'validatorId'  => $this->_clientValidationId,
+      'style'        => $this->getEditorFieldStyle(),
       'type'         => strtolower($this->type),
-      'width'        => $width,
     );
-  }
-
-  /**
-   * @param ElementInterface|null $element
-   * @return array
-   */
-  public function getEditorGroup(ElementInterface $element = null) {
-    if (!isset($this->group)) {
-      return null;
-    }
-
-    $attributes = $this->group;
-    if (!is_array($attributes)) {
-      $attributes = ['label' => (string)$attributes];
-    }
-
-    $group = array();
-    $style = array();
-    foreach ($attributes as $name => $value) {
-      if (in_array($name, self::GROUP_LOCALIZED_ATTRIBUTES)) {
-        $value = Plugin::t($value);
-      }
-
-      if (in_array($name, self::GROUP_STYLE_ATTRIBUTES)) {
-        $style[$name] = (string)$value;
-      } else if (in_array($name, self::GROUP_ATTRIBUTES)) {
-        $group[$name] = (string)$value;
-      }
-    }
-
-    if (count($style) > 0) {
-      $group['style'] = $style;
-    }
-
-    return $group;
   }
 
   /**
@@ -305,8 +306,125 @@ abstract class AbstractField extends Model
   }
 
 
+  // Private methods
+  // ---------------
+
+  /**
+   * @return array|null
+   */
+  private function getEditorFieldStyle() {
+    $style = isset($this->style) && is_array($this->style)
+      ? $this->style
+      : [];
+
+    if (isset($this->width) && !empty($this->width)) {
+      $width = (string)$this->width;
+      if (preg_match('/(\d+)\/(\d+)/', $this->width, $match)) {
+        $width = round(intval($match[1]) / intval($match[2]) * 100, 6) . '%';
+      }
+
+      $style[self::DEFAULT_BREAKPOINT]['width'] = $width;
+    }
+
+    return self::createBreakpoints($style, self::FIELD_STYLE_ATTRIBUTES);
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return array
+   */
+  private function getEditorGroupStyle(ElementInterface $element = null) {
+    if (!isset($this->group)) {
+      return null;
+    }
+
+    $attributes = $this->group;
+    if (!is_array($attributes)) {
+      $attributes = ['label' => (string)$attributes];
+    }
+
+    $group = array();
+    $style = array();
+    foreach ($attributes as $name => $value) {
+      if (in_array($name, self::GROUP_LOCALIZED_ATTRIBUTES)) {
+        $value = Plugin::t($value);
+      }
+
+      if (in_array($name, self::GROUP_STYLE_ATTRIBUTES)) {
+        $style[$name] = (string)$value;
+      } else if (in_array($name, self::GROUP_ATTRIBUTES)) {
+        $group[$name] = (string)$value;
+      }
+    }
+
+    if (count($style) > 0) {
+      $group['style'] = $style;
+    }
+
+    return $group;
+  }
+
+
   // Static methods
   // --------------
+
+  /**
+   * @param array $source
+   * @param array $allowedAttributes
+   * @param string|null $defaultAttribute
+   * @return array|null
+   */
+  static public function createBreakpoints($source, array $allowedAttributes, $defaultAttribute = null) {
+    if (is_string($source) && !is_null($defaultAttribute)) {
+      $source = [
+        $defaultAttribute => $source
+      ];
+    }
+
+    if (!is_array($source)) {
+      return null;
+    }
+
+    $breakpoints = array();
+    foreach ($source as $key => $value) {
+      if (in_array($key, self::STYLE_BREAKPOINTS)) {
+        if (is_string($value) && !is_null($defaultAttribute)) {
+          $value = [
+            $defaultAttribute => $value
+          ];
+        }
+
+        $value = array_filter(
+          is_array($value) ? $value : [],
+          function($key) use ($allowedAttributes) {
+            return in_array($key, $allowedAttributes);
+          },
+          ARRAY_FILTER_USE_KEY
+        );
+
+        if (count($value)) {
+          $breakpoints[$key] = array_key_exists($key, $breakpoints)
+            ? array_merge($value, $breakpoints[$key])
+            : $value;
+        }
+      } elseif (in_array($key, $allowedAttributes)) {
+        $breakpoints[self::DEFAULT_BREAKPOINT][$key] = $value;
+      }
+    }
+
+    $styles = [];
+    foreach (self::STYLE_BREAKPOINTS as $breakpoint) {
+      if (array_key_exists($breakpoint, $breakpoints)) {
+        $styles = array_merge($styles, $breakpoints[$breakpoint]);
+      }
+
+      $breakpoints[$breakpoint] = $styles;
+    }
+
+    return count($styles) == 0
+      ? null
+      : $breakpoints;
+  }
 
   /**
    * Allows this widget to manipulate the given field configuration.
