@@ -212,6 +212,7 @@ class Plugin extends \craft\base\Plugin
         ->registerAssetBundle(ContentFieldPreviewAsset::class);
     }
 
+    // Invoke onBeforeAction on all content fields
     foreach ($element->getFieldValues() as $fieldValue) {
       if ($fieldValue instanceof Content) {
         $fieldValue->onBeforeAction(new BeforeActionEvent([
