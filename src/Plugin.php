@@ -3,9 +3,8 @@
 namespace lenz\contentfield;
 
 use Craft;
-use craft\controllers\EntriesController;
+use craft\controllers\PreviewController;
 use craft\controllers\TemplatesController;
-use craft\events\ElementEvent;
 use craft\events\ExceptionEvent;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\TemplateEvent;
@@ -116,11 +115,6 @@ class Plugin extends \craft\base\Plugin
       ErrorHandler::class, ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION,
       [$this, 'onBeforeHandleException']
     );
-
-    Event::on(
-      EntriesController::class, EntriesController::EVENT_PREVIEW_ENTRY,
-      [$this, 'onPreviewEntry']
-    );
   }
 
   /**
@@ -128,39 +122,18 @@ class Plugin extends \craft\base\Plugin
    * @throws Exception
    */
   public function onBeforeAction(ActionEvent $event) {
-    $element = Craft::$app->getUrlManager()->getMatchedElement();
-    $isRenderRequest = (
-      $event->action->controller instanceof TemplatesController &&
-      $event->action->id == 'render'
-    );
+    $action = $event->action;
 
-    $isPreviewRequest = (
-      $event->action->controller instanceof EntriesController &&
-      $event->action->id == 'preview-entry'
-    );
-
-    if (!$element || (!$isRenderRequest && !$isPreviewRequest)) {
-      return;
-    }
-
-    $uuid           = Craft::$app->getRequest()->getParam(self::$UUID_PARAM);
-    $isChunkRequest = $isRenderRequest && !is_null($uuid);
-    $pageTemplate   = null;
-
-    foreach ($element->getFieldValues() as $fieldValue) {
-      if ($fieldValue instanceof Content) {
-        $fieldValue->onBeforeAction(new BeforeActionEvent([
-          'isPreviewRequest' => $isPreviewRequest,
-          'originalEvent'    => $event,
-          'requestedUuid'    => $isChunkRequest ? $uuid : null,
-        ]));
-      }
-    };
-
-    // If this was a chunk request and we did not resolve it, raise
-    // an error
-    if ($isChunkRequest && $event->isValid) {
-      throw new NotFoundHttpException();
+    if (
+      $action->controller instanceof PreviewController &&
+      $action->id == 'preview'
+    ) {
+      $this->onBeforePreviewAction($event);
+    } elseif (
+      $action->controller instanceof TemplatesController &&
+      $action->id == 'render'
+    ) {
+      $this->onBeforeRenderAction($event);
     }
   }
 
@@ -191,20 +164,10 @@ class Plugin extends \craft\base\Plugin
       $view->getTemplateMode() == View::TEMPLATE_MODE_SITE
     ) {
       $twig = $view->getTwig();
-
       if (!($twig->getLoader() instanceof YamlAwareTemplateLoader)) {
         $twig->setLoader(new YamlAwareTemplateLoader($view));
       }
     }
-  }
-
-  /**
-   * @param ElementEvent $event
-   * @throws InvalidConfigException
-   */
-  public function onPreviewEntry(ElementEvent $event) {
-    self::$IS_ELEMENT_PREVIEW = true;
-    Craft::$app->getView()->registerAssetBundle(ContentFieldPreviewAsset::class);
   }
 
   /**
@@ -232,6 +195,48 @@ class Plugin extends \craft\base\Plugin
     return new Config();
   }
 
+  /**
+   * @param ActionEvent $event
+   * @throws InvalidConfigException
+   */
+  protected function onBeforePreviewAction(ActionEvent $event) {
+    self::$IS_ELEMENT_PREVIEW = true;
+    Craft::$app
+      ->getView()
+      ->registerAssetBundle(ContentFieldPreviewAsset::class);
+  }
+
+  /**
+   * @param ActionEvent $event
+   * @throws Exception
+   */
+  protected function onBeforeRenderAction(ActionEvent $event) {
+    $element        = Craft::$app->getUrlManager()->getMatchedElement();
+    $uuid           = Craft::$app->getRequest()->getParam(self::$UUID_PARAM);
+    $isChunkRequest = !is_null($uuid);
+    $pageTemplate   = null;
+
+    if (!$element) {
+      return;
+    }
+
+    foreach ($element->getFieldValues() as $fieldValue) {
+      if ($fieldValue instanceof Content) {
+        $fieldValue->onBeforeAction(new BeforeActionEvent([
+          'isPreviewRequest' => self::$IS_ELEMENT_PREVIEW,
+          'originalEvent'    => $event,
+          'requestedUuid'    => $isChunkRequest ? $uuid : null,
+        ]));
+      }
+    };
+
+    // If this was a chunk request and we did not resolve it, raise
+    // an error
+    if ($isChunkRequest && $event->isValid) {
+      throw new NotFoundHttpException();
+    }
+  }
+
 
   // Static methods
   // --------------
@@ -240,7 +245,7 @@ class Plugin extends \craft\base\Plugin
    * @param string $value
    * @return string
    */
-  public static function t($value) {
+  static public function t($value) {
     return empty($value)
       ? $value
       : Craft::t(self::$TRANSLATION_CATEGORY, $value);
