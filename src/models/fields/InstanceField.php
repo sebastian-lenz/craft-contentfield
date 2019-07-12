@@ -99,10 +99,12 @@ class InstanceField extends AbstractField
       $parent  = $this->_parentSchema;
 
       $this->_resolvedSchemas = $manager->getSchemas(
-        array_map(function($schema) use ($parent, $manager) {
-          return $manager->parseSchemaQualifier($schema, $parent);
-        },
-        $this->schemas)
+        array_map(
+          function($schema) use ($parent, $manager) {
+            return $manager->parseSchemaQualifier($schema, $parent);
+          },
+          $this->schemas
+        )
       );
     }
 

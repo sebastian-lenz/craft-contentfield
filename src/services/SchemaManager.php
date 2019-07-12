@@ -201,7 +201,7 @@ class SchemaManager
       $name = $this->_structureLoader->normalizeName($name);
       return array(
         'loader' => $this->_structureLoader,
-        'name'   => $name,
+        'name'   => StructureLoader::createName($name, $scope),
         'uri'    => StructureLoader::createQualifier($name, $scope),
       );
     }

@@ -40,9 +40,18 @@ class StructureLoader extends AbstractLoader
    * @param AbstractSchema|null $scope
    * @return string
    */
-  static public function createQualifier($name, AbstractSchema $scope = null) {
+  public static function createName($name, AbstractSchema $scope = null) {
     return is_null($scope)
-      ? self::NAME_PREFIX . $name
-      : self::NAME_PREFIX . $name . '@' . $scope->qualifier;
+      ? $name
+      : $name . '@' . $scope->qualifier;
+  }
+
+  /**
+   * @param string $name
+   * @param AbstractSchema|null $scope
+   * @return string
+   */
+  static public function createQualifier($name, AbstractSchema $scope = null) {
+    return self::NAME_PREFIX . self::createName($name, $scope);
   }
 }
