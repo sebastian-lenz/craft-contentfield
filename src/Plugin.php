@@ -3,7 +3,6 @@
 namespace lenz\contentfield;
 
 use Craft;
-use craft\controllers\PreviewController;
 use craft\controllers\TemplatesController;
 use craft\events\ExceptionEvent;
 use craft\events\RegisterComponentTypesEvent;
@@ -24,7 +23,6 @@ use lenz\contentfield\utilities\Utility;
 use Twig\Error\RuntimeError;
 use yii\base\ActionEvent;
 use yii\base\Event;
-use yii\base\InvalidConfigException;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -123,13 +121,7 @@ class Plugin extends \craft\base\Plugin
    */
   public function onBeforeAction(ActionEvent $event) {
     $action = $event->action;
-
     if (
-      $action->controller instanceof PreviewController &&
-      $action->id == 'preview'
-    ) {
-      $this->onBeforePreviewAction($event);
-    } elseif (
       $action->controller instanceof TemplatesController &&
       $action->id == 'render'
     ) {
@@ -197,33 +189,33 @@ class Plugin extends \craft\base\Plugin
 
   /**
    * @param ActionEvent $event
-   * @throws InvalidConfigException
-   */
-  protected function onBeforePreviewAction(ActionEvent $event) {
-    self::$IS_ELEMENT_PREVIEW = true;
-    Craft::$app
-      ->getView()
-      ->registerAssetBundle(ContentFieldPreviewAsset::class);
-  }
-
-  /**
-   * @param ActionEvent $event
    * @throws Exception
    */
   protected function onBeforeRenderAction(ActionEvent $event) {
-    $element        = Craft::$app->getUrlManager()->getMatchedElement();
-    $uuid           = Craft::$app->getRequest()->getParam(self::$UUID_PARAM);
-    $isChunkRequest = !is_null($uuid);
-    $pageTemplate   = null;
+    $element          = Craft::$app->getUrlManager()->getMatchedElement();
+    $request          = Craft::$app->getRequest();
+    $uuid             = $request->getParam(self::$UUID_PARAM);
+    $isPreviewRequest = $request->getIsPreview();
+    $isChunkRequest   = !is_null($uuid);
+    $pageTemplate     = null;
 
     if (!$element) {
       return;
     }
 
+    // Remember if this is a preview request and add the preview
+    // helper assets
+    if ($isPreviewRequest) {
+      self::$IS_ELEMENT_PREVIEW = true;
+      Craft::$app
+        ->getView()
+        ->registerAssetBundle(ContentFieldPreviewAsset::class);
+    }
+
     foreach ($element->getFieldValues() as $fieldValue) {
       if ($fieldValue instanceof Content) {
         $fieldValue->onBeforeAction(new BeforeActionEvent([
-          'isPreviewRequest' => self::$IS_ELEMENT_PREVIEW,
+          'isPreviewRequest' => $isPreviewRequest,
           'originalEvent'    => $event,
           'requestedUuid'    => $isChunkRequest ? $uuid : null,
         ]));
