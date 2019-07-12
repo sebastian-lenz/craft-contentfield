@@ -15,6 +15,7 @@ return [
   'COMMAND_MOVE_UP_LABEL' => 'Nach oben verschieben',
   'COMMAND_PASTE_LABEL' => 'Einfügen',
 
+  'FIELD_INSTANCE_FORM_EMPTY' => 'Dieses Element besitzt keine Eigenschaften.',
   'FIELD_LINK_NEW_WINDOW' => 'In neuem Fenster öffnen',
 
   'OVERLAY_EDIT_INSTANCE_APPLY' => 'Anwenden',

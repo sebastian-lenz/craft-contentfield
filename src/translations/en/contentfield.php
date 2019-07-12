@@ -15,6 +15,7 @@ return [
   'COMMAND_MOVE_UP_LABEL' => 'Move up',
   'COMMAND_PASTE_LABEL' => 'Paste',
 
+  'FIELD_INSTANCE_FORM_EMPTY' => 'This element has no properties.',
   'FIELD_LINK_NEW_WINDOW' => 'Open in new window',
 
   'OVERLAY_EDIT_INSTANCE_APPLY' => 'Apply',

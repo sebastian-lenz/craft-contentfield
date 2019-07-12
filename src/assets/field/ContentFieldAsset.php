@@ -57,6 +57,7 @@ class ContentFieldAsset extends AssetBundle
       'COMMAND_MOVE_UP_LABEL',
       'COMMAND_PASTE_LABEL',
 
+      'FIELD_INSTANCE_FORM_EMPTY',
       'FIELD_LINK_NEW_WINDOW',
 
       'OVERLAY_EDIT_INSTANCE_APPLY',
