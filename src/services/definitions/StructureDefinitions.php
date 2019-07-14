@@ -5,7 +5,7 @@ namespace lenz\contentfield\services\definitions;
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\schemas\StructureSchema;
-use lenz\contentfield\services\loaders\StructureLoader;
+use lenz\contentfield\services\schemas\StructureLoader;
 
 /**
  * Class StructureDefinitions

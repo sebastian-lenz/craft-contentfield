@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\services\loaders;
+namespace lenz\contentfield\services\schemas;
 
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;

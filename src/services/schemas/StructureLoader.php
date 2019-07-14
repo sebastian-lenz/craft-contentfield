@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\services\loaders;
+namespace lenz\contentfield\services\schemas;
 
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;

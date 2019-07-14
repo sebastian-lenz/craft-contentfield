@@ -7,9 +7,9 @@ use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
-use lenz\contentfield\services\loaders\AbstractLoader;
-use lenz\contentfield\services\loaders\StructureLoader;
-use lenz\contentfield\services\loaders\TemplateLoader;
+use lenz\contentfield\services\schemas\AbstractLoader;
+use lenz\contentfield\services\schemas\StructureLoader;
+use lenz\contentfield\services\schemas\TemplateLoader;
 use Throwable;
 
 /**

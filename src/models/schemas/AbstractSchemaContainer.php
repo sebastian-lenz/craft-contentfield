@@ -3,7 +3,7 @@
 namespace lenz\contentfield\models\schemas;
 
 use Exception;
-use lenz\contentfield\services\loaders\StructureLoader;
+use lenz\contentfield\services\schemas\StructureLoader;
 
 /**
  * Class AbstractSchemaContainer
