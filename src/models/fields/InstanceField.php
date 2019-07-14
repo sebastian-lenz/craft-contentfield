@@ -8,7 +8,7 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\services\SchemaManager;
+use lenz\contentfield\services\Schemas;
 use lenz\contentfield\validators\InstanceValueValidator;
 use Throwable;
 
@@ -171,8 +171,8 @@ class InstanceField extends AbstractField
         return true;
       } else if (
         $schemaInfo['loader'] == $qualifierInfo['loader'] &&
-        SchemaManager::isPattern($schemaInfo['name']) &&
-        preg_match(SchemaManager::toPattern($schemaInfo['name']), $qualifierInfo['name'])
+        Schemas::isPattern($schemaInfo['name']) &&
+        preg_match(Schemas::toPattern($schemaInfo['name']), $qualifierInfo['name'])
       ) {
         return true;
       }

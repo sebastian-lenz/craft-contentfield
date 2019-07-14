@@ -13,9 +13,9 @@ use lenz\contentfield\services\loaders\TemplateLoader;
 use Throwable;
 
 /**
- * Class SchemaManager
+ * Class Schemas
  */
-class SchemaManager
+class Schemas
 {
   /**
    * @var AbstractSchema[]
