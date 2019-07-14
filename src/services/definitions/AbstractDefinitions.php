@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\services;
+namespace lenz\contentfield\services\definitions;
 
 use Craft;
 use Exception;
@@ -13,9 +13,9 @@ use Symfony\Component\Yaml\Yaml;
 use Throwable;
 
 /**
- * Class AbstractDefinitionService
+ * Class AbstractDefinitions
  */
-abstract class AbstractDefinitionService
+abstract class AbstractDefinitions
 {
   /**
    * @var array

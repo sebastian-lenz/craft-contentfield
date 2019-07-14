@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\services;
+namespace lenz\contentfield\services\definitions;
 
 use Exception;
 use lenz\contentfield\exceptions\FieldConfigException;
@@ -14,17 +14,17 @@ use lenz\contentfield\models\fields\enumerations\SwatchColorField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\fields\LinkField;
 use lenz\contentfield\models\fields\LocationField;
+use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\models\fields\RedactorField;
 use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\models\fields\strings\TextAreaField;
 use lenz\contentfield\models\fields\strings\TextField;
-use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 
 /**
- * Class FieldManager
+ * Class FieldDefinitions
  */
-class FieldManager extends AbstractDefinitionService
+class FieldDefinitions extends AbstractDefinitions
 {
   /**
    * @var array

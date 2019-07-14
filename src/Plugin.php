@@ -28,11 +28,11 @@ use yii\web\NotFoundHttpException;
 /**
  * Class Plugin
  *
- * @property services\FieldManager $fields
- * @property services\ImageTagManager $imageTags
+ * @property services\definitions\FieldDefinitions $fields
+ * @property services\definitions\ImageTagDefinitions $imageTags
  * @property services\Relations $relations
  * @property services\SchemaManager $schemas
- * @property services\StructureManager $structures
+ * @property services\definitions\StructureDefinitions $structures
  * @method Config getSettings()
  */
 class Plugin extends \craft\base\Plugin
@@ -66,10 +66,10 @@ class Plugin extends \craft\base\Plugin
 
     $this->setComponents([
       'fields' => [
-        'class' => services\FieldManager::class
+        'class' => services\definitions\FieldDefinitions::class
       ],
       'imageTags' => [
-        'class' => services\ImageTagManager::class
+        'class' => services\definitions\ImageTagDefinitions::class
       ],
       'relations' => [
         'class' => services\Relations::class
@@ -78,7 +78,7 @@ class Plugin extends \craft\base\Plugin
         'class' => services\SchemaManager::class
       ],
       'structures' => [
-        'class' => services\StructureManager::class
+        'class' => services\definitions\StructureDefinitions::class
       ]
     ]);
 

@@ -1,19 +1,18 @@
 <?php
 
-namespace lenz\contentfield\services;
+namespace lenz\contentfield\services\definitions;
 
 use craft\elements\Asset;
-
 use Exception;
 use lenz\contentfield\services\imageTags\DefaultImageTag;
-use lenz\contentfield\services\imageTags\PictureImageTag;
 use lenz\contentfield\services\imageTags\ImageTag;
+use lenz\contentfield\services\imageTags\PictureImageTag;
 use lenz\contentfield\services\imageTags\WrappedImageTag;
 
 /**
- * Class ImageTagManager
+ * Class ImageTagDefinitions
  */
-class ImageTagManager extends AbstractDefinitionService
+class ImageTagDefinitions extends AbstractDefinitions
 {
   /**
    * @var ImageTag[]

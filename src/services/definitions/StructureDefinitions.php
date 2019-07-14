@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\services;
+namespace lenz\contentfield\services\definitions;
 
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
@@ -8,9 +8,9 @@ use lenz\contentfield\models\schemas\StructureSchema;
 use lenz\contentfield\services\loaders\StructureLoader;
 
 /**
- * Class StructureManager
+ * Class StructureDefinitions
  */
-class StructureManager extends AbstractDefinitionService
+class StructureDefinitions extends AbstractDefinitions
 {
   /**
    * @var StructureSchema[]
