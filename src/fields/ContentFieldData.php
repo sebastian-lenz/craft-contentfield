@@ -130,7 +130,8 @@ class ContentFieldData
    */
   private function loadSchemas() {
     $rootSchemas = $this->_field->getRootSchemas($this->_element);
-    $allSchemas = Plugin::getInstance()->schemas
+    $allSchemas = Plugin::getInstance()
+      ->schemas
       ->getDependedSchemas($rootSchemas);
 
     $errors  = array();
@@ -146,13 +147,10 @@ class ContentFieldData
       }
     }
 
+    $this->_rootSchemas   = array_keys($rootSchemas);
     $this->_schemas       = $schemas;
     $this->_schemaErrors  = $errors;
     $this->_schemaScripts = $scripts;
-
-    $this->_rootSchemas = array_map(function($schema) {
-      return $schema->qualifier;
-    }, $rootSchemas);
   }
 
   /**

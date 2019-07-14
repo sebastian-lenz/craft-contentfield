@@ -200,14 +200,8 @@ abstract class AbstractSchema extends Model
 
     foreach ($this->fields as $field) {
       $schemas = $field->getDependedSchemas();
-      if (is_null($schemas)) {
-        continue;
-      }
-
-      foreach ($schemas as $schema) {
-        if (!in_array($schema, $result)) {
-          $result[] = $schema;
-        }
+      if (!is_null($schemas)) {
+        $result += $schemas;
       }
     }
 
@@ -237,6 +231,18 @@ abstract class AbstractSchema extends Model
       'qualifier' => $this->qualifier,
       'style'     => $this->getEditorStyle(),
     );
+  }
+
+  /**
+   * Return a field by name.
+   *
+   * @param string $name
+   * @return AbstractField|null
+   */
+  public function getField(string $name) {
+    return array_key_exists($name, $this->fields)
+      ? $this->fields[$name]
+      : null;
   }
 
   /**

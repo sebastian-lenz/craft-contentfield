@@ -98,17 +98,17 @@ class SchemaManager
    */
   public function getDependedSchemas($schemas) {
     $result = array();
-    $stack = $schemas;
+    $stack  = $schemas;
 
     while ($schema = array_pop($stack)) {
       $result[$schema->qualifier] = $schema;
       $children = $schema->getDependedSchemas();
 
-      foreach ($children as $child) {
-        if (in_array($child, $result)) {
+      foreach ($children as $qualifier => $child) {
+        if (array_key_exists($qualifier, $result)) {
           continue;
-        } else if (!in_array($child, $stack)) {
-          $stack[] = $child;
+        } else if (!array_key_exists($qualifier, $stack)) {
+          $stack[$qualifier] = $child;
         }
       }
     }
@@ -154,9 +154,7 @@ class SchemaManager
         : array($this->getSchema($qualifier));
 
       foreach ($schemas as $schema) {
-        if (!in_array($schema, $result)) {
-          $result[] = $schema;
-        }
+        $result[$schema->qualifier] = $schema;
       }
     }
 

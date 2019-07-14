@@ -252,7 +252,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
       // If we don't have a model and there is only one schema
       // available, create a model from it
       if (is_null($model) && count($schemas) === 1) {
-        $model = new InstanceValue([], $schemas[0], null, null);
+        $model = new InstanceValue([], reset($schemas), null, null);
       }
 
       if (!is_null($model)) {
