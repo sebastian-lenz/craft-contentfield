@@ -143,11 +143,11 @@ abstract class AbstractField extends Model
   /**
    * Field constructor.
    *
-   * @param AbstractSchema $schema
+   * @param AbstractSchema|null $schema
    * @param array $config
    * @throws Exception
    */
-  public function __construct(AbstractSchema $schema, array $config = []) {
+  public function __construct(AbstractSchema $schema = null, array $config = []) {
     if (!isset($config['name'])) {
       throw new Exception('All fields must have a name.');
     }
@@ -168,11 +168,11 @@ abstract class AbstractField extends Model
    * Transforms the given raw data into a value instance.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
+   * @param ValueInterface|null $parent
    * @return mixed
    * @throws Exception
    */
-  abstract function createValue($data, ValueInterface $parent);
+  abstract function createValue($data, ValueInterface $parent = null);
 
   /**
    * Return a list of all schemas this field and all of its children depend on.

@@ -41,11 +41,11 @@ abstract class AbstractEnumerationField extends AbstractField
   /**
    * AbstractEnumField constructor.
    *
-   * @param AbstractSchema $schema
+   * @param AbstractSchema|null $schema
    * @param array $config
    * @throws Exception
    */
-  public function __construct(AbstractSchema $schema, array $config = []) {
+  public function __construct(AbstractSchema $schema = null, array $config = []) {
     if (isset($config['options'])) {
       $this->_enumeration = new StaticEnumeration($config['options']);
       unset($config['options']);
@@ -84,7 +84,7 @@ abstract class AbstractEnumerationField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return new EnumerationValue($data, $parent, $this);
   }
 

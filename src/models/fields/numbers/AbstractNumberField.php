@@ -13,7 +13,7 @@ abstract class AbstractNumberField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return is_numeric($data) ? $data * 1 : null;
   }
 

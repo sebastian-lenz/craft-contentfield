@@ -26,7 +26,7 @@ class LocationField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return new LocationValue($data, $parent, $this);
   }
 

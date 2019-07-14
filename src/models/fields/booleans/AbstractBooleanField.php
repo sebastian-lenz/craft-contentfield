@@ -20,7 +20,7 @@ abstract class AbstractBooleanField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return !!$data;
   }
 

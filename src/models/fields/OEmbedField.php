@@ -30,7 +30,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function __construct(AbstractSchema $schema, array $config = []) {
+  public function __construct(AbstractSchema $schema = null, array $config = []) {
     if (array_key_exists('providers', $config)) {
       if (!is_array($config['providers'])) {
         $config['providers'] = explode(',', (string)$config['providers']);
@@ -58,7 +58,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return new OEmbedValue($data, $parent, $this);
   }
 

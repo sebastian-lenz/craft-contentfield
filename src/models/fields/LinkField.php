@@ -59,7 +59,7 @@ class LinkField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return new LinkValue($data, $parent, $this);
   }
 
