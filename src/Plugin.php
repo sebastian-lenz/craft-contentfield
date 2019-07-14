@@ -3,6 +3,7 @@
 namespace lenz\contentfield;
 
 use Craft;
+use craft\base\Plugin as BasePlugin;
 use craft\controllers\TemplatesController;
 use craft\events\ExceptionEvent;
 use craft\events\RegisterComponentTypesEvent;
@@ -20,6 +21,7 @@ use lenz\contentfield\models\Content;
 use lenz\contentfield\twig\Extension;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
 use lenz\contentfield\utilities\Utility;
+use Throwable;
 use Twig\Error\RuntimeError;
 use yii\base\ActionEvent;
 use yii\base\Event;
@@ -34,10 +36,16 @@ use yii\web\NotFoundHttpException;
  * @property services\Relations $relations
  * @property services\Schemas $schemas
  * @property services\definitions\StructureDefinitions $structures
+ * @property services\Translators $translators
  * @method Config getSettings()
  */
-class Plugin extends \craft\base\Plugin
+class Plugin extends BasePlugin
 {
+  /**
+   * @var bool
+   */
+  public $hasCpSettings = true;
+
   /**
    * @inheritdoc
    */
@@ -67,23 +75,26 @@ class Plugin extends \craft\base\Plugin
 
     $this->setComponents([
       'fields' => [
-        'class' => services\definitions\FieldDefinitions::class
+        'class' => services\definitions\FieldDefinitions::class,
       ],
       'fieldUsage' => [
-        'class' => services\FieldUsage::class
+        'class' => services\FieldUsage::class,
       ],
       'imageTags' => [
-        'class' => services\definitions\ImageTagDefinitions::class
+        'class' => services\definitions\ImageTagDefinitions::class,
       ],
       'relations' => [
-        'class' => services\Relations::class
+        'class' => services\Relations::class,
       ],
       'schemas' => [
-        'class' => services\Schemas::class
+        'class' => services\Schemas::class,
       ],
       'structures' => [
-        'class' => services\definitions\StructureDefinitions::class
-      ]
+        'class' => services\definitions\StructureDefinitions::class,
+      ],
+      'translators' => [
+        'class' => services\Translators::class,
+      ],
     ]);
 
     Craft::$app->view->registerTwigExtension(new Extension());
@@ -232,6 +243,17 @@ class Plugin extends \craft\base\Plugin
     if ($isChunkRequest && $event->isValid) {
       throw new NotFoundHttpException();
     }
+  }
+
+  /**
+   * @return string|null
+   * @throws Throwable
+   */
+  protected function settingsHtml() {
+    return Craft::$app->getView()->renderTemplate('contentfield/_config', [
+      'config'      => $this->getSettings(),
+      'translators' => $this->translators,
+    ]);
   }
 
 

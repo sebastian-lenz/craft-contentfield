@@ -6,6 +6,7 @@ use CallbackFilterIterator;
 use Craft;
 use craft\helpers\FileHelper;
 use Exception;
+use lenz\contentfield\Config;
 use lenz\contentfield\exceptions\TemplateConfigException;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
@@ -181,7 +182,7 @@ class TemplateLoader extends AbstractLoader
    */
   private function getAllTemplates() {
     if (!isset($this->_templates)) {
-      if (CRAFT_ENVIRONMENT == 'production') {
+      if (Config::getInstance()->enableTemplateIndexCache()) {
         $key = static::class . '::getAllTemplates';
         $this->_templates = Craft::$app->getCache()->getOrSet($key, function() {
           return $this->getAllTemplatesFromDisk();

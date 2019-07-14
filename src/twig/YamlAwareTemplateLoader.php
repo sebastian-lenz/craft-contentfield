@@ -8,6 +8,7 @@ use craft\web\twig\TemplateLoader;
 use craft\web\twig\TemplateLoaderException;
 use craft\web\View;
 use Exception;
+use lenz\contentfield\Config;
 use lenz\contentfield\exceptions\YamlException;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -116,7 +117,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
       ? $metaData
       : [];
 
-    if (CRAFT_ENVIRONMENT != 'production') {
+    if (Config::getInstance()->enableTemplateModificationCheck()) {
       foreach ($this->_metaData as $name => $metaData) {
         $path = $metaData['path'];
 

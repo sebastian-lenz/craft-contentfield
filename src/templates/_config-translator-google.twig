@@ -1,0 +1,8 @@
+{% import '_includes/forms' as forms %}
+
+{{- forms.textField({
+  label:        'API key',
+  instructions: 'The Google API key used to translate fields. Needs access to the "Cloud Translation API" service.',
+  name:         'apiKey',
+  value:        apiKey is defined ? apiKey : '',
+}) -}}

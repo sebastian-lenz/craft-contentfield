@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\twig\nodes;
 
+use lenz\contentfield\Config;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use Twig\Compiler;
@@ -38,7 +39,7 @@ class InstanceDisplayNode extends DisplayNode
    * @inheritDoc
    */
   public function getInlineSchemaCandidates() {
-    if (CRAFT_ENVIRONMENT != 'production') {
+    if (!Config::getInstance()->useTemplateInlining()) {
       return [];
     }
 
