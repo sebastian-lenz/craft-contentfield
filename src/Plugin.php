@@ -29,6 +29,7 @@ use yii\web\NotFoundHttpException;
  * Class Plugin
  *
  * @property services\definitions\FieldDefinitions $fields
+ * @property services\FieldUsage $fieldUsage
  * @property services\definitions\ImageTagDefinitions $imageTags
  * @property services\Relations $relations
  * @property services\SchemaManager $schemas
@@ -67,6 +68,9 @@ class Plugin extends \craft\base\Plugin
     $this->setComponents([
       'fields' => [
         'class' => services\definitions\FieldDefinitions::class
+      ],
+      'fieldUsage' => [
+        'class' => services\FieldUsage::class
       ],
       'imageTags' => [
         'class' => services\definitions\ImageTagDefinitions::class

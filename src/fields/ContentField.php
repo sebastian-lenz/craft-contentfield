@@ -14,7 +14,7 @@ use lenz\contentfield\models\Content;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\records\ContentRecord;
-use lenz\contentfield\utilities\FieldUsage;
+use lenz\contentfield\services\fieldUsages\Usage;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
 use Throwable;
@@ -141,7 +141,7 @@ class ContentField extends ForeignField
    */
   public function getRootSchemas(ElementInterface $element = null) {
     $schemas = $this->rootSchemas;
-    $uids = FieldUsage::toUids($element);
+    $uids = Plugin::getInstance()->fieldUsage->toUids($element);
 
     foreach ($uids as $uid) {
       if (array_key_exists($uid, $this->rootSchemasByUsage)) {
@@ -175,10 +175,10 @@ class ContentField extends ForeignField
   }
 
   /**
-   * @return FieldUsage[]
+   * @return Usage[]
    */
   public function getUsages() {
-    return FieldUsage::forField($this);
+    return Plugin::getInstance()->fieldUsage->findUsages($this);
   }
 
   /**
