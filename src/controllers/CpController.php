@@ -19,12 +19,6 @@ use yii\web\Response;
 class CpController extends Controller
 {
   /**
-   * @var string
-   */
-  const GOOGLE_TRANSLATE_ENDPOINT = 'https://www.googleapis.com/language/translate/v2';
-
-
-  /**
    * @param integer $siteId
    * @param integer $elementId
    * @param string $fieldHandle
@@ -100,41 +94,24 @@ class CpController extends Controller
    * @return Response
    */
   public function actionTranslate($source, $target, $text) {
-    $apiKey = Plugin::getInstance()
-      ->getSettings()
-      ->googleTranslateApiKey;
+    $translated = null;
+    $translator = Plugin::getInstance()
+      ->translators
+      ->getTranslator();
 
-    if (empty($apiKey) || empty(trim($text))) {
+    if (!is_null($translator)) {
+      $translated = $translator->translate($source, $target, $text);
+    }
+
+    if (!is_null($translated)) {
       return $this->asJson([
         'success' => true,
-        'data'    => $text,
+        'data'    => $translated,
       ]);
     }
 
-    $url = new Url(self::GOOGLE_TRANSLATE_ENDPOINT);
-    $url->setQuery([
-      'key'    => $apiKey,
-      'q'      => $text,
-      'source' => $source,
-      'target' => $target,
-    ]);
-
-    $handle = curl_init((string)$url);
-    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($handle);
-    $responseDecoded = Json::decode($response, true);
-    $responseCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-    curl_close($handle);
-
-    if ($responseCode != 200) {
-      $this->asJson([
-        'success' => false,
-      ]);
-    }
-
-    return $this->asJson([
-      'success' => true,
-      'data' => $responseDecoded['data']['translations'][0]['translatedText'],
+    $this->asJson([
+      'success' => false,
     ]);
   }
 }
