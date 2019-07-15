@@ -15,7 +15,7 @@ class GoogleTranslator extends AbstractTranslator
   /**
    * @var string
    */
-  public $apiKey;
+  private $_apiKey;
 
   /**
    * The url of the API endpoint.
@@ -24,17 +24,31 @@ class GoogleTranslator extends AbstractTranslator
 
 
   /**
+   * @return string
+   */
+  public function getApiKey() {
+    return $this->_apiKey;
+  }
+
+  /**
+   * @param string $value
+   */
+  public function setApiKey($value) {
+    $this->_apiKey = (string)$value;
+  }
+
+  /**
    * @inheritDoc
    */
   public function translate($sourceLanguage, $targetLanguage, $message) {
-    if (empty($this->apiKey)) {
+    if (empty($this->_apiKey)) {
       return null;
     }
 
     $url = new Url(self::ENDPOINT);
     $url->setQuery([
       'format' => 'html',
-      'key'    => $this->apiKey,
+      'key'    => $this->_apiKey,
       'q'      => $message,
       'source' => $sourceLanguage,
       'target' => $targetLanguage,
@@ -52,7 +66,7 @@ class GoogleTranslator extends AbstractTranslator
       return null;
     }
 
-    ArrayHelper::getValue(
+    return ArrayHelper::getValue(
       $responseDecoded,
       ['data', 'translations', 0, 'translatedText']
     );

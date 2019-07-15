@@ -39,15 +39,18 @@ class Translators extends Component
     if (!isset($this->_translator)) {
       $settings    = Plugin::getInstance()->getSettings();
       $translators = $this->getTranslatorTypes();
+      $translator  = null;
       $handle      = $settings->translator;
 
-      if (array_key_exists($handle, $translators)) {
-        $translatorClass    = $translators[$handle];
-        $translatorSettings = $settings->getTranslatorSettings($handle);
-        $this->_translator = new $translatorClass($translatorSettings);
-      } else {
-        $this->_translator = null;
+      foreach ($translators as $translatorClass) {
+        if ($translatorClass::getHandle() == $handle) {
+          $translatorSettings = $settings->getTranslatorSettings($handle);
+          $translator         = new $translatorClass($translatorSettings);
+          break;
+        }
       }
+
+      $this->_translator = $translator;
     }
 
     return $this->_translator;

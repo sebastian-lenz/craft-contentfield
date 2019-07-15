@@ -2,7 +2,6 @@
 
 namespace lenz\contentfield\services\fieldUsages;
 
-use lenz\contentfield\services\FieldUsage;
 use yii\BaseYii;
 
 /**

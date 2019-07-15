@@ -110,7 +110,7 @@ class CpController extends Controller
       ]);
     }
 
-    $this->asJson([
+    return $this->asJson([
       'success' => false,
     ]);
   }

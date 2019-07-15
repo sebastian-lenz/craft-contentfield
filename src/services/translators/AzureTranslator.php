@@ -15,7 +15,7 @@ class AzureTranslator extends AbstractTranslator
   /**
    * @var string
    */
-  public $subscriptionKey;
+  private $_subscriptionKey;
 
   /**
    * The url of the API endpoint.
@@ -24,10 +24,24 @@ class AzureTranslator extends AbstractTranslator
 
 
   /**
+   * @return string
+   */
+  public function getSubscriptionKey() {
+    return $this->_subscriptionKey;
+  }
+
+  /**
+   * @param string $value
+   */
+  public function setSubscriptionKey($value) {
+    $this->_subscriptionKey = (string)$value;
+  }
+
+  /**
    * @inheritDoc
    */
   public function translate($sourceLanguage, $targetLanguage, $message) {
-    if (empty($this->endpoint) || empty($this->subscriptionKey)) {
+    if (empty($this->_subscriptionKey)) {
       return null;
     }
 
@@ -36,7 +50,7 @@ class AzureTranslator extends AbstractTranslator
     ]);
 
     $headers = [
-      'Ocp-Apim-Subscription-Key: ' . $this->subscriptionKey,
+      'Ocp-Apim-Subscription-Key: ' . $this->_subscriptionKey,
       'Content-Type: application/json',
       'Content-Length: ' . strlen($body),
     ];
@@ -64,9 +78,9 @@ class AzureTranslator extends AbstractTranslator
       return null;
     }
 
-    ArrayHelper::getValue(
+    return ArrayHelper::getValue(
       $responseDecoded,
-      [0, 'translations', 'text']
+      [0, 'translations', 0, 'text']
     );
   }
 
