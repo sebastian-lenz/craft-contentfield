@@ -110,4 +110,11 @@ class Translators extends Component
 
     return $result;
   }
+
+  /**
+   * @return bool
+   */
+  public function hasTranslator() {
+    return !is_null($this->getTranslator());
+  }
 }

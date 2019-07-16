@@ -206,7 +206,8 @@ class ContentFieldData
    * @return array
    */
   private function getGlobalConfig() {
-    $urls = Craft::$app->urlManager;
+    $plugin = Plugin::getInstance();
+    $urls   = Craft::$app->urlManager;
 
     return [
       'apiEndpoints'     => array(
@@ -214,7 +215,8 @@ class ContentFieldData
         'oembed'         => $urls->createUrl('contentfield/cp/oembed'),
         'translate'      => $urls->createUrl('contentfield/cp/translate'),
       ),
-      'googleMapsApiKey' => Plugin::getInstance()->getSettings()->googleMapsApiKey,
+      'googleMapsApiKey' => $plugin->getSettings()->googleMapsApiKey,
+      'hasTranslator'    => $plugin->translators->hasTranslator(),
       'i18nCategory'     => Plugin::$TRANSLATION_CATEGORY,
       'rootSchemas'      => $this->_rootSchemas,
     ];
