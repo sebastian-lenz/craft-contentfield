@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\utilities;
+namespace lenz\contentfield\helpers;
 
 use craft\base\ElementInterface;
 

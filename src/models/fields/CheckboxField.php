@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\models\fields\booleans;
+namespace lenz\contentfield\models\fields;
 
 /**
  * Class CheckboxField

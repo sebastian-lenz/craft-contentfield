@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\utilities;
+namespace lenz\contentfield\helpers;
 
 use Craft;
 use craft\base\Element;
@@ -102,7 +102,8 @@ class ReferenceLoader
   }
 
 
-  // Private
+  // Private methods
+  // ---------------
 
   /**
    * @return ReferenceMap
@@ -123,7 +124,6 @@ class ReferenceLoader
 
     return $this->_referenceMap;
   }
-
 
   /**
    * @param string $elementType

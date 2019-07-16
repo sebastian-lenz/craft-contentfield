@@ -1,11 +1,10 @@
 <?php
 
-namespace lenz\contentfield\models\fields\strings;
+namespace lenz\contentfield\models\fields;
 
-use lenz\contentfield\models\fields\AbstractField;
-use lenz\contentfield\models\values\ValueInterface;
-use lenz\contentfield\models\values\StringValue;
 use craft\base\ElementInterface;
+use lenz\contentfield\models\values\StringValue;
+use lenz\contentfield\models\values\ValueInterface;
 
 /**
  * Class AbstractStringField

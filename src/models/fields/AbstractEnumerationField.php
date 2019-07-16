@@ -1,16 +1,15 @@
 <?php
 
-namespace lenz\contentfield\models\fields\enumerations;
+namespace lenz\contentfield\models\fields;
 
 use Craft;
+use craft\base\ElementInterface;
 use Exception;
 use lenz\contentfield\models\enumerations\EnumerationInterface;
 use lenz\contentfield\models\enumerations\StaticEnumeration;
-use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\schemas\AbstractSchema;
-use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\EnumerationValue;
-use craft\base\ElementInterface;
+use lenz\contentfield\models\values\ValueInterface;
 use Throwable;
 
 /**

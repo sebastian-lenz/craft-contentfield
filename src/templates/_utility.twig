@@ -1,10 +1,12 @@
+{% do view.registerAssetBundle('lenz\\contentfield\\assets\\field\\ContentFieldAsset') %}
+
 <div class="tcfUtility">
   <div class="tcfUtility--wrap">
     <div class="tcfUtility--tabs">
       {% include "_includes/tabs" %}
     </div>
     <div class="tcfUtility--content">
-      {% block toolsContent %}{% endblock %}
+      {{ content|raw }}
     </div>
   </div>
 </div>

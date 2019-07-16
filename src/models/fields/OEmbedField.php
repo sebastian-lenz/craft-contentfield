@@ -2,14 +2,13 @@
 
 namespace lenz\contentfield\models\fields;
 
-use craft\base\ElementInterface;
-
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\OEmbedValue;
 use lenz\contentfield\models\values\ValueInterface;
-use lenz\contentfield\utilities\oembed\Endpoint;
-use lenz\contentfield\utilities\oembed\OEmbed;
-use lenz\contentfield\utilities\oembed\Provider;
+use lenz\contentfield\Plugin;
+use lenz\contentfield\services\oembeds\Endpoint;
+use lenz\contentfield\services\oembeds\OEmbed;
+use lenz\contentfield\services\oembeds\Provider;
 
 /**
  * Class OEmbedField
@@ -39,7 +38,7 @@ class OEmbedField extends AbstractField
       $providers = array();
       foreach ($config['providers'] as $source) {
         if (is_string($source)) {
-          $source = Provider::findProvider($source);
+          $source = Plugin::getInstance()->oembeds->findProvider($source);
         }
 
         if ($source instanceof Provider) {

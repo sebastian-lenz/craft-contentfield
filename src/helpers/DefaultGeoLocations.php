@@ -1,15 +1,19 @@
 <?php
 
-namespace lenz\contentfield\utilities;
+namespace lenz\contentfield\helpers;
 
+use Craft;
+use craft\base\Element;
 use craft\base\ElementInterface;
+use Throwable;
 
 /**
- * Class DefaultLocations
+ * Class DefaultGeoLocations
  *
  * see http://techslides.com/list-of-countries-and-capitals
  */
-class DefaultLocations {
+class DefaultGeoLocations
+{
   /**
    * @param ElementInterface|null $element
    * @return array
@@ -18,10 +22,10 @@ class DefaultLocations {
     $language = null;
 
     try {
-      $language = is_null($element)
-        ? \Craft::$app->sites->currentSite->language
+      $language = is_null($element) || !($element instanceof Element)
+        ? Craft::$app->sites->currentSite->language
         : $element->getSite()->language;
-    } catch (\Throwable $error) { }
+    } catch (Throwable $error) { }
 
     if (is_string($language)) {
       $language = strtoupper(

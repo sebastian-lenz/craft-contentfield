@@ -33,6 +33,7 @@ use yii\web\NotFoundHttpException;
  * @property services\definitions\FieldDefinitions $fields
  * @property services\FieldUsage $fieldUsage
  * @property services\definitions\ImageTagDefinitions $imageTags
+ * @property services\OEmbeds $oembeds
  * @property services\Relations $relations
  * @property services\Schemas $schemas
  * @property services\definitions\StructureDefinitions $structures
@@ -82,6 +83,9 @@ class Plugin extends BasePlugin
       ],
       'imageTags' => [
         'class' => services\definitions\ImageTagDefinitions::class,
+      ],
+      'oembeds' => [
+        'class' => services\OEmbeds::class,
       ],
       'relations' => [
         'class' => services\Relations::class,

@@ -6,19 +6,19 @@ use Exception;
 use lenz\contentfield\exceptions\FieldConfigException;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\ArrayField;
-use lenz\contentfield\models\fields\booleans\CheckboxField;
-use lenz\contentfield\models\fields\booleans\LightswitchField;
+use lenz\contentfield\models\fields\CheckboxField;
 use lenz\contentfield\models\fields\ColorField;
-use lenz\contentfield\models\fields\enumerations\SelectField;
-use lenz\contentfield\models\fields\enumerations\SwatchColorField;
 use lenz\contentfield\models\fields\InstanceField;
+use lenz\contentfield\models\fields\LightswitchField;
 use lenz\contentfield\models\fields\LinkField;
 use lenz\contentfield\models\fields\LocationField;
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\models\fields\RedactorField;
 use lenz\contentfield\models\fields\ReferenceField;
-use lenz\contentfield\models\fields\strings\TextAreaField;
-use lenz\contentfield\models\fields\strings\TextField;
+use lenz\contentfield\models\fields\SelectField;
+use lenz\contentfield\models\fields\SwatchColorField;
+use lenz\contentfield\models\fields\TextAreaField;
+use lenz\contentfield\models\fields\TextField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 
 /**

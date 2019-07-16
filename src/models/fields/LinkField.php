@@ -5,12 +5,12 @@ namespace lenz\contentfield\models\fields;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
-use Exception;
-use lenz\contentfield\models\values\ValueInterface;
-use lenz\contentfield\models\values\LinkValue;
 use craft\elements\Asset;
 use craft\elements\Entry;
-use lenz\contentfield\utilities\ReferenceMap;
+use Exception;
+use lenz\contentfield\helpers\ReferenceMap;
+use lenz\contentfield\models\values\LinkValue;
+use lenz\contentfield\models\values\ValueInterface;
 
 /**
  * Class LinkField

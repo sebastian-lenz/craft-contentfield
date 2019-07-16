@@ -5,7 +5,6 @@ namespace lenz\contentfield\models\values;
 use craft\base\ElementInterface;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
-use lenz\contentfield\utilities\ReferenceMap;
 use Twig\Markup;
 
 /**

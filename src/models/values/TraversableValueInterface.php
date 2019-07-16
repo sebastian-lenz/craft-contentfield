@@ -1,8 +1,6 @@
 <?php
 
-namespace lenz\contentfield\models;
-
-use lenz\contentfield\models\values\InstanceValue;
+namespace lenz\contentfield\models\values;
 
 /**
  * Interface TraversableValueInterface

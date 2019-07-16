@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\models\fields\enumerations;
+namespace lenz\contentfield\models\fields;
 
 /**
  * Class SwatchColorField

@@ -10,6 +10,8 @@ use craft\helpers\ArrayHelper;
 use Exception;
 use InvalidArgumentException;
 use lenz\contentfield\events\RootSchemasEvent;
+use lenz\contentfield\fields\content\QueryExtension;
+use lenz\contentfield\fields\content\InputData;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
@@ -127,11 +129,11 @@ class ContentField extends ForeignField
    * @param Content $value
    * @param ElementInterface|null $element
    * @param bool $disabled
-   * @return ContentFieldData
+   * @return InputData
    * @throws Throwable
    */
   public function getInputData(Content $value, ElementInterface $element = null, $disabled = false) {
-    return new ContentFieldData($this, $value, $element, $disabled);
+    return new InputData($this, $value, $element, $disabled);
   }
 
   /**
@@ -283,7 +285,7 @@ class ContentField extends ForeignField
    * @inheritDoc
    */
   public static function queryExtensionClass(): string {
-    return ContentFieldQueryExtension::class;
+    return QueryExtension::class;
   }
 
   /**

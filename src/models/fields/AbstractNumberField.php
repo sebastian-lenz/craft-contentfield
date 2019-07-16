@@ -1,8 +1,7 @@
 <?php
 
-namespace lenz\contentfield\models\fields\booleans;
+namespace lenz\contentfield\models\fields;
 
-use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\values\ValueInterface;
 
 /**

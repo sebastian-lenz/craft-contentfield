@@ -1,19 +1,25 @@
-{% extends "contentfield/_utility.twig" %}
-
-{% block toolsContent %}
-  {% for title, sources in sourceTypes %}
-    {% if sources|length %}
-      <h2>{{ title }}</h2>
-      <dl>
+{% for title, sources in sourceTypes %}
+  {% if sources|length %}
+    <h2>{{ title }}</h2>
+    <table class="tcfSourceTable">
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>Handle</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for source in sources %}
-          <dt class="tcfUtility--sourceTitle">
-            {{- source['key'] -}}
-          </dt>
-          <dd>
-            {{- source['label'] -}}
-          </dd>
+          <tr>
+            <td class="tcfSourceList--sourceLabel">
+              {{- source['label'] -}}
+            </td>
+            <td class="tcfSourceList--sourceHandle">
+              {{- source['key'] -}}
+            </td>
+          </tr>
         {% endfor %}
-      </dl>
-    {% endif %}
-  {% endfor %}
-{% endblock %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endfor %}

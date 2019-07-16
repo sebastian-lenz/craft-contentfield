@@ -5,13 +5,12 @@ namespace lenz\contentfield\models\values;
 use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\StringHelper;
+use Exception;
+use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\models\fields\RedactorField;
-use lenz\contentfield\models\ReferenceMapValueInterface;
 use lenz\contentfield\twig\DisplayInterface;
-use lenz\contentfield\utilities\RedactorFieldData;
-use lenz\contentfield\utilities\ReferenceMap;
 use Throwable;
-use yii\base\Exception;
+use Twig\Markup;
 
 /**
  * Class RedactorValue
@@ -20,9 +19,9 @@ use yii\base\Exception;
 class RedactorValue extends Value implements DisplayInterface, ReferenceMapValueInterface
 {
   /**
-   * @var string
+   * @var Markup[]|null
    */
-  private $_rawContent;
+  private $_pages = null;
 
   /**
    * @var string
@@ -35,9 +34,9 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
   private $_parsedTokens;
 
   /**
-   * @var RedactorFieldData
+   * @var string
    */
-  private $_value;
+  private $_rawContent;
 
   /**
    * @var bool
@@ -62,21 +61,53 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
    * @inheritdoc
    */
   public function __toString() {
-    return (string)$this->getRedactorFieldData();
+    return $this->_parsedContent;
   }
 
   /**
    * @inheritDoc
    */
   public function display(array $variables = []) {
-    echo $this->getRedactorFieldData();
+    echo $this->_parsedContent;
   }
 
   /**
    * @inheritdoc
    */
   public function getHtml() {
-    return $this->getRedactorFieldData();
+    return new Markup($this->_parsedContent, Craft::$app->charset);
+  }
+
+  /**
+   * @return Markup[]
+   */
+  public function getPages(): array {
+    if ($this->_pages !== null) {
+      return $this->_pages;
+    }
+
+    $this->_pages = [];
+    $pages = explode('<!--pagebreak-->', (string)$this);
+
+    foreach ($pages as $page) {
+      $this->_pages[] = new Markup($page, Craft::$app->charset);
+    }
+
+    return $this->_pages;
+  }
+
+  /**
+   * @param int $pageNumber
+   * @return Markup|null
+   */
+  public function getPage(int $pageNumber) {
+    $pages = $this->getPages();
+
+    if (isset($pages[$pageNumber - 1])) {
+      return $pages[$pageNumber - 1];
+    }
+
+    return null;
   }
 
   /**
@@ -85,17 +116,6 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
    */
   public function getRawContent() {
     return $this->_rawContent;
-  }
-
-  /**
-   * @return RedactorFieldData
-   */
-  public function getRedactorFieldData() {
-    if (!isset($this->_value)) {
-      $this->_value = new RedactorFieldData($this->getParsedContent());
-    }
-
-    return $this->_value;
   }
 
   /**
@@ -120,6 +140,13 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
   }
 
   /**
+   * @return int
+   */
+  public function getTotalPages(): int {
+    return count($this->getPages());
+  }
+
+  /**
    * @return bool
    */
   public function isEmpty() {
@@ -130,7 +157,7 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
    * @param string $str
    */
   public function setRawContent(string $str) {
-    unset($this->_value);
+    $this->_pages = null;
     $this->_rawContent = $str;
 
     $elements = Craft::$app->getElements();
@@ -161,7 +188,7 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
           }
 
           if (!is_numeric($matches[2])) {
-            throw new \Exception('Unsupported reference type');
+            throw new Exception('Unsupported reference type');
           }
 
           $token = '{' . StringHelper::randomString(9) . '}';
@@ -176,81 +203,6 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
     } catch (Throwable $error) {
       $this->_parsedContent = $elements->parseRefs($str);
       $this->_parsedTokens = null;
-    }
-  }
-
-
-  // Private methods
-  // ---------------
-
-  /**
-   * @return string
-   */
-  private function getParsedContent() {
-    if (is_null($this->_parsedTokens)) {
-      return $this->_parsedContent;
-    }
-
-    $content = $this->getContent();
-    if (is_null($content)) {
-      return Craft::$app->getElements()->parseRefs($this->_rawContent);
-    }
-
-    $loader = $content->getReferenceLoader();
-    $replace = [];
-    $search = [];
-    $str = $this->_parsedContent;
-
-    foreach ($this->_parsedTokens as $elementType => $tokensByName) {
-      $elements = $loader->getElements($elementType);
-
-      foreach ($tokensByName as $refName => $tokens) {
-        $element = $elements[$refName] ?? null;
-
-        foreach ($tokens as list($token, $matches)) {
-          $search[] = $token;
-          $replace[] = $this->getTokenReplacement($matches, $element);
-        }
-      }
-    }
-
-    // Swap the tokens with the references
-    return str_replace($search, $replace, $str);
-  }
-
-  /**
-   * Returns the replacement for a given reference tag.
-   *
-   * @param ElementInterface|null $element
-   * @param array $matches
-   * @return string
-   * @see parseRefs()
-   */
-  private function getTokenReplacement(array $matches, ElementInterface $element = null): string {
-    if ($element === null) {
-      // Put the ref tag back
-      return $matches[0];
-    }
-
-    if (empty($matches[3]) || !isset($element->{$matches[3]})) {
-      // Default to the URL
-      return (string)$element->getUrl();
-    }
-
-    try {
-      $value = $element->{$matches[3]};
-
-      if (is_object($value) && !method_exists($value, '__toString')) {
-        throw new Exception('Object of class ' . get_class($value) . ' could not be converted to string');
-      }
-
-      return Craft::$app->getElements()->parseRefs((string)$value);
-    } catch (Throwable $e) {
-      // Log it
-      Craft::error('An exception was thrown when parsing the ref tag "' . $matches[0] . "\":\n" . $e->getMessage(), __METHOD__);
-
-      // Replace the token with the original ref tag
-      return $matches[0];
     }
   }
 }

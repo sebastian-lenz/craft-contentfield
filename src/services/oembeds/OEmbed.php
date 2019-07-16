@@ -1,18 +1,16 @@
 <?php
 
-namespace lenz\contentfield\utilities\oembed;
+namespace lenz\contentfield\services\oembeds;
 
 use DOMDocument;
 use DOMElement;
-use lenz\contentfield\utilities\HTTP;
-use craft\helpers\Json;
-use lenz\contentfield\utilities\Url;
-use Throwable;
+use lenz\contentfield\helpers\UrlHelper;
 use Yii;
-use yii\caching\FileCache;
 
 /**
  * Class OEmbed
+ *
+ * Represents a single embeddable resource.
  */
 class OEmbed
 {
@@ -108,17 +106,6 @@ class OEmbed
 
 
   /**
-   * @var FileCache
-   */
-  private static $cache;
-
-  /**
-   * Default cache duration.
-   */
-  const CACHE_DURATION = 60 * 60 * 24 * 30;
-
-
-  /**
    * OEmbed constructor.
    * @param array $data
    */
@@ -159,6 +146,10 @@ class OEmbed
     return $html;
   }
 
+
+  // Protected methods
+  // -----------------
+
   /**
    * @param DOMElement $element
    * @param array $options
@@ -187,7 +178,7 @@ class OEmbed
       return;
     }
 
-    $url = new Url($src);
+    $url = new UrlHelper($src);
     $query = $url->getQuery();
 
     foreach ($options as $name => $value) {
@@ -200,45 +191,5 @@ class OEmbed
 
     $url->setQuery($query);
     $element->setAttribute('src', (string)$url);
-  }
-
-  /**
-   * @param string $url
-   * @return array|null
-   */
-  static public function fetchJson($url) {
-    $cache = self::getCache();
-    $result = null;
-
-    try {
-      $response = $cache->get($url);
-      if ($response !== false) {
-        $result = Json::decode($response);
-      }
-    } catch (Throwable $error) {}
-
-    if (is_null($result)) {
-      try {
-        $response = HTTP::fetch($url);
-        $result = Json::decode($response);
-        $duration = isset($result['cache_age']) ? $result['cache_age'] : self::CACHE_DURATION;
-        $cache->set($url, $response, $duration);
-      } catch (Throwable $error) {}
-    }
-
-    return is_array($result) ? $result : null;
-  }
-
-  /**
-   * @return FileCache
-   */
-  static public function getCache() {
-    if (!isset(self::$cache)) {
-      self::$cache = new FileCache([
-        'cachePath' => '@runtime/oembed'
-      ]);
-    }
-
-    return self::$cache;
   }
 }

@@ -1,9 +1,13 @@
 <?php
 
-namespace lenz\contentfield\utilities\oembed;
+namespace lenz\contentfield\services\oembeds;
+
+use lenz\contentfield\Plugin;
 
 /**
  * Class Endpoint
+ *
+ * Represents a single endpoint offered by a provider.
  */
 class Endpoint
 {
@@ -25,6 +29,7 @@ class Endpoint
 
   /**
    * Endpoint constructor.
+   *
    * @param Provider $provider
    * @param array $config
    */
@@ -58,7 +63,9 @@ class Endpoint
   public function getOEmbed($url) {
     $endpointUrl = str_replace('{format}', 'json', $this->url);
     $endpointUrl .= '?url=' . urlencode($url);
-    $data = OEmbed::fetchJson($endpointUrl);
+    $data = Plugin::getInstance()
+      ->oembeds
+      ->fetchJson($endpointUrl);
 
     return is_null($data)
       ? null

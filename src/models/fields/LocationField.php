@@ -2,10 +2,10 @@
 
 namespace lenz\contentfield\models\fields;
 
-use lenz\contentfield\models\values\ValueInterface;
-use lenz\contentfield\models\values\LocationValue;
-use lenz\contentfield\utilities\DefaultLocations;
 use craft\base\ElementInterface;
+use lenz\contentfield\helpers\DefaultGeoLocations;
+use lenz\contentfield\models\values\LocationValue;
+use lenz\contentfield\models\values\ValueInterface;
 
 /**
  * Class LocationField
@@ -56,7 +56,7 @@ class LocationField extends AbstractField
       );
     }
 
-    return DefaultLocations::get($element);
+    return DefaultGeoLocations::get($element);
   }
 
   /**

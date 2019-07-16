@@ -1,10 +1,9 @@
 <?php
 
-namespace lenz\contentfield\models\fields\booleans;
+namespace lenz\contentfield\models\fields;
 
-use lenz\contentfield\models\fields\AbstractField;
-use lenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
+use lenz\contentfield\models\values\ValueInterface;
 
 /**
  * Class AbstractBooleanField

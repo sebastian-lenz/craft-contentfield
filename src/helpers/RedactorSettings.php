@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\utilities;
+namespace lenz\contentfield\helpers;
 
 use Craft;
 use craft\base\Element;
@@ -108,6 +108,10 @@ class RedactorSettings extends Field
       return $value;
     }
   }
+
+
+  // Protected methods
+  // -----------------
 
   /**
    * @return array

@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\models;
+namespace lenz\contentfield\helpers;
 
 use lenz\contentfield\models\values\InstanceValue;
 

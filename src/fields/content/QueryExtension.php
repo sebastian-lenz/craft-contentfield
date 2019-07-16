@@ -1,17 +1,17 @@
 <?php
 
-namespace lenz\contentfield\fields;
+namespace lenz\contentfield\fields\content;
 
 use craft\elements\db\ElementQuery;
 use craft\events\PopulateElementEvent;
+use lenz\contentfield\helpers\ReferenceLoader;
 use lenz\contentfield\models\Content;
-use lenz\contentfield\utilities\ReferenceLoader;
 use lenz\craft\utils\foreignField\ForeignFieldQueryExtension;
 
 /**
- * Class ContentFieldQueryExtension
+ * Class QueryExtension
  */
-class ContentFieldQueryExtension extends ForeignFieldQueryExtension
+class QueryExtension extends ForeignFieldQueryExtension
 {
   /**
    * @var ReferenceLoader

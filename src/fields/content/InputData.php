@@ -1,20 +1,21 @@
 <?php
 
-namespace lenz\contentfield\fields;
+namespace lenz\contentfield\fields\content;
 
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\helpers\Json;
+use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use Throwable;
 
 /**
- * Class ContentFieldData
+ * Class InputData
  */
-class ContentFieldData
+class InputData
 {
   /**
    * @var bool

@@ -3,14 +3,12 @@
 namespace lenz\contentfield\controllers;
 
 use Craft;
-use craft\helpers\Json;
+use craft\web\Controller;
 use Exception;
-use lenz\contentfield\fields\ContentFieldData;
+use lenz\contentfield\fields\content\InputData;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\utilities\Url;
-use craft\web\Controller;
 use yii\web\Response;
 
 /**
@@ -51,7 +49,7 @@ class CpController extends Controller
     return $this->asJson([
       'result'     => true,
       'data'       => $value->getEditorValue(),
-      'references' => ContentFieldData::loadReferences($value),
+      'references' => InputData::loadReferences($value),
     ]);
   }
 

@@ -2,12 +2,11 @@
 
 namespace lenz\contentfield\models\values;
 
-use lenz\contentfield\models\fields\LinkField;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
 use craft\helpers\Template;
-use lenz\contentfield\models\ReferenceMapValueInterface;
-use lenz\contentfield\utilities\ReferenceMap;
+use lenz\contentfield\helpers\ReferenceMap;
+use lenz\contentfield\models\fields\LinkField;
 
 /**
  * Class LinkValue
