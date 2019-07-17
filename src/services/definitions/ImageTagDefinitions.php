@@ -63,26 +63,17 @@ class ImageTagDefinitions extends AbstractDefinitions
   /**
    * @param Asset $asset
    * @param array|string $config
-   * @param array|null $extraConfig
    * @return string|null
    * @throws Exception
    */
-  public function render(Asset $asset, $config, $extraConfig = null) {
+  public function render(Asset $asset, $config) {
     if (!is_array($config)) {
       $config = [
         'type' => (string)$config
       ];
     }
 
-    $config = $this->resolveDefinition($config);
-    if (!is_null($extraConfig)) {
-      if (!isset($extraConfig['type'])) {
-        $extraConfig['type'] = $config['type'];
-      }
-
-      $config = $this->mergeDefinitions($extraConfig, $config);
-    }
-
+    $config          = $this->resolveDefinition($config);
     $imageTagClass   = $this->getImageTagClass($config);
     $type            = $config['type'];
     $config['asset'] = $asset;

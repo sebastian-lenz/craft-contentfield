@@ -44,11 +44,10 @@ class Extension extends AbstractExtension
   /**
    * @param Asset $asset
    * @param string|array $config
-   * @param array|null $extraConfig
    * @return string|null
    * @throws Exception
    */
-  static function imageTag($asset, $config, $extraConfig = null) {
+  static function imageTag($asset, $config) {
     if ($asset instanceof AssetQuery) {
       $asset = $asset->one();
     }
@@ -60,7 +59,7 @@ class Extension extends AbstractExtension
     return $asset instanceof Asset
       ? Template::raw(Plugin::getInstance()
         ->imageTags
-        ->render($asset, $config, $extraConfig))
+        ->render($asset, $config))
       : null;
   }
 }
