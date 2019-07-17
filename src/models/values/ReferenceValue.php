@@ -133,16 +133,15 @@ class ReferenceValue extends Value implements
 
   /**
    * @param string|array $config
-   * @param array|null $extraConfig
    * @return Markup|Markup|null
    * @throws Exception
    */
-  public function imageTag($config = 'default', $extraConfig = null) {
+  public function imageTag($config = 'default') {
     foreach ($this->getReferences() as $reference) {
       if ($reference instanceof Asset) {
         $result = Plugin::getInstance()
           ->imageTags
-          ->render($reference, $config, $extraConfig);
+          ->render($reference, $config);
 
         return is_null($result)
           ? null

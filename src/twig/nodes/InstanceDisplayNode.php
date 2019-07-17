@@ -43,12 +43,15 @@ class InstanceDisplayNode extends DisplayNode
       return [];
     }
 
-    return array_filter($this->_field->schemas, function($schema) {
-      return (
-        $schema instanceof TemplateSchema &&
-        ($this->_forceInline || $schema->inline)
-      );
-    });
+    return array_filter(
+      $this->_field->getDependedSchemas(),
+      function($schema) {
+        return (
+          $schema instanceof TemplateSchema &&
+          ($this->_forceInline || $schema->inline)
+        );
+      }
+    );
   }
 
 

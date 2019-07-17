@@ -48,12 +48,15 @@ class ArrayDisplayNode extends DisplayNode
       return [];
     }
 
-    return array_filter($member->schemas, function($schema) {
-      return (
-        $schema instanceof TemplateSchema &&
-        ($this->_forceInline || $schema->inline)
-      );
-    });
+    return array_filter(
+      $member->getDependedSchemas(),
+      function($schema) {
+        return (
+          $schema instanceof TemplateSchema &&
+          ($this->_forceInline || $schema->inline)
+        );
+      }
+    );
   }
 
 
