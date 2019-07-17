@@ -2,11 +2,8 @@
 
 namespace lenz\contentfield;
 
-use Craft;
 use craft\base\Model;
 use craft\helpers\ArrayHelper;
-use craft\helpers\FileHelper;
-use Throwable;
 
 /**
  * Class Config
@@ -127,28 +124,6 @@ class Config extends Model
       [['translator'], 'in', 'skipOnEmpty' => true, 'range' => $translators],
       [['translatorSettings'], 'validateTranslatorSettings']
     ];
-  }
-
-  /**
-   * @param array $values
-   * @param bool $safeOnly
-   * @throws Throwable
-   */
-  public function setAttributes($values, $safeOnly = true) {
-    $oldValues = $this->getAttributes(self::CLEAR_CACHE_ATTRIBUTES);
-    parent::setAttributes($values, $safeOnly);
-
-    foreach ($oldValues as $name => $oldValue) {
-      if ($this->$name != $oldValue) {
-        Craft::$app->cache->flush();
-
-        if ($name == 'templateInlining') {
-          FileHelper::clearDirectory(Craft::$app->getPath()->getCompiledTemplatesPath(false));
-        }
-
-        break;
-      }
-    }
   }
 
   /**
