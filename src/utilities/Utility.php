@@ -44,15 +44,22 @@ class Utility extends UtilityBase
   /**
    * @inheritdoc
    */
-  public static function id(): string {
-    return 'tcf-utilities';
+  public static function displayName(): string {
+    return Craft::t('contentfield', 'Content field utilities');
   }
 
   /**
    * @inheritdoc
    */
-  public static function displayName(): string {
-    return Craft::t('contentfield', 'Content field utilities');
+  public static function iconPath() {
+    return dirname(__DIR__) . '/icon-mono.svg';
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public static function id(): string {
+    return 'tcf-utilities';
   }
 
 
