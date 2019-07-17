@@ -2,7 +2,9 @@
 
 namespace lenz\contentfield\services\definitions;
 
+use Craft;
 use craft\elements\Asset;
+use craft\helpers\Json;
 use Exception;
 use lenz\contentfield\services\imageTags\DefaultImageTag;
 use lenz\contentfield\services\imageTags\ImageTag;
@@ -73,23 +75,25 @@ class ImageTagDefinitions extends AbstractDefinitions
       ];
     }
 
-    $config          = $this->resolveDefinition($config);
-    $imageTagClass   = $this->getImageTagClass($config);
-    $type            = $config['type'];
-    $config['asset'] = $asset;
+    $config   = $this->resolveDefinition($config);
+    $cache    = Craft::$app->getCache();
+    $cacheKey = self::class . '::render(' . md5(Json::encode([
+      'asset'  => $asset->uid,
+      'mtime'  => $asset->dateModified,
+      'config' => $config,
+    ])) . ')';
 
-    unset($config['type']);
-
-    $imageTag = new $imageTagClass($config);
-    if (!($imageTag instanceof ImageTag)) {
-      throw new Exception(sprintf(
-        'Invalid image tag class `%s` for type %s.', $imageTagClass, $type)
-      );
+    $result = $cache->get($cacheKey);
+    if ($result !== false) {
+      return $result;
     }
 
-    return $imageTag->isSupported()
-      ? $imageTag->render()
-      : null;
+    $result = $this->renderInternal($asset, $config);
+    if (strpos($result, 'actions/assets/generate-transform') === false) {
+      $cache->set($cacheKey, $result);
+    }
+
+    return $result;
   }
 
 
@@ -134,5 +138,30 @@ class ImageTagDefinitions extends AbstractDefinitions
   protected function mergeDefinitions(array $config, array $parent) {
     $imageTagClass = $this->getImageTagClass($parent);
     return $imageTagClass::mergeConfig($config, $parent);
+  }
+
+  /**
+   * @param Asset $asset
+   * @param array $config
+   * @return string|null
+   * @throws Exception
+   */
+  protected function renderInternal(Asset $asset, array $config) {
+    $imageTagClass   = $this->getImageTagClass($config);
+    $type            = $config['type'];
+    $config['asset'] = $asset;
+
+    unset($config['type']);
+
+    $imageTag = new $imageTagClass($config);
+    if (!($imageTag instanceof ImageTag)) {
+      throw new Exception(sprintf(
+        'Invalid image tag class `%s` for type %s.', $imageTagClass, $type)
+      );
+    }
+
+    return $imageTag->isSupported()
+      ? $imageTag->render()
+      : null;
   }
 }
