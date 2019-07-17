@@ -12,8 +12,23 @@ use lenz\craft\utils\foreignField\ForeignFieldRecord;
 class ContentRecord extends ForeignFieldRecord
 {
   /**
-   * @param Migration $migration
-   * @param array $columns
+   * @inheritDoc
+   */
+  public function attributes() {
+    return [
+      'id',
+      'elementId',
+      'siteId',
+      'fieldId',
+      'dateCreated',
+      'dateUpdated',
+      'uid',
+      'model'
+    ];
+  }
+
+  /**
+   * @inheritDoc
    */
   public static function createTable(Migration $migration, array $columns = []) {
     return parent::createTable($migration, $columns + [

@@ -2,7 +2,7 @@
 
 namespace lenz\contentfield\models\values;
 
-use lenz\contentfield\models\fields\enumerations\AbstractEnumerationField;
+use lenz\contentfield\models\fields\AbstractEnumerationField;
 
 /**
  * Class EnumerationValue

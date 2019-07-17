@@ -7,8 +7,7 @@ use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\services\loaders\StructureLoader;
-use lenz\contentfield\services\StructureManager;
+use lenz\contentfield\services\definitions\StructureDefinitions;
 
 /**
  * Class StructureSchema
@@ -75,7 +74,7 @@ class StructureSchema extends AbstractSchema
   // -----------------
 
   /**
-   * @return StructureManager
+   * @return \lenz\contentfield\services\definitions\StructureDefinitions
    */
   protected function getManager() {
     return Plugin::getInstance()->structures;

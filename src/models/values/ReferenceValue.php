@@ -5,15 +5,14 @@ namespace lenz\contentfield\models\values;
 use ArrayAccess;
 use ArrayIterator;
 use Countable;
-use Exception;
-use IteratorAggregate;
-use lenz\contentfield\models\fields\ReferenceField;
-use lenz\contentfield\models\ReferenceMapValueInterface;
-use lenz\contentfield\Plugin;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\helpers\Template;
-use lenz\contentfield\utilities\ReferenceMap;
+use Exception;
+use IteratorAggregate;
+use lenz\contentfield\helpers\ReferenceMap;
+use lenz\contentfield\models\fields\ReferenceField;
+use lenz\contentfield\Plugin;
 use Twig\Markup;
 
 /**

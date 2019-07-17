@@ -1,0 +1,8 @@
+{% import '_includes/forms' as forms %}
+
+{{- forms.textField({
+  label:        'Subscription key',
+  instructions: 'The subscription key of your subscription to "Microsoft.CognitiveServicesTextTranslation".',
+  name:         'subscriptionKey',
+  value:        subscriptionKey is defined ? subscriptionKey : '',
+}) -}}

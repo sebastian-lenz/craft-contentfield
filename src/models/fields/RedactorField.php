@@ -3,10 +3,10 @@
 namespace lenz\contentfield\models\fields;
 
 use Craft;
-use lenz\contentfield\models\values\ValueInterface;
-use lenz\contentfield\models\values\RedactorValue;
 use craft\base\ElementInterface;
-use lenz\contentfield\utilities\RedactorSettings;
+use lenz\contentfield\helpers\RedactorSettings;
+use lenz\contentfield\models\values\RedactorValue;
+use lenz\contentfield\models\values\ValueInterface;
 use Throwable;
 
 /**
@@ -50,7 +50,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return new RedactorValue($data, $parent, $this);
   }
 
@@ -76,7 +76,7 @@ class RedactorField extends AbstractField
   }
 
   /**
-   * @return RedactorSettings|null
+   * @return \lenz\contentfield\helpers\RedactorSettings|null
    */
   public function getRedactorField() {
     try {
@@ -109,7 +109,7 @@ class RedactorField extends AbstractField
       return '';
     }
 
-    return (string)$value->getRedactorFieldData();
+    return (string)$value;
   }
 
   /**

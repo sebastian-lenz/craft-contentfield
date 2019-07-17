@@ -8,12 +8,10 @@ use Countable;
 use Exception;
 use IteratorAggregate;
 use lenz\contentfield\events\BeforeActionEvent;
-use lenz\contentfield\models\BeforeActionInterface;
+use lenz\contentfield\helpers\BeforeActionInterface;
+use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\models\fields\ArrayField;
-use lenz\contentfield\models\ReferenceMapValueInterface;
-use lenz\contentfield\models\TraversableValueInterface;
 use lenz\contentfield\twig\DisplayInterface;
-use lenz\contentfield\utilities\ReferenceMap;
 use Twig\Markup;
 
 /**

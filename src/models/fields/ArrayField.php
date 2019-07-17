@@ -43,11 +43,11 @@ class ArrayField extends AbstractField
 
   /**
    * ArrayField constructor.
-   * @param AbstractSchema $schema
+   * @param AbstractSchema|null $schema
    * @param array $config
    * @throws Exception
    */
-  public function __construct(AbstractSchema $schema, array $config = []) {
+  public function __construct(AbstractSchema $schema = null, array $config = []) {
     if (array_key_exists('member', $config)) {
       $config['member']['name'] = $config['name'];
       $config['member'] = Plugin::getInstance()
@@ -61,7 +61,7 @@ class ArrayField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return new ArrayValue($data, $parent, $this);
   }
 

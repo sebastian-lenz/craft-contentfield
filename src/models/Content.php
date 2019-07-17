@@ -11,10 +11,10 @@ use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\events\RenderEvent;
 use lenz\contentfield\fields\ContentField;
+use lenz\contentfield\helpers\ReferenceLoader;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\DisplayInterface;
-use lenz\contentfield\utilities\ReferenceLoader;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
 use Throwable;
@@ -252,7 +252,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
       // If we don't have a model and there is only one schema
       // available, create a model from it
       if (is_null($model) && count($schemas) === 1) {
-        $model = new InstanceValue([], $schemas[0], null, null);
+        $model = new InstanceValue([], reset($schemas), null, null);
       }
 
       if (!is_null($model)) {

@@ -4,10 +4,12 @@ namespace lenz\contentfield\models\schemas;
 
 use Craft;
 use craft\base\ElementInterface;
+use craft\elements\Asset;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
+use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\validators\ValueValidator;
@@ -35,7 +37,15 @@ abstract class AbstractSchema extends Model
   /**
    * Defines the css grid layout of this schema. Grid layout is used
    * to place the field groups within the schema form.
-   * @var string
+   *
+   * This is a shorthand for:
+   * ```
+   * style:
+   *   medium:
+   *     grid: <value>
+   * ```
+   *
+   * @var string|array
    */
   public $grid;
 
@@ -63,10 +73,47 @@ abstract class AbstractSchema extends Model
   public $preview;
 
   /**
+   * The name of an asset reference field whose image will be used as an
+   * replacement of the icon the header.
+   *
+   * ```
+   * previewImage: imageField
+   * ```
+   *
+   * @var string
+   */
+  public $previewImage;
+
+  /**
+   * A template for a short text displayed in the header of an instance
+   * next to the type name.
+   *
+   * Follows the format of handlebars/twig templates but only supports
+   * variable injection due to performance considerations e.g.:
+   * ```
+   * previewLabel: "{{primaryTitle}}: {{secondaryTitle}}"
+   * ```
+   *
+   * Can be set to the name of a single field as a shorthand:
+   * ```
+   * previewLabel: primaryTitle
+   * ```
+   *
+   * @var string
+   */
+  public $previewLabel;
+
+  /**
    * Marks this schema as a root schema. Only used to tidy up the cp field settings.
    * @var bool
    */
   public $rootSchema = false;
+
+  /**
+   * The css styles applied to form of this instance, grouped by breakpoint.
+   * @var array
+   */
+  public $style;
 
   /**
    * The internal name of this schema.
@@ -78,6 +125,40 @@ abstract class AbstractSchema extends Model
    * The default icon to use if no icon is specified.
    */
   const DEFAULT_ICON = 'material:check_box_outline_blank';
+
+  /**
+   * List of allowed style attributes.
+   */
+  const STYLE_ATTRIBUTES = [
+    'alignContent',
+    'alignItems',
+    'grid',
+    'gridAutoColumns',
+    'gridAutoFlow',
+    'gridAutoRows',
+    'gridColumnGap',
+    'gridGap',
+    'gridRowGap',
+    'gridTemplate',
+    'gridTemplateAreas',
+    'gridTemplateColumns',
+    'gridTemplateRows',
+    'justifyContent',
+    'justifyItems',
+    'placeContent',
+    'placeItems',
+  ];
+
+  /**
+   * A list of fields we consider using as title field.
+   */
+  const TITLE_CANDIDATES = [
+    'title',
+    'primaryTitle',
+    'heading',
+    'headline',
+    'label'
+  ];
 
 
   /**
@@ -163,14 +244,8 @@ abstract class AbstractSchema extends Model
 
     foreach ($this->fields as $field) {
       $schemas = $field->getDependedSchemas();
-      if (is_null($schemas)) {
-        continue;
-      }
-
-      foreach ($schemas as $schema) {
-        if (!in_array($schema, $result)) {
-          $result[] = $schema;
-        }
+      if (!is_null($schemas)) {
+        $result += $schemas;
       }
     }
 
@@ -193,13 +268,27 @@ abstract class AbstractSchema extends Model
     }
 
     return array(
-      'fields'    => $fields,
-      'grid'      => (string)$this->grid,
-      'icon'      => $this->getIcon(),
-      'label'     => Plugin::t($this->getLabel()),
-      'preview'   => $this->getPreview(),
-      'qualifier' => $this->qualifier,
+      'fields'       => $fields,
+      'icon'         => $this->getIcon(),
+      'label'        => Plugin::t($this->getLabel()),
+      'preview'      => $this->getPreview(),
+      'previewImage' => $this->getPreviewImage(),
+      'previewLabel' => $this->getPreviewLabel(),
+      'qualifier'    => $this->qualifier,
+      'style'        => $this->getEditorStyle(),
     );
+  }
+
+  /**
+   * Return a field by name.
+   *
+   * @param string $name
+   * @return AbstractField|null
+   */
+  public function getField(string $name) {
+    return array_key_exists($name, $this->fields)
+      ? $this->fields[$name]
+      : null;
   }
 
   /**
@@ -305,6 +394,14 @@ abstract class AbstractSchema extends Model
    * @param string $name
    * @return bool
    */
+  public function hasField(string $name) {
+    return array_key_exists($name, $this->fields);
+  }
+
+  /**
+   * @param string $name
+   * @return bool
+   */
   abstract public function hasLocalStructure($name);
 
   /**
@@ -385,5 +482,66 @@ abstract class AbstractSchema extends Model
         }
       }
     }
+  }
+
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @return array|null
+   */
+  protected function getEditorStyle() {
+    $style = isset($this->style) && is_array($this->style)
+      ? $this->style
+      : [];
+
+    if (isset($this->grid) && !empty($this->grid)) {
+      $style[AbstractField::DEFAULT_BREAKPOINT]['grid'] = $this->grid;
+    }
+
+    return AbstractField::createBreakpoints($style, self::STYLE_ATTRIBUTES);
+  }
+
+  /**
+   * @return string|null
+   */
+  protected function getPreviewImage() {
+    if (!isset($this->previewImage)) {
+      return null;
+    }
+
+    $field = $this->getField($this->previewImage);
+    if (
+      $field instanceof ReferenceField &&
+      $field->elementType === Asset::class
+    ) {
+      return $field->name;
+    }
+
+    return null;
+  }
+
+  /**
+   * @return string|null
+   */
+  protected function getPreviewLabel() {
+    if (isset($this->previewLabel) && is_string($this->previewLabel)) {
+      return $this->hasField($this->previewLabel)
+        ? '{{' . $this->previewLabel . '}}'
+        : $this->previewLabel;
+    }
+
+    foreach (self::TITLE_CANDIDATES as $candidate) {
+      if ($this->hasField($candidate)) {
+        return '{{' . $candidate . '}}';
+      }
+    }
+
+    foreach ($this->fields as $name => $field) {
+      return '{{' . $name . '}}';
+    }
+
+    return null;
   }
 }

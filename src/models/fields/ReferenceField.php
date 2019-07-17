@@ -56,7 +56,7 @@ class ReferenceField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return new ReferenceValue($data, $parent, $this);
   }
 

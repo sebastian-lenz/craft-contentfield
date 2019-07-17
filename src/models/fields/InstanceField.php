@@ -8,7 +8,7 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\services\SchemaManager;
+use lenz\contentfield\services\Schemas;
 use lenz\contentfield\validators\InstanceValueValidator;
 use Throwable;
 
@@ -25,7 +25,7 @@ class InstanceField extends AbstractField
   public $schemas;
 
   /**
-   * @var AbstractSchema
+   * @var AbstractSchema|null
    */
   private $_parentSchema;
 
@@ -48,11 +48,11 @@ class InstanceField extends AbstractField
   /**
    * InstanceField constructor.
    *
-   * @param AbstractSchema $schema
+   * @param AbstractSchema|null $schema
    * @param array $config
    * @throws Throwable
    */
-  public function __construct(AbstractSchema $schema, array $config = []) {
+  public function __construct(AbstractSchema $schema = null, array $config = []) {
     $this->_parentSchema = $schema;
 
     if (array_key_exists('schemas', $config)) {
@@ -68,7 +68,7 @@ class InstanceField extends AbstractField
    * @inheritdoc
    * @throws Throwable
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     if (count($this->schemas) === 0) {
       return null;
     }
@@ -83,7 +83,7 @@ class InstanceField extends AbstractField
 
     if (is_null($schema) || !$this->isValidSchema($schema)) {
       $schemas = $this->getDependedSchemas();
-      $data[InstanceValue::TYPE_PROPERTY] = $schemas[0]->qualifier;
+      $data[InstanceValue::TYPE_PROPERTY] = reset($schemas)->qualifier;
     }
 
     return Plugin::getInstance()->schemas->createValue($data, $parent, $this);
@@ -99,10 +99,12 @@ class InstanceField extends AbstractField
       $parent  = $this->_parentSchema;
 
       $this->_resolvedSchemas = $manager->getSchemas(
-        array_map(function($schema) use ($parent, $manager) {
-          return $manager->parseSchemaQualifier($schema, $parent);
-        },
-        $this->schemas)
+        array_map(
+          function($schema) use ($parent, $manager) {
+            return $manager->parseSchemaQualifier($schema, $parent);
+          },
+          $this->schemas
+        )
       );
     }
 
@@ -114,10 +116,7 @@ class InstanceField extends AbstractField
    * @throws Throwable
    */
   public function getEditorData(ElementInterface $element = null) {
-    $qualifiers = array_map(function(AbstractSchema $schema) {
-      return $schema->qualifier;
-    }, $this->getDependedSchemas());
-
+    $qualifiers = array_keys($this->getDependedSchemas());
     if (count($qualifiers) === 0) {
       return null;
     }
@@ -172,8 +171,8 @@ class InstanceField extends AbstractField
         return true;
       } else if (
         $schemaInfo['loader'] == $qualifierInfo['loader'] &&
-        SchemaManager::isPattern($schemaInfo['name']) &&
-        preg_match(SchemaManager::toPattern($schemaInfo['name']), $qualifierInfo['name'])
+        Schemas::isPattern($schemaInfo['name']) &&
+        preg_match(Schemas::toPattern($schemaInfo['name']), $qualifierInfo['name'])
       ) {
         return true;
       }

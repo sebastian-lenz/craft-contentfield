@@ -3,7 +3,6 @@
 namespace lenz\contentfield\models\values;
 
 use lenz\contentfield\models\fields\OEmbedField;
-use lenz\contentfield\utilities\oembed\OEmbed;
 use Twig\Markup;
 
 /**
@@ -55,7 +54,7 @@ class OEmbedValue extends Value
   }
 
   /**
-   * @return OEmbed|null
+   * @return \lenz\contentfield\services\oembeds\OEmbed|null
    */
   public function getOEmbed() {
     return $this->_field->getOEmbed($this->_url);

@@ -3,14 +3,12 @@
 namespace lenz\contentfield\controllers;
 
 use Craft;
-use craft\helpers\Json;
+use craft\web\Controller;
 use Exception;
-use lenz\contentfield\fields\ContentFieldData;
+use lenz\contentfield\fields\content\InputData;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\utilities\Url;
-use craft\web\Controller;
 use yii\web\Response;
 
 /**
@@ -18,12 +16,6 @@ use yii\web\Response;
  */
 class CpController extends Controller
 {
-  /**
-   * @var string
-   */
-  const GOOGLE_TRANSLATE_ENDPOINT = 'https://www.googleapis.com/language/translate/v2';
-
-
   /**
    * @param integer $siteId
    * @param integer $elementId
@@ -57,7 +49,7 @@ class CpController extends Controller
     return $this->asJson([
       'result'     => true,
       'data'       => $value->getEditorValue(),
-      'references' => ContentFieldData::loadReferences($value),
+      'references' => InputData::loadReferences($value),
     ]);
   }
 
@@ -100,41 +92,24 @@ class CpController extends Controller
    * @return Response
    */
   public function actionTranslate($source, $target, $text) {
-    $apiKey = Plugin::getInstance()
-      ->getSettings()
-      ->googleTranslateApiKey;
+    $translated = null;
+    $translator = Plugin::getInstance()
+      ->translators
+      ->getTranslator();
 
-    if (empty($apiKey) || empty(trim($text))) {
-      return $this->asJson([
-        'success' => true,
-        'data'    => $text,
-      ]);
+    if (!is_null($translator)) {
+      $translated = $translator->translate($source, $target, $text);
     }
 
-    $url = new Url(self::GOOGLE_TRANSLATE_ENDPOINT);
-    $url->setQuery([
-      'key'    => $apiKey,
-      'q'      => $text,
-      'source' => $source,
-      'target' => $target,
-    ]);
-
-    $handle = curl_init((string)$url);
-    curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($handle);
-    $responseDecoded = Json::decode($response, true);
-    $responseCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
-    curl_close($handle);
-
-    if ($responseCode != 200) {
-      $this->asJson([
-        'success' => false,
+    if (!is_null($translated)) {
+      return $this->asJson([
+        'success' => true,
+        'data'    => $translated,
       ]);
     }
 
     return $this->asJson([
-      'success' => true,
-      'data' => $responseDecoded['data']['translations'][0]['translatedText'],
+      'success' => false,
     ]);
   }
 }

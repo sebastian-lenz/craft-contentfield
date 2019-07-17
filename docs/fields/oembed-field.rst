@@ -62,7 +62,7 @@ You can also supply a coma separated list of provider names:
 The definitions returned by oembed.com may not always be complete and
 correct, you can alter or register providers by modifying the static
 variable :code:`$CUSTOM_DEFINITIONS` of the class
-:code:`lenz\contentfield\utilities\oembed\Provider`.
+:code:`lenz\contentfield\services\oembeds\Provider`.
 
 .. note::
    Keep in mind that the Craft CMS needs to make requests to both

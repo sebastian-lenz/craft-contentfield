@@ -1,0 +1,53 @@
+{% import '_includes/forms' as forms %}
+
+<h2>Templates</h2>
+
+{{- forms.selectField({
+  label:        'Template inlining',
+  instructions: 'When enabled templates rendered using the `display` twig tag can be merged into the calling template. Set to "When in production mode" by default.',
+  name:         'templateInlining',
+  value:        config.templateInlining,
+  options:      config.environmentModes
+}) -}}
+
+{{- forms.selectField({
+  label:        'Template index cache',
+  instructions: 'When enabled the result of the template directory crawler will be cached. Set to "When in production mode" by default.',
+  name:         'templateIndexCache',
+  value:        config.templateIndexCache,
+  options:      config.environmentModes
+}) -}}
+
+{{- forms.selectField({
+  label:        'Check templates for modifications',
+  instructions: 'When enabled all template files will be checked for modifications on every request. Set to "When in development mode" by default.',
+  name:         'templateModificationCheck',
+  value:        config.templateModificationCheck,
+  options:      config.environmentModes
+}) -}}
+
+<h2>Fields</h2>
+
+{{- forms.textField({
+  label:        'Google Maps API key',
+  instructions: 'The Google Maps API key used to display maps in the control panel. Needs access to the "Maps JavaScript API", "Maps Static API" and "Places API" service.',
+  name:         'googleMapsApiKey',
+  value:        config.googleMapsApiKey,
+}) -}}
+
+<h2>Translators</h2>
+
+{{- forms.selectField({
+  label:        'Active translator',
+  instructions: 'The translator that will be used when translating content fields.<br>Please make sure to meet the terms and conditions of the selected translator, especially regarding the required attribution.',
+  name:         'translator',
+  options:      translators.translatorTypeOptions,
+  value:        config.translator,
+}) -}}
+
+{% for settings in translators.translatorTypeSettings %}
+  <h2>{{ settings.displayName }}</h2>
+  {% namespace 'translatorSettings['~settings.handle~']' %}
+    {{ settings.html }}
+  {% endnamespace %}
+{% endfor %}

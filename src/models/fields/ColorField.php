@@ -30,7 +30,7 @@ class ColorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent) {
+  public function createValue($data, ValueInterface $parent = null) {
     return new ColorValue($data, $parent, $this);
   }
 

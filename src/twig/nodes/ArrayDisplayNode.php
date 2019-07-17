@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\twig\nodes;
 
+use lenz\contentfield\Config;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\TemplateSchema;
@@ -41,7 +42,7 @@ class ArrayDisplayNode extends DisplayNode
   public function getInlineSchemaCandidates() {
     $member = $this->_field->member;
     if (
-      CRAFT_ENVIRONMENT != 'production' ||
+      !Config::getInstance()->useTemplateInlining() ||
       !($member instanceof InstanceField)
     ) {
       return [];

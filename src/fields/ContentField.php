@@ -10,11 +10,13 @@ use craft\helpers\ArrayHelper;
 use Exception;
 use InvalidArgumentException;
 use lenz\contentfield\events\RootSchemasEvent;
+use lenz\contentfield\fields\content\QueryExtension;
+use lenz\contentfield\fields\content\InputData;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\records\ContentRecord;
-use lenz\contentfield\utilities\FieldUsage;
+use lenz\contentfield\services\fieldUsages\Usage;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
 use Throwable;
@@ -126,11 +128,12 @@ class ContentField extends ForeignField
   /**
    * @param Content $value
    * @param ElementInterface|null $element
-   * @return ContentFieldData
+   * @param bool $disabled
+   * @return InputData
    * @throws Throwable
    */
-  public function getInputData(Content $value, ElementInterface $element = null) {
-    return new ContentFieldData($this, $value, $element);
+  public function getInputData(Content $value, ElementInterface $element = null, $disabled = false) {
+    return new InputData($this, $value, $element, $disabled);
   }
 
   /**
@@ -140,7 +143,7 @@ class ContentField extends ForeignField
    */
   public function getRootSchemas(ElementInterface $element = null) {
     $schemas = $this->rootSchemas;
-    $uids = FieldUsage::toUids($element);
+    $uids = Plugin::getInstance()->fieldUsage->toUids($element);
 
     foreach ($uids as $uid) {
       if (array_key_exists($uid, $this->rootSchemasByUsage)) {
@@ -174,10 +177,10 @@ class ContentField extends ForeignField
   }
 
   /**
-   * @return FieldUsage[]
+   * @return Usage[]
    */
   public function getUsages() {
-    return FieldUsage::forField($this);
+    return Plugin::getInstance()->fieldUsage->findUsages($this);
   }
 
   /**
@@ -282,7 +285,7 @@ class ContentField extends ForeignField
    * @inheritDoc
    */
   public static function queryExtensionClass(): string {
-    return ContentFieldQueryExtension::class;
+    return QueryExtension::class;
   }
 
   /**

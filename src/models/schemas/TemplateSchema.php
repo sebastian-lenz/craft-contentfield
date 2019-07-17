@@ -5,7 +5,6 @@ namespace lenz\contentfield\models\schemas;
 use Craft;
 use craft\web\twig\Environment;
 use craft\web\View;
-use lenz\contentfield\controllers\EntriesController;
 use lenz\contentfield\controllers\TemplatesController;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
@@ -64,9 +63,7 @@ class TemplateSchema extends AbstractSchemaContainer
       'mimeType' => $this->mimeType,
     ];
 
-    $action->controller =  $event->isPreviewRequest
-      ? new EntriesController('entries', $module, $config)
-      : new TemplatesController('templates', $module, $config);
+    $action->controller = new TemplatesController('templates', $module, $config);
   }
 
   /**

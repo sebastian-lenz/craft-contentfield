@@ -42,22 +42,14 @@ class ContentFieldAsset extends AssetBundle
    * @param View $view
    */
   private function _registerTranslations(View $view) {
-    $view->registerTranslations('contentfield', [
-      'ARRAY_MEMBER_COLLAPSE',
-      'ARRAY_MEMBER_EXPAND',
-
-      'COMMAND_COPY_LABEL',
-      'COMMAND_CREATE_LABEL',
-      'COMMAND_CUT_LABEL',
-      'COMMAND_DELETE_LABEL',
-      'COMMAND_EDIT_LABEL',
-      'COMMAND_MOVE_DOWN_LABEL',
-      'COMMAND_MOVE_UP_LABEL',
-      'COMMAND_PASTE_LABEL',
-
-      'FIELD_LINK_NEW_WINDOW',
-
-      'OVERLAY_EDIT_INSTANCE_APPLY',
+    $i18nFile = implode(DIRECTORY_SEPARATOR, [
+      dirname(__DIR__, 2),
+      'translations',
+      'de',
+      'contentfield.php'
     ]);
+
+    $translations = require($i18nFile);
+    $view->registerTranslations('contentfield', array_keys($translations));
   }
 }
