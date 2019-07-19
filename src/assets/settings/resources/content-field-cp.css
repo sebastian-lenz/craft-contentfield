@@ -106,7 +106,9 @@
   justify-content: center;
 }
 
-.tcfSchemas--cell.section {
+.tcfSchemas--cell.globalSet,
+.tcfSchemas--cell.section,
+.tcfSchemas--cell.solspace-calendars {
   border-left-width: 3px;
   font-weight: bold;
 }

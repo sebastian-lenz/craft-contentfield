@@ -24,10 +24,17 @@ class FieldUsage
    * FieldUsage constructor.
    */
   public function __construct() {
-    $this->_adapters = [
+    $adapters = [
       new fieldUsages\EntryAdapter(),
       new fieldUsages\GlobalSetAdapter(),
     ];
+
+    $plugins = Craft::$app->getPlugins();
+    if ($plugins->isPluginEnabled('calendar')) {
+      $adapters[] = new fieldUsages\SolspaceCalendarAdapter();
+    }
+
+    $this->_adapters = $adapters;
   }
 
   /**
