@@ -98,15 +98,16 @@ abstract class ImageTag extends BaseObject
    * @return array
    */
   protected function expandAttributes($attributes, $values = array()) {
-    $asset = $this->asset;
+    $asset      = $this->asset;
     $focalPoint = $asset->getFocalPoint() ?? ['x' => 0.5, 'y' => 0.5];
-    $result = array();
+    $result     = array();
 
     $values += array(
       '$focusX'         => $focalPoint['x'],
       '$focusY'         => $focalPoint['y'],
-      '$nativeWidth'    => $asset->getWidth(),
-      '$nativeHeight'   => $asset->getHeight(),
+      '$nativeHeight'   => [$asset, 'getHeight'],
+      '$nativeSrc'      => [$asset, 'getUrl'],
+      '$nativeWidth'    => [$asset, 'getWidth'],
       '$title'          => $asset->title,
       '$thumbnail'      => [$this, 'getThumbnail'],
       '$thumbnailStyle' => [$this, 'getThumbnailStyle'],
