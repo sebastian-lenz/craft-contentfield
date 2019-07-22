@@ -334,33 +334,44 @@ abstract class AbstractField extends Model
    * @return array
    */
   private function getEditorGroupStyle(ElementInterface $element = null) {
+    $group = [];
+    $style = [];
     if (!isset($this->group)) {
       return null;
     }
 
+    // Allow groups to be defined by label only, e.g.
+    // ```
+    // group: My group
+    // ```
     $attributes = $this->group;
     if (!is_array($attributes)) {
       $attributes = ['label' => (string)$attributes];
     }
 
-    $group = array();
-    $style = array();
+    // If there is a style attribute, use it as the style basis
+    if (array_key_exists('style', $attributes)) {
+      if (is_array($attributes['style'])) {
+        $style = $attributes['style'];
+      }
+
+      unset($attributes['style']);
+    }
+
+    // Sort the remaining attributes into group and style attributes
     foreach ($attributes as $name => $value) {
       if (in_array($name, self::GROUP_LOCALIZED_ATTRIBUTES)) {
         $value = Plugin::t($value);
       }
 
-      if (in_array($name, self::GROUP_STYLE_ATTRIBUTES)) {
-        $style[$name] = (string)$value;
-      } else if (in_array($name, self::GROUP_ATTRIBUTES)) {
+      if (in_array($name, self::GROUP_ATTRIBUTES)) {
         $group[$name] = (string)$value;
+      } else {
+        $style[$name] = $value;
       }
     }
 
-    if (count($style) > 0) {
-      $group['style'] = $style;
-    }
-
+    $group['style'] = self::createBreakpoints($style, self::GROUP_STYLE_ATTRIBUTES);
     return $group;
   }
 
