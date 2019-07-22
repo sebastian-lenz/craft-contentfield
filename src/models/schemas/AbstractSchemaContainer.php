@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\schemas;
 
 use Exception;
+use lenz\contentfield\Plugin;
 use lenz\contentfield\services\schemas\StructureLoader;
 
 /**
@@ -76,6 +77,10 @@ abstract class AbstractSchemaContainer extends AbstractSchema
         $name, $this->qualifier
       ));
     }
+
+    $config = Plugin::getInstance()
+      ->structures
+      ->expandDefinition($config);
 
     $schema = new StructureSchema([
       'container' => $this,

@@ -327,7 +327,7 @@ class ReferenceField extends AbstractField
    * @return string[]
    */
   static public function splitSourcesString($rawValue) {
-    if (!is_string($rawValue) || !empty($rawValue)) {
+    if (!is_string($rawValue) || empty($rawValue)) {
       return [];
     }
 

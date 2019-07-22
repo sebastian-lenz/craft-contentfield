@@ -62,6 +62,18 @@ class StructureSchema extends AbstractSchema
   }
 
   /**
+   * @param string $qualifier
+   * @return string
+   */
+  public function normalizeQualifier(string $qualifier) {
+    if (!preg_match('/^[^:]+:/', $qualifier)) {
+      $qualifier = 'structure:' . $qualifier;
+    }
+
+    return $qualifier;
+  }
+
+  /**
    * @inheritDoc
    * @throws Exception
    */
@@ -74,7 +86,7 @@ class StructureSchema extends AbstractSchema
   // -----------------
 
   /**
-   * @return \lenz\contentfield\services\definitions\StructureDefinitions
+   * @return StructureDefinitions
    */
   protected function getManager() {
     return Plugin::getInstance()->structures;

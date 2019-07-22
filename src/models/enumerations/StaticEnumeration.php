@@ -2,8 +2,10 @@
 
 namespace lenz\contentfield\models\enumerations;
 
+use Craft;
 use lenz\contentfield\models\values\EnumerationValue;
 use lenz\contentfield\Plugin;
+use yii\helpers\Inflector;
 
 /**
  * Class StaticEnumeration
@@ -33,14 +35,14 @@ class StaticEnumeration implements EnumerationInterface
     $safeOptions = array();
     foreach ($options as $key => $value) {
       if (!is_array($value)) {
-        $value = array(
-          'key'   => $key,
-          'label' => (string)$value,
-        );
+        $value = [
+          'key'   => is_numeric($key) ? $value : $key,
+          'label' => Inflector::camel2words((string)$value, true),
+        ];
       }
 
       if (!isset($value['key'])) {
-        $value['key'] = $key;
+        $value['key'] = is_numeric($key) ? $value : $key;
       }
 
       if (!isset($value['label'])) {
@@ -48,7 +50,7 @@ class StaticEnumeration implements EnumerationInterface
       }
 
       if (!EnumerationValue::isValidEnumerationKey($value['key'])) {
-        \Craft::warning('Invalid enumeration key "%s", enumeration keys must be integers or strings');
+        Craft::warning('Invalid enumeration key "%s", enumeration keys must be integers or strings');
         continue;
       }
 

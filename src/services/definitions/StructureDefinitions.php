@@ -19,6 +19,20 @@ class StructureDefinitions extends AbstractDefinitions
 
 
   /**
+   * @param array $config
+   * @return array
+   */
+  public function expandDefinition(array $config) {
+    if (array_key_exists('type', $config)) {
+      $parent = $this->getDefinition($config['type']);
+      $config = self::mergeDefinitions($config, $parent);
+      unset($config['type']);
+    }
+
+    return $config;
+  }
+
+  /**
    * @param string $name
    * @return AbstractSchema|null
    * @throws Exception

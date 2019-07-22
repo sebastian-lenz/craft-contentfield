@@ -12,6 +12,7 @@ use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\services\Schemas;
 use lenz\contentfield\validators\ValueValidator;
 use yii\base\Model;
 
@@ -411,14 +412,19 @@ abstract class AbstractSchema extends Model
   public function matchesQualifier($qualifier) {
     if (is_array($qualifier)) {
       foreach ($qualifier as $value) {
-        if ($this->qualifier == $this->normalizeQualifier($value)) {
+        if ($this->matchesQualifier($value)) {
           return true;
         }
       }
 
       return false;
     } else {
-      return $this->qualifier == $this->normalizeQualifier($qualifier);
+      $qualifier = $this->normalizeQualifier($qualifier);
+      if (Schemas::isPattern($qualifier)) {
+        return preg_match(Schemas::toPattern($qualifier), $this->qualifier);
+      } else {
+        return $this->qualifier == $qualifier;
+      }
     }
   }
 

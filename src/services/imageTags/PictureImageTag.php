@@ -21,6 +21,16 @@ class PictureImageTag extends ImageTag
   public $fallbackTransform = null;
 
   /**
+   * @var array
+   */
+  public $imageAttributes;
+
+  /**
+   * @var array
+   */
+  public $noscriptImageAttributes;
+
+  /**
    * @var string
    */
   public $placeholder = '';
@@ -78,6 +88,10 @@ class PictureImageTag extends ImageTag
       }
     }
 
+    if (isset($this->imageAttributes)) {
+      $content[] = Html::tag('img', '', $this->expandAttributes($this->imageAttributes));
+    }
+
     if (isset($this->placeholderTag)) {
       $content[] = Html::tag(
         $this->placeholderTag,
@@ -86,14 +100,11 @@ class PictureImageTag extends ImageTag
       );
     }
 
-    $content[] = Html::tag('noscript',
-      Html::tag('img', '', array(
-        'alt'    => $this->asset->title,
-        'height' => $this->asset->getHeight($this->fallbackTransform),
-        'src'    => $this->asset->getUrl($this->fallbackTransform),
-        'width'  => $this->asset->getWidth($this->fallbackTransform),
-      ))
-    );
+    if (isset($this->noscriptImageAttributes)) {
+      $content[] = Html::tag('noscript',
+        Html::tag('img', '', $this->expandAttributes($this->noscriptImageAttributes))
+      );
+    }
 
     $attributes = $this->expandAttributes($this->attributes);
     return Html::tag('picture', implode('', $content), $attributes);
@@ -128,6 +139,84 @@ class PictureImageTag extends ImageTag
     );
 
     return Html::tag('source', '', $attributes);
+  }
+
+  /**
+   * @return float|int|null
+   */
+  public function getMaxHeight() {
+    return $this->asset->getHeight($this->getMaxTransform());
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getMaxSrc() {
+    return $this->asset->getUrl($this->getMaxTransform());
+  }
+
+  /**
+   * @return array|string
+   */
+  public function getMaxTransform() {
+    $source = self::normalizeSource(end($this->sources));
+    return end($source['transforms']);
+  }
+
+  /**
+   * @return float|int|null
+   */
+  public function getMaxWidth() {
+    return $this->asset->getWidth($this->getMaxTransform());
+  }
+
+  /**
+   * @return float|int|null
+   */
+  public function getMinHeight() {
+    return $this->asset->getHeight($this->getMinTransform());
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getMinSrc() {
+    return $this->asset->getUrl($this->getMinTransform());
+  }
+
+  /**
+   * @return array|string
+   */
+  public function getMinTransform() {
+    $source = self::normalizeSource(reset($this->sources));
+    return reset($source['transforms']);
+  }
+
+  /**
+   * @return float|int|null
+   */
+  public function getMinWidth() {
+    return $this->asset->getWidth($this->getMinTransform());
+  }
+
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @param array $attributes
+   * @param array $values
+   * @return array
+   */
+  protected function expandAttributes($attributes, $values = array()) {
+    return parent::expandAttributes($attributes, $values + array(
+      '$maxHeight' => [$this, 'getMaxHeight'],
+      '$maxSrc'    => [$this, 'getMaxSrc'],
+      '$maxWidth'  => [$this, 'getMaxWidth'],
+      '$minHeight' => [$this, 'getMinHeight'],
+      '$minSrc'    => [$this, 'getMinSrc'],
+      '$minWidth'  => [$this, 'getMinWidth'],
+    ));
   }
 
 
