@@ -213,11 +213,11 @@ class YamlAwareTemplateLoader extends TemplateLoader
   // --------------
 
   /**
-   * @param View $view
+   * @param View|null $view
    * @return Environment
    * @throws \yii\base\Exception
    */
-  static public function getSiteTwig(View $view) {
+  static public function getSiteTwig(View $view = null) {
     return self::withSiteView(function(View $view) {
       $twig = $view->getTwig();
       if (!($twig->getLoader() instanceof YamlAwareTemplateLoader)) {
