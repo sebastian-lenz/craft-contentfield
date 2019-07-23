@@ -2,18 +2,18 @@
 
 namespace lenz\contentfield\models\schemas;
 
-use Craft;
 use craft\web\twig\Environment;
 use craft\web\View;
+use Exception;
 use lenz\contentfield\controllers\TemplatesController;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
+use lenz\contentfield\models\values\ArrayValue;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
 use Throwable;
 use Twig\TemplateWrapper;
-use yii\base\Exception;
 
 /**
  * Class TemplateSchema
@@ -72,7 +72,7 @@ class TemplateSchema extends AbstractSchemaContainer
    */
   public function display(InstanceValue $instance, array $variables = []) {
     $this->getTemplate()->display(
-      $this->getNormalizedVariables($instance, $variables)
+      self::normalizedVariables($instance, $variables)
     );
   }
 
@@ -81,7 +81,7 @@ class TemplateSchema extends AbstractSchemaContainer
    * @throws Throwable
    */
   public function render(InstanceValue $instance, array $variables = [], array $options = []) {
-    $variables = $this->getNormalizedVariables($instance, $variables);
+    $variables = self::normalizedVariables($instance, $variables);
     $view = array_key_exists('view', $options) && $options['view'] instanceof View
       ? $options['view']
       : null;
@@ -94,22 +94,6 @@ class TemplateSchema extends AbstractSchemaContainer
 
   // Private methods
   // ---------------
-
-  /**
-   * @param InstanceValue $instance
-   * @param array $variables
-   * @return array
-   */
-  private function getNormalizedVariables(InstanceValue $instance, array $variables) {
-    return array_merge(
-      [
-        'entry'    => $instance->getContent()->getOwner(),
-        'instance' => $instance,
-      ],
-      $instance->getValues(),
-      $variables
-    );
-  }
 
   /**
    * @return TemplateWrapper
@@ -133,11 +117,35 @@ class TemplateSchema extends AbstractSchemaContainer
    */
   static function getTwig() {
     if (!isset(self::$_twig)) {
-      self::$_twig = YamlAwareTemplateLoader::getSiteTwig(
-        Craft::$app->getView()
-      );
+      self::$_twig = YamlAwareTemplateLoader::getSiteTwig();
     }
 
     return self::$_twig;
+  }
+
+  /**
+   * @param InstanceValue $instance
+   * @param array $variables
+   * @return array
+   * @throws Exception
+   */
+  static function normalizedVariables(InstanceValue $instance, array $variables) {
+    $variables = array_merge(
+      [
+        'editAttributes' => $instance->getEditAttributes(),
+        'entry'          => $instance->getContent()->getOwner(),
+        'instance'       => $instance,
+        'isChunkRequest' => false,
+        'model'          => $instance->getModel(),
+      ],
+      $instance->getValues(),
+      $variables
+    );
+
+    if (!array_key_exists('loop', $variables)) {
+      $variables['loop'] = ArrayValue::createLoopVariable(0, 1);
+    }
+
+    return $variables;
   }
 }

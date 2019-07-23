@@ -88,16 +88,7 @@ class ArrayValue
     foreach ($this->_values as $index => $value) {
       if ($value instanceof InstanceValue) {
         $value->display($variables + [
-          'loop' => [
-            'index'     => $index + 1,
-            'index0'    => $index,
-            'revindex'  => $count - $index,
-            'revindex0' => $count - $index - 1,
-            'first'     => $index == 0,
-            'last'      => $index == $count - 1,
-            'length'    => $count,
-            'parent'    => $this,
-          ],
+          'loop' => self::createLoopVariable($index, $count),
         ]);
       } else {
         echo (string)$value;
@@ -240,16 +231,7 @@ class ArrayValue
     foreach ($this->_values as $index => $value) {
       if ($value instanceof InstanceValue) {
         $result[] = (string)$value->getHtml($variables + [
-          'loop' => [
-            'index'     => $index + 1,
-            'index0'    => $index,
-            'revindex'  => $count - $index,
-            'revindex0' => $count - $index - 1,
-            'first'     => $index == 0,
-            'last'      => $index == $count - 1,
-            'length'    => $count,
-            'parent'    => $this,
-          ],
+          'loop' => self::createLoopVariable($index, $count),
         ]);
       } else {
         $result[] = (string)$value;
@@ -264,5 +246,26 @@ class ArrayValue
    */
   public function toArray() {
     return $this->_values;
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param int $index
+   * @param int $count
+   * @return array
+   */
+  static function createLoopVariable($index, $count) {
+    return [
+      'index'     => $index + 1,
+      'index0'    => $index,
+      'revindex'  => $count - $index,
+      'revindex0' => $count - $index - 1,
+      'first'     => $index == 0,
+      'last'      => $index == $count - 1,
+      'length'    => $count,
+    ];
   }
 }
