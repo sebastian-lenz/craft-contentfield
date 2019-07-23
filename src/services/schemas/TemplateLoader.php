@@ -42,11 +42,6 @@ class TemplateLoader extends AbstractLoader
    */
   const NAME_PREFIX = 'template:';
 
-  /**
-   * Unified path separator.
-   */
-  const SEPARATOR = '/';
-
 
   /**
    * TemplateLoader constructor.
@@ -55,7 +50,7 @@ class TemplateLoader extends AbstractLoader
   public function __construct() {
     $basePath = FileHelper::normalizePath(
       Craft::$app->getPath()->getSiteTemplatesPath(),
-      self::SEPARATOR
+      YamlAwareTemplateLoader::SEPARATOR
     );
 
     $loader = TemplateSchema::getTwig()->getLoader();
@@ -114,7 +109,9 @@ class TemplateLoader extends AbstractLoader
    * @inheritdoc
    */
   public function load($name) {
+    $name = $this->normalizeName($name);
     $data = $this->_loader->getMetaData($name);
+
     if (is_null($data['preamble'])) {
       throw new Exception(sprintf(
         'The template `%s` does not contain a yaml preamble.',
@@ -146,7 +143,7 @@ class TemplateLoader extends AbstractLoader
    * @inheritdoc
    */
   public function normalizeName($name) {
-    return FileHelper::normalizePath($name, self::SEPARATOR);
+    return YamlAwareTemplateLoader::normalizeName($name);
   }
 
 
@@ -204,7 +201,11 @@ class TemplateLoader extends AbstractLoader
 
     /** @var SplFileInfo $file */
     foreach ($this->getTemplateIterator($basePath) as $file) {
-      $fullPath = FileHelper::normalizePath($file->getRealPath(), self::SEPARATOR);
+      $fullPath = FileHelper::normalizePath(
+        $file->getRealPath(),
+        YamlAwareTemplateLoader::SEPARATOR
+      );
+
       if (substr($fullPath, 0, strlen($basePath)) !== $basePath) {
         continue;
       }

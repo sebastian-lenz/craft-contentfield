@@ -206,10 +206,11 @@ class Schemas
 
     // If no loader is given, assume it is a template
     if ($divider === false) {
+      $name = $this->_templateLoader->normalizeName($name);
       return array(
         'loader' => $this->_templateLoader,
-        'name'   => $qualifier,
-        'uri'    => TemplateLoader::NAME_PREFIX . $qualifier,
+        'name'   => $name,
+        'uri'    => TemplateLoader::NAME_PREFIX . $name,
       );
     }
 
