@@ -12,6 +12,7 @@ use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\twig\DisplayInterface;
+use Throwable;
 use Twig\Markup;
 
 /**
@@ -50,9 +51,15 @@ class ArrayValue
       $this->_values = array();
     } else {
       $member = $this->_field->member;
-      $this->_values = array_filter(array_map(function($value) use ($member) {
-        return $member->createValue($value, $this);
-      }, $data));
+      $this->_values = array_filter(
+        array_map(function($value) use ($member) {
+          try {
+            return $member->createValue($value, $this);
+          } catch (Throwable $error) {
+            return null;
+          }
+        }, $data)
+      );
     }
   }
 
