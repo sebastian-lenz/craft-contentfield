@@ -35,10 +35,17 @@ class StaticEnumeration implements EnumerationInterface
     $safeOptions = array();
     foreach ($options as $key => $value) {
       if (!is_array($value)) {
-        $value = [
-          'key'   => is_numeric($key) ? $value : $key,
-          'label' => Inflector::camel2words((string)$value, true),
-        ];
+        if (is_numeric($key)) {
+          $value = [
+            'key'   => $value,
+            'label' => Inflector::camel2words((string)$value, true),
+          ];
+        } else {
+          $value = [
+            'key'   => $key,
+            'label' => $value,
+          ];
+        }
       }
 
       if (!isset($value['key'])) {
