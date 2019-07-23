@@ -35,6 +35,18 @@
   value:        config.googleMapsApiKey,
 }) -}}
 
+<h2>Control panel</h2>
+
+{{- forms.autosuggestField({
+  label:        'Custom CSS file',
+  instructions: 'Specifies a path to a custom css file that should be loaded if the content editor is shown within the control panel.',
+  id:           'cpCssFile',
+  name:         'cpCssFile',
+  suggestEnvVars: true,
+  suggestAliases: true,
+  value:        config.cpCssFile,
+}) -}}
+
 <h2>Translators</h2>
 
 {{- forms.selectField({

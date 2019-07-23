@@ -182,7 +182,7 @@ class TemplateLoader extends AbstractLoader
    */
   private function getAllTemplates() {
     if (!isset($this->_templates)) {
-      if (Config::getInstance()->enableTemplateIndexCache()) {
+      if (Config::getInstance()->useTemplateIndexCache()) {
         $key = static::class . '::getAllTemplates';
         $this->_templates = Craft::$app->getCache()->getOrSet($key, function() {
           return $this->getAllTemplatesFromDisk();

@@ -117,7 +117,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
       ? $metaData
       : [];
 
-    if (Config::getInstance()->enableTemplateModificationCheck()) {
+    if (Config::getInstance()->useTemplateModificationCheck()) {
       foreach ($this->_metaData as $name => $metaData) {
         $path = $metaData['path'];
 
