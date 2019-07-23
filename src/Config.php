@@ -3,6 +3,7 @@
 namespace lenz\contentfield;
 
 use craft\base\Model;
+use craft\behaviors\EnvAttributeParserBehavior;
 use craft\helpers\ArrayHelper;
 
 /**
@@ -10,6 +11,11 @@ use craft\helpers\ArrayHelper;
  */
 class Config extends Model
 {
+  /**
+   * @var string
+   */
+  public $cpCssFile;
+
   /**
    * @var string
    */
@@ -51,24 +57,15 @@ class Config extends Model
 
 
   /**
-   * @return bool
+   * @inheritDoc
    */
-  public function useTemplateInlining() {
-    return $this->resolveEnvironmentMode($this->templateInlining);
-  }
-
-  /**
-   * @return bool
-   */
-  public function enableTemplateIndexCache() {
-    return $this->resolveEnvironmentMode($this->templateIndexCache);
-  }
-
-  /**
-   * @return bool
-   */
-  public function enableTemplateModificationCheck() {
-    return $this->resolveEnvironmentMode($this->templateModificationCheck);
+  public function behaviors() {
+    return [
+      'parser' => [
+        'class' => EnvAttributeParserBehavior::class,
+        'attributes' => ['cpCssFile'],
+      ],
+    ];
   }
 
   /**
@@ -124,6 +121,27 @@ class Config extends Model
       [['translator'], 'in', 'skipOnEmpty' => true, 'range' => $translators],
       [['translatorSettings'], 'validateTranslatorSettings']
     ];
+  }
+
+  /**
+   * @return bool
+   */
+  public function useTemplateInlining() {
+    return $this->resolveEnvironmentMode($this->templateInlining);
+  }
+
+  /**
+   * @return bool
+   */
+  public function useTemplateIndexCache() {
+    return $this->resolveEnvironmentMode($this->templateIndexCache);
+  }
+
+  /**
+   * @return bool
+   */
+  public function useTemplateModificationCheck() {
+    return $this->resolveEnvironmentMode($this->templateModificationCheck);
   }
 
   /**
