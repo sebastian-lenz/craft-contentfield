@@ -8,7 +8,6 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\services\Schemas;
 use lenz\contentfield\validators\InstanceValueValidator;
 use Throwable;
 
@@ -164,6 +163,10 @@ class InstanceField extends AbstractField
       ->schemas
       ->matchesQualifier($qualifier, $this->schemas, $this->_parentSchema);
   }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @inheritdoc
