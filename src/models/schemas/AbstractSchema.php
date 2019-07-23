@@ -12,8 +12,8 @@ use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\services\Schemas;
 use lenz\contentfield\validators\ValueValidator;
+use Throwable;
 use yii\base\Model;
 
 /**
@@ -406,34 +406,14 @@ abstract class AbstractSchema extends Model
   abstract public function hasLocalStructure($name);
 
   /**
-   * @param string|string[] $qualifier
+   * @param string|string[] $specs
    * @return boolean
+   * @throws Throwable
    */
-  public function matchesQualifier($qualifier) {
-    if (is_array($qualifier)) {
-      foreach ($qualifier as $value) {
-        if ($this->matchesQualifier($value)) {
-          return true;
-        }
-      }
-
-      return false;
-    } else {
-      $qualifier = $this->normalizeQualifier($qualifier);
-      if (Schemas::isPattern($qualifier)) {
-        return preg_match(Schemas::toPattern($qualifier), $this->qualifier);
-      } else {
-        return $this->qualifier == $qualifier;
-      }
-    }
-  }
-
-  /**
-   * @param string $qualifier
-   * @return string
-   */
-  public function normalizeQualifier(string $qualifier) {
-    return $qualifier;
+  public function matchesQualifier($specs) {
+    return Plugin::getInstance()
+      ->schemas
+      ->matchesQualifier($this->qualifier, $specs);
   }
 
   /**

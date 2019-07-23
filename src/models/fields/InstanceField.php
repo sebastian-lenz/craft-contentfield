@@ -160,25 +160,9 @@ class InstanceField extends AbstractField
    * @throws Throwable
    */
   public function isValidSchema($qualifier) {
-    $manager = Plugin::getInstance()->schemas;
-    $parent = $this->_parentSchema;
-    $qualifierInfo = $manager->parseSchemaQualifier($qualifier, $parent);
-
-    foreach ($this->schemas as $schema) {
-      $schemaInfo = $manager->parseSchemaQualifier($schema, $parent);
-
-      if ($qualifierInfo['uri'] == $schemaInfo['uri']) {
-        return true;
-      } else if (
-        $schemaInfo['loader'] == $qualifierInfo['loader'] &&
-        Schemas::isPattern($schemaInfo['name']) &&
-        preg_match(Schemas::toPattern($schemaInfo['name']), $qualifierInfo['name'])
-      ) {
-        return true;
-      }
-    }
-
-    return false;
+    return Plugin::getInstance()
+      ->schemas
+      ->matchesQualifier($qualifier, $this->schemas, $this->_parentSchema);
   }
 
   /**

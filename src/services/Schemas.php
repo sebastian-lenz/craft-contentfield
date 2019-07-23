@@ -180,6 +180,39 @@ class Schemas
   }
 
   /**
+   * Tests whether the given qualifier matches any of the given specs.
+   *
+   * @param string $qualifier
+   * @param string|string[] $specs
+   * @param AbstractSchema|null $scope
+   * @return bool
+   * @throws Throwable
+   */
+  public function matchesQualifier(string $qualifier, $specs, AbstractSchema $scope = null) {
+    $qualifierInfo = $this->parseSchemaQualifier($qualifier, $scope);
+
+    if (!is_array($specs)) {
+      $specs = [$specs];
+    }
+
+    foreach ($specs as $spec) {
+      $schemaInfo = $this->parseSchemaQualifier($spec, $scope);
+
+      if ($qualifierInfo['uri'] == $schemaInfo['uri']) {
+        return true;
+      } else if (
+        $schemaInfo['loader'] == $qualifierInfo['loader'] &&
+        Schemas::isPattern($schemaInfo['name']) &&
+        preg_match(Schemas::toPattern($schemaInfo['name']), $qualifierInfo['name'])
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * @param string $qualifier
    * @param AbstractSchema|null $scope
    * @return array
