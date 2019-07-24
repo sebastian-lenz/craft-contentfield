@@ -77,6 +77,9 @@ abstract class AbstractSchema extends Model
    * The name of an asset reference field whose image will be used as an
    * replacement of the icon the header.
    *
+   * When omitted, we have a series of possible candidates that will be
+   * used automatically (AbstractSchema::PREVIEW_IMAGE_CANDIDATES).
+   *
    * ```
    * previewImage: imageField
    * ```
@@ -89,11 +92,9 @@ abstract class AbstractSchema extends Model
    * A template for a short text displayed in the header of an instance
    * next to the type name.
    *
-   * Follows the format of handlebars/twig templates but only supports
-   * variable injection due to performance considerations e.g.:
-   * ```
-   * previewLabel: "{{primaryTitle}}: {{secondaryTitle}}"
-   * ```
+   * When omitted, we have a series of possible candidates that will be
+   * used automatically (AbstractSchema::PREVIEW_LABEL_CANDIDATES).
+   * Otherwise the preview will be used.
    *
    * Can be set to the name of a single field as a shorthand:
    * ```
@@ -151,14 +152,23 @@ abstract class AbstractSchema extends Model
   ];
 
   /**
-   * A list of fields we consider using as title field.
+   * A list of fields we consider using as the image preview field.
    */
-  const TITLE_CANDIDATES = [
+  const PREVIEW_IMAGE_CANDIDATES = [
+    'image',
+    'icon'
+  ];
+
+  /**
+   * A list of fields we consider using as the label preview field.
+   */
+  const PREVIEW_LABEL_CANDIDATES = [
     'title',
     'primaryTitle',
     'heading',
     'headline',
-    'label'
+    'label',
+    'body'
   ];
 
 
@@ -493,16 +503,19 @@ abstract class AbstractSchema extends Model
    * @return string|null
    */
   protected function getPreviewImage() {
-    if (!isset($this->previewImage)) {
-      return null;
+    $candidates = self::PREVIEW_IMAGE_CANDIDATES;
+    if (isset($this->previewImage)) {
+      array_unshift($candidates, $this->previewImage);
     }
 
-    $field = $this->getField($this->previewImage);
-    if (
-      $field instanceof ReferenceField &&
-      $field->elementType === Asset::class
-    ) {
-      return $field->name;
+    foreach ($candidates as $candidate) {
+      $field = $this->getField($candidate);
+      if (
+        $field instanceof ReferenceField &&
+        $field->elementType === Asset::class
+      ) {
+        return $field->name;
+      }
     }
 
     return null;
@@ -518,14 +531,10 @@ abstract class AbstractSchema extends Model
         : $this->previewLabel;
     }
 
-    foreach (self::TITLE_CANDIDATES as $candidate) {
+    foreach (self::PREVIEW_LABEL_CANDIDATES as $candidate) {
       if ($this->hasField($candidate)) {
         return '{{' . $candidate . '}}';
       }
-    }
-
-    foreach ($this->fields as $name => $field) {
-      return '{{' . $name . '}}';
     }
 
     return null;

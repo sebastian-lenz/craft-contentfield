@@ -176,11 +176,11 @@ class InstanceField extends AbstractField
     if ($config['type'] === 'instances') {
       $config = array_intersect_key($config, array(
         'collapsible' => true,
-        'compact'     => true,
         'group'       => true,
-        'name'        => true,
         'label'       => true,
         'limit'       => true,
+        'name'        => true,
+        'previewMode' => true,
         'style'       => true,
         'width'       => true,
       )) + array(
