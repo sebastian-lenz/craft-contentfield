@@ -68,14 +68,24 @@ class ArrayField extends AbstractField
    */
   public function __construct(AbstractSchema $schema = null, array $config = []) {
     if (array_key_exists('member', $config)) {
-      $config['member']['name'] = $config['name'];
-      $config['member'] = Plugin::getInstance()
-        ->fields
-        ->createField($schema, $config['member']);
+      $member = $config['member'];
+      if (!is_array($member)) {
+        $member = ['type' => $member];
+      }
 
-      if ($config['member'] instanceof ArrayValue) {
+      if (!array_key_exists('name', $member)) {
+        $member['name'] = $config['name'];
+      }
+
+      $member = Plugin::getInstance()
+        ->fields
+        ->createField($schema, $member);
+
+      if ($member instanceof ArrayValue) {
         throw new Exception('Array fields cannot be nested.');
       }
+      
+      $config['member'] = $member;
     }
 
     parent::__construct($schema, $config);
