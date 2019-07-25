@@ -315,6 +315,6 @@ class Schemas
       return preg_quote($part, '/');
     }, explode('*', $value)));
 
-    return '/' . $pattern . '/';
+    return '/^' . $pattern . '$/';
   }
 }

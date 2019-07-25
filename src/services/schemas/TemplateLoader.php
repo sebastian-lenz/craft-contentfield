@@ -213,7 +213,7 @@ class TemplateLoader extends AbstractLoader
       $name = substr($fullPath, strlen($basePath) + 1);
       $path = dirname($name);
       $result[] = array(
-        'name' => $name,
+        'name' => YamlAwareTemplateLoader::normalizeName($name),
         'path' => $path === '.' ? '' : $path,
       );
     }
