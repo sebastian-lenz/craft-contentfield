@@ -4,6 +4,7 @@ namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
 
+use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
@@ -19,6 +20,15 @@ use Throwable;
 class InstanceField extends AbstractField
 {
   /**
+   * Whether the instance can be expanded / collapsed or not.
+   *
+   * @var boolean
+   */
+  public $collapsible = false;
+
+  /**
+   * The list of allowed schemas. Supports wildcards.
+   *
    * @var string[]
    */
   public $schemas;
@@ -82,7 +92,12 @@ class InstanceField extends AbstractField
 
     if (is_null($schema) || !$this->isValidSchema($schema)) {
       $schemas = $this->getDependedSchemas();
-      $data[InstanceValue::TYPE_PROPERTY] = reset($schemas)->qualifier;
+      $defaultSchema = reset($schemas);
+      if (!$defaultSchema) {
+        throw new Exception(sprintf('No schema available on field `%s`.', $this->name));
+      }
+
+      $data[InstanceValue::TYPE_PROPERTY] = $defaultSchema->qualifier;
     }
 
     return Plugin::getInstance()->schemas->createValue($data, $parent, $this);
@@ -121,7 +136,8 @@ class InstanceField extends AbstractField
     }
 
     return parent::getEditorData($element) + array(
-      'schemas' => $qualifiers,
+      'collapsible' => !!$this->collapsible,
+      'schemas'     => $qualifiers,
     );
   }
 
