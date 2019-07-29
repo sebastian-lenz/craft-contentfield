@@ -180,6 +180,39 @@ class Schemas
   }
 
   /**
+   * Tests whether the given qualifier matches any of the given specs.
+   *
+   * @param string $qualifier
+   * @param string|string[] $specs
+   * @param AbstractSchema|null $scope
+   * @return bool
+   * @throws Throwable
+   */
+  public function matchesQualifier(string $qualifier, $specs, AbstractSchema $scope = null) {
+    $qualifierInfo = $this->parseSchemaQualifier($qualifier, $scope);
+
+    if (!is_array($specs)) {
+      $specs = [$specs];
+    }
+
+    foreach ($specs as $spec) {
+      $schemaInfo = $this->parseSchemaQualifier($spec, $scope);
+
+      if ($qualifierInfo['uri'] == $schemaInfo['uri']) {
+        return true;
+      } else if (
+        $schemaInfo['loader'] == $qualifierInfo['loader'] &&
+        Schemas::isPattern($schemaInfo['name']) &&
+        preg_match(Schemas::toPattern($schemaInfo['name']), $qualifierInfo['name'])
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * @param string $qualifier
    * @param AbstractSchema|null $scope
    * @return array
@@ -206,10 +239,11 @@ class Schemas
 
     // If no loader is given, assume it is a template
     if ($divider === false) {
+      $name = $this->_templateLoader->normalizeName($name);
       return array(
         'loader' => $this->_templateLoader,
-        'name'   => $qualifier,
-        'uri'    => TemplateLoader::NAME_PREFIX . $qualifier,
+        'name'   => $name,
+        'uri'    => TemplateLoader::NAME_PREFIX . $name,
       );
     }
 
@@ -281,6 +315,6 @@ class Schemas
       return preg_quote($part, '/');
     }, explode('*', $value)));
 
-    return '/' . $pattern . '/';
+    return '/^' . $pattern . '$/';
   }
 }

@@ -4,11 +4,11 @@ namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
 
+use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\services\Schemas;
 use lenz\contentfield\validators\InstanceValueValidator;
 use Throwable;
 
@@ -20,6 +20,15 @@ use Throwable;
 class InstanceField extends AbstractField
 {
   /**
+   * Whether the instance can be expanded / collapsed or not.
+   *
+   * @var boolean
+   */
+  public $collapsible = false;
+
+  /**
+   * The list of allowed schemas. Supports wildcards.
+   *
    * @var string[]
    */
   public $schemas;
@@ -83,7 +92,12 @@ class InstanceField extends AbstractField
 
     if (is_null($schema) || !$this->isValidSchema($schema)) {
       $schemas = $this->getDependedSchemas();
-      $data[InstanceValue::TYPE_PROPERTY] = reset($schemas)->qualifier;
+      $defaultSchema = reset($schemas);
+      if (!$defaultSchema) {
+        throw new Exception(sprintf('No schema available on field `%s`.', $this->name));
+      }
+
+      $data[InstanceValue::TYPE_PROPERTY] = $defaultSchema->qualifier;
     }
 
     return Plugin::getInstance()->schemas->createValue($data, $parent, $this);
@@ -122,7 +136,8 @@ class InstanceField extends AbstractField
     }
 
     return parent::getEditorData($element) + array(
-      'schemas' => $qualifiers,
+      'collapsible' => !!$this->collapsible,
+      'schemas'     => $qualifiers,
     );
   }
 
@@ -160,26 +175,14 @@ class InstanceField extends AbstractField
    * @throws Throwable
    */
   public function isValidSchema($qualifier) {
-    $manager = Plugin::getInstance()->schemas;
-    $parent = $this->_parentSchema;
-    $qualifierInfo = $manager->parseSchemaQualifier($qualifier, $parent);
-
-    foreach ($this->schemas as $schema) {
-      $schemaInfo = $manager->parseSchemaQualifier($schema, $parent);
-
-      if ($qualifierInfo['uri'] == $schemaInfo['uri']) {
-        return true;
-      } else if (
-        $schemaInfo['loader'] == $qualifierInfo['loader'] &&
-        Schemas::isPattern($schemaInfo['name']) &&
-        preg_match(Schemas::toPattern($schemaInfo['name']), $qualifierInfo['name'])
-      ) {
-        return true;
-      }
-    }
-
-    return false;
+    return Plugin::getInstance()
+      ->schemas
+      ->matchesQualifier($qualifier, $this->schemas, $this->_parentSchema);
   }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @inheritdoc
@@ -189,11 +192,12 @@ class InstanceField extends AbstractField
     if ($config['type'] === 'instances') {
       $config = array_intersect_key($config, array(
         'collapsible' => true,
-        'compact'     => true,
         'group'       => true,
-        'name'        => true,
         'label'       => true,
         'limit'       => true,
+        'name'        => true,
+        'previewMode' => true,
+        'style'       => true,
         'width'       => true,
       )) + array(
         'type'  => ArrayField::NAME,

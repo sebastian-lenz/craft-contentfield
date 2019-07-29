@@ -17,6 +17,7 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\DisplayInterface;
+use Throwable;
 use Twig\Markup;
 use yii\base\Model;
 
@@ -192,7 +193,6 @@ class InstanceValue
     if (isset($this->_output)) {
       echo $this->_output;
     } else {
-      $this->normalizeVariables($variables);
       $this->_schema->display($this, $variables);
     }
   }
@@ -220,6 +220,7 @@ class InstanceValue
   /**
    * @param string|string[] $qualifier
    * @return InstanceValue[]
+   * @throws Throwable
    */
   public function findInstances($qualifier) {
     $result = array();
@@ -279,10 +280,12 @@ class InstanceValue
   }
 
   /**
-   * @return Markup
+   * @return Markup|string
    */
   public function getEditAttributes() {
-    return Template::raw(' data-contentfield-edit-uuid="' . $this->_uuid . '" ');
+    return Plugin::$IS_ELEMENT_PREVIEW
+      ? Template::raw(' data-contentfield-edit-uuid="' . $this->_uuid . '" ')
+      : '';
   }
 
   /**
@@ -453,6 +456,7 @@ class InstanceValue
   /**
    * @param string|string[]|null $qualifier
    * @return boolean
+   * @throws Throwable
    */
   public function hasNextSibling($qualifier = null) {
     return $this->isInstanceWithQualifier($this->getSibling(1), $qualifier);
@@ -461,6 +465,7 @@ class InstanceValue
   /**
    * @param string|string[]|null $qualifier
    * @return bool
+   * @throws Throwable
    */
   public function hasParentInstance($qualifier = null) {
     return $this->isInstanceWithQualifier($this->getParentInstance(), $qualifier);
@@ -469,6 +474,7 @@ class InstanceValue
   /**
    * @param string|string[]|null $qualifier
    * @return boolean
+   * @throws Throwable
    */
   public function hasPreviousSibling($qualifier = null) {
     return $this->isInstanceWithQualifier($this->getSibling(-1), $qualifier);
@@ -484,6 +490,7 @@ class InstanceValue
   /**
    * @param string|string[] $qualifier
    * @return bool
+   * @throws Throwable
    */
   public function isOfType($qualifier) {
     return $this->_schema->matchesQualifier($qualifier);
@@ -536,7 +543,6 @@ class InstanceValue
       return $this->_output;
     }
 
-    $this->normalizeVariables($variables);
     return $this->_schema->render($this, $variables, $options);
   }
 
@@ -583,6 +589,7 @@ class InstanceValue
    * @param mixed $value
    * @param string|string[]|null $qualifier
    * @return bool
+   * @throws Throwable
    */
   private function isInstanceWithQualifier($value, $qualifier = null) {
     if (!($value instanceof InstanceValue)) {
@@ -592,33 +599,6 @@ class InstanceValue
     return is_null($qualifier)
       ? true
       : $value->_schema->matchesQualifier($qualifier);
-  }
-
-  /**
-   * @param array $variables
-   * @throws Exception
-   */
-  private function normalizeVariables(array &$variables) {
-    $variables += [
-      'isChunkRequest' => false,
-      'model'          => $this->getModel(),
-      'editAttributes' => Plugin::$IS_ELEMENT_PREVIEW
-        ? $this->getEditAttributes()
-        : '',
-    ];
-
-    if (!array_key_exists('loop', $variables)) {
-      $variables['loop'] = [
-        'index'     => 1,
-        'index0'    => 0,
-        'revindex'  => 1,
-        'revindex0' => 0,
-        'first'     => true,
-        'last'      => true,
-        'length'    => 1,
-        'parent'    => [],
-      ];
-    }
   }
 
 

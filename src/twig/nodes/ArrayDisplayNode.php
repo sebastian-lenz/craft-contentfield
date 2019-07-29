@@ -83,12 +83,14 @@ class ArrayDisplayNode extends DisplayNode
             ->write("echo \$displayContentItem->getCachedOutput();\n")
             ->write("continue;\n")
             ->outdent()
-          ->write("}\n\n");
+          ->write("}\n\n")
+          ->write("\$displayVariables['loop'] = \\lenz\\contentfield\\models\\values\\ArrayValue::createLoopVariable(\$displayLoopIndex, \$displayLoopCount);\n");
 
-    $this->addInstanceDisplay($compiler, '$displayContentItem', '$displayVariables', '$displayLoopIndex', '$displayLoopCount');
+    $this->addInstanceDisplay($compiler, '$displayContentItem', '$displayVariables');
 
     $compiler
-          ->write("\n\$displayLoopIndex += 1;\n")
+          ->write("\n")
+          ->write("\$displayLoopIndex += 1;\n")
           ->outdent()
         ->write("}\n")
         ->outdent()

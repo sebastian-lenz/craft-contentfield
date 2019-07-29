@@ -3,6 +3,7 @@
 namespace lenz\contentfield\twig;
 
 use Craft;
+use craft\helpers\FileHelper;
 use craft\web\twig\Environment;
 use craft\web\twig\TemplateLoader;
 use craft\web\twig\TemplateLoaderException;
@@ -30,6 +31,11 @@ class YamlAwareTemplateLoader extends TemplateLoader
    */
   private $_metaData;
 
+  /**
+   * Unified path separator.
+   */
+  const SEPARATOR = '/';
+
 
   /**
    * @param string $name
@@ -37,6 +43,8 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @throws Throwable
    */
   public function getMetaData($name) {
+    $name = self::normalizeName($name);
+
     $this->loadCachedMetaData();
     if (!isset($this->_metaData[$name])) {
       $this->_metaData[$name] = $this->loadMetaData($name);
@@ -169,6 +177,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @throws Throwable
    */
   private function saveMetaData($name, $path, $yaml = null) {
+    $name = self::normalizeName($name);
     $this->loadCachedMetaData();
 
     if (is_null($yaml)) {
@@ -204,11 +213,11 @@ class YamlAwareTemplateLoader extends TemplateLoader
   // --------------
 
   /**
-   * @param View $view
+   * @param View|null $view
    * @return Environment
    * @throws \yii\base\Exception
    */
-  static public function getSiteTwig(View $view) {
+  static public function getSiteTwig(View $view = null) {
     return self::withSiteView(function(View $view) {
       $twig = $view->getTwig();
       if (!($twig->getLoader() instanceof YamlAwareTemplateLoader)) {
@@ -217,6 +226,19 @@ class YamlAwareTemplateLoader extends TemplateLoader
 
       return $twig;
     }, $view);
+  }
+
+  /**
+   * @param string $name
+   * @return string
+   */
+  static public function normalizeName($name) {
+    $name = FileHelper::normalizePath($name, self::SEPARATOR);
+    if (substr($name, -5) == '.twig') {
+      $name = substr($name, 0, strlen($name) - 5);
+    }
+
+    return $name;
   }
 
   /**

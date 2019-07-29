@@ -141,28 +141,18 @@ class DisplayNode extends Node
    * @param Compiler $compiler
    * @param string $instanceVar
    * @param string $variablesVar
-   * @param string|null $loopIndexVar
-   * @param string|null $loopCountVar
    */
   protected function addInstanceDisplay(
     Compiler $compiler,
     string $instanceVar = '$displayContent',
-    string $variablesVar = '$displayVariables',
-    string $loopIndexVar = null,
-    string $loopCountVar = null
+    string $variablesVar = '$displayVariables'
   ) {
     $compiler
       ->write("switch ({$instanceVar}->getType()) {\n")
       ->indent();
 
     foreach ($this->_inlinedSchemas as $qualifier => $callback) {
-      $compiler->write(sprintf("case '%s': \$this->%s({$instanceVar}, {$variablesVar}", $qualifier, $callback));
-
-      if (!is_null($loopIndexVar) && !is_null($loopCountVar)) {
-        $compiler->raw(", \$context, {$loopIndexVar}, {$loopCountVar}");
-      }
-
-      $compiler->raw("); break;\n");
+      $compiler->write(sprintf("case '%s': \$this->%s({$instanceVar}, {$variablesVar}); break;\n", $qualifier, $callback));
     }
 
     $compiler

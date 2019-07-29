@@ -218,7 +218,6 @@ class InputData
       ),
       'googleMapsApiKey' => $plugin->getSettings()->googleMapsApiKey,
       'hasTranslator'    => $plugin->translators->hasTranslator(),
-      'i18nCategory'     => Plugin::$TRANSLATION_CATEGORY,
       'rootSchemas'      => $this->_rootSchemas,
     ];
   }

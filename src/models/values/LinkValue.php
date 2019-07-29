@@ -5,6 +5,7 @@ namespace lenz\contentfield\models\values;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
 use craft\helpers\Template;
+use Exception;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\models\fields\LinkField;
 
@@ -72,6 +73,7 @@ class LinkValue extends Value implements ReferenceMapValueInterface
 
   /**
    * @return string
+   * @throws Exception
    */
   function __toString() {
     switch ($this->type) {
@@ -88,6 +90,7 @@ class LinkValue extends Value implements ReferenceMapValueInterface
   /**
    * @param array $extraAttribs
    * @return string
+   * @throws Exception
    */
   public function getLinkAttributes($extraAttribs = array()) {
     if ($this->isEmpty()) {
@@ -117,6 +120,7 @@ class LinkValue extends Value implements ReferenceMapValueInterface
 
   /**
    * @return ElementInterface|null
+   * @throws Exception
    */
   function getLinkedElement() {
     if (!isset($this->_element)) {
@@ -128,7 +132,9 @@ class LinkValue extends Value implements ReferenceMapValueInterface
         $content = $this->getContent();
 
         if (!is_null($content)) {
-          $this->_element = $content->getReferenceLoader()->getElement($elementType, $elementId);
+          $this->_element = $content
+            ->getReferenceLoader()
+            ->getElement($elementType, $elementId);
         } else {
           /** @var ElementInterface $elementType */
           $this->_element = $elementType::findOne(array(
@@ -186,6 +192,7 @@ class LinkValue extends Value implements ReferenceMapValueInterface
 
   /**
    * @return bool
+   * @throws Exception
    */
   public function isEmpty() {
     $linkType = $this->getLinkType();
