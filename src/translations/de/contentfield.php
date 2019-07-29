@@ -6,6 +6,7 @@ return [
   'Cancel' => 'Abbrechen',
   'Close' => 'Schließen',
   'Collapse' => 'Schließen',
+  'Compress content data' => 'Inhalte komprimieren',
   'Copy' => 'Kopieren',
   'Create' => 'Erstellen',
   'Create {schema}' => '{schema} erstellen',

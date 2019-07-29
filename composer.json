@@ -7,6 +7,7 @@
     "ext-curl": "*",
     "ext-dom": "*",
     "ext-libxml": "*",
+    "ext-zlib": "*",
     "php": "^7.0",
     "craftcms/cms": "^3.2.1",
     "craftcms/redactor": "^2.2.0",

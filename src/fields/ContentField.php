@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use lenz\contentfield\events\RootSchemasEvent;
 use lenz\contentfield\fields\content\QueryExtension;
 use lenz\contentfield\fields\content\InputData;
+use lenz\contentfield\helpers\CompressRecordsJob;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
@@ -27,6 +28,17 @@ use yii\base\Event;
  */
 class ContentField extends ForeignField
 {
+  /**
+   * Whether we should store compressed data to the database. Should
+   * one of the the following values:
+   * - `always`: Always compress the data
+   * - `archive`: Compress drafts and revisions
+   * - `never`: Never compress content data
+   *
+   * @var string
+   */
+  public $compression = 'archive';
+
   /**
    * @var string[]
    */
@@ -81,6 +93,30 @@ class ContentField extends ForeignField
         ->relations
         ->saveRelations($this, $element, $referencedIds);
     }
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function afterSave(bool $isNew) {
+    $oldCompression = is_array($this->oldSettings) && array_key_exists('compression', $this->oldSettings)
+      ? $this->oldSettings['compression']
+      : 'never';
+
+    if ($oldCompression != $this->compression) {
+      $recordIds = ContentRecord::find([ 'fieldId' => $this->id ])
+        ->select(['id'])
+        ->column();
+
+      foreach (array_chunk($recordIds, 50) as $chunk) {
+        Craft::$app->getQueue()->push(new CompressRecordsJob([
+          'fieldId'   => $this->id,
+          'recordIds' => $chunk,
+        ]));
+      }
+    }
+
+    parent::afterSave($isNew);
   }
 
   /**
@@ -227,7 +263,25 @@ class ContentField extends ForeignField
    * @return array
    */
   public function settingsAttributes(): array {
-    return ['rootSchemas', 'rootSchemasByUsage', 'useAsPageTemplate'];
+    return ['compression', 'rootSchemas', 'rootSchemasByUsage', 'useAsPageTemplate'];
+  }
+
+  /**
+   * @param ElementInterface|null $element
+   * @return bool
+   */
+  public function shouldCompress(ElementInterface $element = null) {
+    if (!function_exists('gzencode')) {
+      return false;
+    }
+
+    if ($this->compression == 'always') {
+      return true;
+    } elseif ($this->compression == 'never' || is_null($element)) {
+      return false;
+    }
+
+    return $element->getIsDraft() || $element->getIsRevision();
   }
 
 
@@ -238,14 +292,15 @@ class ContentField extends ForeignField
    * @inheritDoc
    */
   protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element = null) {
-    $contentModel = $model instanceof Content
-      ? $model->getModel()
-      : null;
+    $content = $model instanceof Content ? $model : null;
+    $contentModel = is_null($content)
+      ? null
+      : $content->getModel()->getSerializedValue();
 
     return [
       'model' => is_null($contentModel)
         ? null
-        : $contentModel->getSerializedValue()
+        : ContentRecord::encodeModel($contentModel, $this->shouldCompress($element))
     ];
   }
 

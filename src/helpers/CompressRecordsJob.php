@@ -1,0 +1,82 @@
+<?php
+
+namespace lenz\contentfield\helpers;
+
+use Craft;
+use craft\queue\BaseJob;
+use lenz\contentfield\fields\ContentField;
+use lenz\contentfield\Plugin;
+use lenz\contentfield\records\ContentRecord;
+
+/**
+ * Class CompressRecordsJob
+ *
+ * Recompresses all content records of a field after the compression
+ * settings of the field have been changed.
+ */
+class CompressRecordsJob extends BaseJob
+{
+  /**
+   * The id of the field whose content record should be recompressed.
+   *
+   * @var int
+   */
+  public $fieldId;
+
+  /**
+   * The ids of the content records that should recompressed.
+   *
+   * @var int[]
+   */
+  public $recordIds;
+
+
+  /**
+   * @inheritdoc
+   */
+  public function execute($queue) {
+    $field = \Craft::$app->getFields()->getFieldById($this->fieldId);
+    if (!($field instanceof ContentField)) {
+      throw new \Exception('Invalid field given, must be an instance of ContentField.');
+    }
+
+    $records = ContentRecord::findAll(['id' => $this->recordIds]);
+    $count   = count($this->recordIds);
+    $index   = 0;
+
+    foreach ($records as $record) {
+      $this->setProgress($queue, $index++ / $count);
+      if (is_null($record->model)) {
+        continue;
+      }
+
+      $element = Craft::$app
+        ->getElements()
+        ->getElementById($record->elementId, null, $record->siteId);
+
+      $isCompressed   = ContentRecord::isCompressed($record->model);
+      $shouldCompress = $field->shouldCompress($element);
+      if ($isCompressed == $shouldCompress) {
+        continue;
+      }
+
+      $record->model = ContentRecord::encodeModel(
+        ContentRecord::decodeModel($record->model),
+        $shouldCompress
+      );
+
+      $record->save();
+    }
+  }
+
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @inheritDoc
+   */
+  protected function defaultDescription() {
+    return Plugin::t('Compress content data');
+  }
+}
