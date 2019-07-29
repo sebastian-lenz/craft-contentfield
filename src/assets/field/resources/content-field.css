@@ -398,6 +398,39 @@
   justify-content: center;
 }
 
+.tcfArrayWidgetMember--single {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.tcfArrayWidgetMember--singleHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  flex: 0 0 auto;
+}
+.tcfArrayWidgetMember--singleHandle.enabled {
+  cursor: move;
+}
+.tcfArrayWidgetMember--singleHandle.enabled:hover {
+  color: #00b008;
+}
+.tcfArrayWidgetMember--singleBody {
+  flex: 1;
+  padding: 8px;
+}
+.tcfArrayWidgetMember--singleActions {
+  width: 38px;
+  flex: 0 0 auto;
+}
+.tcfArrayWidgetMember--singleActionsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
 .tcfDetailsPanel {
   position: relative;
   overflow: hidden;
@@ -483,31 +516,41 @@
 }
 
 .tcfArrayWidgetMember {
+  position: relative;
   padding: 5px 0;
 }
+.tcfArrayWidgetMember.isCollapsed {
+  transform: translate3d(0, 0, 0);
+}
 .tcfArrayWidgetMember.isDragging {
-  opacity: 0.5;
+  visibility: hidden;
 }
-.tcfArrayWidgetMember.isCompact {
-  padding: 0;
-}
-.tcfArrayWidgetMember.hasDropTarget {
-  display: none;
+.tcfArrayWidgetMember.isDragging:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 5px;
+  right: 0;
+  bottom: 5px;
+  left: 0;
+  background: #616e7d;
+  visibility: visible;
 }
 .tcfArrayWidgetMember--panel {
   position: relative;
   overflow: hidden;
   background: #f1f5f8;
+}
+.depth-1 > .tcfArrayWidgetMember--panel {
   border: 1px solid #dedee1;
 }
-*:not(.depth-1):not(.isCompact) > .tcfArrayWidgetMember--panel {
-  border: none;
+*:not(.depth-1) > .tcfArrayWidgetMember--panel {
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
-*:not(.depth-1) > .tcfArrayWidgetMember--panel.isExpanded {
+.isExpanded:not(.depth-1) > .tcfArrayWidgetMember--panel {
   background: #fff;
 }
-.tcfArrayWidgetMember--panel.isExpanded:after {
+.isExpanded > .tcfArrayWidgetMember--panel:after {
   content: '';
   display: block;
   position: absolute;
@@ -516,15 +559,9 @@
   height: 36px;
   border-left: 3px solid #00b008;
 }
-.depth-1 > .tcfArrayWidgetMember--panel.isExpanded:after {
+.isExpanded.depth-1 > .tcfArrayWidgetMember--panel:after {
   height: auto;
   bottom: 0;
-}
-.isCompact > .tcfArrayWidgetMember--panel {
-  border-top: none;
-}
-.isCompact:first-of-type > .tcfArrayWidgetMember--panel {
-  border-top: 1px solid #dedee1;
 }
 .tcfArrayWidgetMember--header {
   display: flex;
@@ -541,7 +578,12 @@
   flex: 1;
   padding: 0 10px;
   min-width: 0;
+}
+.tcfArrayWidgetMember--headerHandle.enabled {
   cursor: move;
+}
+.tcfArrayWidgetMember--headerHandle.enabled:hover {
+  color: #00b008;
 }
 .tcfArrayWidgetMember--headerHandle > * {
   margin-right: 8px;
@@ -593,7 +635,6 @@
   border-top: 1px solid #dedee1;
 }
 .tcfArrayWidgetMember--preview {
-  padding: 16px;
   border-top: 1px solid #dedee1;
 }
 
@@ -691,6 +732,11 @@
   border-radius: 3px;
 }
 
+.tcfInstancePreview {
+  position: relative;
+  overflow: hidden;
+  max-height: 132px;
+}
 .tcfInstancePreview.isClickable {
   cursor: pointer;
 }
@@ -698,88 +744,103 @@
   user-select: none;
   pointer-events: none;
 }
-.tcfInstancePreview .row {
+.tcfInstancePreview--content {
+  padding: 16px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 100px, rgba(0,0,0,0) 132px);
+  mask-image: linear-gradient(to bottom, #000 100px, rgba(0,0,0,0) 132px);
+  color: #616e7d;
+  font-size: 12px;
+  line-height: 1.3em;
+}
+.tcfInstancePreview--content h1,
+.tcfInstancePreview--content h2,
+.tcfInstancePreview--content h3,
+.tcfInstancePreview--content h4,
+.tcfInstancePreview--content h5,
+.tcfInstancePreview--content p {
+  margin: 8px 0;
+}
+.tcfInstancePreview--content .row {
   display: flex;
   flex-flow: row;
   margin: 0 -10px;
 }
-.tcfInstancePreview .col-1 {
+.tcfInstancePreview--content .col-1 {
   box-sizing: border-box;
   width: 8.333333%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-2 {
+.tcfInstancePreview--content .col-2 {
   box-sizing: border-box;
   width: 16.666666%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-3 {
+.tcfInstancePreview--content .col-3 {
   box-sizing: border-box;
   width: 24.999999%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-4 {
+.tcfInstancePreview--content .col-4 {
   box-sizing: border-box;
   width: 33.333332%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-5 {
+.tcfInstancePreview--content .col-5 {
   box-sizing: border-box;
   width: 41.666664999999995%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-6 {
+.tcfInstancePreview--content .col-6 {
   box-sizing: border-box;
   width: 49.999998%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-7 {
+.tcfInstancePreview--content .col-7 {
   box-sizing: border-box;
   width: 58.333331%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-8 {
+.tcfInstancePreview--content .col-8 {
   box-sizing: border-box;
   width: 66.666664%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-9 {
+.tcfInstancePreview--content .col-9 {
   box-sizing: border-box;
   width: 74.999997%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-10 {
+.tcfInstancePreview--content .col-10 {
   box-sizing: border-box;
   width: 83.33332999999999%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-11 {
+.tcfInstancePreview--content .col-11 {
   box-sizing: border-box;
   width: 91.666663%;
   padding: 0 10px;
 }
-.tcfInstancePreview .col-12 {
+.tcfInstancePreview--content .col-12 {
   box-sizing: border-box;
   width: 99.999996%;
   padding: 0 10px;
 }
-.tcfInstancePreview dl {
+.tcfInstancePreview--content dl {
   display: flex;
   flex-flow: row nowrap;
-  align-items: center;
 }
-.tcfInstancePreview dt,
-.tcfInstancePreview dd {
+.tcfInstancePreview--content dt,
+.tcfInstancePreview--content dd {
   margin-right: 10px;
 }
-.tcfInstancePreview dt:last-child,
-.tcfInstancePreview dd:last-child {
+.tcfInstancePreview--content dt:last-child,
+.tcfInstancePreview--content dd:last-child {
   margin-right: 0;
 }
-.tcfInstancePreview dt {
+.tcfInstancePreview--content dt {
   flex: 1;
 }
-.tcfInstancePreview .snippet {
+.tcfInstancePreview--content .snippet {
   overflow: hidden;
   max-height: 100px;
   -webkit-mask-image: linear-gradient(to bottom, #000 50px, rgba(0,0,0,0) 100px);
@@ -787,24 +848,44 @@
   pointer-events: none;
   user-select: none;
 }
-.tcfInstancePreview .stack > * {
+.tcfInstancePreview--content .flexRow {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch;
+  margin: 0 -10px;
+}
+.tcfInstancePreview--content .flexRow > * {
+  margin: 0 10px 0 0;
+  padding-left: 10px;
+  min-width: 100px;
+  max-width: 300px;
+  border-left: 1px solid #dedee1;
+}
+.tcfInstancePreview--content .flexRow > *:first-child {
+  border-left-color: transparent;
+}
+.tcfInstancePreview--content .flexColumn {
+  display: flex;
+  flex-flow: column nowrap;
+}
+.tcfInstancePreview--content .flexColumn > * {
   margin-top: 10px;
   margin-bottom: 10px;
 }
-.tcfInstancePreview .stack > *:first-child {
+.tcfInstancePreview--content .flexColumn > *:first-child {
   margin-top: 0;
 }
-.tcfInstancePreview .stack > *:last-child {
+.tcfInstancePreview--content .flexColumn > *:last-child {
   margin-bottom: 0;
 }
 .tcfInstancePreview--elements {
-  overflow: hidden;
-  margin-top: -7px;
+  display: flex;
+  flex-flow: row wrap;
+  margin: -4px;
 }
 .tcfInstancePreview--elements > .tcfInstancePreview--thumb,
 .tcfInstancePreview--elements > .element {
-  float: left;
-  margin: 7px 7px 0 0;
+  margin: 4px;
 }
 .tcfInstancePreview--thumb {
   display: flex;
@@ -813,8 +894,9 @@
   overflow: hidden;
   width: 30px;
   height: 30px;
-  border-radius: 3px;
-  background: #f1f5f8;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
 }
 .tcfInstancePreview--thumb.large {
   width: 100px;
@@ -868,10 +950,6 @@
   bottom: 5px;
   left: 0;
   background: #c0c4c6;
-}
-.tcfArrayWidgetList--placeholder.isCompact:after {
-  top: 0;
-  bottom: 0;
 }
 .tcfArrayWidgetList--footer {
   padding: 15px 0 0;
@@ -1211,6 +1289,33 @@
 .tcfInstanceWidget {
   padding: 15px;
   border: 1px solid rgba(0,0,20,0.1);
+}
+.tcfInstanceWidget--collapsiblePanel {
+  position: relative;
+  overflow: hidden;
+  background: #f1f5f8;
+}
+.tcfInstanceWidget--collapsiblePanel.depth-1 {
+  border: 1px solid #dedee1;
+}
+.tcfInstanceWidget--collapsiblePanel:not(.depth-1) {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.tcfInstanceWidget--collapsiblePanel.isExpanded:not(.depth-1) {
+  background: #fff;
+}
+.tcfInstanceWidget--collapsiblePanel.isExpanded:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 36px;
+  border-left: 3px solid $primary-color;
+}
+.tcfInstanceWidget--collapsiblePanel.isExpanded.depth-1:after {
+  height: auto;
+  bottom: 0;
 }
 
 .tcfLinkWidget {
