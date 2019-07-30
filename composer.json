@@ -12,12 +12,27 @@
     "craftcms/cms": "^3.2.1",
     "craftcms/redactor": "^2.2.0",
     "sebastianlenz/craft-utils": "^2.1.0",
-    "symfony/yaml": "^3.4"
+    "symfony/yaml": "^3.4",
+    "league/commonmark": "^1.0",
+    "league/commonmark-extras": "^1.1"
+  },
+  "require-dev": {
+    "codeception/codeception": "^3.0",
+    "codeception/mockery-module": "^0.3",
+    "codeception/specify": "^0.4",
+    "codeception/verify": "^1.0",
+    "vlucas/phpdotenv": "^3.0",
+    "league/factory-muffin": "^3.0",
+    "fzaninotto/faker": "^1.8"
   },
   "autoload": {
     "psr-4": {
       "lenz\\contentfield\\": "src/"
     }
+  },
+  "scripts": {
+    "test": "vendor/bin/codecept run unit",
+    "test-coverage": "vendor/bin/codecept run unit --coverage-xml coverage.xml"
   },
   "extra": {
     "handle": "contentfield",
