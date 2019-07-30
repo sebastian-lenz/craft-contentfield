@@ -3,12 +3,12 @@
 namespace lenz\contentfield\models\values;
 
 use ArrayAccess;
-use ArrayIterator;
 use Countable;
 use Exception;
 use IteratorAggregate;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
+use lenz\contentfield\helpers\IteratorLoop;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\twig\DisplayInterface;
@@ -83,13 +83,12 @@ class ArrayValue
    * @throws Exception
    */
   public function display(array $variables = []) {
-    $count = count($this->_values);
+    $iterator = $this->getIterator();
+    $variables['loop'] = $iterator;
 
-    foreach ($this->_values as $index => $value) {
+    foreach ($iterator as $value) {
       if ($value instanceof InstanceValue) {
-        $value->display($variables + [
-          'loop' => self::createLoopVariable($index, $count),
-        ]);
+        $value->display($variables);
       } else {
         echo (string)$value;
       }
@@ -155,7 +154,7 @@ class ArrayValue
    * @inheritdoc
    */
   public function getIterator() {
-    return new ArrayIterator($this->_values);
+    return new IteratorLoop($this->_values);
   }
 
   /**
@@ -226,13 +225,12 @@ class ArrayValue
    */
   public function render(array $variables = []) {
     $result = array();
-    $count = count($this->_values);
+    $iterator = $this->getIterator();
+    $variables['loop'] = $iterator;
 
-    foreach ($this->_values as $index => $value) {
+    foreach ($iterator as $value) {
       if ($value instanceof InstanceValue) {
-        $result[] = (string)$value->getHtml($variables + [
-          'loop' => self::createLoopVariable($index, $count),
-        ]);
+        $result[] = (string)$value->getHtml($variables);
       } else {
         $result[] = (string)$value;
       }
@@ -246,26 +244,5 @@ class ArrayValue
    */
   public function toArray() {
     return $this->_values;
-  }
-
-
-  // Static methods
-  // --------------
-
-  /**
-   * @param int $index
-   * @param int $count
-   * @return array
-   */
-  static function createLoopVariable($index, $count) {
-    return [
-      'index'     => $index + 1,
-      'index0'    => $index,
-      'revindex'  => $count - $index,
-      'revindex0' => $count - $index - 1,
-      'first'     => $index == 0,
-      'last'      => $index == $count - 1,
-      'length'    => $count,
-    ];
   }
 }

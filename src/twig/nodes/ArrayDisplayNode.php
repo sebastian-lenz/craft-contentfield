@@ -74,23 +74,21 @@ class ArrayDisplayNode extends DisplayNode
     $compiler
       ->write("if (\$displayContent instanceof \\lenz\\contentfield\\models\\values\\ArrayValue) {\n")
         ->indent()
-        ->write("\$displayLoopIndex = 0;\n")
-        ->write("\$displayLoopCount = \$displayContent->count();\n")
-        ->write("foreach (\$displayContent->toArray() as \$displayContentItem) {\n")
+        ->write("\$displayIterator = \$displayContent->getIterator();\n")
+        ->write("\$displayVariables['loop'] = \$displayIterator;\n")
+        ->write("foreach (\$displayIterator as \$displayContentItem) {\n")
           ->indent()
           ->write("if (\$displayContentItem->hasCachedOutput()) {\n")
             ->indent()
             ->write("echo \$displayContentItem->getCachedOutput();\n")
             ->write("continue;\n")
             ->outdent()
-          ->write("}\n\n")
-          ->write("\$displayVariables['loop'] = \\lenz\\contentfield\\models\\values\\ArrayValue::createLoopVariable(\$displayLoopIndex, \$displayLoopCount);\n");
+          ->write("}\n\n");
 
     $this->addInstanceDisplay($compiler, '$displayContentItem', '$displayVariables');
 
     $compiler
           ->write("\n")
-          ->write("\$displayLoopIndex += 1;\n")
           ->outdent()
         ->write("}\n")
         ->outdent()
