@@ -9,6 +9,7 @@ use Exception;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\nodeVisitors\DisplayNodeVisitor;
 use lenz\contentfield\twig\tokenParsers\DisplayTokenParser;
+use lenz\contentfield\twig\tokenParsers\SiblingsTokenParser;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -22,7 +23,8 @@ class Extension extends AbstractExtension
    */
   public function getTokenParsers() {
     return [
-      new DisplayTokenParser()
+      new DisplayTokenParser(),
+      new SiblingsTokenParser(),
     ];
   }
 

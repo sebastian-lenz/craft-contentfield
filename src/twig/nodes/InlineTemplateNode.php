@@ -25,7 +25,7 @@ class InlineTemplateNode extends Node
     parent::__construct([
       'body' => $module,
     ], [
-      'name' => 'inlined_' . md5($schema->template),
+      'name' => 'contentfieldDisplay_' . md5($schema->template),
     ]);
 
     $this->_schema = $schema;

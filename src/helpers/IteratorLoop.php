@@ -2,7 +2,10 @@
 
 namespace lenz\contentfield\helpers;
 
+use Exception;
 use Iterator;
+use lenz\contentfield\models\values\InstanceValue;
+use Throwable;
 
 /**
  * Class IteratorLoop
@@ -32,6 +35,52 @@ class IteratorLoop implements Iterator, LoopInterface
   public function __construct(array $values) {
     $this->_count = count($values);
     $this->_values = $values;
+  }
+
+  /**
+   * @param int|null $limit
+   * @param string|string[]|null $only
+   * @param string|string[]|null $until
+   * @return IteratorLoop
+   * @throws Throwable
+   */
+  public function getSiblings($limit = null, $only = null, $until = null) {
+    $siblings = [];
+
+    if (!is_null($limit) && !is_numeric($limit)) {
+      throw new Exception('"Limit" must be an numeric value');
+    }
+
+    if (!is_null($only) && !is_string($only) && !is_array($only)) {
+      throw new Exception('"Only" must be a string or an array of strings');
+    }
+
+    if (!is_null($until) && !is_string($until) && !is_array($until)) {
+      throw new Exception('"Until" must be a string or an array of strings');
+    }
+
+    while ($this->_index < $this->_count - 1) {
+      $next = $this->_values[$this->_index + 1];
+      if (!($next instanceof InstanceValue)) {
+        break;
+      }
+
+      if (
+        (!is_null($only)  && !$next->isOfType($only)) ||
+        (!is_null($until) &&  $next->isOfType($until))
+      ) {
+        break;
+      }
+
+      $siblings[] = $next;
+      $this->_index++;
+
+      if (!is_null($limit) && count($siblings) >= $limit) {
+        break;
+      }
+    }
+
+    return new IteratorLoop($siblings);
   }
 
 

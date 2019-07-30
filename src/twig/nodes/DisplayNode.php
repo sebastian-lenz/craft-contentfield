@@ -30,7 +30,7 @@ class DisplayNode extends Node
 
 
   /**
-   * InstanceNode constructor.
+   * DisplayNode constructor.
    *
    * @param AbstractExpression $value
    * @param AbstractField|null $field
@@ -100,6 +100,13 @@ class DisplayNode extends Node
     $this->_inlinedSchemas[$qualifier] = $callback;
   }
 
+  /**
+   * @return bool
+   */
+  public function usesIndexDisplay() {
+    return true;
+  }
+
 
   // Protected methods
   // -----------------
@@ -121,20 +128,7 @@ class DisplayNode extends Node
    * @param Compiler $compiler
    */
   protected function addDisplay(Compiler $compiler) {
-    $compiler
-      ->write("if (\$displayContent instanceof \\lenz\\contentfield\\twig\\DisplayInterface) {\n")
-        ->indent()
-        ->write("\$displayContent->display(\$displayVariables);\n")
-        ->outdent()
-      ->write("} elseif (\$displayContent instanceof \\lenz\\contentfield\\models\\values\\ValueInterface) {\n")
-        ->indent()
-        ->write("echo \$displayContent->getHtml();\n")
-        ->outdent()
-      ->write("} else {\n")
-        ->indent()
-        ->write("echo (string)\$displayContent;\n")
-        ->outdent()
-      ->write("}\n");
+    $compiler->write("\$this->contentfieldDisplay(\$displayContent, \$displayVariables);\n");
   }
 
   /**

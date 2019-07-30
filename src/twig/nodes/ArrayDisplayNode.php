@@ -6,11 +6,13 @@ use lenz\contentfield\Config;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\TemplateSchema;
+use Throwable;
 use Twig\Compiler;
 use Twig\Node\Expression\AbstractExpression;
 
 /**
  * Class ArrayDisplayNode
+ *
  * @property ArrayField $_field
  * @method ArrayField getField()
  */
@@ -18,6 +20,7 @@ class ArrayDisplayNode extends DisplayNode
 {
   /**
    * ArrayDisplayNode constructor.
+   *
    * @param AbstractExpression $value
    * @param ArrayField $field
    * @param AbstractExpression|null $variables
@@ -38,6 +41,7 @@ class ArrayDisplayNode extends DisplayNode
 
   /**
    * @inheritDoc
+   * @throws Throwable
    */
   public function getInlineSchemaCandidates() {
     $member = $this->_field->member;
@@ -59,6 +63,13 @@ class ArrayDisplayNode extends DisplayNode
     );
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function usesIndexDisplay() {
+    return count($this->_inlinedSchemas) == 0;
+  }
+
 
   // Protected methods
   // -----------------
@@ -67,8 +78,9 @@ class ArrayDisplayNode extends DisplayNode
    * @param Compiler $compiler
    */
   protected function addDisplay(Compiler $compiler) {
-    if (count($this->_inlinedSchemas) == 0) {
-      return parent::addDisplay($compiler);
+    if ($this->usesIndexDisplay()) {
+      parent::addDisplay($compiler);
+      return;
     }
 
     $compiler
