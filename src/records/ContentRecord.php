@@ -2,9 +2,9 @@
 
 namespace lenz\contentfield\records;
 
+use Craft;
 use craft\db\Migration;
 use craft\helpers\Json;
-use lenz\contentfield\models\Content;
 use lenz\craft\utils\foreignField\ForeignFieldRecord;
 
 /**
@@ -34,7 +34,7 @@ class ContentRecord extends ForeignFieldRecord
    */
   public static function createTable(Migration $migration, array $columns = []) {
     return parent::createTable($migration, $columns + [
-      'model' => $migration->longText()
+      'model' => self::getBinaryColumnType()
     ]);
   }
 
@@ -77,6 +77,15 @@ class ContentRecord extends ForeignFieldRecord
     }
 
     return $data;
+  }
+
+  /**
+   * @return string
+   */
+  static function getBinaryColumnType() {
+    return Craft::$app->getDb()->getIsMysql()
+      ? 'mediumblob'
+      : 'bytea';
   }
 
   /**
