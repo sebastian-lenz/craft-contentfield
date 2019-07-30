@@ -19,6 +19,7 @@ use lenz\contentfield\assets\preview\ContentFieldPreviewAsset;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\Content;
+use lenz\contentfield\services\definitions\FieldDefinitions;
 use lenz\contentfield\twig\Extension;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
 use lenz\contentfield\utilities\Utility;
@@ -31,6 +32,7 @@ use yii\web\NotFoundHttpException;
 /**
  * Class Plugin
  *
+ * @property services\CommonMark $commonMark
  * @property services\definitions\FieldDefinitions $fields
  * @property services\FieldUsage $fieldUsage
  * @property services\definitions\ImageTagDefinitions $imageTags
@@ -76,6 +78,9 @@ class Plugin extends BasePlugin
     parent::init();
 
     $this->setComponents([
+      'commonMark' => [
+        'class' => services\CommonMark::class,
+      ],
       'fields' => [
         'class' => services\definitions\FieldDefinitions::class,
       ],
