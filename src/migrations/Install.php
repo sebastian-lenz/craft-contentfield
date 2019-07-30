@@ -15,9 +15,7 @@ class Install extends Migration
    * @inheritdoc
    */
   public function safeUp() {
-    ContentRecord::createTable($this, [
-      'model' => $this->longText(),
-    ]);
+    ContentRecord::createTable($this);
   }
 
   /**

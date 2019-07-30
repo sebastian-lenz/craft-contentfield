@@ -37,7 +37,7 @@ class ContentField extends ForeignField
    *
    * @var string
    */
-  public $compression = 'archive';
+  public $compression = 'never';
 
   /**
    * @var string[]
@@ -104,11 +104,12 @@ class ContentField extends ForeignField
       : 'never';
 
     if ($oldCompression != $this->compression) {
-      $recordIds = ContentRecord::find([ 'fieldId' => $this->id ])
+      $recordIds = ContentRecord::find()
+        ->where([ 'fieldId' => $this->id ])
         ->select(['id'])
         ->column();
 
-      foreach (array_chunk($recordIds, 50) as $chunk) {
+      foreach (array_chunk($recordIds, 250) as $chunk) {
         Craft::$app->getQueue()->push(new CompressRecordsJob([
           'fieldId'   => $this->id,
           'recordIds' => $chunk,
@@ -268,20 +269,20 @@ class ContentField extends ForeignField
 
   /**
    * @param ElementInterface|null $element
-   * @return bool
+   * @return string|null
    */
   public function shouldCompress(ElementInterface $element = null) {
-    if (!function_exists('gzencode')) {
-      return false;
-    }
+    $compression = ContentRecord::getAvailableCompression();
 
     if ($this->compression == 'always') {
-      return true;
+      return $compression;
     } elseif ($this->compression == 'never' || is_null($element)) {
-      return false;
+      return null;
     }
 
-    return $element->getIsDraft() || $element->getIsRevision();
+    return $element->getIsDraft() || $element->getIsRevision()
+      ? $compression
+      : null;
   }
 
 
