@@ -10,6 +10,18 @@
   on:           field.useAsPageTemplate,
 }) -}}
 
+{{- forms.selectField({
+  label:        'Compression',
+  instructions: 'Uses gzip to reduce the size of the json payload when stored to the database.',
+  name:         'compression',
+  value:        field.compression,
+  options: {
+    always:  'Always compress (not recommended)',
+    never:   'Never compress',
+    archive: 'Compress drafts and revisions',
+  }
+}) -}}
+
 {{- forms.field({
   label:        'Templates',
   instructions: 'Mark templates with the property `rootTemplate: true` to filter this list. Assign this field to entries to see additional settings.',

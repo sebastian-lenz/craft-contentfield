@@ -14,6 +14,7 @@ use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\helpers\ReferenceLoader;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\records\ContentRecord;
 use lenz\contentfield\twig\DisplayInterface;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
@@ -233,7 +234,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
       if ($value instanceof InstanceValue) {
         $model = $value;
       } elseif (is_string($value)) {
-        $model = $schemas->createValue(Json::decode($value, true));
+        $model = $schemas->createValue(ContentRecord::decodeModel($value));
       } elseif (is_array($value)) {
         $model = $schemas->createValue($value);
       }
