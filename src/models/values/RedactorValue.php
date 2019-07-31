@@ -14,10 +14,16 @@ use Twig\Markup;
 
 /**
  * Class RedactorValue
+ *
  * @property RedactorField $_field
  */
 class RedactorValue extends Value implements DisplayInterface, ReferenceMapValueInterface
 {
+  /**
+   * @var string|null
+   */
+  private $_compiledContent = null;
+
   /**
    * @var Markup[]|null
    */
@@ -61,21 +67,21 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
    * @inheritdoc
    */
   public function __toString() {
-    return $this->_parsedContent;
+    return $this->getCompiledContent();
   }
 
   /**
    * @inheritDoc
    */
   public function display(array $variables = []) {
-    echo $this->_parsedContent;
+    echo $this->getCompiledContent();
   }
 
   /**
    * @inheritdoc
    */
   public function getHtml() {
-    return new Markup($this->_parsedContent, Craft::$app->charset);
+    return new Markup($this->getCompiledContent(), Craft::$app->charset);
   }
 
   /**
@@ -87,7 +93,7 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
     }
 
     $this->_pages = [];
-    $pages = explode('<!--pagebreak-->', (string)$this);
+    $pages = explode('<!--pagebreak-->', $this->getCompiledContent());
 
     foreach ($pages as $page) {
       $this->_pages[] = new Markup($page, Craft::$app->charset);
@@ -157,6 +163,7 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
    * @param string $str
    */
   public function setRawContent(string $str) {
+    $this->_compiledContent = null;
     $this->_pages = null;
     $this->_rawContent = $str;
 
@@ -203,6 +210,96 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
     } catch (Throwable $error) {
       $this->_parsedContent = $elements->parseRefs($str);
       $this->_parsedTokens = null;
+    }
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * @return string
+   */
+  private function compile() {
+    if (is_null($this->_parsedTokens) || count($this->_parsedTokens) == 0) {
+      return $this->_parsedContent;
+    }
+
+    try {
+      $loader = $this->getContent()->getReferenceLoader();
+    } catch (Throwable $error) {
+      $loader = null;
+    }
+
+    if (is_null($loader)) {
+      return Craft::$app->getElements()->parseRefs($this->_rawContent);
+    }
+
+    $replace = [];
+    $search  = [];
+    $str     = $this->_parsedContent;
+
+    foreach ($this->_parsedTokens as $elementType => $tokensByName) {
+      $elements = $loader->getElements($elementType);
+
+      foreach ($tokensByName as $refName => $tokens) {
+        $element = $elements[$refName] ?? null;
+
+        foreach ($tokens as list($token, $matches)) {
+          $search[] = $token;
+          $replace[] = $this->getTokenReplacement($matches, $element);
+        }
+      }
+    }
+
+    // Swap the tokens with the references
+    return str_replace($search, $replace, $str);
+  }
+
+  /**
+   * @return string
+   */
+  private function getCompiledContent() {
+    if (is_null($this->_compiledContent)) {
+      $this->_compiledContent = $this->compile();
+    }
+
+    return $this->_compiledContent;
+  }
+
+  /**
+   * Returns the replacement for a given reference tag.
+   *
+   * @param ElementInterface|null $element
+   * @param array $matches
+   * @return string
+   * @see parseRefs()
+   */
+  private function getTokenReplacement(array $matches, ElementInterface $element = null): string {
+    if ($element === null) {
+      // Put the ref tag back
+      return $matches[0];
+    }
+
+    if (empty($matches[3]) || !isset($element->{$matches[3]})) {
+      // Default to the URL
+      return (string)$element->getUrl();
+    }
+
+    try {
+      $value = $element->{$matches[3]};
+
+      if (is_object($value) && !method_exists($value, '__toString')) {
+        throw new Exception('Object of class ' . get_class($value) . ' could not be converted to string');
+      }
+
+      return Craft::$app->getElements()->parseRefs((string)$value);
+    } catch (Throwable $e) {
+      // Log it
+      Craft::error('An exception was thrown when parsing the ref tag "' . $matches[0] . "\":\n" . $e->getMessage(), __METHOD__);
+
+      // Replace the token with the original ref tag
+      return $matches[0];
     }
   }
 }
