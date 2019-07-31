@@ -17,8 +17,10 @@ use Twig\Markup;
  *
  * @property RedactorField $_field
  */
-class RedactorValue extends Value implements DisplayInterface, ReferenceMapValueInterface
+class RedactorValue extends Markup implements DisplayInterface, ReferenceMapValueInterface, ValueInterface
 {
+  use ValueTrait;
+
   /**
    * @var string|null
    */
@@ -58,8 +60,10 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
    * @param RedactorField $field
    */
   public function __construct($data, ValueInterface $parent, RedactorField $field) {
-    parent::__construct($parent, $field);
+    parent::__construct('', 'utf-8');
 
+    $this->_field = $field;
+    $this->_parent = $parent;
     $this->setRawContent(is_string($data) ? $data : '');
   }
 
@@ -68,6 +72,13 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
    */
   public function __toString() {
     return $this->getCompiledContent();
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function count() {
+    return mb_strlen($this->getCompiledContent(), 'utf-8');
   }
 
   /**
@@ -157,6 +168,13 @@ class RedactorValue extends Value implements DisplayInterface, ReferenceMapValue
    */
   public function isEmpty() {
     return empty($this->_rawContent);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function jsonSerialize() {
+    return $this->getCompiledContent();
   }
 
   /**
