@@ -296,12 +296,12 @@ class ContentField extends ForeignField
     $content = $model instanceof Content ? $model : null;
     $contentModel = is_null($content)
       ? null
-      : $content->getModel()->getSerializedValue();
+      : $content->getModel();
 
     return [
       'model' => is_null($contentModel)
         ? null
-        : ContentRecord::encodeModel($contentModel, $this->shouldCompress($element))
+        : ContentRecord::encodeModel($contentModel->getSerializedValue(), $this->shouldCompress($element))
     ];
   }
 
