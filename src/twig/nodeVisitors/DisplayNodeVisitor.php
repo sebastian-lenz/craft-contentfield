@@ -5,7 +5,9 @@ namespace lenz\contentfield\twig\nodeVisitors;
 use Exception;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\twig\nodes\DisplayNode;
+use lenz\contentfield\twig\nodes\InlineIndexNode;
 use lenz\contentfield\twig\nodes\InlineTemplateNode;
+use lenz\contentfield\twig\nodes\SiblingsNode;
 use Throwable;
 use Twig\Environment;
 use Twig\Error\Error;
@@ -21,9 +23,19 @@ use Twig\NodeVisitor\AbstractNodeVisitor;
 class DisplayNodeVisitor extends AbstractNodeVisitor
 {
   /**
+   * @var InlineIndexNode
+   */
+  private $_inlineIndex;
+
+  /**
    * @var ModuleNode[]
    */
   private $_moduleStack = [];
+
+  /**
+   * @var bool
+   */
+  private $_requiresIndex = false;
 
   /**
    * @var ModuleNode[]
@@ -38,8 +50,14 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
   protected function doEnterNode(Node $node, Environment $env) {
     if ($node instanceof ModuleNode) {
       $this->_moduleStack[] = $node;
+      if (count($this->_moduleStack) == 1) {
+        $this->_inlineIndex = new InlineIndexNode();
+        $this->_requiresIndex = false;
+      }
     } elseif ($node instanceof DisplayNode) {
       $this->attach($node, $env);
+    } else if ($node instanceof SiblingsNode) {
+      $this->_requiresIndex = true;
     }
 
     return $node;
@@ -51,6 +69,9 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
   protected function doLeaveNode(Node $node, Environment $env) {
     if ($node instanceof ModuleNode) {
       array_pop($this->_moduleStack);
+      if (count($this->_moduleStack) == 0 && $this->_requiresIndex) {
+        $node->getNode('class_end')->setNode('inline_index', $this->_inlineIndex);
+      }
     }
 
     return $node;
@@ -73,10 +94,16 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
    * @throws Throwable
    */
   protected function attach(DisplayNode $node, Environment $env) {
+    if ($node->usesIndexDisplay()) {
+      $this->_requiresIndex = true;
+    }
+
     foreach ($node->getInlineSchemaCandidates() as $candidate) {
       $callback = $this->tryInline($candidate, $env);
+
       if (!is_null($callback)) {
         $node->setInlinedSchema($candidate->qualifier, $callback);
+        $this->_inlineIndex->setInlinedSchema($candidate->qualifier, $callback);
       }
     }
   }
@@ -122,32 +149,32 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
    * @throws Throwable
    */
   protected function tryInline(TemplateSchema $schema, Environment $env) {
-    /** @var ModuleNode $module */
-    $module   = end($this->_moduleStack);
-    $classEnd = $module->getNode('class_end');
-    $macros   = $module->getNode('macros');
-
-    if (!$classEnd->hasNode($schema->qualifier)) {
-      try {
-        $subModule = $this->compile($schema, $env);
-
-        foreach ($subModule->getNode('class_end') as $name => $classEndNode) {
-          $classEnd->setNode($name, $classEndNode);
-        }
-
-        foreach ($subModule->getNode('macros') as $name => $macroNode) {
-          $macros->setNode($name, $macroNode);
-        }
-
-        $node = new InlineTemplateNode($schema, $subModule);
-        $classEnd->setNode($schema->qualifier, $node);
-      } catch (Throwable $error) {
-        throw $error;
-      }
+    $root = reset($this->_moduleStack);
+    if (!($root instanceof ModuleNode)) {
+      return null;
     }
 
-    return $classEnd->hasNode($schema->qualifier)
-      ? $classEnd->getNode($schema->qualifier)->getAttribute('name')
-      : null;
+    // Check whether we already have that template inlined
+    $classEnd = $root->getNode('class_end');
+    if ($classEnd->hasNode($schema->qualifier)) {
+      return $classEnd
+        ->getNode($schema->qualifier)
+        ->getAttribute('name');
+    }
+
+    // Compile the template
+    $subModule = $this->compile($schema, $env);
+
+    // Copy over all macros
+    $rootMacros = $root->getNode('macros');
+    foreach ($subModule->getNode('macros') as $name => $macroNode) {
+      $rootMacros->setNode($name, $macroNode);
+    }
+
+    // Create an inline template node
+    $node = new InlineTemplateNode($schema, $subModule);
+    $classEnd->setNode($schema->qualifier, $node);
+
+    return $node->getAttribute('name');
   }
 }

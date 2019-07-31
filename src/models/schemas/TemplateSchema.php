@@ -7,8 +7,8 @@ use craft\web\View;
 use Exception;
 use lenz\contentfield\controllers\TemplatesController;
 use lenz\contentfield\events\BeforeActionEvent;
+use lenz\contentfield\helpers\StaticLoop;
 use lenz\contentfield\models\Content;
-use lenz\contentfield\models\values\ArrayValue;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
@@ -143,7 +143,7 @@ class TemplateSchema extends AbstractSchemaContainer
     );
 
     if (!array_key_exists('loop', $variables)) {
-      $variables['loop'] = ArrayValue::createLoopVariable(0, 1);
+      $variables['loop'] = StaticLoop::getInstance();
     }
 
     return $variables;

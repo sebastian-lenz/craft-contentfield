@@ -54,15 +54,15 @@ class CompressRecordsJob extends BaseJob
         ->getElements()
         ->getElementById($record->elementId, null, $record->siteId);
 
-      $isCompressed   = ContentRecord::isCompressed($record->model);
-      $shouldCompress = $field->shouldCompress($element);
-      if ($isCompressed == $shouldCompress) {
+      $actual = ContentRecord::getCompression($record->model);
+      $target = $field->shouldCompress($element);
+      if ($actual == $target) {
         continue;
       }
 
       $record->model = ContentRecord::encodeModel(
         ContentRecord::decodeModel($record->model),
-        $shouldCompress
+        $target
       );
 
       $record->save();

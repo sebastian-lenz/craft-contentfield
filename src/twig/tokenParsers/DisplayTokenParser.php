@@ -25,9 +25,9 @@ class DisplayTokenParser extends AbstractTokenParser
    * @inheritdoc
    */
   public function parse(Token $token) {
-    $parser = $this->parser;
-    $stream = $parser->getStream();
-    $variables = null;
+    $parser      = $this->parser;
+    $stream      = $parser->getStream();
+    $variables   = null;
     $forceInline = false;
 
     if ($stream->nextIf(Token::NAME_TYPE, 'inline')) {

@@ -2,7 +2,6 @@
 
 namespace lenz\contentfield\records;
 
-use Craft;
 use craft\db\Migration;
 use craft\helpers\Json;
 use lenz\craft\utils\foreignField\ForeignFieldRecord;
@@ -13,6 +12,25 @@ use lenz\craft\utils\foreignField\ForeignFieldRecord;
  */
 class ContentRecord extends ForeignFieldRecord
 {
+  /**
+   * The length of our format header.
+   * All FORMAT_* constants must be of this length.
+   */
+  const FORMAT_LENGTH = 3;
+
+  /**
+   * Defines the known compression formats
+   */
+  const FORMAT_GZ_BASE64 = 'gz:';
+
+  /**
+   * Stores all known compression formats as an array.
+   */
+  const FORMATS = [
+    self::FORMAT_GZ_BASE64,
+  ];
+
+
   /**
    * @inheritDoc
    */
@@ -34,7 +52,7 @@ class ContentRecord extends ForeignFieldRecord
    */
   public static function createTable(Migration $migration, array $columns = []) {
     return parent::createTable($migration, $columns + [
-      'model' => self::getBinaryColumnType()
+      'model' => $migration->longText(),
     ]);
   }
 
@@ -54,8 +72,13 @@ class ContentRecord extends ForeignFieldRecord
    * @return array
    */
   static function decodeModel(string $value) {
-    if (self::isCompressed($value)) {
-      $value = gzdecode($value);
+    $format = substr($value, 0, self::FORMAT_LENGTH);
+    if (in_array($format, self::FORMATS)) {
+      $value = substr($value, self::FORMAT_LENGTH);
+
+      if ($format == self::FORMAT_GZ_BASE64) {
+        $value = gzuncompress(base64_decode($value));
+      }
     }
 
     return Json::decode($value, true);
@@ -63,16 +86,16 @@ class ContentRecord extends ForeignFieldRecord
 
   /**
    * @param array $model
-   * @param bool $useCompression
+   * @param string|null $compression
    * @return string
    */
-  static function encodeModel(array $model, bool $useCompression = false) {
+  static function encodeModel(array $model, string $compression = null) {
     $data = Json::encode($model);
 
-    if ($useCompression) {
-      $compressed = gzencode($data);
+    if ($compression == self::FORMAT_GZ_BASE64) {
+      $compressed = gzcompress($data);
       if ($compressed !== false) {
-        $data = $compressed;
+        $data = self::FORMAT_GZ_BASE64 . base64_encode($compressed);
       }
     }
 
@@ -80,19 +103,24 @@ class ContentRecord extends ForeignFieldRecord
   }
 
   /**
-   * @return string
+   * @return string|null
    */
-  static function getBinaryColumnType() {
-    return Craft::$app->getDb()->getIsMysql()
-      ? 'mediumblob'
-      : 'bytea';
+  static function getAvailableCompression() {
+    if (function_exists('gzcompress')) {
+      return ContentRecord::FORMAT_GZ_BASE64;
+    }
+
+    return null;
   }
 
   /**
    * @param string $value
-   * @return bool
+   * @return string|null
    */
-  static function isCompressed(string $value) {
-    return ord($value{0}) == 31 && ord($value{1}) == 139;
+  static function getCompression(string $value) {
+    $format = substr($value, 0, self::FORMAT_LENGTH);
+    return in_array($format, self::FORMATS)
+      ? $format
+      : null;
   }
 }

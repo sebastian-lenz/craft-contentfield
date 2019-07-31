@@ -92,7 +92,7 @@ abstract class Migration extends MigrationBase
         continue;
       }
 
-      $isCompressed = ContentRecord::isCompressed($record->model);
+      $compression = ContentRecord::getCompression($record->model);
       $field = $fields->getFieldById($record->fieldId);
       $model = new Instance(
         ContentRecord::decodeModel($record->model)
@@ -111,7 +111,7 @@ abstract class Migration extends MigrationBase
 
       $record->model = ContentRecord::encodeModel(
         $model->getSerializedValue(),
-        $isCompressed
+        $compression
       );
 
       $record->save();
