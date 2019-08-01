@@ -864,33 +864,34 @@
 }
 .tcfInstancePreview--content .flexRow {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: stretch;
-  margin: 0 -10px;
+  margin: -5px;
 }
 .tcfInstancePreview--content .flexRow > * {
-  margin: 0 10px 0 0;
-  padding-left: 10px;
-  min-width: 100px;
+  margin: 5px;
   max-width: 300px;
+}
+.tcfInstancePreview--content .flexRow.noWrap {
+  flex-wrap: nowrap;
+}
+.tcfInstancePreview--content .flexRow.withMinWidth > * {
+  min-width: 100px;
+}
+.tcfInstancePreview--content .flexRow.withSeparator > * {
+  padding-left: 10px;
   border-left: 1px solid #dedee1;
 }
-.tcfInstancePreview--content .flexRow > *:first-child {
+.tcfInstancePreview--content .flexRow.withSeparator > *:first-child {
   border-left-color: transparent;
 }
 .tcfInstancePreview--content .flexColumn {
   display: flex;
   flex-flow: column nowrap;
+  margin: -5px;
 }
 .tcfInstancePreview--content .flexColumn > * {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-.tcfInstancePreview--content .flexColumn > *:first-child {
-  margin-top: 0;
-}
-.tcfInstancePreview--content .flexColumn > *:last-child {
-  margin-bottom: 0;
+  margin: 5px;
 }
 .tcfInstancePreview--elements {
   display: flex;
