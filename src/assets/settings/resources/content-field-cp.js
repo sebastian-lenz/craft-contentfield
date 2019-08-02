@@ -1,5 +1,9 @@
 (function($){
+  /** global: contentField */
+  /** global: Garnish */
+
   contentField = typeof contentField == 'undefined' ? {} : contentField;
+
   contentField.SettingsTable = Garnish.Base.extend({
     init: function(id) {
       var $field = $('#' + id);

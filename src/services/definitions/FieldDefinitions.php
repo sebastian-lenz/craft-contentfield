@@ -56,13 +56,13 @@ class FieldDefinitions extends AbstractDefinitions
   /**
    * Creates a new field instance from the given configuration.
    *
-   * @param AbstractSchema $schema
+   * @param AbstractSchema|null $schema
    * @param array $config
    * @return AbstractField
    * @throws FieldConfigException
    * @throws Exception
    */
-  public function createField(AbstractSchema $schema, $config) {
+  public function createField(AbstractSchema $schema = null, array $config = []) {
     $type   = strtolower($config['type']);
     $config = $this->resolveDefinition($config);
 

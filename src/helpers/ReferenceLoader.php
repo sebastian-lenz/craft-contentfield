@@ -126,7 +126,7 @@ class ReferenceLoader
   }
 
   /**
-   * @param string $elementType
+   * @param string|ElementInterface $elementType
    * @return ElementInterface[]
    */
   private function queryElements($elementType) {
@@ -136,7 +136,6 @@ class ReferenceLoader
       return array();
     }
 
-    /** @var ElementInterface $elementType */
     $query = $elementType::find()
       ->id($ids)
       ->siteId($this->_siteId);

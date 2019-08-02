@@ -19,7 +19,10 @@ class m190611_213100_RefactorFieldSettings extends Migration
     $fields = Field::findAll(['type' => ContentField::class]);
     foreach ($fields as $field) {
       $settings = Json::decode($field->settings);
-      if (!array_key_exists('rootTemplates', $settings)) {
+      if (
+        !is_array($settings) ||
+        !array_key_exists('rootTemplates', $settings)
+      ) {
         continue;
       }
 

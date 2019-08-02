@@ -8,6 +8,7 @@ use lenz\craft\utils\foreignField\ForeignFieldRecord;
 
 /**
  * Class ContentRecord
+ *
  * @property string $model
  */
 class ContentRecord extends ForeignFieldRecord
@@ -68,6 +69,10 @@ class ContentRecord extends ForeignFieldRecord
   // --------------
 
   /**
+   * Decodes a model when retrieving it from the database. Takes care
+   * for JSON encoding and compression.
+   *
+   * @internal
    * @param string $value
    * @return array
    */
@@ -85,6 +90,10 @@ class ContentRecord extends ForeignFieldRecord
   }
 
   /**
+   * Encodes a model before storing it to the database. Opposite
+   * operation to `ContentRecord::decodeModel`.
+   *
+   * @internal
    * @param array $model
    * @param string|null $compression
    * @return string
@@ -103,6 +112,9 @@ class ContentRecord extends ForeignFieldRecord
   }
 
   /**
+   * Returns the best available compression method.
+   *
+   * @internal
    * @return string|null
    */
   static function getAvailableCompression() {
@@ -114,6 +126,10 @@ class ContentRecord extends ForeignFieldRecord
   }
 
   /**
+   * Retrieve the compression method of the given raw record
+   * model value.
+   *
+   * @internal
    * @param string $value
    * @return string|null
    */

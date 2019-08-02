@@ -41,10 +41,10 @@ class ArrayValue
    * ArrayValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param ArrayField $field
+   * @param ValueInterface|null $parent
+   * @param ArrayField|null $field
    */
-  public function __construct($data, ValueInterface $parent, ArrayField $field) {
+  public function __construct($data, ValueInterface $parent = null, ArrayField $field = null) {
     parent::__construct($parent, $field);
 
     if (!is_array($data)) {

@@ -54,7 +54,7 @@ abstract class AbstractField extends Model
 
   /**
    * The validation rules applied to the values of this field.
-   * @var array
+   * @var array|string
    */
   public $valueRules = [];
 
@@ -172,7 +172,7 @@ abstract class AbstractField extends Model
    * @return mixed
    * @throws Exception
    */
-  abstract function createValue($data, ValueInterface $parent = null);
+  abstract public function createValue($data, ValueInterface $parent = null);
 
   /**
    * Return a list of all schemas this field and all of its children depend on.
@@ -191,7 +191,7 @@ abstract class AbstractField extends Model
    */
   public function getEditorData(ElementInterface $element = null) {
     return array(
-      'group'        => $this->getEditorGroupStyle($element),
+      'group'        => $this->getEditorGroupStyle(),
       'instructions' => Plugin::t($this->instructions),
       'isRequired'   => $this->isRequired(),
       'label'        => Plugin::t($this->label),
@@ -208,7 +208,7 @@ abstract class AbstractField extends Model
    * @param mixed $value
    * @return mixed
    */
-  abstract function getEditorValue($value);
+  abstract public function getEditorValue($value);
 
   /**
    * @param mixed $value
@@ -330,10 +330,9 @@ abstract class AbstractField extends Model
   }
 
   /**
-   * @param ElementInterface|null $element
    * @return array
    */
-  private function getEditorGroupStyle(ElementInterface $element = null) {
+  private function getEditorGroupStyle() {
     $group = [];
     $style = [];
     if (!isset($this->group)) {
@@ -380,7 +379,7 @@ abstract class AbstractField extends Model
   // --------------
 
   /**
-   * @param array $source
+   * @param array|string $source
    * @param array $allowedAttributes
    * @param string|null $defaultAttribute
    * @return array|null
@@ -445,5 +444,5 @@ abstract class AbstractField extends Model
    *
    * @param array $config
    */
-  static function expandFieldConfig(&$config) {}
+  static public function expandFieldConfig(&$config) {}
 }

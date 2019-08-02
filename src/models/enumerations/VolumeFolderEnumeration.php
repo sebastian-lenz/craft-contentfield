@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\enumerations;
 
+use Craft;
 use craft\helpers\StringHelper;
 use craft\models\VolumeFolder;
 
@@ -11,7 +12,7 @@ use craft\models\VolumeFolder;
 class VolumeFolderEnumeration implements EnumerationInterface
 {
   /**
-   * @var VolumeFolder[]
+   * @var array
    */
   protected $_folders = [];
 
@@ -64,7 +65,7 @@ class VolumeFolderEnumeration implements EnumerationInterface
    */
   public function getCustomData($key, $name) {
     if (!array_key_exists($key, $this->_folders)) {
-      $this->_folders[$key] = \Craft::$app->getAssets()
+      $this->_folders[$key] = Craft::$app->getAssets()
         ->findFolder(['uid' => $key]);
     }
 
@@ -99,9 +100,9 @@ class VolumeFolderEnumeration implements EnumerationInterface
    */
   private function getRootFolders() {
     if (!isset($this->_rootFolders)) {
-      $assets = \Craft::$app->getAssets();
+      $assets = Craft::$app->getAssets();
 
-      if ($this->_rootUids) {
+      if (!empty($this->_rootUids)) {
         $this->_rootFolders = $assets->findFolders(['uid' => $this->_rootUids]);
       } else {
         $this->_rootFolders = $assets->findFolders(['parentId' => ':empty:']);

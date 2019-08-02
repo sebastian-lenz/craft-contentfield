@@ -21,10 +21,10 @@ class EnumerationValue extends Value
    * EnumValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param AbstractEnumerationField $field
+   * @param ValueInterface|null $parent
+   * @param AbstractEnumerationField|null $field
    */
-  public function __construct($data, ValueInterface $parent, AbstractEnumerationField $field) {
+  public function __construct($data, ValueInterface $parent = null, AbstractEnumerationField $field = null) {
     parent::__construct($parent, $field);
 
     $this->_value = self::isValidEnumerationKey($data) ? $data : '';
@@ -84,7 +84,7 @@ class EnumerationValue extends Value
    * @param mixed $value
    * @return bool
    */
-  static function isValidEnumerationKey($value) {
+  static public function isValidEnumerationKey($value) {
     return is_int($value) || is_string($value);
   }
 }

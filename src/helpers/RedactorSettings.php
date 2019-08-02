@@ -71,7 +71,10 @@ class RedactorSettings extends Field
       'redactorLang'   => $redactorLang,
     ];
 
-    if ($this->translationMethod != self::TRANSLATION_METHOD_NONE) {
+    if (
+      $this->translationMethod != self::TRANSLATION_METHOD_NONE &&
+      !is_null($site->language)
+    ) {
       // Explicitly set the text direction
       $locale = Craft::$app->getI18n()->getLocaleById($site->language);
       $settings['direction'] = $locale->getOrientation();

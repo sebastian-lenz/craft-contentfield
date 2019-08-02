@@ -125,7 +125,7 @@ abstract class Migration extends MigrationBase
    * @param string|int|array $values
    * @return int[]
    */
-  static function toFieldIds($values) {
+  static public function toFieldIds($values) {
     $fields = Craft::$app->getFields();
     $values = is_array($values) ? $values : [$values];
 

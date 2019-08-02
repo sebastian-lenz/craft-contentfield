@@ -40,16 +40,24 @@ class ContentField extends ForeignField
   public $compression = 'never';
 
   /**
+   * The list of root schemas set for this field. Do not manipulate
+   * directly, subscribe to the ContentField::EVENT_ROOT_SCHEMAS event
+   * if you want to change this value in code.
+   *
    * @var string[]
    */
   public $rootSchemas = [];
 
   /**
+   * The list of root schemas by usage uid set for this field.
+   *
    * @var string[][]
    */
   public $rootSchemasByUsage = [];
 
   /**
+   * Whether this field should take over the page rendering or not.
+   *
    * @var bool
    */
   public $useAsPageTemplate = false;
@@ -73,6 +81,9 @@ class ContentField extends ForeignField
    */
   public function afterElementSave(ElementInterface $element, bool $isNew) {
     parent::afterElementSave($element, $isNew);
+    if (is_null($this->handle)) {
+      return;
+    }
 
     $value = $element->getFieldValue($this->handle);
     if (
@@ -121,13 +132,6 @@ class ContentField extends ForeignField
   }
 
   /**
-   * @inheritDoc
-   */
-  public function beforeSave(bool $isNew): bool {
-    return parent::beforeSave($isNew);
-  }
-
-  /**
    * @return AbstractSchema[]
    */
   public function getAllRootSchemas() {
@@ -141,6 +145,11 @@ class ContentField extends ForeignField
   }
 
   /**
+   * Returns a complete list of all root schemas. Intended for the
+   * field settings form. This method is slow as it has to crawl all
+   * templates in the system.
+   *
+   * @internal
    * @return AbstractSchema[][]
    */
   public function getAllRootSchemasGrouped() {
@@ -163,6 +172,9 @@ class ContentField extends ForeignField
   }
 
   /**
+   * Returns the data required by the JavaScript editor to work.
+   *
+   * @internal
    * @param Content $value
    * @param ElementInterface|null $element
    * @param bool $disabled
@@ -174,6 +186,10 @@ class ContentField extends ForeignField
   }
 
   /**
+   * Returns the root schemas that are currently available for this
+   * field.
+   *
+   * @internal
    * @param ElementInterface|null $element
    * @return AbstractSchema[]
    * @throws Throwable
@@ -214,6 +230,9 @@ class ContentField extends ForeignField
   }
 
   /**
+   * Returns a list of all detected field usages. Used by the setting form.
+   *
+   * @internal
    * @return Usage[]
    */
   public function getUsages() {
@@ -222,6 +241,8 @@ class ContentField extends ForeignField
 
   /**
    * Whether each site should get its own unique set of relations.
+   *
+   * @internal
    * @return boolean
    */
   public function hasLocalizedRelations() {
@@ -229,7 +250,23 @@ class ContentField extends ForeignField
   }
 
   /**
-   * @param array $value
+   * Sets the available root schemas by usage. Primary intended as a
+   * setter to be used by Craft when saving the field settings form.
+   *
+   * The expected value should be an array keyed by the uids returned by
+   * the field usage service. Each value must be an array containing
+   * `@enabled` for active mappings and a series of schema names.
+   *
+   * ```
+   * $value = [
+   *   'd686dafd-4494-4600-b82a-9316851c7bd1' => ['@enabled', 'template:_roots/*'],
+   *   '00990692-a3cd-4d96-99c7-5ff1d1787607' => ['@enabled', 'template:_roots/page-default', 'template:_roots/page-special'],
+   *   'c9ec637f-b59f-40fc-8baa-44f742cec588' => [''],
+   * ];
+   * ```
+   *
+   * @internal
+   * @param mixed $value
    */
   public function setCpRootSchemasByUsage($value) {
     if (!is_array($value)) {
@@ -243,6 +280,10 @@ class ContentField extends ForeignField
       }
 
       ArrayHelper::removeValue($schemas, self::ENABLED_INDICATOR);
+      $schemas = array_filter($schemas, function($schema) {
+        return is_string($schema);
+      });
+
       $usages[$uid] = $schemas;
     }
 
@@ -253,21 +294,27 @@ class ContentField extends ForeignField
    * This settings has been renamed to `rootSchemas`. This method
    * helps bootstrapping old installs before the migration has run.
    *
-   * @param array $value
+   * @internal
    * @deprecated
+   * @param array $value
    */
   public function setRootTemplates($value) {
     $this->rootSchemas = $value;
   }
 
   /**
-   * @return array
+   * @inheritDoc
    */
   public function settingsAttributes(): array {
     return ['compression', 'rootSchemas', 'rootSchemasByUsage', 'useAsPageTemplate'];
   }
 
   /**
+   * Decides whether the content data of the given element should be
+   * compressed when being stored to the database. Returns the desired
+   * compression method.
+   *
+   * @internal
    * @param ElementInterface|null $element
    * @return string|null
    */
@@ -310,21 +357,21 @@ class ContentField extends ForeignField
   // --------------
 
   /**
-   * @return string
+   * @inheritDoc
    */
   static public function displayName(): string {
     return self::t('Content field');
   }
 
   /**
-   * @return string
+   * @inheritDoc
    */
   public static function inputTemplate(): string {
     return 'contentfield/_input';
   }
 
   /**
-   * @inheritdoc
+   * @inheritDoc
    */
   public static function modelClass(): string {
     return Content::class;

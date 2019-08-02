@@ -23,7 +23,7 @@ class SelectField extends AbstractEnumerationField
   /**
    * @inheritDoc
    */
-  public static function expandFieldConfig(&$config) {
+  static public function expandFieldConfig(&$config) {
     if ($config['type'] === 'volumeFolder') {
       $params = [];
       if (isset($config['rootFolders'])) {

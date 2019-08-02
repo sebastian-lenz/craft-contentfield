@@ -4,6 +4,7 @@ namespace lenz\contentfield\controllers;
 
 use Craft;
 use craft\controllers\TemplatesController as BaseTemplatesController;
+use Exception;
 use lenz\contentfield\models\Content;
 use Throwable;
 use yii\web\Response as YiiResponse;
@@ -30,8 +31,11 @@ class TemplatesController extends BaseTemplatesController
    */
   public function renderTemplate(string $template, array $variables = []): YiiResponse {
     $response = Craft::$app->getResponse();
-    $headers  = $response->getHeaders();
+    if (!($response instanceof YiiResponse)) {
+      $response = new YiiResponse();
+    }
 
+    $headers  = $response->getHeaders();
     if (!$headers->has('content-type')) {
       $headers->set('content-type', $this->mimeType . '; charset=' . $response->charset);
     }

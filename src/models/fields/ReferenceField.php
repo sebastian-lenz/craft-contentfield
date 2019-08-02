@@ -205,7 +205,7 @@ class ReferenceField extends AbstractField
   /**
    * @inheritdoc
    */
-  static function expandFieldConfig(&$config) {
+  static public function expandFieldConfig(&$config) {
     // Expand the type `instances` to an array of instance fields
     if (in_array($config['type'], ['image', 'images'])) {
       $config = array(

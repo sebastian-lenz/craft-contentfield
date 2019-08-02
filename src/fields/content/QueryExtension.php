@@ -36,9 +36,10 @@ class QueryExtension extends ForeignFieldQueryExtension
    * @throws \Exception
    */
   public function onAfterPopulateElement(PopulateElementEvent $event) {
-    $content = is_null($event->element)
+    $handle  = $this->field->handle;
+    $content = is_null($event->element) || is_null($handle)
       ? null
-      : $event->element->getFieldValue($this->field->handle);
+      : $event->element->getFieldValue($handle);
 
     if ($content instanceof Content) {
       if (!isset($this->_referenceLoader)) {

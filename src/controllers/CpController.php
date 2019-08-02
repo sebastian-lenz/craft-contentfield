@@ -62,7 +62,7 @@ class CpController extends Controller
    */
   public function actionOembed($schema, $field, $url) {
     $instance = Plugin::getInstance()->schemas->getSchema($schema);
-    if (is_null($schema)) {
+    if (is_null($instance)) {
       throw new Exception('Invalid schema provided: ' . $schema);
     }
 

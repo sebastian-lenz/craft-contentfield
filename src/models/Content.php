@@ -138,7 +138,9 @@ class Content extends ForeignFieldModel implements DisplayInterface
     if ($this->_owner instanceof Element) {
       try {
         return $this->_owner->getSite();
-      } catch (Exception $e) { }
+      } catch (Exception $e) {
+        // Ignore this error
+      }
     }
 
     return Craft::$app->sites->currentSite;
@@ -224,7 +226,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
-   * @param InstanceValue|string|null $value
+   * @param InstanceValue|string|null|mixed $value
    */
   public function setModel($value = null) {
     $model   = null;

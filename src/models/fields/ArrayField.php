@@ -41,7 +41,7 @@ class ArrayField extends AbstractField
   /**
    * The maximum number of elements allowed in this array.
    *
-   * @var int
+   * @var int|mixed
    */
   public $limit = 0;
 
@@ -49,9 +49,9 @@ class ArrayField extends AbstractField
    * A field defining each member within the array. Can be any field
    * except another array field.
    *
-   * @var AbstractField
+   * @var AbstractField|null
    */
-  public $member;
+  public $member = null;
 
   /**
    * @inheritdoc
@@ -81,7 +81,7 @@ class ArrayField extends AbstractField
         ->fields
         ->createField($schema, $member);
 
-      if ($member instanceof ArrayValue) {
+      if ($member instanceof ArrayField) {
         throw new Exception('Array fields cannot be nested.');
       }
       

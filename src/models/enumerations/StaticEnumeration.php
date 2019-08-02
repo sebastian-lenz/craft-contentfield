@@ -20,7 +20,7 @@ class StaticEnumeration implements EnumerationInterface
 
   /**
    * StaticEnumeration constructor.
-   * @param array $options
+   * @param array|string $options
    */
   public function __construct($options = array()) {
     if (is_string($options)) {
@@ -82,7 +82,7 @@ class StaticEnumeration implements EnumerationInterface
    * @param string $name
    * @return mixed
    */
-  function getCustomData($key, $name) {
+  public function getCustomData($key, $name) {
     foreach ($this->_options as $option) {
       if ($option['key'] === $key) {
         return array_key_exists($name, $option)
@@ -97,9 +97,11 @@ class StaticEnumeration implements EnumerationInterface
   /**
    * @inheritdoc
    */
-  function getOptions() {
+  public function getOptions() {
     $options = $this->_options;
-    for ($index = 0; $index < count($options); $index++) {
+    $count   = count($options);
+
+    for ($index = 0; $index < $count; $index++) {
       $options[$index]['label'] = Plugin::t($options[$index]['label']);
     }
 

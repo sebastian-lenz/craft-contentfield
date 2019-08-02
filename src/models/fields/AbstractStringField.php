@@ -3,7 +3,6 @@
 namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
-use lenz\contentfield\models\values\StringValue;
 use lenz\contentfield\models\values\ValueInterface;
 
 /**

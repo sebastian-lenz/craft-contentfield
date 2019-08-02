@@ -4,6 +4,7 @@ namespace lenz\contentfield\helpers;
 
 use Craft;
 use craft\queue\BaseJob;
+use Exception;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\records\ContentRecord;
@@ -33,11 +34,12 @@ class CompressRecordsJob extends BaseJob
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function execute($queue) {
-    $field = \Craft::$app->getFields()->getFieldById($this->fieldId);
+    $field = Craft::$app->getFields()->getFieldById($this->fieldId);
     if (!($field instanceof ContentField)) {
-      throw new \Exception('Invalid field given, must be an instance of ContentField.');
+      throw new Exception('Invalid field given, must be an instance of ContentField.');
     }
 
     $records = ContentRecord::findAll(['id' => $this->recordIds]);
@@ -46,7 +48,7 @@ class CompressRecordsJob extends BaseJob
 
     foreach ($records as $record) {
       $this->setProgress($queue, $index++ / $count);
-      if (is_null($record->model)) {
+      if (is_null($record->model) || is_null($record->elementId)) {
         continue;
       }
 
