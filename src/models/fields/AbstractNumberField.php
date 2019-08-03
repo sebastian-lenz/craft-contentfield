@@ -167,4 +167,11 @@ abstract class AbstractNumberField extends AbstractField
       ]
     );
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function useRawValueValidation() {
+    return true;
+  }
 }

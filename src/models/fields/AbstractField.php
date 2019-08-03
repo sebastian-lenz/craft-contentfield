@@ -295,6 +295,15 @@ abstract class AbstractField extends Model
   }
 
   /**
+   * Whether to validate the raw value or not.
+   *
+   * @return bool
+   */
+  public function useRawValueValidation() {
+    return false;
+  }
+
+  /**
    * @param string $attribute
    */
   public function validateName($attribute) {

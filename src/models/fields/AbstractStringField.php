@@ -51,4 +51,11 @@ abstract class AbstractStringField extends AbstractField
   public function getSearchKeywords($value) {
     return $this->searchable && is_string($value) ? (string)$value : '';
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function useRawValueValidation() {
+    return true;
+  }
 }

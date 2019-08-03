@@ -345,9 +345,14 @@ abstract class AbstractSchema extends Model
     foreach ($this->fields as $name => $field) {
       foreach ($field->getValueRules() as $rule) {
         $validator = $rule[0];
-        $attribute = is_subclass_of($validator, ValueValidator::class)
-          ? $name
-          : 'raw:' . $name;
+        $useRawValue = (
+          !is_subclass_of($validator, ValueValidator::class) &&
+          !$field->useRawValueValidation()
+        );
+
+        $attribute = $useRawValue
+          ? 'raw:' . $name
+          : $name;
 
         unset($rule[0]);
         $result[] = [$attribute, $validator] + $rule;

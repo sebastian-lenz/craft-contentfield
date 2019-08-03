@@ -20,6 +20,20 @@ class TextField extends AbstractStringField
   public $inputType = 'text';
 
   /**
+   * Specifies the maximum input length.
+   *
+   * @var int
+   */
+  public $maxLength;
+
+  /**
+   * A regular expression the value must match.
+   *
+   * @var string
+   */
+  public $pattern;
+
+  /**
    * Placeholder text for the text input element. Translated using the default
    * translation method.
    *
@@ -46,8 +60,51 @@ class TextField extends AbstractStringField
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData($element) + [
       'inputType'   => $this->getInputType(),
+      'maxLength'   => $this->maxLength,
+      'pattern'     => $this->pattern,
       'placeholder' => $this->getPlaceholder(),
     ];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getValueRules() {
+    $stringRule = ['string'];
+    if (isset($this->maxLength)) {
+      $stringRule['max'] = $this->maxLength;
+    }
+
+    $rules = [$stringRule];
+    if (isset($this->pattern)) {
+      $rules[] = ['match', 'pattern' => $this->pattern];
+    }
+
+    if ($this->inputType == 'url') {
+      $rules[] = ['url'];
+    } elseif ($this->inputType == 'email') {
+      $rules[] = ['email'];
+    }
+
+    return array_merge(
+      parent::getValueRules(),
+      $rules
+    );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function rules() {
+    return array_merge(
+      parent::rules(),
+      [
+        [['pattern', 'placeholder'], 'string'],
+        ['inputType', 'required'],
+        ['inputType', 'in', 'range' => self::INPUT_TYPES],
+        ['maxLength', 'integer'],
+      ]
+    );
   }
 
 

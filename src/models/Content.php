@@ -276,4 +276,16 @@ class Content extends ForeignFieldModel implements DisplayInterface
     $referenceLoader->addContent($this);
     $this->_referenceLoader = $referenceLoader;
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function validate($attributeNames = null, $clearErrors = true) {
+    $model = $this->getModel();
+    if (is_null($model)) {
+      return true;
+    }
+
+    return $model->validate();
+  }
 }

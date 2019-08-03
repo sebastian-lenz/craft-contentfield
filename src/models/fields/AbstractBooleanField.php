@@ -38,4 +38,11 @@ abstract class AbstractBooleanField extends AbstractField
   public function getEditorValue($value) {
     return !!$value;
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function useRawValueValidation() {
+    return true;
+  }
 }
