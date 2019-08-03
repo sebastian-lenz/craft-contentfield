@@ -63,6 +63,13 @@ class ContentField extends ForeignField
   public $useAsPageTemplate = false;
 
   /**
+   * Cached output of `ContentField::getAllRootSchemas`.
+   *
+   * @var AbstractSchema[][]
+   */
+  private $_allRootSchemas;
+
+  /**
    * Value used by cp settings to mark enabled type settings.
    */
   const ENABLED_INDICATOR = '@enabled';
@@ -132,19 +139,6 @@ class ContentField extends ForeignField
   }
 
   /**
-   * @return AbstractSchema[]
-   */
-  public function getAllRootSchemas() {
-    $schemas = Plugin::getInstance()->schemas->getAllSchemas();
-    $rootSchemas = array_filter($schemas, function(AbstractSchema $schema) {
-      return $schema->rootSchema;
-    });
-
-    // Marking schemas as root is optional, simply return all if none are marked.
-    return count($rootSchemas) ? $rootSchemas : $schemas;
-  }
-
-  /**
    * Returns a complete list of all root schemas. Intended for the
    * field settings form. This method is slow as it has to crawl all
    * templates in the system.
@@ -152,23 +146,27 @@ class ContentField extends ForeignField
    * @internal
    * @return AbstractSchema[][]
    */
-  public function getAllRootSchemasGrouped() {
-    $groups = [];
-    $schemas = $this->getAllRootSchemas();
-    usort($schemas, function(AbstractSchema $a, AbstractSchema $b) {
-      return strcmp($a->label, $b->label);
-    });
+  public function getAllRootSchemas() {
+    if (!isset($this->_allRootSchemas)) {
+      $groups = [];
+      $schemas = $this->fetchAllRootSchemas();
+      usort($schemas, function(AbstractSchema $a, AbstractSchema $b) {
+        return strcmp($a->label, $b->label);
+      });
 
-    foreach ($schemas as $schema) {
-      $offset = strrpos($schema->qualifier, '/');
-      $group = $offset === false
-        ? '*'
-        : substr($schema->qualifier, 0, $offset);
+      foreach ($schemas as $schema) {
+        $offset = strrpos($schema->qualifier, '/');
+        $group = $offset === false
+          ? '*'
+          : substr($schema->qualifier, 0, $offset);
 
-      $groups[$group][] = $schema;
+        $groups[$group][] = $schema;
+      }
+
+      $this->_allRootSchemas = $groups;
     }
 
-    return $groups;
+    return $this->_allRootSchemas;
   }
 
   /**
@@ -346,6 +344,22 @@ class ContentField extends ForeignField
 
   // Protected methods
   // -----------------
+
+  /**
+   * Returns a list of all available root schemas.
+   *
+   * @internal
+   * @return AbstractSchema[]
+   */
+  protected function fetchAllRootSchemas() {
+    $schemas = Plugin::getInstance()->schemas->getAllSchemas();
+    $rootSchemas = array_filter($schemas, function(AbstractSchema $schema) {
+      return $schema->rootSchema;
+    });
+
+    // Marking schemas as root is optional, simply return all if none are marked.
+    return count($rootSchemas) ? $rootSchemas : $schemas;
+  }
 
   /**
    * @inheritDoc

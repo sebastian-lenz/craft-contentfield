@@ -51,7 +51,7 @@
 
 {% macro table(field) %}
   {% import _self as self %}
-  {% set groups = field.allRootSchemasGrouped %}
+  {% set groups = field.getAllRootSchemas %}
   {% set usages = field.usages %}
 
   <div class="tcfSchemas" id="{{ field.handle }}">
@@ -85,7 +85,7 @@
 
         {% for group, schemas in groups %}
           <div class="tcfSchemas--row content group">
-            {{ self.usageCells(field, usages, group~'/*.twig') }}
+            {{ self.usageCells(field, usages, group~'/*') }}
           </div>
 
           {% for schema in schemas %}
