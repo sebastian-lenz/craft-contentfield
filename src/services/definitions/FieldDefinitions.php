@@ -12,6 +12,7 @@ use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\fields\LightswitchField;
 use lenz\contentfield\models\fields\LinkField;
 use lenz\contentfield\models\fields\LocationField;
+use lenz\contentfield\models\fields\NumberField;
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\models\fields\RedactorField;
 use lenz\contentfield\models\fields\ReferenceField;
@@ -43,6 +44,7 @@ class FieldDefinitions extends AbstractDefinitions
     LightswitchField::NAME => LightswitchField::class,
     LinkField::NAME        => LinkField::class,
     LocationField::NAME    => LocationField::class,
+    NumberField::NAME      => NumberField::class,
     ReferenceField::NAME   => ReferenceField::class,
     RedactorField::NAME    => RedactorField::class,
     SelectField::NAME      => SelectField::class,
