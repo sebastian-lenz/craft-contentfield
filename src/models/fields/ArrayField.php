@@ -127,12 +127,13 @@ class ArrayField extends AbstractField
    * @inheritDoc
    */
   public function getEditorValue($value) {
-    if (!($value instanceof ArrayValue)) {
+    $member = $this->member;
+    if (!($value instanceof ArrayValue) || is_null($member)) {
       return null;
     }
 
-    return array_map(function($value) {
-      return $this->member->getEditorValue($value);
+    return array_map(function($value) use ($member) {
+      return $member->getEditorValue($value);
     }, $value->toArray());
   }
 

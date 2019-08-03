@@ -47,10 +47,11 @@ class ArrayValue
   public function __construct($data, ValueInterface $parent = null, ArrayField $field = null) {
     parent::__construct($parent, $field);
 
-    if (!is_array($data)) {
+    $member = $this->_field->member;
+
+    if (!is_array($data) || is_null($member)) {
       $this->_values = array();
     } else {
-      $member = $this->_field->member;
       $this->_values = array_filter(
         array_map(function($value) use ($member) {
           try {
