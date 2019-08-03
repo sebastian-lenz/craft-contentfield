@@ -18,6 +18,11 @@ use Throwable;
 class Schemas
 {
   /**
+   * @var Exception[]
+   */
+  private $_allErrors;
+
+  /**
    * @var AbstractSchema[]
    */
   private $_allSchemas;
@@ -77,15 +82,31 @@ class Schemas
   }
 
   /**
+   * @return Exception[]
+   */
+  public function getAllErrors() {
+    if (!isset($this->_allErrors)) {
+      $this->getAllSchemas();
+    }
+
+    return $this->_allErrors;
+  }
+
+  /**
    * @return AbstractSchema[]
    */
   public function getAllSchemas() {
     if (!isset($this->_allSchemas)) {
+      $errors  = [];
       $schemas = [];
+
       foreach ($this->_loaders as $loader) {
-        $schemas = array_merge($schemas, $loader->getAllSchemas());
+        list($loaderSchemas, $loaderErrors) = $loader->getAllSchemas();
+        $errors  = array_merge($errors, $loaderErrors);
+        $schemas = array_merge($schemas, $loaderSchemas);
       }
 
+      $this->_allErrors  = $errors;
       $this->_allSchemas = $schemas;
     }
 

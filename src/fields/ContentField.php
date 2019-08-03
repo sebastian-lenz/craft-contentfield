@@ -240,6 +240,17 @@ class ContentField extends ForeignField
   }
 
   /**
+   * Checks whether there have been any errors while reading the template
+   * index. Used by the settings form.
+   *
+   * @internal
+   * @return bool
+   */
+  public function hasSchemaErrors() {
+    return !empty(Plugin::getInstance()->schemas->getAllErrors());
+  }
+
+  /**
    * Whether each site should get its own unique set of relations.
    *
    * @internal

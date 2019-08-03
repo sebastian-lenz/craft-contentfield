@@ -126,16 +126,17 @@ class ReferenceLoader
   }
 
   /**
-   * @param string|ElementInterface $elementType
+   * @param string $elementType
    * @return ElementInterface[]
    */
   private function queryElements($elementType) {
     $referenceMap = $this->getReferenceMap();
     $ids = $referenceMap->getElementIds($elementType);
-    if (count($ids) === 0) {
+    if (count($ids) === 0 || !class_exists($elementType)) {
       return array();
     }
 
+    /** @var ElementInterface $elementType */
     $query = $elementType::find()
       ->id($ids)
       ->siteId($this->_siteId);
