@@ -65,16 +65,36 @@ class ColorValue extends Value
    * @inheritDoc
    */
   function __toString() {
-    return $this->_field->disableAlpha
-      ? $this->hex()
-      : $this->rgba();
+    return $this->getCssValue();
   }
 
   /**
    * @return string
    */
-  public function hex() {
+  public function getCssValue() {
+    return $this->_field->alpha
+      ? $this->getRgba()
+      : $this->getHex();
+  }
+
+  /**
+   * @return string
+   */
+  public function getHex() {
     return sprintf("#%02x%02x%02x", $this->red, $this->green, $this->blue);
+  }
+
+  /**
+   * @param float|null $alpha
+   * @return string
+   */
+  public function getRgba($alpha = null) {
+    return 'rgba(' . implode(',', array(
+        $this->red,
+        $this->green,
+        $this->blue,
+        is_null($alpha) ? $this->alpha : $alpha,
+      )) . ')';
   }
 
   /**
@@ -82,17 +102,5 @@ class ColorValue extends Value
    */
   public function isEmpty() {
     return false;
-  }
-
-  /**
-   * @return string
-   */
-  public function rgba() {
-    return 'rgba(' . implode(',', array(
-      $this->red,
-      $this->green,
-      $this->blue,
-      $this->alpha,
-    )) . ')';
   }
 }
