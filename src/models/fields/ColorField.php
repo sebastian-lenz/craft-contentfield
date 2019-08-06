@@ -14,12 +14,12 @@ class ColorField extends AbstractField
   /**
    * @var bool
    */
-  public $disableAlpha = true;
+  public $alpha = false;
 
   /**
    * @var array
    */
-  public $presetColors = null;
+  public $swatches = null;
 
   /**
    * @inheritdoc
@@ -39,8 +39,8 @@ class ColorField extends AbstractField
    */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData($element) + array(
-      'disableAlpha' => $this->disableAlpha,
-      'presetColors' => $this->presetColors,
+      'alpha'    => $this->alpha,
+      'swatches' => $this->swatches,
     );
   }
 
@@ -66,16 +66,18 @@ class ColorField extends AbstractField
   public function rules() {
     return array_merge(
       parent::rules(),
-      array(
-        array('presetColors', 'validatePresetColors'),
-      )
+      [
+        ['alpha', 'required'],
+        ['alpha', 'boolean'],
+        ['swatches', 'validateSwatches'],
+      ]
     );
   }
 
   /**
    * @param $attribute
    */
-  public function validatePresetColors($attribute) {
+  public function validateSwatches($attribute) {
     if (!isset($this->$attribute) || empty($this->$attribute)) {
       return;
     }
@@ -96,11 +98,14 @@ class ColorField extends AbstractField
     if ($hasInvalidValue) {
       $this->addError($attribute, implode(' ', array(
         "{$attribute} contains invalid values.",
-        "All values must be either a hex color string or an",
-        "object containing 'color' and 'title'."
+        "All values must be either a hex color string."
       )));
     }
   }
+
+
+  // Static methods
+  // --------------
 
   /**
    * @param string $value
