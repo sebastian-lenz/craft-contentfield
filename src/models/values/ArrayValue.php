@@ -73,13 +73,6 @@ class ArrayValue
   }
 
   /**
-   * @inheritdoc
-   */
-  public function count() {
-    return count($this->_values);
-  }
-
-  /**
    * @inheritDoc
    * @throws Exception
    */
@@ -154,13 +147,6 @@ class ArrayValue
   /**
    * @inheritdoc
    */
-  public function getIterator() {
-    return new IteratorLoop($this->_values);
-  }
-
-  /**
-   * @inheritdoc
-   */
   public function getReferenceMap(ReferenceMap $map = null) {
     if (is_null($map)) {
       $map = new ReferenceMap();
@@ -181,32 +167,6 @@ class ArrayValue
   public function isEmpty() {
     return $this->count() == 0;
   }
-
-  /**
-   * @inheritdoc
-   */
-  public function offsetExists($offset) {
-    return array_key_exists($offset, $this->_values);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function offsetGet($offset) {
-    return $this->_values[$offset];
-  }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function offsetSet($offset, $value) { }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function offsetUnset($offset) { }
 
   /**
    * @inheritDoc
@@ -245,5 +205,57 @@ class ArrayValue
    */
   public function toArray() {
     return $this->_values;
+  }
+
+
+  // ArrayAccess
+  // -----------
+
+  /**
+   * @inheritdoc
+   */
+  public function offsetExists($offset) {
+    return array_key_exists($offset, $this->_values);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function offsetGet($offset) {
+    return $this->_values[$offset];
+  }
+
+  /**
+   * @inheritdoc
+   * @throws Exception
+   */
+  public function offsetSet($offset, $value) { }
+
+  /**
+   * @inheritdoc
+   * @throws Exception
+   */
+  public function offsetUnset($offset) { }
+
+
+  // Countable
+  // ---------
+
+  /**
+   * @inheritdoc
+   */
+  public function count() {
+    return count($this->_values);
+  }
+
+
+  // IteratorAggregate
+  // -----------------
+
+  /**
+   * @inheritdoc
+   */
+  public function getIterator() {
+    return new IteratorLoop($this->_values);
   }
 }

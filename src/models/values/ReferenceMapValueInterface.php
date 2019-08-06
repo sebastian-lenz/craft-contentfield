@@ -12,7 +12,7 @@ interface ReferenceMapValueInterface
   /**
    * Return a list of all referenced entries by this field.
    *
-   * @param \lenz\contentfield\helpers\ReferenceMap $map
+   * @param ReferenceMap $map
    * @return ReferenceMap
    */
   public function getReferenceMap(ReferenceMap $map = null);
