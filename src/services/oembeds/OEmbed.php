@@ -6,13 +6,14 @@ use DOMDocument;
 use DOMElement;
 use lenz\contentfield\helpers\UrlHelper;
 use Yii;
+use yii\base\Model;
 
 /**
  * Class OEmbed
  *
  * Represents a single embeddable resource.
  */
-class OEmbed
+class OEmbed extends Model
 {
   /**
    * The resource type. Valid values, along with value-specific parameters, are described below.
