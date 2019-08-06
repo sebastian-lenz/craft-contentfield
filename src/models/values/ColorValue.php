@@ -64,7 +64,7 @@ class ColorValue extends Value
   /**
    * @inheritDoc
    */
-  function __toString() {
+  public function __toString() {
     return $this->getCssValue();
   }
 
