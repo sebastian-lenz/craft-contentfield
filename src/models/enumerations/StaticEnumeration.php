@@ -10,7 +10,7 @@ use yii\helpers\Inflector;
 /**
  * Class StaticEnumeration
  */
-class StaticEnumeration implements EnumerationInterface
+class StaticEnumeration implements CustomDataInterface, EnumerationInterface
 {
   /**
    * @var array
@@ -78,9 +78,7 @@ class StaticEnumeration implements EnumerationInterface
   }
 
   /**
-   * @param string|int $key
-   * @param string $name
-   * @return mixed
+   * @inheritDoc
    */
   public function getCustomData($key, $name) {
     foreach ($this->_options as $option) {
@@ -110,5 +108,18 @@ class StaticEnumeration implements EnumerationInterface
     });
 
     return $options;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function hasCustomData($key, $name) {
+    foreach ($this->_options as $option) {
+      if ($option['key'] === $key) {
+        return array_key_exists($name, $option);
+      }
+    }
+
+    return false;
   }
 }

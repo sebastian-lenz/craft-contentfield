@@ -8,8 +8,10 @@ use craft\models\VolumeFolder;
 
 /**
  * Class VolumeFolderEnumeration
+ *
+ * This enumeration is experimental.
  */
-class VolumeFolderEnumeration implements EnumerationInterface
+class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterface
 {
   /**
    * @var array
@@ -64,17 +66,10 @@ class VolumeFolderEnumeration implements EnumerationInterface
    * @return mixed
    */
   public function getCustomData($key, $name) {
-    if (!array_key_exists($key, $this->_folders)) {
-      $this->_folders[$key] = Craft::$app->getAssets()
-        ->findFolder(['uid' => $key]);
-    }
-
-    $folder = $this->_folders[$key];
-    if (!($folder instanceof VolumeFolder)) {
-      return null;
-    }
-
-    return $name == 'folder' ? $folder : $folder->$name;
+    $folder = $this->getFolder($key);
+    return $folder instanceof VolumeFolder && isset($folder->$name)
+      ? $folder->$name
+      : null;
   }
 
   /**
@@ -91,9 +86,31 @@ class VolumeFolderEnumeration implements EnumerationInterface
     return $this->_options;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function hasCustomData($key, $name) {
+    $folder = $this->getFolder($key);
+    return $folder instanceof VolumeFolder && isset($folder->$name);
+  }
+
 
   // Private methods
   // ---------------
+
+  /**
+   * @param string $key
+   * @return VolumeFolder|null
+   */
+  private function getFolder($key) {
+    if (!array_key_exists($key, $this->_folders)) {
+      $this->_folders[$key] = Craft::$app
+        ->getAssets()
+        ->findFolder(['uid' => $key]);
+    }
+
+    return $this->_folders[$key];
+  }
 
   /**
    * @return VolumeFolder[]

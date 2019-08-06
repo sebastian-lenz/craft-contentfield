@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\values;
 
+use lenz\contentfield\models\enumerations\CustomDataInterface;
 use lenz\contentfield\models\fields\AbstractEnumerationField;
 
 /**
@@ -18,7 +19,7 @@ class EnumerationValue extends Value
 
 
   /**
-   * EnumValue constructor.
+   * EnumerationValue constructor.
    *
    * @param mixed $data
    * @param ValueInterface|null $parent
@@ -34,8 +35,21 @@ class EnumerationValue extends Value
    * @param string $name
    * @return mixed
    */
-  public function __call($name, $args) {
+  public function __get($name) {
     return $this->getCustomData($name);
+  }
+
+  /**
+   * @param string $name
+   * @return bool
+   */
+  public function __isset($name) {
+    $enumeration = $this->_field->getEnumeration();
+    if ($enumeration instanceof CustomDataInterface) {
+      return $enumeration->hasCustomData($this->_value, $name);
+    }
+
+    return false;
   }
 
   /**
@@ -59,7 +73,14 @@ class EnumerationValue extends Value
    */
   public function getCustomData($name) {
     $enumeration = $this->_field->getEnumeration();
-    return $enumeration->getCustomData($this->_value, $name);
+    if (
+      $enumeration instanceof CustomDataInterface &&
+      $enumeration->hasCustomData($this->_value, $name)
+    ) {
+      return $enumeration->getCustomData($this->_value, $name);
+    }
+
+    return null;
   }
 
   /**
