@@ -26,6 +26,13 @@
   options:      config.environmentModes
 }) -}}
 
+{{- forms.textField({
+  label:        'Owner variable name',
+  instructions: 'The name of the variable used by the templates to access the fields owning element. Leave empty to not expose the owner.',
+  name:         'ownerVariable',
+  value:        config.ownerVariable,
+}) -}}
+
 <h2>Fields</h2>
 
 {{- forms.textField({

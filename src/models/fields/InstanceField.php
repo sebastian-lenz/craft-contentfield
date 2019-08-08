@@ -48,11 +48,6 @@ class InstanceField extends AbstractField
    */
   const NAME = 'instance';
 
-  /**
-   * @inheritdoc
-   */
-  const VALUE_CLASS = InstanceValue::class;
-
 
   /**
    * InstanceField constructor.

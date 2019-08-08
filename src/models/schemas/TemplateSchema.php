@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\schemas;
 
+use Craft;
 use craft\web\twig\Environment;
 use craft\web\View;
 use Exception;
@@ -44,6 +45,11 @@ class TemplateSchema extends AbstractSchemaContainer
    * @var TemplateWrapper
    */
   private $_template;
+
+  /**
+   * @var array
+   */
+  static private $_globalVariables;
 
   /**
    * @var Environment
@@ -130,22 +136,34 @@ class TemplateSchema extends AbstractSchemaContainer
    * @throws Exception
    */
   static function normalizedVariables(InstanceValue $instance, array $variables) {
-    $variables = array_merge(
-      [
-        'editAttributes' => $instance->getEditAttributes(),
-        'entry'          => $instance->getContent()->getOwner(),
-        'instance'       => $instance,
-        'isChunkRequest' => false,
-        'model'          => $instance->getModel(),
-      ],
+    if (!isset(self::$_globalVariables)) {
+      self::$_globalVariables = Craft::$app
+        ->getUrlManager()
+        ->getRouteParams() + [
+          'loop'           => StaticLoop::getInstance(),
+          'isChunkRequest' => false,
+        ];
+
+      // Behaviour of TemplatesController::actionRender
+      unset(self::$_globalVariables['template']);
+    }
+
+    $instanceVariables = [
+      'editAttributes' => $instance->getEditAttributes(),
+      'instance'       => $instance,
+      'model'          => $instance->getModel(),
+    ];
+
+    $ownerVariable = Plugin::getInstance()->getSettings()->ownerVariable;
+    if (!empty($ownerVariable)) {
+      $instanceVariables[$ownerVariable] = $instance->getContent()->getOwner();
+    }
+
+    return array_merge(
+      self::$_globalVariables,
+      $instanceVariables,
       $instance->getValues(),
       $variables
     );
-
-    if (!array_key_exists('loop', $variables)) {
-      $variables['loop'] = StaticLoop::getInstance();
-    }
-
-    return $variables;
   }
 }
