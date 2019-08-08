@@ -5,15 +5,16 @@ namespace lenz\contentfield\services\oembeds;
 use DOMDocument;
 use DOMElement;
 use lenz\contentfield\helpers\UrlHelper;
-use Yii;
-use yii\base\Model;
+use yii\base\BaseObject;
+use yii\base\InvalidCallException;
+use yii\base\UnknownPropertyException;
 
 /**
  * Class OEmbed
  *
  * Represents a single embeddable resource.
  */
-class OEmbed extends Model
+class OEmbed extends BaseObject
 {
   /**
    * The resource type. Valid values, along with value-specific parameters, are described below.
@@ -105,20 +106,68 @@ class OEmbed extends Model
    */
   public $height;
 
+  /**
+   * @var array
+   */
+  protected $_attributes;
+
 
   /**
-   * OEmbed constructor.
-   * @param array $data
+   * @inheritDoc
    */
-  public function __construct($data) {
-    Yii::configure($this, $data);
+  public function __get($name) {
+    $getter = 'get' . $name;
+    if (method_exists($this, $getter)) {
+      return $this->$getter();
+    } elseif (method_exists($this, 'set' . $name)) {
+      throw new InvalidCallException('Getting write-only property: ' . get_class($this) . '::' . $name);
+    }
+
+    if (array_key_exists($name, $this->_attributes)) {
+      return $this->_attributes[$name];
+    }
+
+    throw new UnknownPropertyException('Getting unknown property: ' . get_class($this) . '::' . $name);
   }
 
   /**
-   * @return array
+   * @inheritDoc
    */
-  public function getEditorData() {
-    return array();
+  public function __set($name, $value) {
+    $setter = 'set' . $name;
+    if (method_exists($this, $setter)) {
+      $this->$setter($value);
+    } elseif (method_exists($this, 'get' . $name)) {
+      throw new InvalidCallException('Setting read-only property: ' . get_class($this) . '::' . $name);
+    } else {
+      $this->_attributes[$name] = $value;
+    }
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function __isset($name) {
+    $getter = 'get' . $name;
+    if (method_exists($this, $getter)) {
+      return $this->$getter() !== null;
+    }
+
+    return array_key_exists($name, $this->_attributes);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function __unset($name) {
+    $setter = 'set' . $name;
+    if (method_exists($this, $setter)) {
+      $this->$setter(null);
+    } elseif (method_exists($this, 'get' . $name)) {
+      throw new InvalidCallException('Unsetting read-only property: ' . get_class($this) . '::' . $name);
+    } else {
+      unset($this->_attributes);
+    }
   }
 
   /**
