@@ -6,6 +6,7 @@ use Exception;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
 use Throwable;
+use yii\helpers\Markdown;
 
 /**
  * Class Instance
@@ -43,7 +44,7 @@ class Instance
     if ($this->hasAttribute($name)) {
       try {
         $text = (string)$this->getAttribute($name);
-        $html = Plugin::getInstance()->commonMark->toHtml($text);
+        $html = Markdown::process($text);
         $this->setAttribute($name, $html);
       } catch (Throwable $error) {
         $this->setAttribute($name, $defaultValue);

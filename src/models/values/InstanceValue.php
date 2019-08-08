@@ -68,12 +68,18 @@ class InstanceValue
   private $_values = [];
 
   /**
+   * @var bool
+   */
+  private $_visible = true;
+
+  /**
    * @var string
    */
   const ERRORS_PROPERTY = '__errors';
   const ORIGINAL_UUID_PROPERTY = '__originalUuid';
   const TYPE_PROPERTY = '__type';
   const UUID_PROPERTY = '__uuid';
+  const VISIBLE_PROPERTY = '__visible';
 
 
   /**
@@ -100,6 +106,10 @@ class InstanceValue
 
     if (array_key_exists(self::ORIGINAL_UUID_PROPERTY, $data)) {
       $this->_originalUuid = $data[self::ORIGINAL_UUID_PROPERTY];
+    }
+
+    if (array_key_exists(self::VISIBLE_PROPERTY, $data)) {
+      $this->_visible = !!$data[self::VISIBLE_PROPERTY];
     }
 
     foreach ($this->_schema->fields as $name => $field) {
@@ -190,10 +200,12 @@ class InstanceValue
    * @throws Exception
    */
   public function display(array $variables = []) {
-    if (isset($this->_output)) {
-      echo $this->_output;
-    } else {
-      $this->_schema->display($this, $variables);
+    if ($this->isVisible()) {
+      if (isset($this->_output)) {
+        echo $this->_output;
+      } else {
+        $this->_schema->display($this, $variables);
+      }
     }
   }
 
@@ -297,6 +309,7 @@ class InstanceValue
       self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
       self::TYPE_PROPERTY          => $this->_schema->qualifier,
       self::UUID_PROPERTY          => $this->_uuid,
+      self::VISIBLE_PROPERTY       => $this->_visible,
     );
 
     foreach ($this->_schema->fields as $name => $field) {
@@ -416,6 +429,7 @@ class InstanceValue
       self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
       self::TYPE_PROPERTY          => $this->_schema->qualifier,
       self::UUID_PROPERTY          => $this->_uuid,
+      self::VISIBLE_PROPERTY       => $this->_visible,
     );
 
     foreach ($this->_schema->fields as $name => $field) {
@@ -497,6 +511,13 @@ class InstanceValue
   }
 
   /**
+   * @return bool
+   */
+  public function isVisible() {
+    return $this->_visible;
+  }
+
+  /**
    * @inheritDoc
    * @throws Exception
    */
@@ -539,6 +560,10 @@ class InstanceValue
    * @throws Exception
    */
   public function render(array $variables = [], array $options = []) {
+    if (!$this->isVisible()) {
+      return '';
+    }
+
     if (isset($this->_output)) {
       return $this->_output;
     }

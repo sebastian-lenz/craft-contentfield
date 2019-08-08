@@ -32,7 +32,7 @@ class ArrayValue
     TraversableValueInterface
 {
   /**
-   * @var ValueInterface[]
+   * @var array
    */
   private $_values;
 
@@ -77,7 +77,7 @@ class ArrayValue
    * @throws Exception
    */
   public function display(array $variables = []) {
-    $iterator = $this->getIterator();
+    $iterator = $this->getVisibleIterator();
     $variables['loop'] = $iterator;
 
     foreach ($iterator as $value) {
@@ -128,12 +128,21 @@ class ArrayValue
   }
 
   /**
-   * @return ValueInterface
+   * Returns the first visible value.
+   *
+   * @return mixed
    */
   public function getFirst() {
-    return count($this->_values) > 0
-      ? $this->_values[0]
-      : null;
+    foreach ($this->_values as $value) {
+      if (
+        !($value instanceof InstanceValue) ||
+        $value->isVisible()
+      ) {
+        return $value;
+      }
+    }
+
+    return null;
   }
 
   /**
@@ -162,6 +171,35 @@ class ArrayValue
   }
 
   /**
+   * @return array
+   */
+  public function getValues() {
+    return $this->_values;
+  }
+
+  /**
+   * Returns an array containing only visible values in the
+   * array.
+   *
+   * @return array
+   */
+  public function getVisibleValues() {
+    return array_filter($this->_values, function($value) {
+      return (
+        !($value instanceof InstanceValue) ||
+        $value->isVisible()
+      );
+    });
+  }
+
+  /**
+   * @return IteratorLoop
+   */
+  public function getVisibleIterator() {
+    return new IteratorLoop($this->getVisibleValues());
+  }
+
+  /**
    * @inheritDoc
    */
   public function isEmpty() {
@@ -185,8 +223,8 @@ class ArrayValue
    * @throws Exception
    */
   public function render(array $variables = []) {
-    $result = array();
-    $iterator = $this->getIterator();
+    $result   = array();
+    $iterator = $this->getVisibleIterator();
     $variables['loop'] = $iterator;
 
     foreach ($iterator as $value) {
@@ -198,13 +236,6 @@ class ArrayValue
     }
 
     return implode('', $result);
-  }
-
-  /**
-   * @return ValueInterface[]
-   */
-  public function toArray() {
-    return $this->_values;
   }
 
 

@@ -24,6 +24,11 @@ class Config extends Model
   /**
    * @var string
    */
+  public $ownerVariable = '';
+
+  /**
+   * @var string
+   */
   public $templateInlining = 'production';
 
   /**
@@ -116,7 +121,7 @@ class Config extends Model
     $translators = array_keys(Plugin::getInstance()->translators->getTranslatorTypeOptions());
 
     return [
-      [['googleMapsApiKey'], 'string'],
+      [['googleMapsApiKey', 'ownerVariable'], 'string'],
       [['templateInlining', 'templateIndexCache', 'templateModificationCheck'], 'in', 'skipOnEmpty' => false, 'range' => $environmentModes],
       [['translator'], 'in', 'skipOnEmpty' => true, 'range' => $translators],
       [['translatorSettings'], 'validateTranslatorSettings']

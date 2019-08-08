@@ -4,7 +4,6 @@ namespace lenz\contentfield\controllers;
 
 use Craft;
 use craft\controllers\TemplatesController as BaseTemplatesController;
-use Exception;
 use lenz\contentfield\models\Content;
 use Throwable;
 use yii\web\Response as YiiResponse;

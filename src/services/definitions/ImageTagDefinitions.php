@@ -6,10 +6,12 @@ use Craft;
 use craft\elements\Asset;
 use craft\helpers\Json;
 use Exception;
+use lenz\contentfield\Plugin;
 use lenz\contentfield\services\imageTags\DefaultImageTag;
 use lenz\contentfield\services\imageTags\ImageTag;
 use lenz\contentfield\services\imageTags\PictureImageTag;
 use lenz\contentfield\services\imageTags\WrappedImageTag;
+use yii\caching\TagDependency;
 
 /**
  * Class ImageTagDefinitions
@@ -76,7 +78,7 @@ class ImageTagDefinitions extends AbstractDefinitions
     }
 
     $config   = $this->resolveDefinition($config);
-    $cache    = Craft::$app->getCache();
+    $cache    = Plugin::getInstance()->imageTagCache;
     $cacheKey = self::class . '::render(' . md5(Json::encode([
       'asset'  => $asset->uid,
       'mtime'  => $asset->dateModified,
@@ -90,7 +92,7 @@ class ImageTagDefinitions extends AbstractDefinitions
 
     $result = $this->renderInternal($asset, $config);
     if (strpos($result, 'actions/assets/generate-transform') === false) {
-      $cache->set($cacheKey, $result);
+      $cache->set($cacheKey, $result, null, new TagDependency(['tags' => $asset->uid]));
     }
 
     return $result;

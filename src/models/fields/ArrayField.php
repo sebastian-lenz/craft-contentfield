@@ -84,7 +84,7 @@ class ArrayField extends AbstractField
       if ($member instanceof ArrayField) {
         throw new Exception('Array fields cannot be nested.');
       }
-      
+
       $config['member'] = $member;
     }
 
@@ -134,7 +134,7 @@ class ArrayField extends AbstractField
 
     return array_map(function($value) use ($member) {
       return $member->getEditorValue($value);
-    }, $value->toArray());
+    }, $value->getValues());
   }
 
   /**
@@ -147,7 +147,7 @@ class ArrayField extends AbstractField
 
     return implode('', array_map(function($value) {
       return $this->member->getSearchKeywords($value);
-    }, $value->toArray()));
+    }, $value->getValues()));
   }
 
   /**
@@ -160,7 +160,7 @@ class ArrayField extends AbstractField
 
     return array_map(function($value) {
       return $this->member->getSerializedValue($value);
-    }, $value->toArray());
+    }, $value->getValues());
   }
 
   /**
