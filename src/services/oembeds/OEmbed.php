@@ -6,13 +6,14 @@ use DOMDocument;
 use DOMElement;
 use lenz\contentfield\helpers\UrlHelper;
 use Yii;
+use yii\base\Model;
 
 /**
  * Class OEmbed
  *
  * Represents a single embeddable resource.
  */
-class OEmbed
+class OEmbed extends Model
 {
   /**
    * The resource type. Valid values, along with value-specific parameters, are described below.
@@ -159,9 +160,11 @@ class OEmbed
       if (is_null($value)) {
         $element->removeAttribute($name);
       } elseif (is_array($value) && isset($value['rename'])) {
-        $attribute = $element->getAttribute($name);
-        $element->removeAttribute($name);
-        $element->setAttribute($value['rename'], $attribute);
+        if ($element->hasAttribute($name)) {
+          $attribute = $element->getAttribute($name);
+          $element->removeAttribute($name);
+          $element->setAttribute($value['rename'], $attribute);
+        }
       } else {
         $element->setAttribute($name, $value);
       }
@@ -184,6 +187,12 @@ class OEmbed
     foreach ($options as $name => $value) {
       if (is_null($value)) {
         unset($query[$name]);
+      } elseif (is_array($value) && isset($value['rename'])) {
+        if (isset($query[$name])) {
+          $attribute = $query[$name];
+          unset($query[$name]);
+          $query[$value['rename']] = $attribute;
+        }
       } else {
         $query[$name] = $value;
       }

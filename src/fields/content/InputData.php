@@ -85,7 +85,10 @@ class InputData
    * @return string
    */
   public function getContent() {
-    return Json::encode($this->_value->getEditorValue());
+    return Json::encode(is_null($this->_value)
+      ? null
+      : $this->_value->getEditorValue()
+    );
   }
 
   /**
@@ -227,10 +230,14 @@ class InputData
   // --------------
 
   /**
-   * @param Content $content
+   * @param Content|null $content
    * @return array
    */
-  static function loadReferences(Content $content) {
+  static public function loadReferences(Content $content = null) {
+    if (is_null($content)) {
+      return [];
+    }
+
     $model = $content->getModel();
     if (!($model instanceof InstanceValue)) {
       return array();

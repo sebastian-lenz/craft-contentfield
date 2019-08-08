@@ -1,0 +1,9 @@
+<h2>Schema errors</h2>
+{% if errors|length %}
+  {% for qualifier, error in errors %}
+    <h3>{{ qualifier }}</h3>
+    <p>{{ error.message }}</p>
+  {% endfor %}
+{% else %}
+  <h3>No errors found.</h3>
+{% endif %}

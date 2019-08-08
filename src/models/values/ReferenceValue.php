@@ -20,11 +20,9 @@ use Twig\Markup;
  *
  * @property ReferenceField $_field
  */
-class ReferenceValue extends Value implements
-  ArrayAccess,
-  Countable,
-  IteratorAggregate,
-  ReferenceMapValueInterface
+class ReferenceValue
+  extends Value
+  implements ArrayAccess, Countable, IteratorAggregate, ReferenceMapValueInterface
 {
   /**
    * @var ElementInterface[]
@@ -61,21 +59,14 @@ class ReferenceValue extends Value implements
    * @throws Exception
    */
   public function __toString() {
-    return implode('', array_map(function($value) {
+    return implode(', ', array_map(function($value) {
       return (string)$value;
     }, $this->getReferences()));
   }
 
   /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function count() {
-    $references = $this->getReferences();
-    return count($references);
-  }
-
-  /**
+   * Returns the first reference or null if no references are set.
+   *
    * @return ElementInterface
    * @throws Exception
    */
@@ -85,14 +76,8 @@ class ReferenceValue extends Value implements
   }
 
   /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function getIterator() {
-    return new ArrayIterator($this->getReferences());
-  }
-
-  /**
+   * Returns a list with all ids of the references elements.
+   *
    * @return int[]
    */
   public function getReferencedIds() {
@@ -120,6 +105,8 @@ class ReferenceValue extends Value implements
   }
 
   /**
+   * Returns a list of referenced elements.
+   *
    * @return ElementInterface[]
    * @throws Exception
    */
@@ -132,6 +119,8 @@ class ReferenceValue extends Value implements
   }
 
   /**
+   * Renders an image tag for the first reference in the field.
+   *
    * @param string|array $config
    * @return Markup|Markup|null
    * @throws Exception
@@ -153,12 +142,73 @@ class ReferenceValue extends Value implements
   }
 
   /**
-   * @return bool
+   * @inheritDoc
    * @throws Exception
    */
   public function isEmpty() {
     return $this->count() == 0;
   }
+
+
+  // ArrayAccess
+  // -----------
+
+  /**
+   * @inheritdoc
+   * @throws Exception
+   */
+  public function offsetExists($offset) {
+    $references = $this->getReferences();
+    return array_key_exists($offset, $references);
+  }
+
+  /**
+   * @inheritdoc
+   * @throws Exception
+   */
+  public function offsetGet($offset) {
+    $references = $this->getReferences();
+    return $references[$offset];
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function offsetSet($offset, $value) { }
+
+  /**
+   * @inheritdoc
+   */
+  public function offsetUnset($offset) { }
+
+
+  // Countable
+  // ---------
+
+  /**
+   * @inheritdoc
+   * @throws Exception
+   */
+  public function count() {
+    $references = $this->getReferences();
+    return count($references);
+  }
+
+
+  // IteratorAggregate
+  // -----------------
+
+  /**
+   * @inheritdoc
+   * @throws Exception
+   */
+  public function getIterator() {
+    return new ArrayIterator($this->getReferences());
+  }
+
+
+  // Private methods
+  // ---------------
 
   /**
    * @return ElementInterface[]
@@ -201,34 +251,4 @@ class ReferenceValue extends Value implements
 
     return $result;
   }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function offsetExists($offset) {
-    $references = $this->getReferences();
-    return array_key_exists($offset, $references);
-  }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function offsetGet($offset) {
-    $references = $this->getReferences();
-    return $references[$offset];
-  }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function offsetSet($offset, $value) { }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function offsetUnset($offset) { }
 }

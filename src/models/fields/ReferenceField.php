@@ -25,7 +25,7 @@ class ReferenceField extends AbstractField
   /**
    * @var string
    */
-  public $elementType;
+  public $elementType = Entry::class;
 
   /**
    * @var integer|null
@@ -40,7 +40,7 @@ class ReferenceField extends AbstractField
   /**
    * @var string
    */
-  public $viewMode;
+  public $viewMode = 'large';
 
   /**
    * @var string|string[]
@@ -76,26 +76,8 @@ class ReferenceField extends AbstractField
   }
 
   /**
-   * @param ElementInterface|null $element
-   * @return array
-   * @throws Exception
-   */
-  public function getCriteria(ElementInterface $element = null) {
-    $criteria = is_array($this->criteria)
-      ? $this->criteria
-      : [];
-
-    if (is_null($element) || !($element instanceof Element)) {
-      $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
-    } else {
-      $criteria['siteId'] = $element->siteId;
-    }
-
-    return $criteria;
-  }
-
-  /**
    * @inheritdoc
+   * @throws Exception
    */
   public function getEditorValue($value) {
     if (!($value instanceof ReferenceValue)) {
@@ -117,9 +99,64 @@ class ReferenceField extends AbstractField
   }
 
   /**
+   * @inheritdoc
+   */
+  public function rules() {
+    return array_merge(
+      parent::rules(),
+      array(
+        array('elementType', 'validateElementType'),
+        array('limit',       'integer', 'min' => 1),
+        array('viewMode',    'in', 'range' => array('large', 'small'))
+      )
+    );
+  }
+
+  /**
+   * Validates the elementType attribute.
+   *
+   * @param string $attribute
+   * @internal
+   */
+  public function validateElementType($attribute) {
+    if (
+      !isset($this->$attribute) ||
+      !is_string($this->$attribute) ||
+      empty($this->$attribute)
+    ) {
+      $this->addError($attribute, "The element type is required.");
+    } elseif (is_null(self::resolveElementType($this->$attribute))) {
+      $this->addError($attribute, "Unknown element type '{$this->$attribute}'.");
+    }
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * @param ElementInterface|null $element
+   * @return array
+   * @throws Exception
+   */
+  private function getCriteria(ElementInterface $element = null) {
+    $criteria = is_array($this->criteria)
+      ? $this->criteria
+      : [];
+
+    if (is_null($element) || !($element instanceof Element)) {
+      $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+    } else {
+      $criteria['siteId'] = $element->siteId;
+    }
+
+    return $criteria;
+  }
+
+  /**
    * @return integer|null
    */
-  public function getLimit() {
+  private function getLimit() {
     if (isset($this->limit)) {
       return $this->limit;
     }
@@ -141,61 +178,12 @@ class ReferenceField extends AbstractField
    * @param ElementInterface|null $element
    * @return string[]|null
    */
-  public function getSources(ElementInterface $element = null) {
+  private function getSources(ElementInterface $element = null) {
     if (isset($this->sources)) {
       return self::extractSources($this->sources, $element);
     }
 
     return null;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function rules() {
-    return array_merge(
-      parent::rules(),
-      array(
-        array('elementType', 'validateElementType'),
-        array('limit',       'integer', 'min' => 1),
-        array('viewMode',    'default', 'value' => 'large'),
-        array('viewMode',    'in', 'range' => array('large', 'small'))
-      )
-    );
-  }
-
-  /**
-   * @param $attribute
-   */
-  public function validateElementType($attribute) {
-    if (!isset($this->$attribute) || empty($this->$attribute) || !is_string($this->$attribute)) {
-      $this->addError($attribute, "The element type is required.");
-    } elseif (is_null(self::resolveElementType($this->$attribute))) {
-      $this->addError($attribute, "Unknown element type '{$this->$attribute}'.");
-    }
-  }
-
-  /**
-   * @param string $elementType
-   * @return string|null
-   */
-  public function resolveElementType($elementType) {
-    if (!is_string($elementType)) {
-      return null;
-    }
-
-    switch (strtolower($elementType)) {
-      case 'asset':
-      case 'assets':
-        return Asset::class;
-      case 'entry':
-      case 'entries':
-        return Entry::class;
-    }
-
-    return class_exists($this->elementType)
-      ? $this->elementType
-      : null;
   }
 
 
@@ -205,7 +193,7 @@ class ReferenceField extends AbstractField
   /**
    * @inheritdoc
    */
-  static function expandFieldConfig(&$config) {
+  static public function expandFieldConfig(&$config) {
     // Expand the type `instances` to an array of instance fields
     if (in_array($config['type'], ['image', 'images'])) {
       $config = array(
@@ -238,11 +226,41 @@ class ReferenceField extends AbstractField
   }
 
   /**
+   * Ensures the given element type is the class name of
+   * a Craft element class.
+   *
+   * @param string $elementType
+   * @return string|null
+   */
+  static public function resolveElementType($elementType) {
+    if (!is_string($elementType)) {
+      return null;
+    }
+
+    switch (strtolower($elementType)) {
+      case 'asset':
+      case 'assets':
+        return Asset::class;
+      case 'entry':
+      case 'entries':
+        return Entry::class;
+    }
+
+    return is_subclass_of($elementType, Element::class)
+      ? $elementType
+      : null;
+  }
+
+
+  // Static private methods
+  // ----------------------
+
+  /**
    * @param string $rawValue
    * @param ElementInterface|null $element
    * @return string[]|null
    */
-  static function extractSources($rawValue, ElementInterface $element = null) {
+  static private function extractSources($rawValue, ElementInterface $element = null) {
     $sources = self::parseSources($rawValue);
 
     try {
@@ -299,7 +317,7 @@ class ReferenceField extends AbstractField
    * @param string[]|string|null $rawValue
    * @return array|string|string[]|null
    */
-  static function parseSources($rawValue) {
+  static private function parseSources($rawValue) {
     if (is_array($rawValue)) {
       $sources = [];
 
@@ -326,7 +344,7 @@ class ReferenceField extends AbstractField
    * @param string $rawValue
    * @return string[]
    */
-  static public function splitSourcesString($rawValue) {
+  static private function splitSourcesString($rawValue) {
     if (!is_string($rawValue) || empty($rawValue)) {
       return [];
     }

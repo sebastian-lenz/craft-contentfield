@@ -17,7 +17,9 @@ use Twig\Markup;
  *
  * @property RedactorField $_field
  */
-class RedactorValue extends Markup implements DisplayInterface, ReferenceMapValueInterface, ValueInterface
+class RedactorValue
+  extends Markup
+  implements DisplayInterface, ReferenceMapValueInterface, ValueInterface
 {
   use ValueTrait;
 
@@ -49,7 +51,7 @@ class RedactorValue extends Markup implements DisplayInterface, ReferenceMapValu
   /**
    * @var bool
    */
-  static $forceNativeRefParse = false;
+  static public $forceNativeRefParse = false;
 
 
   /**
@@ -129,7 +131,9 @@ class RedactorValue extends Markup implements DisplayInterface, ReferenceMapValu
 
   /**
    * Required for compatibility with craft\redactor\Field::serializeValue
+   *
    * @return string
+   * @internal
    */
   public function getRawContent() {
     return $this->_rawContent;
@@ -137,6 +141,7 @@ class RedactorValue extends Markup implements DisplayInterface, ReferenceMapValu
 
   /**
    * @inheritDoc
+   * @internal
    */
   public function getReferenceMap(ReferenceMap $map = null) {
     if (is_null($map)) {
@@ -175,60 +180,6 @@ class RedactorValue extends Markup implements DisplayInterface, ReferenceMapValu
    */
   public function jsonSerialize() {
     return $this->getCompiledContent();
-  }
-
-  /**
-   * @param string $str
-   */
-  public function setRawContent(string $str) {
-    $this->_compiledContent = null;
-    $this->_pages = null;
-    $this->_rawContent = $str;
-
-    $elements = Craft::$app->getElements();
-    if (self::$forceNativeRefParse) {
-      $this->_parsedContent = $elements->parseRefs($str);
-      $this->_parsedTokens = null;
-      return;
-    }
-
-    if (!StringHelper::contains($str, '{')) {
-      $this->_parsedContent = $str;
-      $this->_parsedTokens = null;
-      return;
-    }
-
-    try {
-      $allRefTagTokens = [];
-      $count = 0;
-      $str = preg_replace_callback(
-        '/\{([\w\\\\]+)\:([^\:\}]+)(?:\:([^\}]+))?\}/',
-        function($matches) use (&$allRefTagTokens, $elements) {
-          // Does it already have a full element type class name?
-          if (is_subclass_of($matches[1], ElementInterface::class)) {
-            $elementType = $matches[1];
-          } else if (($elementType = $elements->getElementTypeByRefHandle($matches[1])) === null) {
-            // Leave the tag alone
-            return $matches[0];
-          }
-
-          if (!is_numeric($matches[2])) {
-            throw new Exception('Unsupported reference type');
-          }
-
-          $token = '{' . StringHelper::randomString(9) . '}';
-          $allRefTagTokens[$elementType][intval($matches[2])][] = [$token, $matches];
-          return $token;
-        },
-        $str, -1, $count
-      );
-
-      $this->_parsedContent = $str;
-      $this->_parsedTokens = $count == 0 ? null : $allRefTagTokens;
-    } catch (Throwable $error) {
-      $this->_parsedContent = $elements->parseRefs($str);
-      $this->_parsedTokens = null;
-    }
   }
 
 
@@ -318,6 +269,60 @@ class RedactorValue extends Markup implements DisplayInterface, ReferenceMapValu
 
       // Replace the token with the original ref tag
       return $matches[0];
+    }
+  }
+
+  /**
+   * @param string $str
+   */
+  private function setRawContent(string $str) {
+    $this->_compiledContent = null;
+    $this->_pages = null;
+    $this->_rawContent = $str;
+
+    $elements = Craft::$app->getElements();
+    if (self::$forceNativeRefParse) {
+      $this->_parsedContent = $elements->parseRefs($str);
+      $this->_parsedTokens = null;
+      return;
+    }
+
+    if (!StringHelper::contains($str, '{')) {
+      $this->_parsedContent = $str;
+      $this->_parsedTokens = null;
+      return;
+    }
+
+    try {
+      $allRefTagTokens = [];
+      $count = 0;
+      $str = preg_replace_callback(
+        '/\{([\w\\\\]+)\:([^\:\}]+)(?:\:([^\}]+))?\}/',
+        function($matches) use (&$allRefTagTokens, $elements) {
+          // Does it already have a full element type class name?
+          if (is_subclass_of($matches[1], ElementInterface::class)) {
+            $elementType = $matches[1];
+          } else if (($elementType = $elements->getElementTypeByRefHandle($matches[1])) === null) {
+            // Leave the tag alone
+            return $matches[0];
+          }
+
+          if (!is_numeric($matches[2])) {
+            throw new Exception('Unsupported reference type');
+          }
+
+          $token = '{' . StringHelper::randomString(9) . '}';
+          $allRefTagTokens[$elementType][intval($matches[2])][] = [$token, $matches];
+          return $token;
+        },
+        $str, -1, $count
+      );
+
+      $this->_parsedContent = $str;
+      $this->_parsedTokens = $count == 0 ? null : $allRefTagTokens;
+    } catch (Throwable $error) {
+      $this->_parsedContent = $elements->parseRefs($str);
+      $this->_parsedTokens = null;
     }
   }
 }

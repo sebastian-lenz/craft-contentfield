@@ -8,6 +8,7 @@ use craft\helpers\FileHelper;
 use Exception;
 use lenz\contentfield\Config;
 use lenz\contentfield\exceptions\TemplateConfigException;
+use lenz\contentfield\exceptions\YamlMissingException;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
 use RecursiveDirectoryIterator;
@@ -80,21 +81,24 @@ class TemplateLoader extends AbstractLoader
 
   /**
    * @inheritDoc
-   * @throws \yii\base\Exception
+   * @throws Exception
    */
   public function getAllSchemas() {
     return YamlAwareTemplateLoader::withSiteView(function() {
+      $errors  = [];
       $schemas = [];
 
       foreach ($this->getAllTemplates() as $template) {
         try {
           $schemas[] = $this->load($template['name']);
         } catch (Throwable $error) {
-          // Just skip errors, there may be templates without a yaml header
+          if (!($error instanceof YamlMissingException)) {
+            $errors[$template['name']] = $error;
+          }
         }
       }
 
-      return $schemas;
+      return [$schemas, $errors];
     });
   }
 
@@ -113,7 +117,7 @@ class TemplateLoader extends AbstractLoader
     $data = $this->_loader->getMetaData($name);
 
     if (is_null($data['preamble'])) {
-      throw new Exception(sprintf(
+      throw new YamlMissingException(sprintf(
         'The template `%s` does not contain a yaml preamble.',
         $name
       ));

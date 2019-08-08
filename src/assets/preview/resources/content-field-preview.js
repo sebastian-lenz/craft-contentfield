@@ -83,7 +83,10 @@
     onFrame();
 
     function dispose() {
-      if (isDisposed) return;
+      if (isDisposed) {
+        return;
+      }
+
       isDisposed = true;
 
       api.unsubscribe();
@@ -152,11 +155,15 @@
 
       var api = contentField.getInstanceApi(uuid);
       if (!api) {
-        return;
+        break;
       }
 
-      if (controls) controls.dispose();
-      return controls = createControls(target, api);
+      if (controls) {
+        controls.dispose();
+      }
+
+      controls = createControls(target, api);
+      break;
     }
   }
 

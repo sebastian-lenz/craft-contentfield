@@ -132,7 +132,7 @@ class ReferenceLoader
   private function queryElements($elementType) {
     $referenceMap = $this->getReferenceMap();
     $ids = $referenceMap->getElementIds($elementType);
-    if (count($ids) === 0) {
+    if (count($ids) === 0 || !class_exists($elementType)) {
       return array();
     }
 

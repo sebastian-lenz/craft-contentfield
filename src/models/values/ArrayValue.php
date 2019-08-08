@@ -41,16 +41,17 @@ class ArrayValue
    * ArrayValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param ArrayField $field
+   * @param ValueInterface|null $parent
+   * @param ArrayField|null $field
    */
-  public function __construct($data, ValueInterface $parent, ArrayField $field) {
+  public function __construct($data, ValueInterface $parent = null, ArrayField $field = null) {
     parent::__construct($parent, $field);
 
-    if (!is_array($data)) {
+    $member = $this->_field->member;
+
+    if (!is_array($data) || is_null($member)) {
       $this->_values = array();
     } else {
-      $member = $this->_field->member;
       $this->_values = array_filter(
         array_map(function($value) use ($member) {
           try {
@@ -69,13 +70,6 @@ class ArrayValue
    */
   public function __toString() {
     return $this->render();
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function count() {
-    return count($this->_values);
   }
 
   /**
@@ -153,13 +147,6 @@ class ArrayValue
   /**
    * @inheritdoc
    */
-  public function getIterator() {
-    return new IteratorLoop($this->_values);
-  }
-
-  /**
-   * @inheritdoc
-   */
   public function getReferenceMap(ReferenceMap $map = null) {
     if (is_null($map)) {
       $map = new ReferenceMap();
@@ -180,32 +167,6 @@ class ArrayValue
   public function isEmpty() {
     return $this->count() == 0;
   }
-
-  /**
-   * @inheritdoc
-   */
-  public function offsetExists($offset) {
-    return array_key_exists($offset, $this->_values);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function offsetGet($offset) {
-    return $this->_values[$offset];
-  }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function offsetSet($offset, $value) { }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function offsetUnset($offset) { }
 
   /**
    * @inheritDoc
@@ -244,5 +205,57 @@ class ArrayValue
    */
   public function toArray() {
     return $this->_values;
+  }
+
+
+  // ArrayAccess
+  // -----------
+
+  /**
+   * @inheritdoc
+   */
+  public function offsetExists($offset) {
+    return array_key_exists($offset, $this->_values);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function offsetGet($offset) {
+    return $this->_values[$offset];
+  }
+
+  /**
+   * @inheritdoc
+   * @throws Exception
+   */
+  public function offsetSet($offset, $value) { }
+
+  /**
+   * @inheritdoc
+   * @throws Exception
+   */
+  public function offsetUnset($offset) { }
+
+
+  // Countable
+  // ---------
+
+  /**
+   * @inheritdoc
+   */
+  public function count() {
+    return count($this->_values);
+  }
+
+
+  // IteratorAggregate
+  // -----------------
+
+  /**
+   * @inheritdoc
+   */
+  public function getIterator() {
+    return new IteratorLoop($this->_values);
   }
 }

@@ -6,22 +6,14 @@ use craft\base\ElementInterface;
 use lenz\contentfield\Plugin;
 
 /**
- * Class TextAreaField
+ * Class NumberField
  *
- * Displays a textarea input.
+ * Displays a input for entering numbers.
  */
-class TextAreaField extends AbstractStringField
+class NumberField extends AbstractNumberField
 {
   /**
-   * Whether to use a monospace font in the control panel
-   * or not.
-   *
-   * @var bool
-   */
-  public $monospace = false;
-
-  /**
-   * Placeholder text for the textarea element. Translated using the default
+   * Placeholder text for the text input element. Translated using the default
    * translation method.
    *
    * @var string
@@ -29,16 +21,16 @@ class TextAreaField extends AbstractStringField
   public $placeholder = '';
 
   /**
-   * The number of initially visible text lines.
+   * A unit that will be displayed next to the input field.
    *
-   * @var int
+   * @var string
    */
-  public $rows = 5;
+  public $unit;
 
   /**
    * The internal name of this widget.
    */
-  const NAME = 'textarea';
+  const NAME = 'number';
 
 
   /**
@@ -46,9 +38,8 @@ class TextAreaField extends AbstractStringField
    */
   public function getEditorData(ElementInterface $element = null) {
     return parent::getEditorData($element) + [
-      'monospace'   => $this->monospace,
       'placeholder' => $this->getPlaceholder(),
-      'rows'        => $this->rows,
+      'unit'        => $this->unit,
     ];
   }
 
@@ -59,10 +50,7 @@ class TextAreaField extends AbstractStringField
     return array_merge(
       parent::rules(),
       [
-        [['monospace', 'rows'], 'required'],
-        ['monospace', 'boolean'],
-        ['placeholder', 'string'],
-        ['rows', 'integer'],
+        [['placeholder', 'unit'], 'string']
       ]
     );
   }
@@ -80,5 +68,21 @@ class TextAreaField extends AbstractStringField
     return empty($placeholder)
       ? ''
       : Plugin::t($placeholder);
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @inheritDoc
+   */
+  static public function expandFieldConfig(&$config) {
+    $type = $config['type'];
+
+    if (in_array($type, AbstractNumberField::DATA_TYPE_ALIASES)) {
+      $config['type']     = 'number';
+      $config['dataType'] = AbstractNumberField::DATA_TYPE_ALIASES[$type];
+    }
   }
 }

@@ -136,4 +136,18 @@ class RedactorField extends AbstractField
   public function hasRedactor() {
     return class_exists(self::REDACTOR_FIELD_CLASS);
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function rules() {
+    return array_merge(
+      parent::rules(),
+      [
+        [['redactorConfig', 'searchable', 'translatable'], 'required'],
+        [['purifierConfig', 'redactorConfig'], 'string'],
+        [['searchable', 'translatable'], 'boolean'],
+      ]
+    );
+  }
 }

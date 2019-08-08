@@ -69,7 +69,7 @@ class StaticLoop implements LoopInterface
   /**
    * @return StaticLoop
    */
-  static function getInstance() {
+  static public function getInstance() {
     if (!isset(self::$_instance)) {
       self::$_instance = new StaticLoop();
     }

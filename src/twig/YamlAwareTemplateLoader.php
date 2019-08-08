@@ -76,7 +76,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
       throw new TemplateLoaderException($name,
         Craft::t(
           'app',
-          'Tried to read the template at {path}, but could not. Check the permissions.',
+          'The template at `{path}` could not be read, check file permissions.',
           ['path' => $template]
         )
       );

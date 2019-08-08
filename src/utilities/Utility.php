@@ -72,7 +72,8 @@ class Utility extends UtilityBase
   private static function getPages() {
     return [
       new IconPage(),
-      new SourcesPage()
+      new SourcesPage(),
+      new ErrorsPage(),
     ];
   }
 }

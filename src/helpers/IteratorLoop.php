@@ -38,9 +38,9 @@ class IteratorLoop implements Iterator, LoopInterface
   }
 
   /**
-   * @param int|null $limit
-   * @param string|string[]|null $only
-   * @param string|string[]|null $until
+   * @param int|null|mixed $limit
+   * @param string|string[]|null|mixed $only
+   * @param string|string[]|null|mixed $until
    * @return IteratorLoop
    * @throws Throwable
    */

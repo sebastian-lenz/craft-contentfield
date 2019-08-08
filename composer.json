@@ -12,9 +12,7 @@
     "craftcms/cms": "^3.2.1",
     "craftcms/redactor": "^2.2.0",
     "sebastianlenz/craft-utils": "^2.1.0",
-    "symfony/yaml": "^3.4",
-    "league/commonmark": "^1.0",
-    "league/commonmark-extras": "^1.1"
+    "symfony/yaml": "^3.4"
   },
   "require-dev": {
     "codeception/codeception": "^3.0",

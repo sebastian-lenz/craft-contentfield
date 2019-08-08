@@ -12,6 +12,7 @@ use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\fields\LightswitchField;
 use lenz\contentfield\models\fields\LinkField;
 use lenz\contentfield\models\fields\LocationField;
+use lenz\contentfield\models\fields\NumberField;
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\models\fields\RedactorField;
 use lenz\contentfield\models\fields\ReferenceField;
@@ -43,6 +44,7 @@ class FieldDefinitions extends AbstractDefinitions
     LightswitchField::NAME => LightswitchField::class,
     LinkField::NAME        => LinkField::class,
     LocationField::NAME    => LocationField::class,
+    NumberField::NAME      => NumberField::class,
     ReferenceField::NAME   => ReferenceField::class,
     RedactorField::NAME    => RedactorField::class,
     SelectField::NAME      => SelectField::class,
@@ -56,13 +58,13 @@ class FieldDefinitions extends AbstractDefinitions
   /**
    * Creates a new field instance from the given configuration.
    *
-   * @param AbstractSchema $schema
+   * @param AbstractSchema|null $schema
    * @param array $config
    * @return AbstractField
    * @throws FieldConfigException
    * @throws Exception
    */
-  public function createField(AbstractSchema $schema, $config) {
+  public function createField(AbstractSchema $schema = null, array $config = []) {
     $type   = strtolower($config['type']);
     $config = $this->resolveDefinition($config);
 

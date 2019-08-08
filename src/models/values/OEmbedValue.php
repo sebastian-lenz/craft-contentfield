@@ -3,6 +3,8 @@
 namespace lenz\contentfield\models\values;
 
 use lenz\contentfield\models\fields\OEmbedField;
+use lenz\contentfield\services\oembeds\OEmbed;
+use lenz\contentfield\twig\DisplayInterface;
 use Twig\Markup;
 
 /**
@@ -10,7 +12,7 @@ use Twig\Markup;
  *
  * @property OEmbedField $_field
  */
-class OEmbedValue extends Value
+class OEmbedValue extends Value implements DisplayInterface
 {
   /**
    * @var string
@@ -43,18 +45,28 @@ class OEmbedValue extends Value
   }
 
   /**
+   * @inheritDoc
+   */
+  public function display(array $variables = []) {
+    $oEmbed = $this->getOEmbed();
+    echo is_null($oEmbed)
+      ? ''
+      : $oEmbed->getHtml($variables);
+  }
+
+  /**
    * @inheritdoc
    */
   public function getHtml($options = null) {
-    $oembed = $this->getOEmbed();
-    return new Markup(is_null($oembed)
+    $oEmbed = $this->getOEmbed();
+    return new Markup(is_null($oEmbed)
       ? ''
-      : $oembed->getHtml($options)
+      : $oEmbed->getHtml($options)
     , 'utf-8');
   }
 
   /**
-   * @return \lenz\contentfield\services\oembeds\OEmbed|null
+   * @return OEmbed|null
    */
   public function getOEmbed() {
     return $this->_field->getOEmbed($this->_url);

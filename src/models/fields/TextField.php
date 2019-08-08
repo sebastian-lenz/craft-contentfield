@@ -50,6 +50,35 @@ class TextField extends AbstractStringField
     ];
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getValueRules() {
+    $rules = parent::getValueRules();
+
+    if ($this->inputType == 'url') {
+      $rules[] = ['url'];
+    } elseif ($this->inputType == 'email') {
+      $rules[] = ['email'];
+    }
+
+    return $rules;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function rules() {
+    return array_merge(
+      parent::rules(),
+      [
+        ['placeholder', 'string'],
+        ['inputType', 'required'],
+        ['inputType', 'in', 'range' => self::INPUT_TYPES],
+      ]
+    );
+  }
+
 
   // Private methods
   // ---------------

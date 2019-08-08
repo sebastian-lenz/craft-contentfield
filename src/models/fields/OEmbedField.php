@@ -119,7 +119,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritdoc
    */
-  static function expandFieldConfig(&$config) {
+  static public function expandFieldConfig(&$config) {
     if ($config['type'] === 'youtube') {
       $config = array(
         'type'      => self::NAME,
