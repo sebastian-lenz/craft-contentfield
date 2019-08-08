@@ -69,9 +69,10 @@ class OEmbedField extends AbstractField
       return null;
     }
 
+    $url = $value->getUrl();
     return array(
-      'url'  => $value->getUrl(),
-      'info' => $value->getOEmbed(),
+      'url'  => $url,
+      'info' => $this->getOEmbed($url),
     );
   }
 
