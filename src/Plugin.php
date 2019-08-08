@@ -32,7 +32,6 @@ use yii\web\NotFoundHttpException;
 /**
  * Class Plugin
  *
- * @property services\CommonMark $commonMark
  * @property services\definitions\FieldDefinitions $fields
  * @property services\FieldUsage $fieldUsage
  * @property services\definitions\ImageTagDefinitions $imageTags
@@ -78,9 +77,6 @@ class Plugin extends BasePlugin
     parent::init();
 
     $this->setComponents([
-      'commonMark' => [
-        'class' => services\CommonMark::class,
-      ],
       'fields' => [
         'class' => services\definitions\FieldDefinitions::class,
       ],
