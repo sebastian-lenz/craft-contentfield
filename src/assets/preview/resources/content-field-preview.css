@@ -28,20 +28,20 @@
 }
 
 .tcfPreview.compact .tcfPreview--commandGroup:first-child {
-  margin-right: 16px;
-  padding-right: 16px;
+  margin-right: 8px;
+  padding-right: 8px;
 
   border-right: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .tcfPreview:not(.compact) .tcfPreview--commandGroup {
   width: 100%;
-  margin: 16px 0;
+  margin: 8px 0;
 }
 
 .tcfPreview--commandDivider {
   align-self: stretch;
-  margin: 0 16px;
+  margin: 0 8px;
 
   border-right: 1px solid rgba(255, 255, 255, 0.5);
 }
@@ -57,7 +57,8 @@
   cursor: pointer;
 }
 
-.tcfPreview.compact .tcfPreview--command {
+.tcfPreview.compact .tcfPreview--command,
+.tcfPreview--commandGroup:last-child .tcfPreview--command {
   width: 40px;
 }
 
@@ -72,7 +73,8 @@
   color: var(--contentfield-primary-text-color, #FFFFFF);
 }
 
-.tcfPreview.compact .tcfPreview--commandIcon {
+.tcfPreview.compact .tcfPreview--commandIcon,
+.tcfPreview--commandGroup:last-child .tcfPreview--commandIcon {
   width: 32px;
   height: 32px;
   padding: 8px;

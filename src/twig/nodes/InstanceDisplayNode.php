@@ -79,7 +79,7 @@ class InstanceDisplayNode extends DisplayNode
     }
 
     $compiler
-      ->write("if (\$displayContent instanceof \\lenz\\contentfield\\models\\values\\InstanceValue) {\n")
+      ->write("if (\$displayContent instanceof \\lenz\\contentfield\\models\\values\\InstanceValue && \$displayContent->isVisible()) {\n")
         ->indent()
         ->write("if (\$displayContent->hasCachedOutput()) {\n")
           ->indent()

@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\helpers;
 
+use craft\helpers\ArrayHelper;
 use Exception;
 use Iterator;
 use lenz\contentfield\models\values\InstanceValue;
@@ -33,8 +34,8 @@ class IteratorLoop implements Iterator, LoopInterface
    * @param array $values
    */
   public function __construct(array $values) {
-    $this->_count = count($values);
-    $this->_values = $values;
+    $this->_count  = count($values);
+    $this->_values = array_values($values);
   }
 
   /**
