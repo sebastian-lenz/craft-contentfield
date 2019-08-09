@@ -22,6 +22,18 @@ class InlineIndexNode extends Node
 
   /**
    * @param string $qualifier
+   * @return string|null
+   */
+  public function getInlinedSchema(string $qualifier) {
+    $templates = $this->getAttribute('templates');
+
+    return array_key_exists($qualifier, $templates)
+      ? $templates[$qualifier]
+      : null;
+  }
+
+  /**
+   * @param string $qualifier
    * @param string $callbackName
    */
   public function setInlinedSchema(string $qualifier, string $callbackName) {
