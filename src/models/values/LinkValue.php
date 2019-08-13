@@ -46,10 +46,10 @@ class LinkValue extends Value implements ReferenceMapValueInterface
    * LinkValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param LinkField $field
+   * @param ValueInterface|null $parent
+   * @param LinkField|null $field
    */
-  public function __construct($data, ValueInterface $parent, LinkField $field) {
+  public function __construct($data, ValueInterface $parent = null, LinkField $field = null) {
     parent::__construct($parent, $field);
 
     if (is_array($data)) {

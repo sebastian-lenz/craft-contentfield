@@ -14,8 +14,8 @@ abstract class Value implements ValueInterface
   /**
    * Value constructor.
    *
-   * @param ValueInterface $parent
-   * @param AbstractField $field
+   * @param ValueInterface|null $parent
+   * @param AbstractField|null $field
    */
   public function __construct(ValueInterface $parent = null, AbstractField $field = null) {
     $this->_field = $field;

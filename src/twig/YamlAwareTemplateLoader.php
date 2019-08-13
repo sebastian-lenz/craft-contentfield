@@ -71,7 +71,12 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @throws Throwable
    */
   public function getSourceContext($name) {
+    if (is_null($this->view)) {
+      throw new Exception('View is required on template loaders.');
+    }
+
     $template = $this->view->resolveTemplate($name);
+
     if ($template === false || !is_readable($template)) {
       throw new TemplateLoaderException($name,
         Craft::t(

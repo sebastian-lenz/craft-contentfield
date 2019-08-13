@@ -26,10 +26,10 @@ class LocationValue extends Value
    * LocationValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param LocationField $field
+   * @param ValueInterface|null $parent
+   * @param LocationField|null $field
    */
-  public function __construct($data, ValueInterface $parent, LocationField $field) {
+  public function __construct($data, ValueInterface $parent = null, LocationField $field = null) {
     parent::__construct($parent, $field);
 
     if (is_array($data)) {

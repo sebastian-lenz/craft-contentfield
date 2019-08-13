@@ -36,10 +36,10 @@ class ColorValue extends Value
    * ColorValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param ColorField $field
+   * @param ValueInterface|null $parent
+   * @param ColorField|null $field
    */
-  public function __construct($data, ValueInterface $parent, ColorField $field) {
+  public function __construct($data, ValueInterface $parent = null, ColorField $field = null) {
     parent::__construct($parent, $field);
 
     if (is_array($data)) {

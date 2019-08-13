@@ -24,10 +24,10 @@ class OEmbedValue extends Value implements DisplayInterface
    * StringValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param OEmbedField $field
+   * @param ValueInterface|null $parent
+   * @param OEmbedField|null $field
    */
-  public function __construct($data, ValueInterface $parent, OEmbedField $field) {
+  public function __construct($data, ValueInterface $parent = null, OEmbedField $field = null) {
     parent::__construct($parent, $field);
 
     if (is_array($data) && array_key_exists('url', $data)) {

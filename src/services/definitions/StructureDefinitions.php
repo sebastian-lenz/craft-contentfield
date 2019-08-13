@@ -25,7 +25,7 @@ class StructureDefinitions extends AbstractDefinitions
   public function expandDefinition(array $config) {
     if (array_key_exists('type', $config)) {
       $parent = $this->getDefinition($config['type']);
-      $config = self::mergeDefinitions($config, $parent);
+      $config = $this->mergeDefinitions($config, $parent);
       unset($config['type']);
     }
 

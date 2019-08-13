@@ -493,11 +493,11 @@ abstract class AbstractSchema extends Model
   // -----------------
 
   /**
-   * @param string $name
+   * @param string|int $key
    * @param string|array $config
    * @throws Exception
    */
-  protected function addField($name, $config) {
+  protected function addField($key, $config) {
     static $fieldManager = null;
     if (is_null($fieldManager)) {
       $fieldManager = Plugin::getInstance()->fields;
@@ -510,19 +510,18 @@ abstract class AbstractSchema extends Model
     }
 
     // If the field list is associative, use the keys as the field names
-    if (is_string($name)) {
+    if (is_string($key)) {
       if (isset($config['name'])) {
         Craft::warning(
-          ['The field `$1` on schema `$2` has multiple names.', $name, $this->qualifier],
+          ['The field `$1` on schema `$2` has multiple names.', $key, $this->qualifier],
           'craft-contentfield'
         );
       }
 
-      $config['name'] = $name;
+      $config['name'] = $key;
     }
 
     if (
-      !is_array($config) ||
       !isset($config['type']) ||
       !isset($config['name'])
     ) {

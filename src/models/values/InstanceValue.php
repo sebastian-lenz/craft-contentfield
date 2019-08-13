@@ -5,6 +5,7 @@ namespace lenz\contentfield\models\values;
 use Craft;
 use craft\helpers\Template;
 use craft\helpers\UrlHelper;
+use craft\web\Application as WebApplication;
 use craft\web\Response;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
@@ -14,7 +15,6 @@ use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
-use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\DisplayInterface;
 use Throwable;
@@ -460,6 +460,16 @@ class InstanceValue
   }
 
   /**
+   * @param string $name
+   * @return mixed|null
+   */
+  public function getValue(string $name) {
+    return array_key_exists($name, $this->_values)
+      ? $this->_values[$name]
+      : null;
+  }
+
+  /**
    * @return mixed[]
    */
   public function getValues() {
@@ -539,7 +549,10 @@ class InstanceValue
       }
     }
 
-    if ($event->requestedUuid == $this->_uuid) {
+    if (
+      $event->requestedUuid == $this->_uuid &&
+      Craft::$app instanceof WebApplication
+    ) {
       $event->originalEvent->isValid = false;
       $response = Craft::$app->response;
       $content = $this->render([

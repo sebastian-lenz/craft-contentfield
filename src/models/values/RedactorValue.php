@@ -58,10 +58,10 @@ class RedactorValue
    * RedactorValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param RedactorField $field
+   * @param ValueInterface|null $parent
+   * @param RedactorField|null $field
    */
-  public function __construct($data, ValueInterface $parent, RedactorField $field) {
+  public function __construct($data, ValueInterface $parent = null, RedactorField $field = null) {
     parent::__construct('', 'utf-8');
 
     $this->_field = $field;

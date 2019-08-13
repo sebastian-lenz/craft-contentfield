@@ -141,7 +141,10 @@ class ArrayField extends AbstractField
    * @inheritDoc
    */
   public function getSearchKeywords($value) {
-    if (!($value instanceof ArrayValue)) {
+    if (
+      !($value instanceof ArrayValue) ||
+      is_null($this->member)
+    ) {
       return '';
     }
 

@@ -19,7 +19,7 @@ use yii\caching\TagDependency;
 class ImageTagDefinitions extends AbstractDefinitions
 {
   /**
-   * @var ImageTag[]
+   * @var ImageTag[]|string[]
    */
   private $_imageTags;
 

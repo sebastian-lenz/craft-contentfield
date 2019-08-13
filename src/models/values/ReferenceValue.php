@@ -39,10 +39,10 @@ class ReferenceValue
    * ReferenceValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param ReferenceField $field
+   * @param ValueInterface|null $parent
+   * @param ReferenceField|null $field
    */
-  public function __construct($data, ValueInterface $parent, ReferenceField $field) {
+  public function __construct($data, ValueInterface $parent = null, ReferenceField $field = null) {
     parent::__construct($parent, $field);
 
     if (!is_array($data)) {
