@@ -66,7 +66,7 @@ class StructureSchema extends AbstractSchema
    * @throws Exception
    */
   public function render(InstanceValue $instance, array $variables = [], array $options = []) {
-    throw new Exception('Pure data structures cannot be rendered.');
+    throw new Exception('Structures cannot be rendered or displayed.');
   }
 
 

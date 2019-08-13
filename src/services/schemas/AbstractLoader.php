@@ -33,7 +33,7 @@ abstract class AbstractLoader
   /**
    * Return a list of all available schemas.
    *
-   * The returned array contains to child arrays, the first one
+   * The returned array contains two child arrays, the first one
    * holds all loaded schemas, the second one a list of errors found
    * while loading the schemas.
    *
