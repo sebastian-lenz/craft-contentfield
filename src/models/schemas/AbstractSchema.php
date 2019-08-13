@@ -190,6 +190,9 @@ abstract class AbstractSchema extends Model
   public function __construct(array $config = []) {
     if (!isset($config['qualifier'])) {
       throw new Exception('All schemas must have a qualifier.');
+    } else {
+      // Set the qualifier early so we can use it in error messages
+      $this->qualifier = $config['qualifier'];
     }
 
     if (!isset($config['label'])) {
@@ -197,34 +200,8 @@ abstract class AbstractSchema extends Model
     }
 
     if (isset($config['fields'])) {
-      $fieldManager = Plugin::getInstance()->fields;
-
       foreach ($config['fields'] as $key => $field) {
-        // If the field is no an array try to load blueprint or use it
-        // as the field type
-        if (is_string($field)) {
-          $field = array('type' => $field);
-        }
-
-        // If the field list is associative, use the keys as the field names
-        if (is_string($key)) {
-          if (isset($field['name'])) {
-            Craft::warning(array('The field `$1` has multiple names.', $key), 'craft-contentfield');
-          }
-
-          $field['name'] = $key;
-        }
-
-        if (!is_array($field) || !isset($field['type']) || !isset($field['name'])) {
-          throw new Exception('Invalid schema');
-        }
-
-        $instance = $fieldManager->createField($this, $field);
-        if (isset($this->fields[$instance->name])) {
-          throw new Exception('The field "' . $instance->name . '" is already set on schema "' . $config['qualifier'] . '".');
-        }
-
-        $this->fields[$instance->name] = $instance;
+        $this->addField($key, $field);
       }
 
       unset($config['fields']);
@@ -514,6 +491,54 @@ abstract class AbstractSchema extends Model
 
   // Protected methods
   // -----------------
+
+  /**
+   * @param string $name
+   * @param string|array $config
+   * @throws Exception
+   */
+  protected function addField($name, $config) {
+    static $fieldManager = null;
+    if (is_null($fieldManager)) {
+      $fieldManager = Plugin::getInstance()->fields;
+    }
+
+    // If the field is no an array try to load blueprint or use it
+    // as the field type
+    if (is_string($config)) {
+      $config = ['type' => $config];
+    }
+
+    // If the field list is associative, use the keys as the field names
+    if (is_string($name)) {
+      if (isset($config['name'])) {
+        Craft::warning(
+          ['The field `$1` on schema `$2` has multiple names.', $name, $this->qualifier],
+          'craft-contentfield'
+        );
+      }
+
+      $config['name'] = $name;
+    }
+
+    if (
+      !is_array($config) ||
+      !isset($config['type']) ||
+      !isset($config['name'])
+    ) {
+      throw new Exception('Invalid schema');
+    }
+
+    $instance = $fieldManager->createField($this, $config);
+    if (isset($this->fields[$instance->name])) {
+      throw new Exception(sprintf(
+        'The field `%s` is already set on schema `%s`.',
+        $instance->name, $this->qualifier
+      ));
+    }
+
+    $this->fields[$instance->name] = $instance;
+  }
 
   /**
    * @param string $qualifier
