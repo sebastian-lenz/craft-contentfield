@@ -3,7 +3,6 @@
 namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
-
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
@@ -86,7 +85,7 @@ class InstanceField extends AbstractField
       : null;
 
     if (is_null($schema) || !$this->isValidSchema($schema)) {
-      $schemas = $this->getDependedSchemas();
+      $schemas = $this->getResolvedSchemas();
       $defaultSchema = reset($schemas);
       if (!$defaultSchema) {
         throw new Exception(sprintf('No schema available on field `%s`.', $this->name));
@@ -103,21 +102,17 @@ class InstanceField extends AbstractField
    * @throws Throwable
    */
   public function getDependedSchemas() {
-    if (!isset($this->_resolvedSchemas)) {
-      $manager = Plugin::getInstance()->schemas;
-      $parent  = $this->_parentSchema;
+    $schemas = $this->getResolvedSchemas();
+    $result  = $schemas;
 
-      $this->_resolvedSchemas = $manager->getSchemas(
-        array_map(
-          function($schema) use ($parent, $manager) {
-            return $manager->parseSchemaQualifier($schema, $parent);
-          },
-          $this->schemas
-        )
-      );
+    foreach ($schemas as $schema) {
+      $dependencies = $schema->getDependedSchemas();
+      if (!is_null($dependencies)) {
+        $result += $dependencies;
+      }
     }
 
-    return $this->_resolvedSchemas;
+    return $result;
   }
 
   /**
@@ -125,7 +120,7 @@ class InstanceField extends AbstractField
    * @throws Throwable
    */
   public function getEditorData(ElementInterface $element = null) {
-    $qualifiers = array_keys($this->getDependedSchemas());
+    $qualifiers = array_keys($this->getResolvedSchemas());
     if (count($qualifiers) === 0) {
       return null;
     }
@@ -173,6 +168,32 @@ class InstanceField extends AbstractField
     return Plugin::getInstance()
       ->schemas
       ->matchesQualifier($qualifier, $this->schemas, $this->_parentSchema);
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * @return AbstractSchema[]
+   * @throws Throwable
+   */
+  private function getResolvedSchemas() {
+    if (!isset($this->_resolvedSchemas)) {
+      $manager = Plugin::getInstance()->schemas;
+      $parent  = $this->_parentSchema;
+
+      $this->_resolvedSchemas = $manager->getSchemas(
+        array_map(
+          function($schema) use ($parent, $manager) {
+            return $manager->parseSchemaQualifier($schema, $parent);
+          },
+          $this->schemas
+        )
+      );
+    }
+
+    return $this->_resolvedSchemas;
   }
 
 
