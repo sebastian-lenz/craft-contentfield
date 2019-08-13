@@ -15,6 +15,7 @@ use lenz\contentfield\Plugin;
 use lenz\contentfield\validators\ValueValidator;
 use Throwable;
 use yii\base\Model;
+use yii\helpers\Inflector;
 
 /**
  * Class AbstractSchema
@@ -66,6 +67,14 @@ abstract class AbstractSchema extends Model
    * @var string
    */
   public $mimeType = 'text/html';
+
+  /**
+   * The fully qualified name of the model class that should be attached
+   * to this schema.
+   *
+   * @var string
+   */
+  public $model;
 
   /**
    * A handlebars template used to display instances of this schema in the editor.
@@ -183,6 +192,10 @@ abstract class AbstractSchema extends Model
       throw new Exception('All schemas must have a qualifier.');
     }
 
+    if (!isset($config['label'])) {
+      $config['label'] = $this->generateSchemaLabel($config['qualifier']);
+    }
+
     if (isset($config['fields'])) {
       $fieldManager = Plugin::getInstance()->fields;
 
@@ -221,12 +234,16 @@ abstract class AbstractSchema extends Model
   }
 
   /**
+   * Makes this schema take over the rendering of the current request.
+   *
    * @param BeforeActionEvent $event
    * @param Content $content
    */
   abstract function applyPageTemplate(BeforeActionEvent $event, Content $content);
 
   /**
+   * Displays this schema.
+   *
    * @param InstanceValue $instance
    * @param array $variables
    */
@@ -325,6 +342,15 @@ abstract class AbstractSchema extends Model
    * @return AbstractSchema|null
    */
   abstract public function getLocalStructure($name);
+
+  /**
+   * Returns the name part of this schemas qualifier.
+   *
+   * @return string
+   */
+  public function getName() {
+    return self::extractName($this->qualifier);
+  }
 
   /**
    * Return the handlebars template used to preview instances of this
@@ -446,7 +472,7 @@ abstract class AbstractSchema extends Model
    */
   public function rules() {
     return [
-      ['qualifier', 'required'],
+      [['label', 'qualifier'], 'required'],
       [['icon', 'grid', 'label', 'preview', 'qualifier'], 'string'],
       ['constants', 'validateArray'],
       ['fields', 'validateFields'],
@@ -488,6 +514,14 @@ abstract class AbstractSchema extends Model
 
   // Protected methods
   // -----------------
+
+  /**
+   * @param string $qualifier
+   * @return string
+   */
+  protected function generateSchemaLabel(string $qualifier) {
+    return Inflector::camel2words(self::extractName($qualifier), true);;
+  }
 
   /**
    * @return array|null
@@ -543,5 +577,27 @@ abstract class AbstractSchema extends Model
     }
 
     return null;
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param string $qualifier
+   * @return bool|string
+   */
+  public static function extractName(string $qualifier) {
+    $offset = strpos($qualifier, ':');
+    if ($offset !== false) {
+      $qualifier = substr($qualifier, $offset + 1);
+    }
+
+    $offset = strpos($qualifier, '@');
+    if ($offset !== false) {
+      $qualifier = substr($qualifier, 0, $offset);
+    }
+
+    return $qualifier;
   }
 }

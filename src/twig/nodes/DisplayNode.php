@@ -54,7 +54,7 @@ class DisplayNode extends Node
 
     $this->_field = $field;
     $this->_forceInline = $forceInline;
-    
+
     parent::__construct($nodes, [], $line, $tag);
   }
 
@@ -142,7 +142,7 @@ class DisplayNode extends Node
     string $variablesVar = '$displayVariables'
   ) {
     $compiler
-      ->write("switch ({$instanceVar}->getType()) {\n")
+      ->write("switch ({$instanceVar}->getSchema()->qualifier) {\n")
       ->indent();
 
     foreach ($this->_inlinedSchemas as $qualifier => $callback) {

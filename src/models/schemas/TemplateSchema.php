@@ -22,44 +22,52 @@ use Twig\TemplateWrapper;
 class TemplateSchema extends AbstractSchemaContainer
 {
   /**
+   * Whether this template should be inlined or not.
+   *
    * @var bool
    */
   public $inline;
 
   /**
-   * @var string
-   */
-  public $model;
-
-  /**
+   * The complete filesystem path to this template, e.g.
+   * `/var/www/html/templates/_elements/text.twig`.
+   *
    * @var string
    */
   public $path;
 
   /**
+   * The name of this template, unlike the `path` this does not include
+   * the path to the template folder, e.g. `_elements/text.twig`.
+   *
    * @var string
    */
   public $template;
 
   /**
+   * The loaded template instance.
+   *
    * @var TemplateWrapper
    */
   private $_template;
 
   /**
+   * The global template variables, those will be available in all templates.
+   *
    * @var array
    */
   static private $_globalVariables;
 
   /**
+   * The site twig instance we use to render templates.
+   *
    * @var Environment
    */
   static private $_twig;
 
 
   /**
-   * @param BeforeActionEvent $event
-   * @param Content $content
+   * @inheritDoc
    */
   public function applyPageTemplate(BeforeActionEvent $event, Content $content) {
     $action = $event->originalEvent->action;
@@ -161,6 +169,7 @@ class TemplateSchema extends AbstractSchemaContainer
 
     return array_merge(
       self::$_globalVariables,
+      $instance->getSchema()->constants,
       $instanceVariables,
       $instance->getValues(),
       $variables

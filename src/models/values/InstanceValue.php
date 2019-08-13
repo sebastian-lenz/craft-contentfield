@@ -334,7 +334,7 @@ class InstanceValue
   public function getModel() {
     if (!isset($this->_model)) {
       $schema     = $this->_schema;
-      $modelClass = $schema instanceof TemplateSchema ? $schema->model : null;
+      $modelClass = $schema->model;
       $model      = null;
 
       if (!empty($modelClass)) {
@@ -441,8 +441,14 @@ class InstanceValue
 
   /**
    * @return string
+   * @deprecated
    */
   public function getType() {
+    Craft::$app->deprecator->log(
+      __METHOD__,
+      'InstanceValue::getType is deprecated. Use InstanceValue::getSchema()->qualifier instead.'
+    );
+
     return $this->_schema->qualifier;
   }
 

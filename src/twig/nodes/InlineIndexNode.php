@@ -63,7 +63,7 @@ class InlineIndexNode extends Node
             ->indent()
             ->write("echo \$instance->getCachedOutput();\n")
             ->outdent()
-          ->write("} else switch (\$instance->getType()) {\n")
+          ->write("} else switch (\$instance->getSchema()->qualifier) {\n")
             ->indent();
 
     foreach ($templates as $qualifier => $callback) {
