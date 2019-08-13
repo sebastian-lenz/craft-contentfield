@@ -11,6 +11,7 @@ use craft\helpers\Template;
 use Exception;
 use IteratorAggregate;
 use lenz\contentfield\helpers\ReferenceMap;
+use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\Plugin;
 use Twig\Markup;
@@ -21,8 +22,8 @@ use Twig\Markup;
  * @property ReferenceField $_field
  */
 class ReferenceValue
-  extends Value
-  implements ArrayAccess, Countable, IteratorAggregate, ReferenceMapValueInterface
+  extends AbstractValue
+  implements ArrayAccess, Countable, IteratorAggregate, ReferenceMappableInterface
 {
   /**
    * @var ElementInterface[]

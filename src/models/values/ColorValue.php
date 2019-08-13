@@ -9,7 +9,7 @@ use lenz\contentfield\models\fields\ColorField;
  *
  * @property ColorField $_field
  */
-class ColorValue extends Value
+class ColorValue extends AbstractValue
 {
   /**
    * @var float

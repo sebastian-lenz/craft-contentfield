@@ -3,9 +3,9 @@
 namespace lenz\contentfield\models\values;
 
 /**
- * Interface TraversableValueInterface
+ * Interface ValueTraversableInterface
  */
-interface TraversableValueInterface
+interface ValueTraversableInterface
 {
   /**
    * @param string|string[] $qualifier

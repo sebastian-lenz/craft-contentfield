@@ -9,7 +9,7 @@ use lenz\contentfield\models\fields\LocationField;
  *
  * @property LocationField $_field
  */
-class LocationValue extends Value
+class LocationValue extends AbstractValue
 {
   /**
    * @var float

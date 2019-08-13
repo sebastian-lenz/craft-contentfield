@@ -10,7 +10,7 @@ use lenz\contentfield\models\fields\AbstractEnumerationField;
  *
  * @property AbstractEnumerationField $_field
  */
-class EnumerationValue extends Value
+class EnumerationValue extends AbstractValue
 {
   /**
    * @var string|number

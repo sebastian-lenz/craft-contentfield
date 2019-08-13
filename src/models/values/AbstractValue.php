@@ -5,9 +5,9 @@ namespace lenz\contentfield\models\values;
 use lenz\contentfield\models\fields\AbstractField;
 
 /**
- * Class Value
+ * Class AbstractValue
  */
-abstract class Value implements ValueInterface
+abstract class AbstractValue implements ValueInterface
 {
   use ValueTrait;
 

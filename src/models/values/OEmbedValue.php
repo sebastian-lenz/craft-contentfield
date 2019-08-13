@@ -12,7 +12,7 @@ use Twig\Markup;
  *
  * @property OEmbedField $_field
  */
-class OEmbedValue extends Value implements DisplayInterface
+class OEmbedValue extends AbstractValue implements DisplayInterface
 {
   /**
    * @var string

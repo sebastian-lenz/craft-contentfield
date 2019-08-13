@@ -7,6 +7,7 @@ use craft\base\ElementInterface;
 use craft\helpers\StringHelper;
 use Exception;
 use lenz\contentfield\helpers\ReferenceMap;
+use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\RedactorField;
 use lenz\contentfield\twig\DisplayInterface;
 use Throwable;
@@ -19,7 +20,7 @@ use Twig\Markup;
  */
 class RedactorValue
   extends Markup
-  implements DisplayInterface, ReferenceMapValueInterface, ValueInterface
+  implements DisplayInterface, ReferenceMappableInterface, ValueInterface
 {
   use ValueTrait;
 

@@ -6,6 +6,7 @@ use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\ReferenceMap;
+use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
@@ -18,7 +19,7 @@ use yii\base\Model;
  */
 abstract class AbstractModelValue
   extends Model
-  implements BeforeActionInterface, ReferenceMapValueInterface, TraversableValueInterface, ValueInterface
+  implements BeforeActionInterface, ReferenceMappableInterface, ValueTraversableInterface, ValueInterface
 {
   use ValueTrait;
 
@@ -129,7 +130,7 @@ abstract class AbstractModelValue
    */
   public function findUuid(string $uuid) {
     foreach ($this->_values as $value) {
-      if ($value instanceof TraversableValueInterface) {
+      if ($value instanceof ValueTraversableInterface) {
         $result = $value->findUuid($uuid);
         if (!is_null($result)) {
           return $result;
@@ -152,7 +153,7 @@ abstract class AbstractModelValue
     }
 
     foreach ($this->_values as $value) {
-      if ($value instanceof TraversableValueInterface) {
+      if ($value instanceof ValueTraversableInterface) {
         $matches = $value->findInstances($qualifier);
         if (count($matches) > 0) {
           $result = array_merge($result, $matches);
@@ -195,7 +196,7 @@ abstract class AbstractModelValue
     }
 
     foreach ($this->_values as $value) {
-      if ($value instanceof ReferenceMapValueInterface) {
+      if ($value instanceof ReferenceMappableInterface) {
         $value->getReferenceMap($map);
       }
     }

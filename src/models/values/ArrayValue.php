@@ -10,6 +10,7 @@ use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\IteratorLoop;
 use lenz\contentfield\helpers\ReferenceMap;
+use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\twig\DisplayInterface;
 use Throwable;
@@ -21,15 +22,15 @@ use Twig\Markup;
  * @property ArrayField $_field
  */
 class ArrayValue
-  extends Value
+  extends AbstractValue
   implements
     ArrayAccess,
     BeforeActionInterface,
     Countable,
     DisplayInterface,
-    ReferenceMapValueInterface,
+    ReferenceMappableInterface,
     IteratorAggregate,
-    TraversableValueInterface
+    ValueTraversableInterface
 {
   /**
    * @var array
@@ -96,7 +97,7 @@ class ArrayValue
     $result = array();
 
     foreach ($this->_values as $value) {
-      if (!($value instanceof TraversableValueInterface)) {
+      if (!($value instanceof ValueTraversableInterface)) {
         continue;
       }
 
@@ -114,7 +115,7 @@ class ArrayValue
    */
   public function findUuid(string $uuid) {
     foreach ($this->_values as $value) {
-      if (!($value instanceof TraversableValueInterface)) {
+      if (!($value instanceof ValueTraversableInterface)) {
         continue;
       }
 
@@ -162,7 +163,7 @@ class ArrayValue
     }
 
     foreach ($this->_values as $value) {
-      if ($value instanceof ReferenceMapValueInterface) {
+      if ($value instanceof ReferenceMappableInterface) {
         $value->getReferenceMap($map);
       }
     }
