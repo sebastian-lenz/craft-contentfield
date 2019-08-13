@@ -40,7 +40,7 @@ class LocationValue extends Value
       if (is_numeric($data['longitude'])) {
         $this->longitude = max(-180, min(180, $data['longitude']));
       }
-    } else {
+    } elseif (!is_null($field)) {
       $defaultValue = $field->getEditorDefaultValue($this->getElement());
       $this->latitude = $defaultValue['latitude'];
       $this->longitude = $defaultValue['longitude'];

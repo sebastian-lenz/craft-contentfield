@@ -8,6 +8,7 @@ use craft\helpers\UrlHelper;
 use craft\web\Application as WebApplication;
 use craft\web\Response;
 use Exception;
+use lenz\contentfield\behaviors\InstanceSiblingsBehavior;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\InstanceAwareInterface;
@@ -25,6 +26,14 @@ use yii\base\Model;
  * Class InstanceValue
  *
  * @property InstanceField|null $_field
+ *
+ * InstanceSiblingsBehavior
+ * @method InstanceValue|null getNextSibling()
+ * @method InstanceValue|null getParentInstance()
+ * @method InstanceValue|null getPreviousSibling()
+ * @method boolean hasNextSibling($qualifier = null)
+ * @method boolean hasParentInstance($qualifier = null)
+ * @method boolean hasPreviousSibling($qualifier = null)
  */
 class InstanceValue
   extends Model
@@ -197,6 +206,15 @@ class InstanceValue
 
   /**
    * @inheritDoc
+   */
+  public function behaviors() {
+    return [
+      InstanceSiblingsBehavior::class
+    ];
+  }
+
+  /**
+   * @inheritDoc
    * @throws Exception
    */
   public function display(array $variables = []) {
@@ -356,36 +374,10 @@ class InstanceValue
   }
 
   /**
-   * @return InstanceValue|null
-   */
-  public function getNextSibling() {
-    return $this->getSibling(1);
-  }
-
-  /**
    * @return string|null
    */
   public function getOriginalUuid() {
     return $this->_originalUuid;
-  }
-
-  /**
-   * @return InstanceValue|null
-   */
-  public function getParentInstance() {
-    $parent = $this->_parent;
-    if ($parent instanceof ArrayValue) {
-      $parent = $parent->getParent();
-    }
-
-    return $parent instanceof InstanceValue ? $parent : null;
-  }
-
-  /**
-   * @return InstanceValue|null
-   */
-  public function getPreviousSibling() {
-    return $this->getSibling(-1);
   }
 
   /**
@@ -441,19 +433,6 @@ class InstanceValue
 
   /**
    * @return string
-   * @deprecated
-   */
-  public function getType() {
-    Craft::$app->deprecator->log(
-      __METHOD__,
-      'InstanceValue::getType is deprecated. Use InstanceValue::getSchema()->qualifier instead.'
-    );
-
-    return $this->_schema->qualifier;
-  }
-
-  /**
-   * @return string
    */
   public function getUuid() {
     return $this->_uuid;
@@ -484,46 +463,10 @@ class InstanceValue
   }
 
   /**
-   * @param string|string[]|null $qualifier
-   * @return boolean
-   * @throws Throwable
-   */
-  public function hasNextSibling($qualifier = null) {
-    return $this->isInstanceWithQualifier($this->getSibling(1), $qualifier);
-  }
-
-  /**
-   * @param string|string[]|null $qualifier
-   * @return bool
-   * @throws Throwable
-   */
-  public function hasParentInstance($qualifier = null) {
-    return $this->isInstanceWithQualifier($this->getParentInstance(), $qualifier);
-  }
-
-  /**
-   * @param string|string[]|null $qualifier
-   * @return boolean
-   * @throws Throwable
-   */
-  public function hasPreviousSibling($qualifier = null) {
-    return $this->isInstanceWithQualifier($this->getSibling(-1), $qualifier);
-  }
-
-  /**
    * @inheritDoc
    */
   public function isEmpty() {
     return false;
-  }
-
-  /**
-   * @param string|string[] $qualifier
-   * @return bool
-   * @throws Throwable
-   */
-  public function isOfType($qualifier) {
-    return $this->_schema->matchesQualifier($qualifier);
   }
 
   /**
@@ -602,47 +545,6 @@ class InstanceValue
    */
   public function setCachedOutput($value) {
     $this->_output = $value;
-  }
-
-
-  // Private methods
-  // ---------------
-
-  /**
-   * @param int $offset
-   * @return InstanceValue|null
-   */
-  private function getSibling($offset) {
-    $parent = $this->_parent;
-    if (is_null($this->_parent) || !($parent instanceof ArrayValue)) {
-      return null;
-    }
-
-    for ($index = 0; $index < count($parent); $index++) {
-      if ($parent->offsetGet($index) == $this) {
-        return $parent->offsetExists($index + $offset)
-          ? $parent->offsetGet($index + $offset)
-          : null;
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * @param mixed $value
-   * @param string|string[]|null $qualifier
-   * @return bool
-   * @throws Throwable
-   */
-  private function isInstanceWithQualifier($value, $qualifier = null) {
-    if (!($value instanceof InstanceValue)) {
-      return false;
-    }
-
-    return is_null($qualifier)
-      ? true
-      : $value->_schema->matchesQualifier($qualifier);
   }
 
 
