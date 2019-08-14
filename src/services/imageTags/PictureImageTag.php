@@ -13,27 +13,27 @@ class PictureImageTag extends ImageTag
   /**
    * @var array
    */
-  public $attributes;
+  public $attributes = true;
 
   /**
-   * @var string|null
+   * @var boolean|array
    */
-  public $fallbackTransform = null;
-
-  /**
-   * @var array
-   */
-  public $imageAttributes;
+  public $noscript = false;
 
   /**
    * @var array
    */
-  public $noscriptImageAttributes;
+  public $pictureAttributes = [];
 
   /**
    * @var string
    */
   public $placeholder = '';
+
+  /**
+   * @var array
+   */
+  public $placeholderAttributes = array();
 
   /**
    * @var string
@@ -43,22 +43,32 @@ class PictureImageTag extends ImageTag
   /**
    * @var array
    */
-  public $placeholderAttributes = array();
+  public $sourceAttributes = [];
 
   /**
    * @var array
    */
-  public $sourceAttributes;
+  public $sources = [];
 
   /**
-   * @var array
+   * The default image tag attributes.
    */
-  public $sources;
+  const DEFAULT_IMAGE = [
+    'height' => '$height',
+    'src'    => '$src',
+    'alt'    => '$title',
+    'width'  => '$width',
+  ];
 
   /**
-   * @var string
+   * The default image tag attributes for the noscript image tag.
    */
-  public $srcsetAttribute = 'srcset';
+  const DEFAULT_NOSCRIPT = [
+    'height' => '$height',
+    'src'    => '$src',
+    'alt'    => '$title',
+    'width'  => '$width',
+  ];
 
 
   /**
@@ -81,6 +91,12 @@ class PictureImageTag extends ImageTag
    */
   public function render() {
     $content = array();
+    $values  = [
+      '$height' => [$this, 'getMaxHeight'],
+      '$src'    => [$this, 'getMaxSrc'],
+      '$width'  => [$this, 'getMaxWidth'],
+    ];
+
     foreach ($this->sources as $source) {
       $sourceTag = $this->renderSource($source);
       if (!is_null($sourceTag)) {
@@ -88,8 +104,12 @@ class PictureImageTag extends ImageTag
       }
     }
 
-    if (isset($this->imageAttributes)) {
-      $content[] = Html::tag('img', '', $this->expandAttributes($this->imageAttributes));
+    if ($this->attributes) {
+      $attributes = is_array($this->attributes)
+        ? self::ensureSourceAttribute($this->attributes, false)
+        : self::DEFAULT_IMAGE;
+
+      $content[] = Html::tag('img', '', $this->expandAttributes($attributes, $values));
     }
 
     if (isset($this->placeholderTag)) {
@@ -100,14 +120,20 @@ class PictureImageTag extends ImageTag
       );
     }
 
-    if (isset($this->noscriptImageAttributes)) {
+    if ($this->noscript) {
       $content[] = Html::tag('noscript',
-        Html::tag('img', '', $this->expandAttributes($this->noscriptImageAttributes))
+        Html::tag('img', '', $this->expandAttributes(
+          is_array($this->noscript) ? $this->noscript : self::DEFAULT_NOSCRIPT,
+          $values
+        ))
       );
     }
 
-    $attributes = $this->expandAttributes($this->attributes);
-    return Html::tag('picture', implode('', $content), $attributes);
+    return Html::tag(
+      'picture',
+      implode('', $content),
+      $this->expandAttributes($this->pictureAttributes)
+    );
   }
 
   /**
@@ -118,21 +144,20 @@ class PictureImageTag extends ImageTag
     $source = self::normalizeSource($source);
 
     if (isset($source['attributes'])) {
-      $attributes = self::mergeAttributes($source['attributes'], $this->sourceAttributes);
+      $attributes = self::mergeAttributes(
+        $source['attributes'],
+        $this->sourceAttributes
+      );
     } else {
       $attributes = $this->sourceAttributes;
     }
 
-    $sources = $this->toSources($source['transforms']);
-    $maxSource = $sources[count($sources) - 1];
+    $sources    = $this->toSources($source['transforms']);
+    $maxSource  = $sources[count($sources) - 1];
     $attributes = $this->expandAttributes(
-      self::ensureSourceAttribute(
-        $attributes,
-        count($sources) > 1
-      ),
+      self::ensureSourceAttribute($attributes, true),
       array(
         '$height' => $maxSource['height'],
-        '$src'    => $maxSource['src'],
         '$width'  => $maxSource['width'],
         '$srcset' => self::toSourceSet($sources),
       )
@@ -252,7 +277,7 @@ class PictureImageTag extends ImageTag
     return array_merge(
       $parent,
       self::mergeAttributes($config, $parent, [
-        'attributes', 'wrapAttributes'
+        'attributes', 'pictureAttributes', 'placeholderAttributes', 'sourceAttributes'
       ])
     );
   }
@@ -268,9 +293,9 @@ class PictureImageTag extends ImageTag
 
     if (!is_array($source)) $source = [];
     if (isset($source['transform'])) {
-      $source['transforms'] = $source['transform'];
+      $source['transforms'] = [$source['transform']];
     } elseif (!isset($source['transforms'])) {
-      $source['transforms'] = [];
+      $source['transforms'] = [null];
     }
 
     return $source;

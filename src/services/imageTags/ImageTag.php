@@ -9,6 +9,7 @@ use craft\errors\AssetTransformException;
 use craft\helpers\Image;
 use Throwable;
 use yii\base\BaseObject;
+use yii\helpers\FileHelper;
 
 /**
  * Interface ImageTag
@@ -60,12 +61,11 @@ abstract class ImageTag extends BaseObject
       }
     }
 
-    $stream = $volume->getFileStream(
-      $asset->folderPath .
-      $transforms->getTransformSubpath($this->asset, $index)
-    );
+    $fileName = $asset->folderPath . $transforms->getTransformSubpath($this->asset, $index);
+    $mimeType = FileHelper::getMimeTypeByExtension($fileName);
+    $stream   = $volume->getFileStream($fileName);
 
-    return "url('data:image/gif;base64," . base64_encode(stream_get_contents($stream)) . "')";
+    return "url('data:" . $mimeType. ";base64," . base64_encode(stream_get_contents($stream)) . "')";
   }
 
   /**
@@ -136,18 +136,25 @@ abstract class ImageTag extends BaseObject
   }
 
   /**
+   * @param int|string $descriptor
    * @param string|array|null $transform
    * @return array
    */
-  protected function toSource($transform = null) {
+  protected function toSource($descriptor = 0, $transform = null) {
     if ($transform == self::ORIGINAL_TRANSFORM) {
       $transform = null;
     }
 
+    $width = $this->asset->getWidth($transform);
+    if (is_numeric($descriptor)) {
+      $descriptor = $width . 'w';
+    }
+
     return array(
-      'height' => $this->asset->getHeight($transform),
-      'src'    => $this->asset->getUrl($transform),
-      'width'  => $this->asset->getWidth($transform)
+      'descriptor' => $descriptor,
+      'height'     => $this->asset->getHeight($transform),
+      'src'        => $this->asset->getUrl($transform),
+      'width'      => $width
     );
   }
 
@@ -162,8 +169,8 @@ abstract class ImageTag extends BaseObject
     if (count($transforms) === 0) {
       $sources[] = $this->toSource();
     } else {
-      foreach ($transforms as $transform) {
-        $source = $this->toSource($transform);
+      foreach ($transforms as $key => $transform) {
+        $source = $this->toSource($key, $transform);
         if (!is_null($source)) {
           $sources[] = $source;
         }
@@ -302,14 +309,8 @@ abstract class ImageTag extends BaseObject
    * @return string
    */
   static public function toSourceSet($sources) {
-    $maxSource = array_pop($sources);
-    $srcSet    = [];
-
-    foreach ($sources as $source) {
-      $srcSet[] = $source['src'] . ' ' . $source['width'] . 'w';
-    }
-
-    $srcSet[] = $maxSource['src'];
-    return implode(',', $srcSet);
+    return implode(',', array_map(function($source) {
+      return $source['src'] . ' ' . $source['descriptor'];
+    }, $sources));
   }
 }
