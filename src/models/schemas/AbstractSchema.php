@@ -15,6 +15,7 @@ use lenz\contentfield\Plugin;
 use lenz\contentfield\validators\ValueValidator;
 use Throwable;
 use yii\base\Model;
+use yii\helpers\Inflector;
 
 /**
  * Class AbstractSchema
@@ -66,6 +67,14 @@ abstract class AbstractSchema extends Model
    * @var string
    */
   public $mimeType = 'text/html';
+
+  /**
+   * The fully qualified name of the model class that should be attached
+   * to this schema.
+   *
+   * @var string
+   */
+  public $model;
 
   /**
    * A handlebars template used to display instances of this schema in the editor.
@@ -181,37 +190,18 @@ abstract class AbstractSchema extends Model
   public function __construct(array $config = []) {
     if (!isset($config['qualifier'])) {
       throw new Exception('All schemas must have a qualifier.');
+    } else {
+      // Set the qualifier early so we can use it in error messages
+      $this->qualifier = $config['qualifier'];
+    }
+
+    if (!isset($config['label'])) {
+      $config['label'] = $this->generateSchemaLabel($config['qualifier']);
     }
 
     if (isset($config['fields'])) {
-      $fieldManager = Plugin::getInstance()->fields;
-
       foreach ($config['fields'] as $key => $field) {
-        // If the field is no an array try to load blueprint or use it
-        // as the field type
-        if (is_string($field)) {
-          $field = array('type' => $field);
-        }
-
-        // If the field list is associative, use the keys as the field names
-        if (is_string($key)) {
-          if (isset($field['name'])) {
-            Craft::warning(array('The field `$1` has multiple names.', $key), 'craft-contentfield');
-          }
-
-          $field['name'] = $key;
-        }
-
-        if (!is_array($field) || !isset($field['type']) || !isset($field['name'])) {
-          throw new Exception('Invalid schema');
-        }
-
-        $instance = $fieldManager->createField($this, $field);
-        if (isset($this->fields[$instance->name])) {
-          throw new Exception('The field "' . $instance->name . '" is already set on schema "' . $config['qualifier'] . '".');
-        }
-
-        $this->fields[$instance->name] = $instance;
+        $this->addField($key, $field);
       }
 
       unset($config['fields']);
@@ -221,12 +211,16 @@ abstract class AbstractSchema extends Model
   }
 
   /**
+   * Makes this schema take over the rendering of the current request.
+   *
    * @param BeforeActionEvent $event
    * @param Content $content
    */
   abstract function applyPageTemplate(BeforeActionEvent $event, Content $content);
 
   /**
+   * Displays this schema.
+   *
    * @param InstanceValue $instance
    * @param array $variables
    */
@@ -325,6 +319,15 @@ abstract class AbstractSchema extends Model
    * @return AbstractSchema|null
    */
   abstract public function getLocalStructure($name);
+
+  /**
+   * Returns the name part of this schemas qualifier.
+   *
+   * @return string
+   */
+  public function getName() {
+    return self::extractName($this->qualifier);
+  }
 
   /**
    * Return the handlebars template used to preview instances of this
@@ -446,7 +449,7 @@ abstract class AbstractSchema extends Model
    */
   public function rules() {
     return [
-      ['qualifier', 'required'],
+      [['label', 'qualifier'], 'required'],
       [['icon', 'grid', 'label', 'preview', 'qualifier'], 'string'],
       ['constants', 'validateArray'],
       ['fields', 'validateFields'],
@@ -488,6 +491,61 @@ abstract class AbstractSchema extends Model
 
   // Protected methods
   // -----------------
+
+  /**
+   * @param string|int $key
+   * @param string|array $config
+   * @throws Exception
+   */
+  protected function addField($key, $config) {
+    static $fieldManager = null;
+    if (is_null($fieldManager)) {
+      $fieldManager = Plugin::getInstance()->fields;
+    }
+
+    // If the field is no an array try to load blueprint or use it
+    // as the field type
+    if (is_string($config)) {
+      $config = ['type' => $config];
+    }
+
+    // If the field list is associative, use the keys as the field names
+    if (is_string($key)) {
+      if (isset($config['name'])) {
+        Craft::warning(
+          ['The field `$1` on schema `$2` has multiple names.', $key, $this->qualifier],
+          'craft-contentfield'
+        );
+      }
+
+      $config['name'] = $key;
+    }
+
+    if (
+      !isset($config['type']) ||
+      !isset($config['name'])
+    ) {
+      throw new Exception('Invalid schema');
+    }
+
+    $instance = $fieldManager->createField($this, $config);
+    if (isset($this->fields[$instance->name])) {
+      throw new Exception(sprintf(
+        'The field `%s` is already set on schema `%s`.',
+        $instance->name, $this->qualifier
+      ));
+    }
+
+    $this->fields[$instance->name] = $instance;
+  }
+
+  /**
+   * @param string $qualifier
+   * @return string
+   */
+  protected function generateSchemaLabel(string $qualifier) {
+    return Inflector::camel2words(self::extractName($qualifier), true);;
+  }
 
   /**
    * @return array|null
@@ -543,5 +601,27 @@ abstract class AbstractSchema extends Model
     }
 
     return null;
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param string $qualifier
+   * @return bool|string
+   */
+  public static function extractName(string $qualifier) {
+    $offset = strpos($qualifier, ':');
+    if ($offset !== false) {
+      $qualifier = substr($qualifier, $offset + 1);
+    }
+
+    $offset = strpos($qualifier, '@');
+    if ($offset !== false) {
+      $qualifier = substr($qualifier, 0, $offset);
+    }
+
+    return $qualifier;
   }
 }

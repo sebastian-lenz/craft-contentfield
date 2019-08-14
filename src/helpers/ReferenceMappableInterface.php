@@ -1,13 +1,11 @@
 <?php
 
-namespace lenz\contentfield\models\values;
-
-use lenz\contentfield\helpers\ReferenceMap;
+namespace lenz\contentfield\helpers;
 
 /**
- * Interface ReferenceMapValueInterface
+ * Interface ReferenceMappableInterface
  */
-interface ReferenceMapValueInterface
+interface ReferenceMappableInterface
 {
   /**
    * Return a list of all referenced entries by this field.

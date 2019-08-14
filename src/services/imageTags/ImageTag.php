@@ -53,7 +53,9 @@ abstract class ImageTag extends BaseObject
       try {
         $transforms->ensureTransformUrlByIndexModel($index);
       } catch (Throwable $exception) {
-        $transforms->deleteTransformIndex($index->id);
+        if (!is_null($index->id)) {
+          $transforms->deleteTransformIndex($index->id);
+        }
         return null;
       }
     }

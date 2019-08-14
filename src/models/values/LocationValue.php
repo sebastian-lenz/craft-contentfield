@@ -9,7 +9,7 @@ use lenz\contentfield\models\fields\LocationField;
  *
  * @property LocationField $_field
  */
-class LocationValue extends Value
+class LocationValue extends AbstractValue
 {
   /**
    * @var float
@@ -26,10 +26,10 @@ class LocationValue extends Value
    * LocationValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param LocationField $field
+   * @param ValueInterface|null $parent
+   * @param LocationField|null $field
    */
-  public function __construct($data, ValueInterface $parent, LocationField $field) {
+  public function __construct($data, ValueInterface $parent = null, LocationField $field = null) {
     parent::__construct($parent, $field);
 
     if (is_array($data)) {
@@ -40,7 +40,7 @@ class LocationValue extends Value
       if (is_numeric($data['longitude'])) {
         $this->longitude = max(-180, min(180, $data['longitude']));
       }
-    } else {
+    } elseif (!is_null($field)) {
       $defaultValue = $field->getEditorDefaultValue($this->getElement());
       $this->latitude = $defaultValue['latitude'];
       $this->longitude = $defaultValue['longitude'];

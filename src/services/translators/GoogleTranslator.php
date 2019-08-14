@@ -55,6 +55,10 @@ class GoogleTranslator extends AbstractTranslator
     ]);
 
     $handle = curl_init((string)$url);
+    if ($handle === false) {
+      return null;
+    }
+
     curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
     $response = curl_exec($handle);

@@ -5,17 +5,17 @@ namespace lenz\contentfield\models\values;
 use lenz\contentfield\models\fields\AbstractField;
 
 /**
- * Class Value
+ * Class AbstractValue
  */
-abstract class Value implements ValueInterface
+abstract class AbstractValue implements ValueInterface
 {
   use ValueTrait;
 
   /**
    * Value constructor.
    *
-   * @param ValueInterface $parent
-   * @param AbstractField $field
+   * @param ValueInterface|null $parent
+   * @param AbstractField|null $field
    */
   public function __construct(ValueInterface $parent = null, AbstractField $field = null) {
     $this->_field = $field;

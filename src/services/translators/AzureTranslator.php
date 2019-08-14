@@ -64,6 +64,10 @@ class AzureTranslator extends AbstractTranslator
     ]);
 
     $handle = curl_init((string)$url);
+    if ($handle === false) {
+      return null;
+    }
+
     curl_setopt($handle, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($handle, CURLOPT_POSTFIELDS, $body);
     curl_setopt($handle, CURLOPT_POST, true);

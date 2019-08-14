@@ -141,12 +141,16 @@ class ArrayField extends AbstractField
    * @inheritDoc
    */
   public function getSearchKeywords($value) {
-    if (!($value instanceof ArrayValue)) {
+    $member = $this->member;
+    if (
+      !($value instanceof ArrayValue) ||
+      is_null($member)
+    ) {
       return '';
     }
 
-    return implode('', array_map(function($value) {
-      return $this->member->getSearchKeywords($value);
+    return implode('', array_map(function($value) use ($member) {
+      return $member->getSearchKeywords($value);
     }, $value->getValues()));
   }
 
@@ -154,12 +158,16 @@ class ArrayField extends AbstractField
    * @inheritDoc
    */
   public function getSerializedValue($value) {
-    if (!($value instanceof ArrayValue)) {
+    $member = $this->member;
+    if (
+      !($value instanceof ArrayValue) ||
+      is_null($member)
+    ) {
       return null;
     }
 
-    return array_map(function($value) {
-      return $this->member->getSerializedValue($value);
+    return array_map(function($value) use ($member) {
+      return $member->getSerializedValue($value);
     }, $value->getValues());
   }
 

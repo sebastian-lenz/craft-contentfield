@@ -52,6 +52,10 @@ class FieldUsage
     ]);
 
     foreach ($layoutFields as $layoutField) {
+      if (is_null($layoutField->layoutId)) {
+        continue;
+      }
+
       $layout = $fields->getLayoutById($layoutField->layoutId);
       if (is_null($layout)) {
         continue;

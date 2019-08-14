@@ -4,7 +4,8 @@ namespace lenz\contentfield\models\forms;
 
 use Craft;
 use craft\base\Model;
-use craft\web\Request;
+use craft\console\Request as ConsoleRequest;
+use craft\web\Request as WebRequest;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
@@ -13,6 +14,7 @@ use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\models\values\LinkValue;
 use lenz\contentfield\models\values\ReferenceValue;
 use Throwable;
+use yii\base\Request;
 
 /**
  * Class AbstractForm
@@ -162,7 +164,17 @@ abstract class AbstractForm
    * @return array|null
    */
   protected function getPostedParam(Request $request) {
-    return $request->getParam(static::PARAM_NAME);
+    if (
+      !$request instanceof ConsoleRequest &&
+      !$request instanceof WebRequest
+    ) {
+      return null;
+    }
+
+    $param = $request->getParam(static::PARAM_NAME);
+    return is_array($param)
+      ? $param
+      : null;
   }
 
   /**
@@ -181,7 +193,7 @@ abstract class AbstractForm
       $instance = $this->getInstance();
 
       if (!is_null($instance) && isset($instance->redirect)) {
-        $redirect = $instance->redirect;
+        $redirect = $instance->getValue('redirect');
 
         if ($redirect instanceof ReferenceValue) {
           $element = $redirect->getFirst();

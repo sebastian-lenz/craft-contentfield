@@ -67,8 +67,8 @@ class IteratorLoop implements Iterator, LoopInterface
       }
 
       if (
-        (!is_null($only)  && !$next->isOfType($only)) ||
-        (!is_null($until) &&  $next->isOfType($until))
+        (!is_null($only)  && !$next->getSchema()->matchesQualifier($only)) ||
+        (!is_null($until) &&  $next->getSchema()->matchesQualifier($until))
       ) {
         break;
       }

@@ -7,6 +7,7 @@ use craft\helpers\Html;
 use craft\helpers\Template;
 use Exception;
 use lenz\contentfield\helpers\ReferenceMap;
+use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\LinkField;
 
 /**
@@ -14,7 +15,7 @@ use lenz\contentfield\models\fields\LinkField;
  *
  * @property LinkField $_field
  */
-class LinkValue extends Value implements ReferenceMapValueInterface
+class LinkValue extends AbstractValue implements ReferenceMappableInterface
 {
   /**
    * @var int
@@ -46,10 +47,10 @@ class LinkValue extends Value implements ReferenceMapValueInterface
    * LinkValue constructor.
    *
    * @param mixed $data
-   * @param ValueInterface $parent
-   * @param LinkField $field
+   * @param ValueInterface|null $parent
+   * @param LinkField|null $field
    */
-  public function __construct($data, ValueInterface $parent, LinkField $field) {
+  public function __construct($data, ValueInterface $parent = null, LinkField $field = null) {
     parent::__construct($parent, $field);
 
     if (is_array($data)) {

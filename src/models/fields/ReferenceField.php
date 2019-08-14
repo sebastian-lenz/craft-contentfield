@@ -256,7 +256,7 @@ class ReferenceField extends AbstractField
   // ----------------------
 
   /**
-   * @param string $rawValue
+   * @param string[]|string|null $rawValue
    * @param ElementInterface|null $element
    * @return string[]|null
    */

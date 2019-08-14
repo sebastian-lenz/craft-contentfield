@@ -113,6 +113,10 @@ class OEmbeds extends Component
    */
   private function fetch($url) {
     $channel = curl_init();
+    if ($channel === false) {
+      return null;
+    }
+
     curl_setopt($channel,CURLOPT_URL, $url);
     curl_setopt($channel,CURLOPT_CONNECTTIMEOUT, 2);
     curl_setopt($channel,CURLOPT_RETURNTRANSFER, true);

@@ -7,17 +7,14 @@ use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\web\Response;
 use Exception;
+use lenz\contentfield\behaviors\InstanceSiblingsBehavior;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\InstanceAwareInterface;
-use lenz\contentfield\helpers\ReferenceMap;
-use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
-use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\DisplayInterface;
-use Throwable;
 use Twig\Markup;
 use yii\base\Model;
 
@@ -25,18 +22,15 @@ use yii\base\Model;
  * Class InstanceValue
  *
  * @property InstanceField|null $_field
+ * @method InstanceValue|null getNextSibling()
+ * @method InstanceValue|null getParentInstance()
+ * @method InstanceValue|null getPreviousSibling()
+ * @method boolean hasNextSibling($qualifier = null)
+ * @method boolean hasParentInstance($qualifier = null)
+ * @method boolean hasPreviousSibling($qualifier = null)
  */
-class InstanceValue
-  extends Model
-  implements
-    BeforeActionInterface,
-    DisplayInterface,
-    ReferenceMapValueInterface,
-    TraversableValueInterface,
-    ValueInterface
+class InstanceValue extends AbstractModelValue implements DisplayInterface
 {
-  use ValueTrait;
-
   /**
    * @var Model|null
    */
@@ -53,19 +47,9 @@ class InstanceValue
   private $_originalUuid = null;
 
   /**
-   * @var AbstractSchema
-   */
-  private $_schema;
-
-  /**
    * @var string
    */
   private $_uuid;
-
-  /**
-   * @var array
-   */
-  private $_values = [];
 
   /**
    * @var bool
@@ -92,11 +76,7 @@ class InstanceValue
    * @throws Exception
    */
   public function __construct(array $data, AbstractSchema $schema, ValueInterface $parent = null, InstanceField $field = null) {
-    parent::__construct();
-
-    $this->_field = $field;
-    $this->_parent = $parent;
-    $this->_schema = $schema;
+    parent::__construct($data, $schema, $parent, $field);
 
     if (array_key_exists(self::UUID_PROPERTY, $data)) {
       $this->_uuid = $data[self::UUID_PROPERTY];
@@ -111,53 +91,6 @@ class InstanceValue
     if (array_key_exists(self::VISIBLE_PROPERTY, $data)) {
       $this->_visible = !!$data[self::VISIBLE_PROPERTY];
     }
-
-    foreach ($this->_schema->fields as $name => $field) {
-      $this->$name = array_key_exists($name, $data) ? $data[$name] : null;
-    }
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function __get($name) {
-    if (
-      substr($name, 0, 4) == 'raw:' &&
-      array_key_exists(substr($name, 4), $this->_schema->fields)
-    ) {
-      return $this->_values[substr($name, 4)]->getEditorData();
-    } elseif (array_key_exists($name, $this->_schema->fields)) {
-      return $this->_values[$name];
-    } elseif ($this->_schema->hasConstant($name)) {
-      return $this->_schema->getConstant($name);
-    } else {
-      return parent::__get($name);
-    }
-  }
-
-  /**
-   * @inheritdoc
-   * @throws Exception
-   */
-  public function __set($name, $value) {
-    if (array_key_exists($name, $this->_schema->fields)) {
-      $this->_values[$name] = $this->_schema->fields[$name]->createValue($value, $this);
-    } else {
-      parent::__set($name, $value);
-    }
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function __isset($name) {
-    if (array_key_exists($name, $this->_schema->fields)) {
-      return true;
-    } elseif ($this->_schema->hasConstant($name)) {
-      return true;
-    } else {
-      return parent::__isset($name);
-    }
   }
 
   /**
@@ -171,28 +104,10 @@ class InstanceValue
   /**
    * @inheritDoc
    */
-  public function addError($attribute, $error = '') {
-    if (substr($attribute, 0, 4) == 'raw:') {
-      $attribute = substr($attribute, 4);
-    }
-
-    parent::addError($attribute, $error);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function attributeLabels() {
-    return array_map(function(AbstractField $field) {
-      return Plugin::t($field->label);
-    }, $this->_schema->fields);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function attributes() {
-    return array_keys($this->_schema->fields);
+  public function behaviors() {
+    return [
+      InstanceSiblingsBehavior::class
+    ];
   }
 
   /**
@@ -204,7 +119,7 @@ class InstanceValue
       if (isset($this->_output)) {
         echo $this->_output;
       } else {
-        $this->_schema->display($this, $variables);
+        $this->getSchema()->display($this, $variables);
       }
     }
   }
@@ -213,54 +128,9 @@ class InstanceValue
    * @inheritDoc
    */
   public function findUuid(string $uuid) {
-    if ($this->_uuid == $uuid) {
-      return $this;
-    }
-
-    foreach ($this->_values as $value) {
-      if ($value instanceof TraversableValueInterface) {
-        $result = $value->findUuid($uuid);
-        if (!is_null($result)) {
-          return $result;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * @param string|string[] $qualifier
-   * @return InstanceValue[]
-   * @throws Throwable
-   */
-  public function findInstances($qualifier) {
-    $result = array();
-    if ($this->_schema->matchesQualifier($qualifier)) {
-      $result[] = $this;
-    }
-
-    foreach ($this->_values as $value) {
-      if ($value instanceof TraversableValueInterface) {
-        $matches = $value->findInstances($qualifier);
-        if (count($matches) > 0) {
-          $result = array_merge($result, $matches);
-        }
-      }
-    }
-
-    return $result;
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function getAttributeLabel($attribute) {
-    if (substr($attribute, 0, 4) == 'raw:') {
-      $attribute = substr($attribute, 4);
-    }
-
-    return parent::getAttributeLabel($attribute);
+    return $this->_uuid == $uuid
+      ? $this
+      : parent::findUuid($uuid);
   }
 
   /**
@@ -304,19 +174,13 @@ class InstanceValue
    * @inheritDoc
    */
   public function getEditorValue() {
-    $result = array(
+    return parent::getEditorValue() + [
       self::ERRORS_PROPERTY        => $this->getErrors(),
       self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
-      self::TYPE_PROPERTY          => $this->_schema->qualifier,
+      self::TYPE_PROPERTY          => $this->getSchema()->qualifier,
       self::UUID_PROPERTY          => $this->_uuid,
       self::VISIBLE_PROPERTY       => $this->_visible,
-    );
-
-    foreach ($this->_schema->fields as $name => $field) {
-      $result[$name] = $field->getEditorValue($this->_values[$name]);
-    }
-
-    return $result;
+    ];
   }
 
   /**
@@ -333,33 +197,10 @@ class InstanceValue
    */
   public function getModel() {
     if (!isset($this->_model)) {
-      $schema     = $this->_schema;
-      $modelClass = $schema instanceof TemplateSchema ? $schema->model : null;
-      $model      = null;
-
-      if (!empty($modelClass)) {
-        $model = new $modelClass();
-
-        if (!($model instanceof Model)) {
-          throw new Exception('Invalid model class ' . $modelClass);
-        }
-
-        if ($model instanceof InstanceAwareInterface) {
-          $model->setInstance($this);
-        }
-      }
-
-      $this->_model = $model;
+      $this->_model = $this->createModel();
     }
 
     return $this->_model;
-  }
-
-  /**
-   * @return InstanceValue|null
-   */
-  public function getNextSibling() {
-    return $this->getSibling(1);
   }
 
   /**
@@ -370,80 +211,15 @@ class InstanceValue
   }
 
   /**
-   * @return InstanceValue|null
-   */
-  public function getParentInstance() {
-    $parent = $this->_parent;
-    if ($parent instanceof ArrayValue) {
-      $parent = $parent->getParent();
-    }
-
-    return $parent instanceof InstanceValue ? $parent : null;
-  }
-
-  /**
-   * @return InstanceValue|null
-   */
-  public function getPreviousSibling() {
-    return $this->getSibling(-1);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public function getReferenceMap(ReferenceMap $map = null) {
-    if (is_null($map)) {
-      $map = new ReferenceMap();
-    }
-
-    foreach ($this->_values as $value) {
-      if ($value instanceof ReferenceMapValueInterface) {
-        $value->getReferenceMap($map);
-      }
-    }
-
-    return $map;
-  }
-
-  /**
-   * @return AbstractSchema
-   */
-  public function getSchema() {
-    return $this->_schema;
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function getSearchKeywords() {
-    return implode(' ', array_map(function(AbstractField $field) {
-      return $field->getSearchKeywords($this->_values[$field->name]);
-    }, $this->_schema->fields));
-  }
-
-  /**
    * @inheritDoc
    */
   public function getSerializedValue() {
-    $result = array(
+    return parent::getSerializedValue() + [
       self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
-      self::TYPE_PROPERTY          => $this->_schema->qualifier,
+      self::TYPE_PROPERTY          => $this->getSchema()->qualifier,
       self::UUID_PROPERTY          => $this->_uuid,
       self::VISIBLE_PROPERTY       => $this->_visible,
-    );
-
-    foreach ($this->_schema->fields as $name => $field) {
-      $result[$name] = $field->getSerializedValue($this->_values[$name]);
-    }
-
-    return $result;
-  }
-
-  /**
-   * @return string
-   */
-  public function getType() {
-    return $this->_schema->qualifier;
+    ];
   }
 
   /**
@@ -454,60 +230,10 @@ class InstanceValue
   }
 
   /**
-   * @return mixed[]
-   */
-  public function getValues() {
-    return $this->_values;
-  }
-
-  /**
    * @return bool
    */
   public function hasCachedOutput() {
     return isset($this->_output);
-  }
-
-  /**
-   * @param string|string[]|null $qualifier
-   * @return boolean
-   * @throws Throwable
-   */
-  public function hasNextSibling($qualifier = null) {
-    return $this->isInstanceWithQualifier($this->getSibling(1), $qualifier);
-  }
-
-  /**
-   * @param string|string[]|null $qualifier
-   * @return bool
-   * @throws Throwable
-   */
-  public function hasParentInstance($qualifier = null) {
-    return $this->isInstanceWithQualifier($this->getParentInstance(), $qualifier);
-  }
-
-  /**
-   * @param string|string[]|null $qualifier
-   * @return boolean
-   * @throws Throwable
-   */
-  public function hasPreviousSibling($qualifier = null) {
-    return $this->isInstanceWithQualifier($this->getSibling(-1), $qualifier);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function isEmpty() {
-    return false;
-  }
-
-  /**
-   * @param string|string[] $qualifier
-   * @return bool
-   * @throws Throwable
-   */
-  public function isOfType($qualifier) {
-    return $this->_schema->matchesQualifier($qualifier);
   }
 
   /**
@@ -522,34 +248,16 @@ class InstanceValue
    * @throws Exception
    */
   public function onBeforeAction(BeforeActionEvent $event) {
+    parent::onBeforeAction($event);
+
     $model = $this->getModel();
     if (!is_null($model) && $model instanceof BeforeActionInterface) {
       $model->onBeforeAction($event);
     }
 
-    foreach ($this->_values as $value) {
-      if ($value instanceof BeforeActionInterface) {
-        $value->onBeforeAction($event);
-      }
-    }
-
     if ($event->requestedUuid == $this->_uuid) {
       $event->originalEvent->isValid = false;
-      $response = Craft::$app->response;
-      $content = $this->render([
-        'isChunkRequest' => true
-      ]);
-
-      if (Craft::$app->getRequest()->getAcceptsJson()) {
-        $response->format = Response::FORMAT_JSON;
-        $response->data = [
-          'success' => true,
-          'uuid'    => $this->_uuid,
-          'content' => $content,
-        ];
-      } else {
-        $response->data = $content;
-      }
+      $this->handleChunkRequest();
     }
   }
 
@@ -568,14 +276,8 @@ class InstanceValue
       return $this->_output;
     }
 
-    return $this->_schema->render($this, $variables, $options);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function rules() {
-    return $this->_schema->getValueRules();
+    return $this->getSchema()
+      ->render($this, $variables, $options);
   }
 
   /**
@@ -590,40 +292,50 @@ class InstanceValue
   // ---------------
 
   /**
-   * @param int $offset
-   * @return InstanceValue|null
+   * @return Model|null
+   * @throws Exception
    */
-  private function getSibling($offset) {
-    $parent = $this->_parent;
-    if (is_null($this->_parent) || !($parent instanceof ArrayValue)) {
+  private function createModel() {
+    $model = $this->getSchema()->model;
+    if (empty($model)) {
       return null;
     }
 
-    for ($index = 0; $index < count($parent); $index++) {
-      if ($parent->offsetGet($index) == $this) {
-        return $parent->offsetExists($index + $offset)
-          ? $parent->offsetGet($index + $offset)
-          : null;
-      }
+    $instance = new $model();
+    if (!($instance instanceof Model)) {
+      throw new Exception('Invalid model class ' . $model);
     }
 
-    return null;
+    if ($instance instanceof InstanceAwareInterface) {
+      $instance->setInstance($this);
+    }
+
+    return $instance;
   }
 
   /**
-   * @param mixed $value
-   * @param string|string[]|null $qualifier
-   * @return bool
-   * @throws Throwable
+   * @throws Exception
    */
-  private function isInstanceWithQualifier($value, $qualifier = null) {
-    if (!($value instanceof InstanceValue)) {
-      return false;
+  private function handleChunkRequest() {
+    $response = Craft::$app->response;
+    if (!($response instanceof Response)) {
+      throw new Exception('Chunk requests are only supported on web requests.');
     }
 
-    return is_null($qualifier)
-      ? true
-      : $value->_schema->matchesQualifier($qualifier);
+    $content = $this->render([
+      'isChunkRequest' => true
+    ]);
+
+    if (Craft::$app->getRequest()->getAcceptsJson()) {
+      $response->format = Response::FORMAT_JSON;
+      $response->data = [
+        'success' => true,
+        'uuid'    => $this->_uuid,
+        'content' => $content,
+      ];
+    } else {
+      $response->data = $content;
+    }
   }
 
 

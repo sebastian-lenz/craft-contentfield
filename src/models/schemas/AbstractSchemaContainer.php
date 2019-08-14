@@ -53,6 +53,13 @@ abstract class AbstractSchemaContainer extends AbstractSchema
   }
 
   /**
+   * @return AbstractSchema[]
+   */
+  public function getLocalStructures() {
+    return $this->_localStructures;
+  }
+
+  /**
    * @param string $name
    * @return bool
    */

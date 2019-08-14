@@ -52,7 +52,7 @@ class ContentRecord extends ForeignFieldRecord
    * @inheritDoc
    */
   public static function createTable(Migration $migration, array $columns = []) {
-    return parent::createTable($migration, $columns + [
+    parent::createTable($migration, $columns + [
       'model' => $migration->longText(),
     ]);
   }
@@ -63,8 +63,8 @@ class ContentRecord extends ForeignFieldRecord
   public static function tableName() {
     return '{{%lenz_contentfield}}';
   }
-  
-  
+
+
   // Static methods
   // --------------
 
