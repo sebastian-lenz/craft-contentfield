@@ -318,7 +318,7 @@ class InstanceValue extends AbstractModelValue implements DisplayInterface
    */
   private function handleChunkRequest() {
     $response = Craft::$app->response;
-    if ($response instanceof Response) {
+    if (!($response instanceof Response)) {
       throw new Exception('Chunk requests are only supported on web requests.');
     }
 

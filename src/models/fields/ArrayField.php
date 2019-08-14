@@ -141,15 +141,16 @@ class ArrayField extends AbstractField
    * @inheritDoc
    */
   public function getSearchKeywords($value) {
+    $member = $this->member;
     if (
       !($value instanceof ArrayValue) ||
-      is_null($this->member)
+      is_null($member)
     ) {
       return '';
     }
 
-    return implode('', array_map(function($value) {
-      return $this->member->getSearchKeywords($value);
+    return implode('', array_map(function($value) use ($member) {
+      return $member->getSearchKeywords($value);
     }, $value->getValues()));
   }
 
