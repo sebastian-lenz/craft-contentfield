@@ -87,7 +87,8 @@ class InstanceSiblingsBehavior extends Behavior
    * @return InstanceValue|null
    */
   private function getSibling($offset) {
-    $parent = $this->owner->getParent();
+    $owner  = $this->owner;
+    $parent = $owner->getParent();
     if (
       is_null($parent) ||
       !($parent instanceof ArrayValue)
@@ -97,7 +98,7 @@ class InstanceSiblingsBehavior extends Behavior
 
     $count = count($parent);
     for ($index = 0; $index < $count; $index++) {
-      if ($parent->offsetGet($index) == $this) {
+      if ($parent->offsetGet($index) === $owner) {
         return $parent->offsetExists($index + $offset)
           ? $parent->offsetGet($index + $offset)
           : null;
