@@ -77,6 +77,10 @@ class ImageTagDefinitions extends AbstractDefinitions
       ];
     }
 
+    if (!array_key_exists('type', $config)) {
+      $config['type'] = 'default';
+    }
+
     $config   = $this->resolveDefinition($config);
     $cache    = Plugin::getInstance()->imageTagCache;
     $cacheKey = self::class . '::render(' . md5(Json::encode([

@@ -10,19 +10,9 @@ use craft\helpers\Html;
 class WrappedImageTag extends DefaultImageTag
 {
   /**
-   * @var bool
+   * @var bool|array
    */
-  public $withNoscript = true;
-
-  /**
-   * @var bool
-   */
-  public $withRatio = true;
-
-  /**
-   * @var array
-   */
-  public $wrapAttributes = array();
+  public $noscript = false;
 
   /**
    * @var string
@@ -38,6 +28,26 @@ class WrappedImageTag extends DefaultImageTag
    * @var array
    */
   public $placeholderAttributes = array();
+
+  /**
+   * @var array
+   */
+  public $wrapAttributes = array();
+
+  /**
+   * @var string
+   */
+  public $wrapTag = 'div';
+
+  /**
+   * The default image tag attributes for the noscript image tag.
+   */
+  const DEFAULT_NOSCRIPT = [
+    'height' => '$height',
+    'src'    => '$src',
+    'alt'    => '$title',
+    'width'  => '$width',
+  ];
 
 
   /**
@@ -74,18 +84,20 @@ class WrappedImageTag extends DefaultImageTag
       ) . $content;
     }
 
-    if ($this->withNoscript) {
+    if ($this->noscript) {
       $content .= Html::tag(
         'noscript',
-        Html::tag('img', '', $source + array(
-          'alt' => $this->asset->title
+        Html::tag('img', '', $this->expandAttributes(
+          is_array($this->noscript) ? $this->noscript : self::DEFAULT_NOSCRIPT,
+          $values
         ))
       );
     }
 
     return Html::tag(
-      'div',
-      $content, $this->expandAttributes(
+      $this->wrapTag,
+      $content,
+      $this->expandAttributes(
         $this->wrapAttributes,
         $values
       )
@@ -105,7 +117,7 @@ class WrappedImageTag extends DefaultImageTag
     return array_merge(
       $parent,
       self::mergeAttributes($config, $parent, [
-        'attributes', 'wrapAttributes'
+        'attributes', 'placeholderAttributes', 'wrapAttributes'
       ])
     );
   }

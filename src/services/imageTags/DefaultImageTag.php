@@ -20,24 +20,14 @@ class DefaultImageTag extends ImageTag
   );
 
   /**
-   * @var string
-   */
-  public $srcAttribute = 'src';
-
-  /**
-   * @var string
-   */
-  public $srcsetAttribute = 'srcset';
-
-  /**
-   * @var string[]
+   * @var string[]|array
    */
   public $transforms;
 
   /**
    * @var array
    */
-  private $sources;
+  private $_sources;
 
   /**
    * List of attributes known to contain transform names.
@@ -77,11 +67,11 @@ class DefaultImageTag extends ImageTag
    * @return array
    */
   public function getSources() {
-    if (!isset($this->sources)) {
-      $this->sources = $this->toSources($this->transforms);
+    if (!isset($this->_sources)) {
+      $this->_sources = $this->toSources($this->transforms);
     }
 
-    return $this->sources;
+    return $this->_sources;
   }
 
   /**
