@@ -11,7 +11,7 @@ use craft\helpers\Image;
 class PictureImageTag extends ImageTag
 {
   /**
-   * @var array
+   * @var array|boolean
    */
   public $attributes = true;
 

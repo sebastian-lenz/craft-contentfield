@@ -33,7 +33,6 @@ class DefaultImageTag extends ImageTag
    * List of attributes known to contain transform names.
    */
   const TRANSFORM_ATTRIBUTES = [
-    'fallbackTransform',
     'thumbnailTransform',
     'transforms'
   ];
