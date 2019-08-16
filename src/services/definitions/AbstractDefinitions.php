@@ -180,14 +180,10 @@ abstract class AbstractDefinitions
     // Finally read all the definitions
     $definitions = array();
     foreach ($sources as $key => $source) {
-      try {
-        $definitions = array_merge(
-          $definitions,
-          Yaml::parseFile($source['pathname'])
-        );
-      } catch (Throwable $error) {
-        Craft::error($error->getMessage());
-      }
+      $definitions = array_merge(
+        $definitions,
+        Yaml::parseFile($source['pathname'])
+      );
     }
 
     $this->definitions = $definitions;
