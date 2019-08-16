@@ -246,6 +246,8 @@ abstract class AbstractDefinitions
     $stack[] = $type;
     $parent  = $this->resolveDefinition($this->getDefinition($type), $stack);
 
-    return $this->mergeDefinitions($config, $parent);
+    return empty($config)
+      ? $parent
+      : $this->mergeDefinitions($config, $parent);
   }
 }
