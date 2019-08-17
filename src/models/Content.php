@@ -10,6 +10,7 @@ use craft\models\Site;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\events\RenderEvent;
+use lenz\contentfield\exceptions\ContentLoadException;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\helpers\ReferenceLoader;
 use lenz\contentfield\models\values\InstanceValue;
@@ -29,14 +30,19 @@ use Twig\Markup;
 class Content extends ForeignFieldModel implements DisplayInterface
 {
   /**
-   * @var ReferenceLoader
+   * @var ContentLoadException
    */
-  private $_referenceLoader;
+  private $_loadError;
 
   /**
    * @var values\InstanceValue|null
    */
   private $_model;
+
+  /**
+   * @var ReferenceLoader
+   */
+  private $_referenceLoader;
 
   /**
    * Event triggered before some content is rendered.
@@ -115,6 +121,13 @@ class Content extends ForeignFieldModel implements DisplayInterface
    */
   public function getHtml(array $variables = []) {
     return new Markup($this->render($variables), 'utf-8');
+  }
+
+  /**
+   * @return ContentLoadException|null
+   */
+  public function getLoadError() {
+    return isset($this->_loadError) ? $this->_loadError : null;
   }
 
   /**
@@ -227,37 +240,42 @@ class Content extends ForeignFieldModel implements DisplayInterface
 
   /**
    * @param InstanceValue|string|null|mixed $value
+   * @throws Throwable
    */
   public function setModel($value = null) {
     $model   = null;
     $schemas = Plugin::getInstance()->schemas;
 
-    if ($value instanceof InstanceValue) {
-      $model = $value;
-    } elseif (is_string($value)) {
-      $model = $schemas->createValue(ContentRecord::decodeModel($value));
-    } elseif (is_array($value)) {
-      $model = $schemas->createValue($value);
-    }
+    try {
+      if ($value instanceof InstanceValue) {
+        $model = $value;
+      } elseif (is_string($value)) {
+        $model = $schemas->createValue(ContentRecord::decodeModel($value));
+      } elseif (is_array($value)) {
+        $model = $schemas->createValue($value);
+      }
 
-    // If we have a model, check whether the type is allowed
-    $schemas = $this->_field->getRootSchemas($this->_owner);
-    $schemaTypes = array_map(
-      function($schema) { return $schema->qualifier; },
-      $schemas
-    );
+      // If we have a model, check whether the type is allowed
+      $schemas = $this->_field->getRootSchemas($this->_owner);
+      $schemaTypes = array_map(
+        function($schema) { return $schema->qualifier; },
+        $schemas
+      );
 
-    if (
-      !is_null($model) &&
-      !in_array($model->getSchema()->qualifier, $schemaTypes)
-    ) {
-      $model = null;
-    }
+      if (
+        !is_null($model) &&
+        !in_array($model->getSchema()->qualifier, $schemaTypes)
+      ) {
+        $model = null;
+      }
 
-    // If we don't have a model and there is only one schema
-    // available, create a model from it
-    if (is_null($model) && count($schemas) === 1) {
-      $model = new InstanceValue([], reset($schemas), null, null);
+      // If we don't have a model and there is only one schema
+      // available, create a model from it
+      if (is_null($model) && count($schemas) === 1) {
+        $model = new InstanceValue([], reset($schemas), null, null);
+      }
+    } catch (ContentLoadException $error) {
+      $this->_loadError = $error;
     }
 
     if (!is_null($model)) {

@@ -145,8 +145,8 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    *
    * Calls `mergeTags` recursively if needed.
    *
-   * @param array $config
-   * @param array $parent
+   * @param array|mixed $config
+   * @param array|mixed $parent
    * @return array
    */
   static private function mergeTagChildren($config, $parent) : array {

@@ -240,7 +240,7 @@ class Source
   }
 
   /**
-   * @param null $prefix
+   * @param string|null $prefix
    * @return callable[]
    */
   public function getVariables($prefix = null) {

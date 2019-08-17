@@ -19,6 +19,7 @@ class TemplateConfigException extends Exception
 
   /**
    * FieldException constructor.
+   *
    * @param array $templateConfiguration
    * @param string $message
    * @param int $code

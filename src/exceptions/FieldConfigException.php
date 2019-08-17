@@ -19,6 +19,7 @@ class FieldConfigException extends Exception
 
   /**
    * FieldException constructor.
+   *
    * @param array $fieldConfiguration
    * @param string $message
    * @param int $code
