@@ -184,10 +184,10 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    * @param array $config
    */
   static private function expandConfig(array &$config) {
+    AbstractImageTag::expandConfig($config);
+
     foreach ($config as $key => &$value) {
-      if ($key == 'transform') {
-        $appendTo = 'transforms';
-      } elseif ($key{0} == '.') {
+      if ($key{0} == '.') {
         $appendTo = 'attributes';
       } elseif ($key{0} == '+') {
         $appendTo = 'children';
@@ -203,11 +203,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
       }
 
       unset($config[$key]);
-      if ($appendTo == 'transforms') {
-        $config[$appendTo][] = $value;
-      } else {
-        $config[$appendTo][substr($key, 1)] = $value;
-      }
+      $config[$appendTo][substr($key, 1)] = $value;
     }
   }
 

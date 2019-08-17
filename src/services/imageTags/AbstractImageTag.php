@@ -52,7 +52,7 @@ abstract class AbstractImageTag extends BaseObject implements ImageTagInterface
    * @param array $config
    */
   public function __construct(Asset $asset, array $config) {
-    parent::__construct($config);
+    parent::__construct(self::expandConfig($config));
 
     $this->_asset = $asset;
     $this->_nativeImage = new Source($this->_asset);
@@ -121,23 +121,37 @@ abstract class AbstractImageTag extends BaseObject implements ImageTagInterface
    * Expand the given config array.
    *
    * @param array $config
+   * @return array
    */
-  static private function expandConfig(array &$config) {
+  static public function expandConfig(array &$config) {
     foreach ($config as $key => &$value) {
       if ($key != 'transform') {
         continue;
       }
 
       if (
-        isset($config[$key]) &&
-        !is_array($config[$key]))
+        isset($config['transforms']) &&
+        !is_array($config['transforms']))
       {
-        $config[$key] = [$config[$key]];
+        $config['transforms'] = [$config['transforms']];
       }
 
       unset($config[$key]);
-      $config[$key][] = $value;
+      $config['transforms'][] = $value;
     }
+
+    if (
+      array_key_exists('transformGroups', $config) &&
+      is_array($config['transformGroups'])
+    ) {
+      foreach ($config['transformGroups'] as &$group) {
+        if (is_array($group)) {
+          self::expandConfig($group);
+        }
+      }
+    }
+
+    return $config;
   }
 
   /**

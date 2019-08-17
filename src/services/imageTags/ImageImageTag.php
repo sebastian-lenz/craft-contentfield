@@ -27,7 +27,22 @@ class ImageImageTag extends AbstractImageTag
   /**
    * @var string
    */
+  public $height = '{height}';
+
+  /**
+   * @var string
+   */
   public $sizes;
+
+  /**
+   * @var string
+   */
+  public $src = '{src}';
+
+  /**
+   * @var string
+   */
+  public $width = '{width}';
 
 
   /**
@@ -38,10 +53,10 @@ class ImageImageTag extends AbstractImageTag
     $attributes = [
       'alt'    => $this->alt,
       'class'  => isset($this->class) ? $this->class : '',
-      'height' => '{height}',
+      'height' => $this->height,
       'sizes'  => isset($this->sizes) ? $this->sizes : '',
-      'src'    => '{src}',
-      'width'  => '{width}',
+      'src'    => $this->src,
+      'width'  => $this->width,
     ];
 
     if (count($sources) > 1) {
