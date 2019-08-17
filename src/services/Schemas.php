@@ -2,7 +2,9 @@
 
 namespace lenz\contentfield\services;
 
+use craft\web\twig\TemplateLoaderException;
 use Exception;
+use lenz\contentfield\exceptions\ContentLoadException;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\ValueInterface;
@@ -73,7 +75,12 @@ class Schemas
       return null;
     }
 
-    $schema = $this->getSchema($data[InstanceValue::TYPE_PROPERTY]);
+    try {
+      $schema = $this->getSchema($data[InstanceValue::TYPE_PROPERTY]);
+    } catch (TemplateLoaderException $exception) {
+      throw new ContentLoadException($exception->getMessage());
+    }
+
     if (is_null($schema)) {
       return null;
     }

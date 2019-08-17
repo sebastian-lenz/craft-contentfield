@@ -4,20 +4,31 @@
 
 {% namespace field.handle %}
   {% if data.hasSchemaErrors %}
-    <div class="contentfield">
-      <p>This field could not be rendered as one or more schemas contain errors:</p>
-      {% for schema in data.schemaErrors %}
-        <p>
-          <strong>{{ schema.label }} ({{ schema.qualifier }})</strong>
+    <div class="readable">
+      <blockquote class="note">
+        <p><strong>This field could not be rendered as one or more schemas contain errors.</p>
+        {% for schema in data.schemaErrors %}
+          <p><strong>{{ schema.label }} ({{ schema.qualifier }})</strong></p>
+          <ul>
           {% for errors in schema.errors %}
             {% for error in errors %}
-              <br>{{ error }}
+              <li>{{ error }}</li>
             {% endfor %}
           {% endfor %}
-        </p>
-      {% endfor %}
+          </ul>
+        {% endfor %}
+      </blockquote>
     </div>
   {% else %}
+    {% if value.loadError %}
+      <div class="readable" style="margin-bottom: 0.5rem;">
+        <blockquote class="note">
+          <p><strong>Error while loading content:<br>{{ value.loadError.message }}</strong></p>
+          <p>In {{ value.loadError.file }} at line {{ value.loadError.line }}</p>
+        </blockquote>
+      </div>
+    {% endif %}
+
     <div class="tcfField" id="{{ name }}">
       <script type="application/json">{{ data.payload|raw }}</script>
       <input

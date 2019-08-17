@@ -180,14 +180,10 @@ abstract class AbstractDefinitions
     // Finally read all the definitions
     $definitions = array();
     foreach ($sources as $key => $source) {
-      try {
-        $definitions = array_merge(
-          $definitions,
-          Yaml::parseFile($source['pathname'])
-        );
-      } catch (Throwable $error) {
-        Craft::error($error->getMessage());
-      }
+      $definitions = array_merge(
+        $definitions,
+        Yaml::parseFile($source['pathname'])
+      );
     }
 
     $this->definitions = $definitions;
@@ -246,6 +242,8 @@ abstract class AbstractDefinitions
     $stack[] = $type;
     $parent  = $this->resolveDefinition($this->getDefinition($type), $stack);
 
-    return $this->mergeDefinitions($config, $parent);
+    return empty($config)
+      ? $parent
+      : $this->mergeDefinitions($config, $parent);
   }
 }

@@ -2,15 +2,16 @@
 
 namespace lenz\contentfield\services\definitions;
 
-use Craft;
 use craft\elements\Asset;
 use craft\helpers\Json;
 use Exception;
 use lenz\contentfield\Plugin;
-use lenz\contentfield\services\imageTags\DefaultImageTag;
-use lenz\contentfield\services\imageTags\ImageTag;
+use lenz\contentfield\services\imageTags\ConfigImageTag;
+use lenz\contentfield\services\imageTags\ImageImageTag;
+use lenz\contentfield\services\imageTags\ImageTagInterface;
+use lenz\contentfield\services\imageTags\ImageTransformExtractorInterface;
 use lenz\contentfield\services\imageTags\PictureImageTag;
-use lenz\contentfield\services\imageTags\WrappedImageTag;
+use lenz\contentfield\services\imageTags\TemplateImageTag;
 use yii\caching\TagDependency;
 
 /**
@@ -19,7 +20,7 @@ use yii\caching\TagDependency;
 class ImageTagDefinitions extends AbstractDefinitions
 {
   /**
-   * @var ImageTag[]|string[]
+   * @var ImageTagInterface[]|string[]
    */
   private $_imageTags;
 
@@ -29,18 +30,11 @@ class ImageTagDefinitions extends AbstractDefinitions
    */
   public function __construct() {
     $this->_imageTags = array(
-      'default' => DefaultImageTag::class,
-      'picture' => PictureImageTag::class,
-      'wrapped' => WrappedImageTag::class
+      'config'   => ConfigImageTag::class,
+      'image'    => ImageImageTag::class,
+      'picture'  => PictureImageTag::class,
+      'template' => TemplateImageTag::class,
     );
-  }
-
-  /**
-   * @param string $type
-   * @param string $imageTagClass
-   */
-  public function addImageTag($type, $imageTagClass) {
-    $this->_imageTags[$type] = $imageTagClass;
   }
 
   /**
@@ -51,17 +45,32 @@ class ImageTagDefinitions extends AbstractDefinitions
       $this->loadDefinitions();
     }
 
-    $transforms = array();
-    foreach ($this->definitions as $definition) {
-      foreach ($this->_imageTags as $imageTag) {
-        $transforms = array_merge(
-          $transforms,
+    $allTransforms = [];
+    foreach ($this->_imageTags as $imageTag) {
+      if (!($imageTag instanceof ImageTransformExtractorInterface)) {
+        continue;
+      }
+
+      foreach ($this->definitions as $definition) {
+        $allTransforms = array_merge(
+          $allTransforms,
           $imageTag::extractTransforms($definition)
         );
       }
     }
 
-    return $transforms;
+    $result = [];
+    foreach ($allTransforms as $transform) {
+      foreach ($result as $existingTransform) {
+        if ($existingTransform == $transform) {
+          continue 2;
+        }
+      }
+
+      $result[] = $transform;
+    }
+
+    return $result;
   }
 
   /**
@@ -78,12 +87,12 @@ class ImageTagDefinitions extends AbstractDefinitions
     }
 
     if (!array_key_exists('type', $config)) {
-      $config['type'] = 'default';
+      $config['type'] = 'image';
     }
 
     $config   = $this->resolveDefinition($config);
     $cache    = Plugin::getInstance()->imageTagCache;
-    $cacheKey = self::class . '::render(' . md5(Json::encode([
+    $cacheKey = __METHOD__ . '(' . md5(Json::encode([
       'asset'  => $asset->uid,
       'mtime'  => $asset->dateModified,
       'config' => $config,
@@ -102,6 +111,14 @@ class ImageTagDefinitions extends AbstractDefinitions
     return $result;
   }
 
+  /**
+   * @param string $type
+   * @param string $imageTagClass
+   */
+  public function registerImageTag($type, $imageTagClass) {
+    $this->_imageTags[$type] = $imageTagClass;
+  }
+
 
   // Protected methods
   // -----------------
@@ -114,11 +131,11 @@ class ImageTagDefinitions extends AbstractDefinitions
   }
 
   /**
-   * @param $config
-   * @return ImageTag|mixed
+   * @param array $config
+   * @return ImageTagInterface|mixed
    * @throws Exception
    */
-  protected function getImageTagClass($config) {
+  protected function getImageTagClass(array $config) {
     $type = $config['type'];
     if (!array_key_exists($type, $this->_imageTags)) {
       throw new Exception('Invalid image tag type: ' .  $type);
@@ -153,14 +170,13 @@ class ImageTagDefinitions extends AbstractDefinitions
    * @throws Exception
    */
   protected function renderInternal(Asset $asset, array $config) {
-    $imageTagClass   = $this->getImageTagClass($config);
-    $type            = $config['type'];
-    $config['asset'] = $asset;
-
+    $imageTagClass = $this->getImageTagClass($config);
+    $type = $config['type'];
     unset($config['type']);
 
-    $imageTag = new $imageTagClass($config);
-    if (!($imageTag instanceof ImageTag)) {
+    $imageTag = new $imageTagClass($asset, $config);
+
+    if (!($imageTag instanceof ImageTagInterface)) {
       throw new Exception(sprintf(
         'Invalid image tag class `%s` for type %s.', $imageTagClass, $type)
       );
