@@ -36,7 +36,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    */
   public function __construct(Asset $asset, array $config) {
     parent::__construct($asset);
-    $this->_rootNode = new TagNode($this, $config);
+    $this->_rootNode = new TagNode($this, self::expandConfigRecursive($config));
   }
 
   /**
@@ -182,6 +182,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    * - Keys starting with `+` are moved to the `children` option.
    *
    * @param array $config
+   * @return array
    */
   static private function expandConfig(array &$config) {
     AbstractImageTag::expandConfig($config);
@@ -205,6 +206,8 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
       unset($config[$key]);
       $config[$appendTo][substr($key, 1)] = $value;
     }
+
+    return $config;
   }
 
   /**
@@ -214,22 +217,24 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    * as well.
    *
    * @param array $config
+   * @return array
    */
   static private function expandConfigRecursive(array &$config) {
     self::expandConfig($config);
 
-    if (!array_key_exists('children', $config)) {
-      return;
+    if (
+      !array_key_exists('children', $config) ||
+      !is_array($config['children'])
+    ) {
+      return $config;
     }
 
-    if (!is_array($config['children'])) {
-      unset($config['children']);
-    } else {
-      foreach ($config['children'] as &$value) {
-        if (is_array($value)) {
-          self::expandConfigRecursive($value);
-        }
+    foreach ($config['children'] as &$value) {
+      if (is_array($value)) {
+        self::expandConfigRecursive($value);
       }
     }
+
+    return $config;
   }
 }
