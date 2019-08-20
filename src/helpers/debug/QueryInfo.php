@@ -3,6 +3,7 @@
 namespace lenz\contentfield\helpers\debug;
 
 use Craft;
+use craft\base\Element;
 use craft\base\Model;
 use craft\elements\db\AssetQuery;
 use craft\elements\db\ElementQuery;
@@ -73,7 +74,10 @@ class QueryInfo extends Model
     $query = $this->_query;
     unset($this->_query);
 
-    $this->criteria = array_filter($query->getCriteria());
+    $this->criteria = array_map(
+      [__CLASS__, 'removeEntries'],
+      array_filter($query->getCriteria())
+    );
   }
 
   /**
@@ -163,5 +167,19 @@ class QueryInfo extends Model
 
       $this->addBacktrace($data, $isExternal);
     }
+  }
+
+  /**
+   * @param array $value
+   * @return mixed
+   */
+  static public function removeEntries($value) {
+    if ($value instanceof Element) {
+      return 'Element ( ' . (string)$value . ', ' . $value->id . ' )';
+    } else if (is_array($value)) {
+      return array_map([__CLASS__, 'removeEntries'], $value);
+    }
+
+    return $value;
   }
 }

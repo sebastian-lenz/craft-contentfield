@@ -21,7 +21,7 @@ use \lenz\contentfield\helpers\debug\QueryInfo;
       <?php foreach ($query->criteria as $key => $value): ?>
         <dl class="tcfDebug--queryCriteria">
           <dt><?php echo $key; ?></dt>
-          <dd><?php var_export($value); ?></dd>
+          <dd><?php print_r($value); ?></dd>
         </dl>
       <?php endforeach; ?>
     </div>
