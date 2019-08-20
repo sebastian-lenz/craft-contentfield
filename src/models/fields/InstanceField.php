@@ -141,6 +141,29 @@ class InstanceField extends AbstractField
   }
 
   /**
+   * @return AbstractSchema[]
+   * @throws Throwable
+   * @internal
+   */
+  public function getResolvedSchemas() {
+    if (!isset($this->_resolvedSchemas)) {
+      $manager = Plugin::getInstance()->schemas;
+      $parent  = $this->_parentSchema;
+
+      $this->_resolvedSchemas = $manager->getSchemas(
+        array_map(
+          function($schema) use ($parent, $manager) {
+            return $manager->parseSchemaQualifier($schema, $parent);
+          },
+          $this->schemas
+        )
+      );
+    }
+
+    return $this->_resolvedSchemas;
+  }
+
+  /**
    * @inheritDoc
    */
   public function getSerializedValue($value) {
@@ -168,32 +191,6 @@ class InstanceField extends AbstractField
     return Plugin::getInstance()
       ->schemas
       ->matchesQualifier($qualifier, $this->schemas, $this->_parentSchema);
-  }
-
-
-  // Private methods
-  // ---------------
-
-  /**
-   * @return AbstractSchema[]
-   * @throws Throwable
-   */
-  private function getResolvedSchemas() {
-    if (!isset($this->_resolvedSchemas)) {
-      $manager = Plugin::getInstance()->schemas;
-      $parent  = $this->_parentSchema;
-
-      $this->_resolvedSchemas = $manager->getSchemas(
-        array_map(
-          function($schema) use ($parent, $manager) {
-            return $manager->parseSchemaQualifier($schema, $parent);
-          },
-          $this->schemas
-        )
-      );
-    }
-
-    return $this->_resolvedSchemas;
   }
 
 

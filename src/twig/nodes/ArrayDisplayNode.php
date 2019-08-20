@@ -53,7 +53,7 @@ class ArrayDisplayNode extends DisplayNode
     }
 
     return array_filter(
-      $member->getDependedSchemas(),
+      $member->getResolvedSchemas(),
       function($schema) {
         return (
           $schema instanceof TemplateSchema &&
