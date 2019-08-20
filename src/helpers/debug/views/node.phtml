@@ -1,0 +1,19 @@
+<?php
+use lenz\contentfield\helpers\debug\QueryNode;
+/** @var QueryNode $node */
+?>
+<div class="tcfDebug--node">
+  <h2 class="tcfDebug--nodeTitle"><?php echo $node->name ?></h2>
+  <div class="tcfDebug--nodeContent">
+    <?php if ($node->hasQueries()): ?>
+      <?php foreach ($node->queries as $query): ?>
+        <?php echo $this->render('@contentfieldDebug/query.phtml', ['query' => $query]) ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php foreach ($node->children as $child): ?>
+      <?php echo $this->render('@contentfieldDebug/node.phtml', ['node' => $child]) ?>
+    <?php endforeach; ?>
+  </div>
+</div>
+

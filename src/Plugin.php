@@ -23,6 +23,7 @@ use Exception;
 use lenz\contentfield\assets\preview\ContentFieldPreviewAsset;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\fields\ContentField;
+use lenz\contentfield\helpers\debug\ElementQueryPanel;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\twig\Extension;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
@@ -33,6 +34,7 @@ use yii\base\ActionEvent;
 use yii\base\Event;
 use yii\caching\FileCache;
 use yii\caching\TagDependency;
+use yii\debug\Module as DebugModule;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -160,6 +162,10 @@ class Plugin extends BasePlugin
       ClearCaches::class, ClearCaches::EVENT_REGISTER_CACHE_OPTIONS,
       [$this, 'onRegisterCacheOptions']
     );
+
+    Event::on(Application::class, Application::EVENT_BEFORE_REQUEST,
+      [$this, 'onBeforeRequest']
+    );
   }
 
   /**
@@ -181,6 +187,15 @@ class Plugin extends BasePlugin
   public function onAfterModifyElement(ElementEvent $event) {
     if ($event->element instanceof Asset) {
       TagDependency::invalidate($this->imageTagCache, $event->element->uid);
+    }
+  }
+
+  public function onBeforeRequest(Event $event) {
+    if (YII_DEBUG) {
+      $debugger = Craft::$app->getModule('debug');
+      if ($debugger instanceof DebugModule) {
+        $debugger->panels[ElementQueryPanel::ID] = new ElementQueryPanel();
+      }
     }
   }
 
