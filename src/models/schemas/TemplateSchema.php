@@ -145,15 +145,17 @@ class TemplateSchema extends AbstractSchemaContainer
    */
   static function normalizedVariables(InstanceValue $instance, array $variables) {
     if (!isset(self::$_globalVariables)) {
-      self::$_globalVariables = Craft::$app
+      $routeParams = Craft::$app
         ->getUrlManager()
-        ->getRouteParams() + [
-          'loop'           => StaticLoop::getInstance(),
-          'isChunkRequest' => false,
-        ];
+        ->getRouteParams();
 
-      // Behaviour of TemplatesController::actionRender
-      unset(self::$_globalVariables['template']);
+      $routeVariables = array_key_exists('variables', $routeParams)
+        ? $routeParams['variables'] : [];
+
+      self::$_globalVariables = $routeVariables + [
+        'loop'           => StaticLoop::getInstance(),
+        'isChunkRequest' => false,
+      ];
     }
 
     $instanceVariables = [
