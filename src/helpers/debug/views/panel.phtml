@@ -1,0 +1,125 @@
+<?php
+use lenz\contentfield\helpers\debug\QueryNode;
+/** @var QueryNode $rootNode */
+?>
+<style>
+  .tcfDebug--node {
+    margin: 20px 0;
+    border-left: 2px solid #0a73bb;
+  }
+
+  .tcfDebug--nodeTitle {
+    display: inline-block;
+    padding: 3px 6px;
+
+    background: #0a73bb;
+
+    color: #fff;
+    font-size: 0.9rem;
+  }
+
+  .tcfDebug--node.gray { border-color: #333; }
+  .tcfDebug--node.gray > .tcfDebug--nodeTitle { background: #333; }
+
+  .tcfDebug--nodeContent {
+    padding: 0 0 0 6px;
+  }
+
+  .tcfDebug--query {
+    margin: 10px 0;
+  }
+
+  .tcfDebug--queryTitle {
+    display: flex;
+    flex-flow: row nowrap;
+  }
+
+  .tcfDebug--querySubtitle {
+    padding-bottom: 4px;
+
+    border-bottom: 1px solid #ccc;
+
+    font-size: 1rem;
+  }
+
+  .tcfDebug--querySubtitle > span {
+    opacity: 0.5;
+    font-weight: normal;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .tcfDebug--queryTitle svg {
+    margin-right: 6px;
+  }
+
+  .tcfDebug--queryContent {
+    padding-left: 30px;
+  }
+
+  .tcfDebug--queryCriteria {
+    display: flex;
+    margin: 5px 0;
+  }
+
+  .tcfDebug--queryCriteria > dt {
+    padding: 2px 10px;
+
+    background: #cc0;
+    border-radius: 4px 0 0 4px;
+  }
+
+  .tcfDebug--queryCriteria > dd {
+    margin: 0;
+    padding: 2px 10px;
+
+    border-radius: 0 4px 4px 0;
+    border: 1px solid #cc0;
+
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-size: 0.8rem;
+  }
+
+  .tcfDebug--queryBacktrace {
+    padding: 0 0 0 2.5em;
+
+    color: #333;
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-size: 0.8rem;
+  }
+
+  .tcfDebug--queryBacktrace .class > .name {
+    color: #0a73bb;
+  }
+
+  .tcfDebug--queryBacktrace .line {
+    opacity: 0.5;
+  }
+
+  .tcfDebug--queryBacktrace .external {
+    display: none;
+
+    opacity: 0.5;
+  }
+
+  .external > .tcfDebug--queryBacktrace .external {
+    display: block;
+  }
+</style>
+
+<h1>Element queries (<?php echo count($queries) ?>)</h1>
+
+<?php if ($rootNode->hasQueries()): ?>
+  <div class="tcfDebug--node gray">
+    <h2 class="tcfDebug--nodeTitle">System queries</h2>
+    <div class="tcfDebug--nodeContent">
+      <?php foreach ($rootNode->queries as $query): ?>
+        <?php echo $this->render('@contentfieldDebug/query.phtml', ['query' => $query]) ?>
+      <?php endforeach; ?>
+    </div>
+  </div>
+<?php endif; ?>
+
+<?php foreach ($rootNode->children as $child): ?>
+  <?php echo $this->render('@contentfieldDebug/node.phtml', ['node' => $child]) ?>
+<?php endforeach; ?>
