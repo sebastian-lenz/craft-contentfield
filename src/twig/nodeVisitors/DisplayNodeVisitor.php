@@ -81,6 +81,7 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
 
     foreach ($node->getInlineSchemaCandidates() as $candidate) {
       $callback = $context->tryInline($candidate, $env);
+
       if (!is_null($callback)) {
         $node->setInlinedSchema($candidate->qualifier, $callback);
       }
