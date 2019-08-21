@@ -163,7 +163,7 @@ class DisplayNodeVisitorContext
    * @param TemplateSchema $schema
    */
   private function addDependency(TemplateSchema $schema) {
-    if ($this->_isInlining) {
+    if (!$this->_isInlining) {
       return;
     }
 
