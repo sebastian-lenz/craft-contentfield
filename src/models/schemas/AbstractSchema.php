@@ -544,7 +544,7 @@ abstract class AbstractSchema extends Model
    * @return string
    */
   protected function generateSchemaLabel(string $qualifier) {
-    return Inflector::camel2words(self::extractName($qualifier), true);;
+    return Inflector::camel2words(self::extractName($qualifier), true);
   }
 
   /**
