@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Template schemas | Content Field</title>
+    <meta name="description" content="The best way to work with templates in Craft CMS.">
+    
+    
+    <link rel="preload" href="/craft-contentfield/assets/css/0.styles.418520cc.css" as="style"><link rel="preload" href="/craft-contentfield/assets/js/app.c5f3d427.js" as="script"><link rel="preload" href="/craft-contentfield/assets/js/2.4de4ac3e.js" as="script"><link rel="preload" href="/craft-contentfield/assets/js/36.199d3b00.js" as="script"><link rel="prefetch" href="/craft-contentfield/assets/js/10.642f440c.js"><link rel="prefetch" href="/craft-contentfield/assets/js/11.a8aba773.js"><link rel="prefetch" href="/craft-contentfield/assets/js/12.776c6da2.js"><link rel="prefetch" href="/craft-contentfield/assets/js/13.789cd4ec.js"><link rel="prefetch" href="/craft-contentfield/assets/js/14.a7fde0eb.js"><link rel="prefetch" href="/craft-contentfield/assets/js/15.cafdfddd.js"><link rel="prefetch" href="/craft-contentfield/assets/js/16.4d647743.js"><link rel="prefetch" href="/craft-contentfield/assets/js/17.499fd800.js"><link rel="prefetch" href="/craft-contentfield/assets/js/18.32c6c3af.js"><link rel="prefetch" href="/craft-contentfield/assets/js/19.04188f1c.js"><link rel="prefetch" href="/craft-contentfield/assets/js/20.dee4ad2c.js"><link rel="prefetch" href="/craft-contentfield/assets/js/21.f5da3565.js"><link rel="prefetch" href="/craft-contentfield/assets/js/22.a729a7ea.js"><link rel="prefetch" href="/craft-contentfield/assets/js/23.be6c7e6a.js"><link rel="prefetch" href="/craft-contentfield/assets/js/24.05f1dbfb.js"><link rel="prefetch" href="/craft-contentfield/assets/js/25.0aa2de14.js"><link rel="prefetch" href="/craft-contentfield/assets/js/26.70466b8d.js"><link rel="prefetch" href="/craft-contentfield/assets/js/27.375fe2f1.js"><link rel="prefetch" href="/craft-contentfield/assets/js/28.2e25845b.js"><link rel="prefetch" href="/craft-contentfield/assets/js/29.d584d0a2.js"><link rel="prefetch" href="/craft-contentfield/assets/js/3.5633d7bd.js"><link rel="prefetch" href="/craft-contentfield/assets/js/30.c7d27911.js"><link rel="prefetch" href="/craft-contentfield/assets/js/31.7528b46e.js"><link rel="prefetch" href="/craft-contentfield/assets/js/32.77e28d92.js"><link rel="prefetch" href="/craft-contentfield/assets/js/33.f31ca1bc.js"><link rel="prefetch" href="/craft-contentfield/assets/js/34.2842be6d.js"><link rel="prefetch" href="/craft-contentfield/assets/js/35.7e824a3c.js"><link rel="prefetch" href="/craft-contentfield/assets/js/37.f6cd84e1.js"><link rel="prefetch" href="/craft-contentfield/assets/js/38.93f8540c.js"><link rel="prefetch" href="/craft-contentfield/assets/js/39.111b459e.js"><link rel="prefetch" href="/craft-contentfield/assets/js/4.852fab20.js"><link rel="prefetch" href="/craft-contentfield/assets/js/40.c36fc96e.js"><link rel="prefetch" href="/craft-contentfield/assets/js/41.a8ea4292.js"><link rel="prefetch" href="/craft-contentfield/assets/js/42.21703184.js"><link rel="prefetch" href="/craft-contentfield/assets/js/43.e466c974.js"><link rel="prefetch" href="/craft-contentfield/assets/js/44.60019732.js"><link rel="prefetch" href="/craft-contentfield/assets/js/5.73150837.js"><link rel="prefetch" href="/craft-contentfield/assets/js/6.ab043e2e.js"><link rel="prefetch" href="/craft-contentfield/assets/js/7.7fbe8a67.js"><link rel="prefetch" href="/craft-contentfield/assets/js/8.9e9728cb.js"><link rel="prefetch" href="/craft-contentfield/assets/js/9.7a85a0be.js">
+    <link rel="stylesheet" href="/craft-contentfield/assets/css/0.styles.418520cc.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/craft-contentfield/" class="home-link router-link-active"><!----> <span class="site-name">Content Field</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/craft-contentfield/" class="nav-link">Home</a></div><div class="nav-item"><a href="/craft-contentfield/tutorials/install/" class="nav-link">Getting started</a></div><div class="nav-item"><a href="/craft-contentfield/guide/" class="nav-link router-link-active">Guide</a></div><div class="nav-item"><a href="/craft-contentfield/fields/" class="nav-link">Fields</a></div> <a href="https://github.com/sebastian-lenz/craft-contentfield" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/craft-contentfield/" class="nav-link">Home</a></div><div class="nav-item"><a href="/craft-contentfield/tutorials/install/" class="nav-link">Getting started</a></div><div class="nav-item"><a href="/craft-contentfield/guide/" class="nav-link router-link-active">Guide</a></div><div class="nav-item"><a href="/craft-contentfield/fields/" class="nav-link">Fields</a></div> <a href="https://github.com/sebastian-lenz/craft-contentfield" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/craft-contentfield/guide/" class="sidebar-link">Core concepts</a></li><li><a href="/craft-contentfield/guide/templates.html" class="active sidebar-link">Template schemas</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#attributes" class="sidebar-link">Attributes</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#constants" class="sidebar-link">constants</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#fields" class="sidebar-link">fields</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#grid" class="sidebar-link">grid</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#icon" class="sidebar-link">icon</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#label" class="sidebar-link">label</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#model" class="sidebar-link">model</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#preview" class="sidebar-link">preview</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#previewimage" class="sidebar-link">previewImage</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#previewlabel" class="sidebar-link">previewLabel</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#rootschema" class="sidebar-link">rootSchema</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#style" class="sidebar-link">style</a></li></ul></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#templating" class="sidebar-link">Templating</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#constants-2" class="sidebar-link">Constants</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#fields-2" class="sidebar-link">Fields</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#editattributes" class="sidebar-link">editAttributes</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#instance" class="sidebar-link">instance</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#ischunkrequest" class="sidebar-link">isChunkRequest</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#loop" class="sidebar-link">loop</a></li><li class="sidebar-sub-header"><a href="/craft-contentfield/guide/templates.html#model-2" class="sidebar-link">model</a></li></ul></li></ul></li><li><a href="/craft-contentfield/guide/structures.html" class="sidebar-link">Structure schemas</a></li><li><a href="/craft-contentfield/guide/fields.html" class="sidebar-link">Fields</a></li><li><a href="/craft-contentfield/guide/models.html" class="sidebar-link">Models</a></li><li><a href="/craft-contentfield/guide/settings.html" class="sidebar-link">Settings</a></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="template-schemas"><a href="#template-schemas" aria-hidden="true" class="header-anchor">#</a> Template schemas</h1> <p>A twig template can become a schema within the content field by prepending
+a yaml header. We use three dashes <code>---</code> to separate the yaml part from the
+twig part within the file. The file itself must be placed inside your regular
+template directory.</p> <p>A template schema that defines the fields &quot;title&quot; and &quot;body&quot; would look like
+this:</p> <p><strong>templates/example.twig</strong></p> <div class="language-twig extra-class"><pre class="language-twig"><code><span class="token other">label: Example
+fields:
+  title:
+    type: text
+  body:
+    type: redactor
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>container<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">title</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span></span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">body</span> <span class="token rd"><span class="token punctuation">}}</span></span></span>
+<span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><p>The qualifier of a template looks like this:</p> <div class="language- extra-class"><pre class="language-text"><code>template:{PATH/FILENAME}
+</code></pre></div><p>The complete qualifier for the schema defined in the first example would be
+<code>template:example</code>.</p> <h2 id="attributes"><a href="#attributes" aria-hidden="true" class="header-anchor">#</a> Attributes</h2> <h3 id="constants"><a href="#constants" aria-hidden="true" class="header-anchor">#</a> <code>constants</code></h3> <p>Defines one or multiple constants on the schema. Constants can be accessed
+within the template like a variable:</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Constants example
+constants:
+  myConstant: A constant value
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">myConstant</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><p>Constants can be used to attach data to instances and are especially helpful
+in situations where the used schema can change, e.g. on an
+<a href="/craft-contentfield/fields/array.html">array</a> or <a href="/craft-contentfield/fields/instance.html">instance</a> field.</p> <div class="tcfGrid--row"><div class="tcfGrid--col-6"><p><strong>templates/blocks/type-a.twig</strong></p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Block A
+constants:
+  myCssClassName: block-a-class
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Block A<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div></div> <div class="tcfGrid--col-6"><p><strong>templates/blocks/type-b.twig</strong></p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Block B
+constants:
+  myCssClassName: block-b-class
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Block B<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div></div></div> <p><strong>templates/blocks.twig</strong></p> <div class="language-twig extra-class"><div class="highlight-lines"><br><br><br><br><br><br><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Blocks
+fields:
+  myBlock:
+    type: instance
+    schemas: templates/blocks/*
+---
+&lt;div class=&quot;</span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">myBlock</span><span class="token punctuation">.</span><span class="token property">myCssClassName</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other">&quot;&gt;</span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">display</span></span> <span class="token property">myBlock</span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+<span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><h3 id="fields"><a href="#fields" aria-hidden="true" class="header-anchor">#</a> <code>fields</code></h3> <p>Defines the fields attached to the schema. Must be an object hash, the keys
+define the internal field names. For a complete list of available fields,
+see <a href="/craft-contentfield/fields/">fields</a>.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Fields example
+fields:
+  title:
+    type: text
+  body:
+    type: redactor
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>container<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">title</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span></span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">body</span> <span class="token rd"><span class="token punctuation">}}</span></span></span>
+<span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><p>If only the field type needs to be specified, a shorthand synatx is available.
+The field declarations above can be rewitten like this:</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br></div><pre class="language-twig"><code><span class="token other">label: Fields example
+fields:
+  title: text
+  body: redactor</span>
+</code></pre></div><h3 id="grid"><a href="#grid" aria-hidden="true" class="header-anchor">#</a> <code>grid</code></h3> <p>Defines a css grid layout for this schema. Can be used in combination with field
+groups to create more complex field layouts within the control panel.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br><br><br><div class="highlighted"> </div><br><br><br><br><div class="highlighted"> </div><br></div><pre class="language-twig"><code><span class="token other">label: Grid example
+grid: &gt;
+  &quot;left right&quot; / 3fr 2fr
+fields:
+  fieldA:
+    type: text
+    group:
+      label: My left group title
+      gridArea: left
+  fieldB:
+    type: text
+    group:
+      label: My right group title
+      gridArea: right</span>
+</code></pre></div><p>The attribute <code>grid</code> is a shorthand alias of the attribute <code>style</code>. The following
+<code>style</code> value has the exact same effect as the example above:</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Grid example
+style:
+  medium:
+    grid: &gt;
+      &quot;left right&quot; / 3fr 2fr
+fields:
+  ...</span>
+</code></pre></div><h3 id="icon"><a href="#icon" aria-hidden="true" class="header-anchor">#</a> <code>icon</code></h3> <p>The name of the icon that represents this schema in the control panel.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><br></div><pre class="language-twig"><code><span class="token other">label: Icon example
+icon: material:flight</span>
+</code></pre></div><div class="tip custom-block"><p>The content field installs a utility page in the control panel that displays all
+available icons. Visit <code>Utilities</code> &gt; <code>Content field utilities</code> and select the
+tab <code>Icons</code>.</p></div> <h3 id="label"><a href="#label" aria-hidden="true" class="header-anchor">#</a> <code>label</code></h3> <p>A human readable name of this schema. Can be translated using the <code>site</code>
+translation table.</p> <div class="language-twig extra-class"><div class="highlight-lines"><div class="highlighted"> </div><br></div><pre class="language-twig"><code><span class="token other">label: Label example</span>
+</code></pre></div><h3 id="model"><a href="#model" aria-hidden="true" class="header-anchor">#</a> <code>model</code></h3> <p>The fully qualified name of a PHP model class that should be attached
+to this schema. The instance of the model class can be accessed using
+the <code>model</code> variable. For more details on how to work with models,
+please see <a href="/craft-contentfield/guide/models.html">models</a>.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><br><br><div class="highlighted"> </div><br><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Model example
+model: modules\models\MyModel
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span></span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">for</span></span> <span class="token property">attribute</span> <span class="token operator">in</span> <span class="token property">model</span><span class="token punctuation">.</span><span class="token property">attributes</span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+    <span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">attribute</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span></span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">endfor</span></span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+<span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><h3 id="preview"><a href="#preview" aria-hidden="true" class="header-anchor">#</a> <code>preview</code></h3> <p>A handlebars template used to create previews of this schema in the editor.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br><br><br><br><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Preview example
+preview: &gt;
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dl</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dt</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">image</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dt</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dd</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">title</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dd</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dl</span><span class="token punctuation">&gt;</span></span>
+fields:
+  title:
+    type: text
+  image:
+    type: image
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">title</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span></span>
+<span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">image</span><span class="token punctuation">.</span><span class="token property">imageTag</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token rd"><span class="token punctuation">}}</span></span></span>
+</code></pre></div><h3 id="previewimage"><a href="#previewimage" aria-hidden="true" class="header-anchor">#</a> <code>previewImage</code></h3> <p>The name of an asset reference field whose image will be used as an
+replacement of the icon the header.</p> <p>When omitted, we have a series of possible candidates that will be
+used automatically (<code>AbstractSchema::PREVIEW_IMAGE_CANDIDATES</code>).</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><br><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Preview image example
+previewImage: myImage
+fields:
+  myImage:
+    type: image</span>
+</code></pre></div><h3 id="previewlabel"><a href="#previewlabel" aria-hidden="true" class="header-anchor">#</a> <code>previewLabel</code></h3> <p>A template for a short text displayed in the header of an instance
+next to the type name.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Preview label example
+previewLabel: &gt;</span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">primaryTitle</span> <span class="token rd"><span class="token punctuation">}}</span></span></span>
+<span class="token other">fields:
+  primaryTitle: text</span>
+</code></pre></div><p>When omitted, we have a series of possible candidates that will be
+used automatically (<code>AbstractSchema::PREVIEW_LABEL_CANDIDATES</code>).
+Otherwise the preview will be used.</p> <p>Can be set to the name of a single field as a shorthand:</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Preview label example
+previewLabel: primaryTitle
+fields:
+  primaryTitle: text</span>
+</code></pre></div><h3 id="rootschema"><a href="#rootschema" aria-hidden="true" class="header-anchor">#</a> <code>rootSchema</code></h3> <p>Marks this schema as a root schema. Only used to tidy up the field settings
+within the control panel.</p> <h3 id="style"><a href="#style" aria-hidden="true" class="header-anchor">#</a> <code>style</code></h3> <p>Defines css styles applied to the form in the control panel. The following css
+attributes can be set:</p> <p><code>alignContent</code>, <code>alignItems</code>, <code>grid</code>, <code>gridAutoColumns</code>, <code>gridAutoFlow</code>,
+<code>gridAutoRows</code>, <code>gridColumnGap</code>, <code>gridGap</code>, <code>gridRowGap</code>, <code>gridTemplate</code>,
+<code>gridTemplateAreas</code>, <code>gridTemplateColumns</code>, <code>gridTemplateRows</code>,
+<code>justifyContent</code>, <code>justifyItems</code>, <code>placeContent</code>, <code>placeItems</code></p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br></div><pre class="language-twig"><code><span class="token other">label: Style example
+style:
+  alignContent: center
+  alignItems: center</span>
+</code></pre></div><p>The control panel form reacts to the available width and cycles through the
+resposive states <code>small</code>, <code>medium</code> and <code>large</code>. All css attributes are assigned
+to the breakpoint <code>medium</code> by default. To apply certain css properties
+only at certain responsive states, group them by the matching state name.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><div class="highlighted"> </div><br></div><pre class="language-twig"><code><span class="token other">label: Responsive style example
+style:
+  medium:
+    grid: &gt;
+      &quot;first second&quot; auto
+      &quot;third third&quot; auto
+      / 1fr 1fr
+  large:
+    grid: &gt;
+      &quot;first second third&quot;
+      / 1fr 1fr 1fr</span>
+</code></pre></div><h2 id="templating"><a href="#templating" aria-hidden="true" class="header-anchor">#</a> Templating</h2> <p>The twig section of the template contains regular twig markup. All functions,
+filters and globals defined by Craft CMS are available within content field
+templates. Furthermore, the following variables are exposed on the context of
+a twig template rendered by the content field:</p> <h3 id="constants-2"><a href="#constants-2" aria-hidden="true" class="header-anchor">#</a> Constants</h3> <p>All <a href="#constants">constants</a> are exposed as variables to the template.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><br><br><br><div class="highlighted"> </div><br></div><pre class="language-twig"><code><span class="token other">label: Constants example
+constants:
+  myConstant: A constant value
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">myConstant</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><h3 id="fields-2"><a href="#fields-2" aria-hidden="true" class="header-anchor">#</a> Fields</h3> <p>All <a href="#fields">fields</a> are exposed as variables to the template. Depending on the
+field type, some fields expose simple PHP types like strings and numbers to the
+template while other field types might expose more complex data structures. Please refer
+to the documentation of the individual field types for more information on the
+exposed data types.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><br><br><br><br><div class="highlighted"> </div><br></div><pre class="language-twig"><code><span class="token other">label: Fields example
+fields:
+  myTitle:
+    type: text
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">myTitle</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><h3 id="editattributes"><a href="#editattributes" aria-hidden="true" class="header-anchor">#</a> <code>editAttributes</code></h3> <p>The variable <code>editAttributes</code> contains prerendered html attributes that can be attached
+to an element. When an user opens the live preview in the control panel, those elements
+will become inetractive and can be edited directly within the preview panel.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><br><br><br><br><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Live preview example
+fields:
+  body:
+    type: redactor
+---
+&lt;div class=&quot;container&quot;</span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">editAttributes</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other">&gt;</span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">body</span> <span class="token rd"><span class="token punctuation">}}</span></span></span>
+<span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><h3 id="instance"><a href="#instance" aria-hidden="true" class="header-anchor">#</a> <code>instance</code></h3> <p>The variable <code>instance</code> contains a reference to the <a href="/craft-contentfield/guide/#instances">instance</a> that
+is currently beeing rendered. Please refer to the documentation of the
+<a href="/craft-contentfield/fields/instance.html#templating">instance field</a> for more details on the available methods.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><br><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Instance variable example
+---</span>
+<span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">if</span></span> <span class="token property">instance</span><span class="token punctuation">.</span><span class="token property">hasParentInstance</span><span class="token punctuation">(</span><span class="token string"><span class="token punctuation">'</span>template:chapter<span class="token punctuation">'</span></span><span class="token punctuation">)</span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+  <span class="token other">...</span>
+<span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">endif</span></span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+</code></pre></div><h3 id="ischunkrequest"><a href="#ischunkrequest" aria-hidden="true" class="header-anchor">#</a> <code>isChunkRequest</code></h3> <p>The variable <code>isChunkRequest</code> contains a boolean value which indicates whether the current
+request is a chunk request. Chunk requests allow partial rendering of content fields, please
+see <a href="/craft-contentfield/guide/models.html#chunkrequests">chunk requests</a>.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><br><div class="highlighted"> </div><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Chunk request example
+---</span>
+<span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">if</span></span> <span class="token property">isChunkRequest</span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+  <span class="token other">...</span>
+<span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">endif</span></span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+</code></pre></div><h3 id="loop"><a href="#loop" aria-hidden="true" class="header-anchor">#</a> <code>loop</code></h3> <p>The variable <code>loop</code> contains information about the position of the current instance within an
+array while it is rendered. It exposes the same attributes as the twig <code>loop</code> <a href="https://twig.symfony.com/doc/2.x/tags/for.html#the-loop-variable" target="_blank" rel="noopener noreferrer">variable<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a>.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><br><br><div class="highlighted"> </div><div class="highlighted"> </div><br><div class="highlighted"> </div><br><br></div><pre class="language-twig"><code><span class="token other">label: Loop example
+---
+&lt;div class=&quot;</span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{{-</span></span> <span class="token property">loop</span><span class="token punctuation">.</span><span class="token property">first</span> <span class="token operator">?</span> <span class="token string"><span class="token punctuation">'</span>first-block-class<span class="token punctuation">'</span></span> <span class="token punctuation">:</span> <span class="token string"><span class="token punctuation">'</span><span class="token punctuation">'</span></span> <span class="token rd"><span class="token punctuation">-}}</span></span></span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{{-</span></span> <span class="token property">loop</span><span class="token punctuation">.</span><span class="token property">last</span> <span class="token operator">?</span> <span class="token string"><span class="token punctuation">'</span>last-block-class<span class="token punctuation">'</span></span> <span class="token punctuation">:</span> <span class="token string"><span class="token punctuation">'</span><span class="token punctuation">'</span></span> <span class="token rd"><span class="token punctuation">-}}</span></span></span>
+<span class="token other">&quot;&gt;
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Loop index #</span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">loop</span><span class="token punctuation">.</span><span class="token property">index</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div><div class="warning custom-block"><p>The variable <code>loop</code> is guaranteed to exist but will only contain meaningful data if</p> <ul><li>The instance is placed inside an <a href="/craft-contentfield/fields/array.html">array field</a>.</li> <li>The containing array field is displayed using the <code>{% display %}</code> tag.</li></ul> <div class="language-twig extra-class"><pre class="language-twig"><code><span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">display</span></span> <span class="token property">myInstanceArray</span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+</code></pre></div></div> <div class="tip custom-block"><p>If you use a <code>{% for %}</code> loop to render instances, you can pass the twig <code>loop</code>
+variable to the render function in order to achieve a consistent behavior of
+the <code>loop</code> variable.</p> <div class="language-twig extra-class"><pre class="language-twig"><code><span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">for</span></span> <span class="token property">instance</span> <span class="token operator">in</span> <span class="token property">myInstanceArray</span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">instance</span><span class="token punctuation">.</span><span class="token property">html</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    <span class="token property">loop</span><span class="token punctuation">:</span> <span class="token property">loop</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span> <span class="token rd"><span class="token punctuation">}}</span></span></span>
+<span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">endfor</span></span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+</code></pre></div></div> <h3 id="model-2"><a href="#model-2" aria-hidden="true" class="header-anchor">#</a> <code>model</code></h3> <p>The variable <code>model</code> exposes the model instance accociated with the current
+schema instance to the template. For more details on how to work with models,
+please see <a href="/craft-contentfield/guide/models.html">models</a>.</p> <div class="language-twig extra-class"><div class="highlight-lines"><br><br><br><br><div class="highlighted"> </div><br><br><br><br></div><pre class="language-twig"><code><span class="token other">label: Model example
+model: modules\models\MyModel
+---
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span><span class="token punctuation">&gt;</span></span></span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">for</span></span> <span class="token property">attribute</span> <span class="token operator">in</span> <span class="token property">model</span><span class="token punctuation">.</span><span class="token property">attributes</span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+    <span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>li</span><span class="token punctuation">&gt;</span></span></span><span class="token tag"><span class="token ld"><span class="token punctuation">{{</span></span> <span class="token property">attribute</span> <span class="token rd"><span class="token punctuation">}}</span></span></span><span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>li</span><span class="token punctuation">&gt;</span></span></span>
+  <span class="token tag"><span class="token ld"><span class="token punctuation">{%</span> <span class="token keyword">endfor</span></span> <span class="token rd"><span class="token punctuation">%}</span></span></span>
+<span class="token other"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>ul</span><span class="token punctuation">&gt;</span></span></span>
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/sebastian-lenz/craft-contentfield/edit/master/docs/guide/templates.md" target="_blank" rel="noopener noreferrer">Edit this page</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+        ←
+        <a href="/craft-contentfield/guide/" class="prev router-link-active">
+          Core concepts
+        </a></span> <span class="next"><a href="/craft-contentfield/guide/structures.html">
+          Structure schemas
+        </a>
+        →
+      </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/craft-contentfield/assets/js/app.c5f3d427.js" defer></script><script src="/craft-contentfield/assets/js/2.4de4ac3e.js" defer></script><script src="/craft-contentfield/assets/js/36.199d3b00.js" defer></script>
+  </body>
+</html>
