@@ -18,9 +18,33 @@ class m190202_133033_AddContentTable extends Migration
    * @inheritdoc
    */
   public function safeUp() {
-    ContentRecord::createTable($this);
+    $this->update(
+      Table::FIELDS,
+      ['type' => 'lenz\\contentfield\\fields\\ContentField'],
+      ['type' => 'contentfield\\fields\\ContentField']
+    );
 
-    foreach (Craft::$app->getFields()->getAllFields() as $field) {
+    $table = ContentRecord::tableName();
+    $this->createTable($table, [
+      'id'          => $this->primaryKey(),
+      'elementId'   => $this->integer()->notNull(),
+      'siteId'      => $this->integer()->notNull(),
+      'fieldId'     => $this->integer()->notNull(),
+      'dateCreated' => $this->dateTime()->notNull(),
+      'dateUpdated' => $this->dateTime()->notNull(),
+      'uid'         => $this->uid(),
+      'content'     => $this->longText(),
+    ]);
+
+    $this->createIndex('contentfield_elementId_siteId_unq_idx', $table, ['elementId', 'siteId'], true);
+    $this->createIndex('contentfield_siteId_idx', $table, ['siteId'], false);
+    $this->createIndex('contentfield_fieldId_idx', $table, ['fieldId'], false);
+    $this->addForeignKey('contentfield_elementId_fk', $table, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE', null);
+    $this->addForeignKey('contentfield_fieldId_fk', $table, ['fieldId'], Table::FIELDS, ['id'], 'CASCADE', null);
+
+    $fields = Craft::$app->getFields();
+    $fields->refreshFields();
+    foreach ($fields->getAllFields() as $field) {
       if (!($field instanceof ContentField)) {
         continue;
       }
@@ -33,11 +57,11 @@ class m190202_133033_AddContentTable extends Migration
         ->all();
 
       foreach ($rows as $row) {
-        $this->db->createCommand()->insert(ContentRecord::tableName(), [
+        $this->db->createCommand()->insert($table, [
           'elementId' => $row['elementId'],
           'siteId'    => $row['siteId'],
           'fieldId'   => $field->id,
-          'model'     => $row[$columnName]
+          'content'   => $row[$columnName]
         ])->execute();
       }
 
