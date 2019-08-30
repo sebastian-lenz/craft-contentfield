@@ -17,9 +17,8 @@ The redactor field allows the editor to enter rich text formatted using
 the Redactor plugin provided by Craft CMS.
 
 ```yaml
-simpleRedactor:
+myRedactorField:
   type: redactor
-  label: My simple Redactor
 ```
 
 This field definition creates the following input in the control panel:

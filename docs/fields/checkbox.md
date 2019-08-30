@@ -10,9 +10,8 @@ attributes:
 Allows the editor to set a flag using a checkbox.
 
 ```yaml
-simpleCheckbox:
+myCheckboxField:
   type: checkbox
-  label: My simple checkbox
 ```
 
 This field definition creates the following input in the control panel:

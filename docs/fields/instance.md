@@ -14,9 +14,8 @@ The instance field allows a field to hold another template (or schema)
 allowing you to build nested hierarchies.
 
 ```yaml
-simpleInstance:
+myInstanceField:
   type: instance
-  label: My simple instance
   schemas:
     - path/to/template-a.twig
     - path/to/template-b.twig

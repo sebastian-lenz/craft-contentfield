@@ -17,9 +17,8 @@ The link field allows editors to create a link to another element or an
 external url.
 
 ```yaml
-simpleLinkField:
+myLinkField:
   type: link
-  label: My simple link
 ```
 
 This field definition creates the following input in the control panel:

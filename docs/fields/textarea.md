@@ -12,9 +12,8 @@ attributes:
 The textarea field allows the editor to enter multiple lines of text.
 
 ```yaml
-simpleTextarea:
+myTextareaField:
   type: textarea
-  label: My simple textarea
 ```
 
 This field definition creates the following input in the control panel:

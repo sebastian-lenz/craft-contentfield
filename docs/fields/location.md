@@ -12,9 +12,8 @@ attributes:
 The location field allows the editor to pick a location on a map.
 
 ```yaml
-simpleLocation:
+myLocationField:
   type: location
-  label: My simple location
 ```
 
 This field definition creates the following input in the control panel:

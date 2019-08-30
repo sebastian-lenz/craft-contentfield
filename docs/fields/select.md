@@ -17,9 +17,8 @@ The select field allows the editor to select one of several predefined
 options from a dropdown.
 
 ```yaml
-simpleSelect:
+mySelectField:
   type: select
-  label: My simple select
   options:
     firstKey: My first option
     secondKey: My second option

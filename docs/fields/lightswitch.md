@@ -10,9 +10,8 @@ attributes:
 Allows the editor to set a flag using a light switch.
 
 ```yaml
-simpleLightswitch:
+myLightswitchField:
   type: lightswitch
-  label: My simple light switch
 ```
 
 This field definition creates the following input in the control panel:

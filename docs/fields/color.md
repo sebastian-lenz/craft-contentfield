@@ -12,9 +12,8 @@ attributes:
 The color field allows editors to freely select a color.
 
 ```yaml
-simpleColorField:
+myColorField:
   type: color
-  label: My simple color
 ```
 
 This field definition creates the following input in the control panel:

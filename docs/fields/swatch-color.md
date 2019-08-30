@@ -19,9 +19,8 @@ The swatch color field is a special select field that allows the editor
 to choose a color from a set of predefined colors.
 
 ```yaml
-simpleSwatchColor:
+mySwatchColorField:
   type: swatchcolor
-  label: My simple swatch color
   options:
     red: '#f00'
     green: '#0f0'

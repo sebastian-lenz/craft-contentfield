@@ -13,12 +13,11 @@ support oembed, e.g. YouTube or Twitter. The field displays a snippet
 of the selected oembed content for validation.
 
 ```yaml
-simpleOEmbed:
+myOEmbedField:
   type: oembed
-  label: My simple oembed
   providers:
     - YouTube
-    - Vimdeo
+    - Vimeo
 ```
 
 This field definition creates the following input in the control panel:

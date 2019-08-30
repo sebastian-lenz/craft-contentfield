@@ -12,9 +12,8 @@ attributes:
 The text field allows the editor to enter a single line of text.
 
 ```yaml
-simpleText:
+myTextField:
   type: text
-  label: My simple text
 ```
 
 This field definition creates the following input in the control panel:

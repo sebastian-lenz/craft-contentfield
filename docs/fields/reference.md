@@ -27,10 +27,9 @@ The reference field allows the editor to select other elements like
 entries or assets.
 
 ```yaml
-simpleReference:
+myReferenceField:
   type: reference
-  label: My simple reference
-  elementType: craft\elements\Asset
+  elementType: entry
 ```
 
 This field definition creates the following input in the control panel:
