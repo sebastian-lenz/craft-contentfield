@@ -1,0 +1,64 @@
+.theme-default-content:not(.custom) img
+  width: 100%
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1)
+
+
+
+.tcfFieldGrid
+  display: flex
+  flex-flow: row wrap
+  margin: -10px
+  padding: 0
+
+  list-style: none
+
+  > li
+    position: relative
+    width: calc(50% - 20px)
+    margin: 10px
+
+    background: #fff
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1)
+
+.tcfFieldGrid--imageMask
+  position: relative
+  overflow: hidden
+  height: 0
+  padding-bottom: 33.333%
+
+  > img
+    position: absolute
+    top: 0
+    left: 0
+    width: auto !important
+    height: auto
+    max-width: none !important
+
+    box-shadow: none !important
+    transform-origin: 0 0
+    transform: scale(0.5)
+
+.tcfFieldGrid--caption
+  padding: 10px 16px
+
+  border-top: 1px solid #eaecef
+  background: #fff
+
+  text-align: center
+
+
+
+.tcfGrid--row
+  display: flex
+  flex-flow: row
+  margin: 0 -10px
+
+  > *
+    padding: 0 10px
+
+.tcfGrid--col-6
+  width: 50%
+
+.tcfGrid--col-4
+  width: 33.333333%

@@ -1,0 +1,25 @@
+{
+  "name": "contentfield",
+  "version": "1.0.0",
+  "description": "The best way to work with templates in Craft.",
+  "directories": {
+    "doc": "docs"
+  },
+  "devDependencies": {
+    "vuepress": "^1.0.3"
+  },
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebastian-lenz/craft-contentfield.git"
+  },
+  "author": "Sebastian Lenz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sebastian-lenz/craft-contentfield/issues"
+  },
+  "homepage": "https://github.com/sebastian-lenz/craft-contentfield#readme"
+}
