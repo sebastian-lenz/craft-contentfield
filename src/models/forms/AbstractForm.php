@@ -51,11 +51,6 @@ abstract class AbstractForm
   const ERROR_UNKNOWN = 'UNKNOWN';
   const ERROR_VALIDATION_FAILED = 'VALIDATION_FAILED';
 
-  /**
-   * The name of the post parameter we should read attributes from.
-   */
-  const PARAM_NAME = 'form';
-
 
   /**
    * Retrieves the generic errors.
@@ -171,10 +166,24 @@ abstract class AbstractForm
       return null;
     }
 
-    $param = $request->getParam(static::PARAM_NAME);
+    $name = $this->getPostedParamName();
+    if (is_null($name)) {
+      return null;
+    }
+
+    $param = $request->getParam($name);
     return is_array($param)
       ? $param
       : null;
+  }
+
+  /**
+   * @return string
+   */
+  protected function getPostedParamName() {
+    return is_null($this->_instance)
+      ? null
+      : $this->_instance->getUuid();
   }
 
   /**
