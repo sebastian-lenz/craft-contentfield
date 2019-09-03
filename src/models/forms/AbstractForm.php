@@ -178,12 +178,12 @@ abstract class AbstractForm
   }
 
   /**
-   * @return string
+   * @return string|null
    */
   protected function getPostedParamName() {
     return is_null($this->_instance)
       ? null
-      : $this->_instance->getUuid();
+      : $this->_instance->getNamespace();
   }
 
   /**
