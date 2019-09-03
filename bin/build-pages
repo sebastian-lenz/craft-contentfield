@@ -1,24 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ROOTDIR="$(dirname "$BASEDIR")"
 
+# abort on errors
+set -e
 
-# Checkout the gh-pages branch
-PAGESDIR="$BASEDIR/branch-gh-pages"
-if [ ! -d "$PAGESDIR" ]; then
-  git clone git@github.com:sebastian-lenz/craft-contentfield.git "$PAGESDIR"
-fi
+# build
+cd "$ROOTDIR"
+npm run docs:build
 
-git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" checkout gh-pages
-git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" pull
+# navigate into the build output directory
+cd "$ROOTDIR/docs/.vuepress/dist"
 
-
-# Compile the docs
-sphinx-build -d "$ROOTDIR/etc/.doctrees" "$ROOTDIR/docs" "$PAGESDIR"
-
-
-# Commit changes
-git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" add -A
-git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" commit -m "Compiled documentation"
-git --git-dir="$PAGESDIR/.git" --work-tree="$PAGESDIR/" push -u origin gh-pages
+git init
+git add -A
+git commit -m 'Deploy'
+git push -f git@github.com:sebastian-lenz/craft-contentfield.git master:gh-pages
