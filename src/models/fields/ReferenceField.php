@@ -233,22 +233,13 @@ class ReferenceField extends AbstractField
    * @return string|null
    */
   static public function resolveElementType($elementType) {
-    if (!is_string($elementType)) {
-      return null;
+    if (is_subclass_of($elementType, ElementInterface::class)) {
+      return $elementType;
     }
 
-    switch (strtolower($elementType)) {
-      case 'asset':
-      case 'assets':
-        return Asset::class;
-      case 'entry':
-      case 'entries':
-        return Entry::class;
-    }
-
-    return is_subclass_of($elementType, Element::class)
-      ? $elementType
-      : null;
+    return Craft::$app
+      ->getElements()
+      ->getElementTypeByRefHandle($elementType);
   }
 
 
