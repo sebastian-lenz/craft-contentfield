@@ -204,6 +204,13 @@ class InstanceValue extends AbstractModelValue implements DisplayInterface
   }
 
   /**
+   * @return string
+   */
+  public function getNamespace() {
+    return 'cn' . substr($this->_uuid, -12);
+  }
+
+  /**
    * @return string|null
    */
   public function getOriginalUuid() {
