@@ -2,7 +2,9 @@
 
 return [
   'A matching webservice must be configured in the options of this field in order to use this feature.' => 'Um diese Funktion nutzen zu können muss in den Einstellungen ein passender Webservice konfiguriert werden.',
+  'After selected element' => 'Nach dem ausgewähltem Element',
   'Apply' => 'Anwenden',
+  'Before selected element' => 'Vor dem ausgewählten Element',
   'Cancel' => 'Abbrechen',
   'Close' => 'Schließen',
   'Collapse' => 'Schließen',
@@ -22,7 +24,9 @@ return [
   'Move up' => 'Nach oben verschieben',
   'Open in new window' => 'In neuem Fenster öffnen',
   'Paste' => 'Einfügen',
+  'Position' => 'Position',
   'Select the site the content should be copied from.' => 'Wählen Sie die Website aus, von der der Inhalt kopiert werden soll.',
+  'Select where the new element should be inserted.' => 'Wählen Sie aus, wo das neue Element eingefügt werden soll.',
   'Show' => 'Einblenden',
   'Site' => 'Website',
   'Sites have been synchronized' => 'Websites wurden synchronisiert',
