@@ -1,5 +1,49 @@
 ---
 sidebarDepth: 2
+attributes:
+  - name: constants
+    description: >
+      Defines one or multiple constants on the schema.
+  - name: fields
+    description: >
+      Defines the fields attached to the schema. Must be an object hash, the keys
+      define the internal field names.
+  - name: grid
+    description: >
+      Defines a css grid layout for this schema.
+  - name: icon
+    description: >
+      The name of the icon that represents this schema in the control panel.
+  - name: inline
+    description: >
+      Whether this template should be inlined or not.
+  - name: label
+    description: >
+      A human readable name of this schema.
+  - name: model
+    description: >
+      The fully qualified name of a PHP model class that should be attached
+      to this schema.
+  - name: preview
+    description: >
+      A handlebars template used to create previews of this schema in the editor.
+  - name: previewImage
+    description: >
+      The name of an asset reference field whose image will be used as an
+      replacement of the icon the header.
+  - name: previewLabel
+    description: >
+      A template for a short text displayed in the header of an instance
+      next to the type name.
+  - name: rootSchema
+    description: >
+      Marks this schema as a root schema.
+  - name: structures
+    description: >
+      Defines local structures for this template.
+  - name: style
+    description: >
+      Defines css styles applied to the form in the control panel.
 ---
 
 # Template schemas
@@ -38,6 +82,8 @@ The complete qualifier for the schema defined in the first example would be
 `template:example`.
 
 ## Attributes
+
+<tcf-field-attribs />
 
 ### `constants`
 
@@ -179,6 +225,15 @@ available icons. Visit `Utilities` > `Content field utilities` and select the
 tab `Icons`.
 :::
 
+### `inline`
+
+Whether this template should be inlined or not.
+
+```twig{2}
+label: Inline example
+inline: true
+```
+
 ### `label`
 
 A human readable name of this schema. Can be translated using the `site`
@@ -271,8 +326,18 @@ fields:
 
 ### `rootSchema`
 
-Marks this schema as a root schema. Only used to tidy up the field settings
+Marks this schema as a root schema. Used to tidy up the field settings
 within the control panel.
+
+```twig{2}
+label: Root schema example
+rootSchema: true
+```
+
+### `structures`
+
+Defines local structures for this template.
+See [local structures](structures.html#local-structures).
 
 ### `style`
 
