@@ -4,9 +4,15 @@ sidebarDepth: 2
 
 # Fields
 
-For a complete list of all included fields, please see [fields](/fields/).
+Fields are the building blocks of schemas within the content field. Fields
+are defined within the `fields` attribute on [template](./templates.html)
+and [structure](./structures.html) schemas.
 
-## Common attributes
+All fields can be customized, this page describes all common field attributes.
+For attributes specific to individual field types please see
+[field types](/fields/).
+
+## Attributes
 
 ### `group`
 
@@ -30,7 +36,7 @@ Which creates the following field group in the control panel:
 
 You can also pass an option object to set multiple css properties
 of the field group. Combined with the ability to specify grid layouts
-on the schema (see ), you can build complex layouts.
+on the schema (see [`grid`](templates.html#grid) ), you can build complex layouts.
 
 ```yaml
 label: Group demo
@@ -57,16 +63,16 @@ Which creates the following layout in the control panel:
 
 The following css attributes are supported:
 
-- alignSelf
-- gridArea
-- gridColumn
-- gridColumnEnd
-- gridColumnStart
-- gridRow
-- gridRowEnd
-- gridRowStart
-- justifySelf
-- placeSelf
+`alignSelf`,
+`gridArea`,
+`gridColumn`,
+`gridColumnEnd`,
+`gridColumnStart`,
+`gridRow`,
+`gridRowEnd`,
+`gridRowStart`,
+`justifySelf`,
+`placeSelf`.
 
 ### `instructions`
 
@@ -122,10 +128,46 @@ A list of all validators can be found here:
 [yiiframework.com](https://www.yiiframework.com/wiki/56/reference-model-rules-validation)
 :::
 
+### `style`
+
+Sets custom css style attributes on the field itself. When given directly, the sttributes
+apply to the medium breakpoint, e.g.:
+
+```yaml{4-5}
+fields:
+  myStyledField:
+    type: text
+    style:
+      width: 100px
+```
+
+Is equivalent to the following example.
+
+```yaml{4-6}
+fields:
+  myStyledField:
+    type: text
+    style:
+      medium:
+        width: 100px
+```
+
+The following style attributes are suported:
+`alignSelf`,
+`flex`,
+`flexBasis`,
+`flexGrow`,
+`flexShrink`,
+`justifySelf`,
+`width`.
+
+The breakpoints `small`, `medium` and `large` are supported.
+
 ### `width`
 
 Defines the width of the field within the control panel. Allows you to stack fields
 horizontally. Can be any valid css width value, can also be given as a fraction, e.g. `6/12`.
+This is a shortcut for the width style attribute at the medium breakpoint.
 
 ```yaml
 label: Width demo
@@ -142,4 +184,39 @@ Which creates the following layout in the control panel:
 
 ![Multiple field groups using the width attribute](./images/common-width-01.png)
 
-## Global field definitions
+## Global fields
+
+Fields can be defined globally in the configuration file `config/content/fields.yml`.
+The configuration keys at the top level of the file define the field names. Beneath
+each key a field configuration must be placed.
+
+**config/content/fields.yml**
+
+```yaml
+acmeSwatchColor:
+  type: swatchColor
+  options:
+    red: '#D63545'
+    green: '#28a745'
+    blue: '#007bff'
+
+acmeColumnSizes:
+  type: select
+  ...
+```
+
+Fields defiend like this can be referenced in schemas by specifying the their
+name as the type of a field.
+
+**templates/section.twig**
+
+```twig{4}
+label: Section
+fields:
+  myTheme:
+    type: acmeSwatchColor
+---
+<div class="{{ myTheme }}">
+  ...
+</div>
+```

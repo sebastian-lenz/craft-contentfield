@@ -28,9 +28,12 @@ export default {
   name: "tcf-field-attribs",
   computed: {
     allAttributes() {
-      return [...globalAttributes, ...this.getAttributes()].sort(
-        (left, right) => left.name.localeCompare(right.name)
-      );
+      const attribs = this.getAttributes();
+      if (/^\/fields\//.test(this.$page.path)) {
+        attribs.push(...globalAttributes);
+      }
+
+      return attribs.sort((left, right) => left.name.localeCompare(right.name));
     }
   },
   methods: {
@@ -50,7 +53,7 @@ export default {
     getLocalAttribute(attrib, page = this.$page) {
       return {
         ...attrib,
-        link: `${page.path}#${attrib.name}`
+        link: `${page.path}#${attrib.name.toLowerCase()}`
       };
     },
     getPageAttribute({ path, name }) {

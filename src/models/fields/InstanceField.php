@@ -164,6 +164,18 @@ class InstanceField extends AbstractField
   }
 
   /**
+   * @param mixed $value
+   * @return string
+   */
+  public function getSearchKeywords($value) {
+    if (!($value instanceof InstanceValue)) {
+      return '';
+    }
+
+    return $value->getSearchKeywords();
+  }
+
+  /**
    * @inheritDoc
    */
   public function getSerializedValue($value) {
