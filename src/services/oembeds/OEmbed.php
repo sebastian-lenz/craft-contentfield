@@ -178,19 +178,25 @@ class OEmbed extends BaseObject
     $html = is_string($this->html) ? $this->html : '';
 
     if (!is_null($options) && !empty($html)) {
-      $doc = new DOMDocument();
-      $doc->loadHTML($html, LIBXML_HTML_NOIMPLIED);
-      $element = $doc->documentElement;
+      $oldErrorMode = libxml_use_internal_errors(true);
 
-      if (isset($options['attributes'])) {
-        $this->modifyAttributes($element, $options['attributes']);
+      try {
+        $doc = new DOMDocument();
+        $doc->loadHTML($html, LIBXML_HTML_NOIMPLIED);
+        $element = $doc->documentElement;
+
+        if (isset($options['attributes'])) {
+          $this->modifyAttributes($element, $options['attributes']);
+        }
+
+        if (isset($options['query'])) {
+          $this->modifyQuery($element, $options['query']);
+        }
+
+        $html = $doc->saveHTML($element);
+      } finally {
+        libxml_use_internal_errors($oldErrorMode);
       }
-
-      if (isset($options['query'])) {
-        $this->modifyQuery($element, $options['query']);
-      }
-
-      $html = $doc->saveHTML($element);
     }
 
     return $html;
