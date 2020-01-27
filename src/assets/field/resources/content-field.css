@@ -224,6 +224,9 @@
   display: grid;
   grid-gap: 20px;
 }
+.tcfInstanceForm > .tcfFieldGroup--content {
+  align-self: flex-start;
+}
 .tcfInstanceForm--empty {
   padding: 10px;
   background: #f0f4f7;
@@ -862,7 +865,7 @@
 .tcfInstancePreview--content dd:last-child {
   margin-right: 0;
 }
-.tcfInstancePreview--content dt {
+.tcfInstancePreview--content dd {
   flex: 1;
 }
 .tcfInstancePreview--content .snippet {
