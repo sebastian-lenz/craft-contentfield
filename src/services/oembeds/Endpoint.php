@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\services\oembeds;
 
+use lenz\contentfield\helpers\UrlHelper;
 use lenz\contentfield\Plugin;
 
 /**
@@ -61,11 +62,15 @@ class Endpoint
    * @return OEmbed|null
    */
   public function getOEmbed($url) {
-    $endpointUrl = str_replace('{format}', 'json', $this->url);
-    $endpointUrl .= '?url=' . urlencode($url);
+    $endpoint = new UrlHelper(str_replace('{format}', 'json', $this->url));
+    $endpoint->setQuery([
+      'format' => 'json',
+      'url'    => $url,
+    ] + $endpoint->getQuery());
+
     $data = Plugin::getInstance()
       ->oembeds
-      ->fetchJson($endpointUrl);
+      ->fetchJson((string)$endpoint);
 
     return is_null($data)
       ? null
