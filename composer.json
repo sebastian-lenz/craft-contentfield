@@ -9,7 +9,7 @@
     "ext-libxml": "*",
     "ext-zlib": "*",
     "php": "^7.0",
-    "craftcms/cms": "^3.3.0",
+    "craftcms/cms": "^3.4.0",
     "craftcms/redactor": "^2.2.0",
     "sebastianlenz/craft-utils": "^2.1.0",
     "symfony/yaml": "^3.4"

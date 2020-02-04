@@ -13,7 +13,7 @@ class ErrorsPage extends AbstractPage
   /**
    * @inheritDoc
    */
-  public function contentHtml() {
+  public function contentHtml() : string {
     $view = Craft::$app->getView();
 
     return $view->renderTemplate('contentfield/_utility-errors', [
@@ -24,14 +24,21 @@ class ErrorsPage extends AbstractPage
   /**
    * @inheritDoc
    */
-  public function getHandle() {
+  public function getHandle() : string {
     return 'errors';
   }
 
   /**
    * @inheritDoc
    */
-  public function getLabel() {
+  public function getIcon(): string {
+    return 'error';
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getLabel() : string {
     return 'Errors';
   }
 }

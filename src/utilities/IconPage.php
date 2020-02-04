@@ -17,7 +17,7 @@ class IconPage extends AbstractPage
   /**
    * @inheritDoc
    */
-  public function contentHtml() {
+  public function contentHtml() : string {
     $view = Craft::$app->getView();
 
     return $view->renderTemplate('contentfield/_utility-icons', [
@@ -29,14 +29,21 @@ class IconPage extends AbstractPage
   /**
    * @inheritDoc
    */
-  public function getHandle() {
+  public function getHandle() : string {
     return 'icons';
   }
 
   /**
    * @inheritDoc
    */
-  public function getLabel() {
+  public function getIcon(): string {
+    return 'asset';
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getLabel() : string {
     return 'Icons';
   }
 
