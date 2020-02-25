@@ -6,6 +6,7 @@
   justify-content: center;
   padding: 8px 10px;
   background: #616e7d;
+  border-radius: 5px;
   color: #fff;
   font-weight: bold;
   white-space: nowrap;
@@ -545,11 +546,7 @@
   position: relative;
   overflow: hidden;
   background: #f1f5f8;
-}
-.depth-1 > .tcfArrayWidgetMember--panel {
-  border: 1px solid #dedee1;
-}
-*:not(.depth-1) > .tcfArrayWidgetMember--panel {
+  border-radius: 5px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 .isExpanded:not(.depth-1) > .tcfArrayWidgetMember--panel {
@@ -562,7 +559,7 @@
   top: 0;
   left: 0;
   height: 36px;
-  border-left: 3px solid #00b008;
+  border-left: 5px solid #00b008;
 }
 .isExpanded.depth-1 > .tcfArrayWidgetMember--panel:after {
   height: auto;
@@ -660,10 +657,6 @@
   position: relative;
   overflow: hidden;
   padding: 16px;
-  border-top: 1px solid #dedee1;
-}
-.tcfArrayWidgetMember--preview {
-  border-top: 1px solid #dedee1;
 }
 
 .tcfInstancePreviewImage {
@@ -679,6 +672,7 @@
 }
 .tcfInstancePreviewImage .elementthumb {
   left: 0 !important;
+  border-radius: 2px !important;
 }
 .tcfInstancePreviewImage .label {
   display: none;
@@ -1018,17 +1012,53 @@
   box-sizing: border-box;
   width: 100%;
   min-height: 3px;
-  padding: 5px 7px;
-  border: 1px solid rgba(0,0,20,0.1);
-  border-radius: 2px;
+  padding: 6px 9px;
+  background: #fbfcfe;
+  border: 1px solid rgba(96,125,159,0.25);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 4px -1px rgba(96,125,159,0.25);
   transition: border linear 50ms;
   color: #29323d;
   font-size: 14px;
   line-height: 20px;
 }
 .tcfInput:focus {
-  border-color: #0d99f2;
+  border-color: rgba(96,125,159,0.8);
   outline: none;
+}
+.tcfInput--group {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.tcfInput--group > .tcfInput {
+  border-radius: 0;
+}
+.tcfInput--group > .tcfInput:first-child {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+.tcfInput--group > .tcfInput:last-child {
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+.tcfInput--groupLabel {
+  padding: 5px 9px;
+  border: 1px solid rgba(96,125,159,0.25);
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.tcfInput--groupLabel:first-child {
+  padding-left: 12px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+}
+.tcfInput--groupLabel:last-child {
+  padding-right: 12px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left: none;
 }
 
 .tcfColorInputSaturation {
@@ -1357,11 +1387,19 @@
   margin-right: 10px;
 }
 .tcfLinkWidget--editor {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: flex-start;
+  justify-content: space-between;
   flex: 1;
   margin-right: 10px;
 }
 .tcfLinkWidget--editor:last-child {
   margin-right: 0;
+}
+.tcfLinkWidget--editorHash {
+  max-width: 120px;
+  margin: 0 0 0 10px;
 }
 
 .tcfLocationFieldSearch {
@@ -1467,32 +1505,6 @@
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 
-.tcfUtility {
-  position: relative;
-  display: flex;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  padding: 0 !important;
-}
-.tcfUtility--wrap {
-  position: absolute;
-  top: -24px;
-  right: -24px;
-  bottom: 0;
-  left: -24px;
-  display: flex;
-  flex-flow: column nowrap;
-}
-.tcfUtility--tabs {
-  padding: 16px 0 0 0;
-  background: #f1f5f8;
-}
-.tcfUtility--content {
-  overflow: auto;
-  flex: 1;
-  padding: 24px;
-}
 .tcfSourceTable {
   width: 100%;
   table-layout: fixed;
