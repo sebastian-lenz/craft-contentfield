@@ -14,6 +14,7 @@
   flex-flow: column nowrap;
   width: 250px;
   padding-top: 31px;
+  padding-bottom: 16px;
 
   background: #f1f5f8;
   border-right: 1px solid rgba(0, 0, 20, 0.1);
@@ -50,18 +51,16 @@
 }
 
 .tcfSchemas--viewport {
-  flex: 1;
+  position: relative;
   overflow: auto;
+  flex: 1;
 
   font-size: 0;
   line-height: 0;
 }
 
 .tcfSchemas--content {
-  display: inline-block;
-  min-width: 100%;
-
-  vertical-align: top;
+  position: absolute;
 }
 
 .tcfSchemas--row {
