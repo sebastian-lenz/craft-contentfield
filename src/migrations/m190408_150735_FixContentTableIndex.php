@@ -8,9 +8,9 @@ use lenz\contentfield\records\ContentRecord;
 use Throwable;
 
 /**
- * m190408_150735_fixContentTableIndex migration.
+ * m190408_150735_FixContentTableIndex migration.
  */
-class m190408_150735_fixContentTableIndex extends Migration
+class m190408_150735_FixContentTableIndex extends Migration
 {
   /**
    * @inheritdoc
@@ -23,7 +23,7 @@ class m190408_150735_fixContentTableIndex extends Migration
     } catch (Throwable $error) {
       // Ignore this error
     }
-    
+
     try {
       $this->dropIndex('contentfield_elementId_siteId_unq_idx', $tableName);
     } catch (Throwable $error) {

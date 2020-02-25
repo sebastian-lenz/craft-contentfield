@@ -13,27 +13,22 @@ abstract class AbstractPage
    * @return string
    * @throws Throwable
    */
-  abstract public function contentHtml();
+  abstract public function contentHtml() : string;
 
   /**
    * @return string
    */
-  abstract public function getHandle();
+  abstract public function getHandle() : string;
 
   /**
    * @return string
    */
-  abstract public function getLabel();
+  abstract public function getIcon() : string;
 
   /**
-   * @return array
+   * @return string
    */
-  public function getTab() {
-    return [
-      'label' => $this->getLabel(),
-      'url'   => $this->getUrl(),
-    ];
-  }
+  abstract public function getLabel() : string;
 
   /**
    * @return string

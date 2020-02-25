@@ -28,7 +28,7 @@ class TemplatesController extends BaseTemplatesController
    * @inheritDoc
    * @throws Throwable
    */
-  public function renderTemplate(string $template, array $variables = []): YiiResponse {
+  public function renderTemplate(string $template, array $variables = [], string $templateMode = null): YiiResponse {
     $response = Craft::$app->getResponse();
     if (!($response instanceof YiiResponse)) {
       $response = new YiiResponse();

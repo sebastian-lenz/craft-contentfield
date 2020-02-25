@@ -18,7 +18,7 @@ class SourcesPage extends AbstractPage
   /**
    * @inheritDoc
    */
-  public function contentHtml() {
+  public function contentHtml() : string {
     $view = Craft::$app->getView();
 
     return $view->renderTemplate('contentfield/_utility-sources', [
@@ -29,14 +29,21 @@ class SourcesPage extends AbstractPage
   /**
    * @inheritDoc
    */
-  public function getHandle() {
+  public function getHandle() : string {
     return 'sources';
   }
 
   /**
    * @inheritDoc
    */
-  public function getLabel() {
+  public function getIcon(): string {
+    return 'category';
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getLabel() : string {
     return 'Sources';
   }
 

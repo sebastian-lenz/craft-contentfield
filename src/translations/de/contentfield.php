@@ -25,7 +25,7 @@ return [
   'Insert new' => 'Hinzufügen...',
   'Move down' => 'Nach unten verschieben',
   'Move up' => 'Nach oben verschieben',
-  'Open in new window' => 'In neuem Fenster öffnen',
+  'New window' => 'Neues Fenster',
   'Orphaned elements' => 'Verwaiste Elemente',
   'Paste' => 'Einfügen',
   'Position' => 'Position',
