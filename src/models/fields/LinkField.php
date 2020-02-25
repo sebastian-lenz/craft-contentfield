@@ -37,12 +37,14 @@ class LinkField extends AbstractField
       'type'        => 'input',
     ],
     'entry' => [
+      'allowHash'   => false,
       'elementType' => Entry::class,
       'label'       => 'Entry',
       'sources'     => null,
       'type'        => 'element',
     ],
     'asset' => [
+      'allowHash'   => false,
       'elementType' => Asset::class,
       'label'       => 'Asset',
       'sources'     => null,
@@ -82,8 +84,12 @@ class LinkField extends AbstractField
           $criteria['siteId'] = $element->siteId;
         }
 
-        $linkType['elementType'] = $elementType;
+        $linkType['allowHash'] = isset($linkType['allowHash'])
+          ? !!$linkType['allowHash']
+          : false;
+
         $linkType['criteria'] = $criteria;
+        $linkType['elementType'] = $elementType;
       }
     }
 
@@ -103,6 +109,7 @@ class LinkField extends AbstractField
 
     return array(
       'elementId'       => $value->elementId,
+      'hash'            => $value->hash,
       'openInNewWindow' => $value->openInNewWindow,
       'type'            => $value->type,
       'url'             => $value->url,

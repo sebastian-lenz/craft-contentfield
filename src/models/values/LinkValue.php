@@ -23,6 +23,11 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   public $elementId = 0;
 
   /**
+   * @var string
+   */
+  public $hash = '';
+
+  /**
    * @var bool
    */
   public $openInNewWindow = false;
@@ -58,12 +63,16 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
         $this->elementId = $data['elementId'];
       }
 
+      if (isset($data['hash'])) {
+        $this->hash = trim($data['hash']);
+      }
+
       if (isset($data['type'])) {
         $this->type = $data['type'];
       }
 
       if (isset($data['url'])) {
-        $this->url = $data['url'];
+        $this->url = trim($data['url']);
       }
 
       if (isset($data['openInNewWindow'])) {
@@ -76,37 +85,21 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @return string
    * @throws Exception
    */
-  function __toString() {
-    switch ($this->type) {
+  public function __toString() {
+    $linkType = $this->getLinkType();
+    $inputType = is_array($linkType) && array_key_exists('inputType', $linkType)
+      ? $linkType['inputType']
+      : '';
+
+    switch ($inputType) {
       case 'url':
-        return $this->url;
+        return $this->getInputUrl();
+      case 'email':
       case 'mail':
-        return 'mailto:' . $this->url;
+        return $this->getMailUrl();
       default:
-        $element = $this->getLinkedElement();
-        return is_null($element) ? '' : $element->getUrl();
+        return $this->getElementUrl();
     }
-  }
-
-  /**
-   * @param array $extraAttribs
-   * @return string
-   * @throws Exception
-   */
-  public function getLinkAttributes($extraAttribs = array()) {
-    if ($this->isEmpty()) {
-      return '';
-    }
-
-    $attribs = [
-      'href' => $this->getUrl(),
-    ] + $extraAttribs;
-
-    if ($this->openInNewWindow) {
-      $attribs['target'] = '_blank';
-    }
-
-    return Template::raw(Html::renderTagAttributes($attribs));
   }
 
   /**
@@ -120,10 +113,31 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   }
 
   /**
+   * @param array $extraAttribs
+   * @return string
+   * @throws Exception
+   */
+  public function getLinkAttributes($extraAttribs = array()) {
+    if ($this->isEmpty()) {
+      return '';
+    }
+
+    $attribs = [
+        'href' => $this->getUrl(),
+      ] + $extraAttribs;
+
+    if ($this->openInNewWindow) {
+      $attribs['target'] = '_blank';
+    }
+
+    return Template::raw(Html::renderTagAttributes($attribs));
+  }
+
+  /**
    * @return ElementInterface|null
    * @throws Exception
    */
-  function getLinkedElement() {
+  public function getLinkedElement() {
     if (!isset($this->_element)) {
       if (!$this->hasLinkedElement()) {
         $this->_element = null;
@@ -151,7 +165,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return array|null
    */
-  function getLinkType() {
+  public function getLinkType() {
     return array_key_exists($this->type, $this->_field->linkTypes)
       ? $this->_field->linkTypes[$this->type]
       : null;
@@ -175,14 +189,14 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return string
    */
-  function getUrl() {
+  public function getUrl() {
     return (string)$this;
   }
 
   /**
    * @return bool
    */
-  function hasLinkedElement() {
+  public function hasLinkedElement() {
     $elementType = $this->getElementType();
     return (
       !is_null($elementType) &&
@@ -204,5 +218,58 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
     return $linkType['type'] === 'element'
       ? is_null($this->getLinkedElement())
       : empty($this->url);
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * @return string
+   */
+  private function getElementUrl() {
+    try {
+      $element = $this->getLinkedElement();
+    } catch (Exception $error) {
+      return '';
+    }
+
+    if (is_null($element)) {
+      return '';
+    }
+
+    $url = $element->getUrl();
+    if (!empty($this->hash)) {
+      $url .= '#' . $this->hash;
+    }
+
+    return $url;
+  }
+
+  /**
+   * @return string
+   */
+  private function getInputUrl() {
+    $url = $this->url;
+
+    if (!empty($this->hash)) {
+      $hashOffset = strpos($url, '#');
+      if ($hashOffset !== -1) {
+        $url = substr($url, 0, $hashOffset);
+      }
+
+      $url .= '#' . $this->hash;
+    }
+
+    return $url;
+  }
+
+  /**
+   * @return string
+   */
+  private function getMailUrl() {
+    return empty($this->url)
+      ? ''
+      : 'mailto:' . $this->url;
   }
 }
