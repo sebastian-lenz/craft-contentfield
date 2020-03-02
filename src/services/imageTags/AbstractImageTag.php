@@ -125,7 +125,7 @@ abstract class AbstractImageTag extends BaseObject implements ImageTagInterface
    */
   static public function expandConfig(array &$config) {
     foreach ($config as $key => &$value) {
-      if ($key != 'transform') {
+      if (!is_numeric($key) && $key !== 'transform') {
         continue;
       }
 
