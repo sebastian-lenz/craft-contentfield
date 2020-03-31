@@ -116,7 +116,7 @@ abstract class AbstractScope extends BaseObject implements ScopeInterface
     foreach ($attributes as $key => $value) {
       if (
         strlen($value) > 0 &&
-        $value{0} == '$' &&
+        substr($value, 0, 1) == '$' &&
         array_key_exists(substr($value, 1), $variables)
       ) {
         $value = $variables[substr($value, 1)]();
