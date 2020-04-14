@@ -378,8 +378,31 @@
   height: 200px;
 }
 
-.tcfInstance--typeSelect:not(:last-child) {
+.tcfInstance--controls {
+  display: flex;
+  margin: -10px;
+}
+.tcfInstance--controls > * {
+  padding: 10px;
+}
+.tcfInstance--controlsSchema {
+  flex: 1;
+}
+.tcfInstance--controlsSchema:not(:last-child) {
   margin-bottom: 12px;
+}
+.tcfInstance--controlsVisibility {
+  width: min-content;
+  white-space: nowrap;
+}
+.tcfInstance--controlsVisibilityIcon {
+  position: relative;
+  top: -1px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+.tcfInstance--controlsVisibilityIcon.off {
+  color: #da5a47;
 }
 
 .tcfOverlay {
