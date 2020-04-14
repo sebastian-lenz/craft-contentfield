@@ -38,5 +38,7 @@ return [
   'Synchronize translations' => 'Übersetzungen synchronisieren',
   'This element has no properties.' => 'Dieses Element besitzt keine Eigenschaften.',
   'Translate texts automatically' => 'Texte automatisch übersetzen',
+  'Type' => 'Typ',
   'Uses a webservice to automatically translate texts.' => 'Verwendet einen Webservice zum automatischen Übersetzen von Texten.',
+  'Visibility' => 'Sichtbarkeit',
 ];
