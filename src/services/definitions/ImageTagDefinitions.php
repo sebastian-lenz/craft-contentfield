@@ -94,8 +94,9 @@ class ImageTagDefinitions extends AbstractDefinitions
     $cache    = Plugin::getInstance()->imageTagCache;
     $cacheKey = __METHOD__ . '(' . md5(Json::encode([
       'asset'  => $asset->uid,
-      'mtime'  => $asset->dateModified,
       'config' => $config,
+      'mtime'  => $asset->dateModified,
+      'site'   => $asset->getSite()->id,
     ])) . ')';
 
     $result = $cache->get($cacheKey);
