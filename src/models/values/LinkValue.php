@@ -86,20 +86,8 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @throws Exception
    */
   public function __toString() {
-    $linkType = $this->getLinkType();
-    $inputType = is_array($linkType) && array_key_exists('inputType', $linkType)
-      ? $linkType['inputType']
-      : '';
-
-    switch ($inputType) {
-      case 'url':
-        return $this->getInputUrl();
-      case 'email':
-      case 'mail':
-        return $this->getMailUrl();
-      default:
-        return $this->getElementUrl();
-    }
+    $result = $this->getUrl();
+    return is_string($result) ? $result : '';
   }
 
   /**
@@ -190,7 +178,20 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @return string
    */
   public function getUrl() {
-    return (string)$this;
+    $linkType = $this->getLinkType();
+    $inputType = is_array($linkType) && array_key_exists('inputType', $linkType)
+      ? $linkType['inputType']
+      : '';
+
+    switch ($inputType) {
+      case 'url':
+        return $this->getInputUrl();
+      case 'email':
+      case 'mail':
+        return $this->getMailUrl();
+      default:
+        return $this->getElementUrl();
+    }
   }
 
   /**
@@ -239,6 +240,10 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
     }
 
     $url = $element->getUrl();
+    if (empty($url) || !is_string($url)) {
+      return '';
+    }
+
     if (!empty($this->hash)) {
       $url .= '#' . $this->hash;
     }
@@ -251,6 +256,9 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    */
   private function getInputUrl() {
     $url = $this->url;
+    if (empty($url) || !is_string($url)) {
+      $url = '';
+    }
 
     if (!empty($this->hash)) {
       $hashOffset = strpos($url, '#');
@@ -268,8 +276,9 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @return string
    */
   private function getMailUrl() {
-    return empty($this->url)
+    $url = $this->url;
+    return empty($url) || !is_string($url)
       ? ''
-      : 'mailto:' . $this->url;
+      : 'mailto:' . $url;
   }
 }
