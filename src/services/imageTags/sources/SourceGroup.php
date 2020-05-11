@@ -100,7 +100,7 @@ class SourceGroup extends SourceSet implements ScopeInterface
    * @param mixed $value
    */
   protected function setAttribute($name, $value) {
-    if ($name{0} == '.') {
+    if (substr($name, 0, 1) == '.') {
       $name = substr($name, 1);
     }
 
