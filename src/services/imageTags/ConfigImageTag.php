@@ -129,7 +129,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
       array_key_exists($key, $config) &&
       array_key_exists($key, $parent)
     ) {
-      if ($config[$key]{0} == '+') {
+      if (substr($config[$key], 0, 1) == '+') {
         $config[$key] = implode(' ', array_unique(array_merge(
           explode(' ', $parent[$key]),
           explode(' ', substr($config[$key], 1))
@@ -188,9 +188,9 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
     AbstractImageTag::expandConfig($config);
 
     foreach ($config as $key => &$value) {
-      if ($key{0} == '.') {
+      if (substr($key, 0, 1) == '.') {
         $appendTo = 'attributes';
-      } elseif ($key{0} == '+') {
+      } elseif (substr($key, 0, 1) == '+') {
         $appendTo = 'children';
       } else {
         continue;
