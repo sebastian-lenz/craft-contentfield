@@ -74,7 +74,7 @@ class Endpoint
 
     return is_null($data)
       ? null
-      : new OEmbed($data);
+      : new OEmbed($this, $url, $data);
   }
 
   /**
