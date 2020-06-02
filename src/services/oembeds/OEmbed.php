@@ -111,6 +111,30 @@ class OEmbed extends BaseObject
    */
   protected $_attributes;
 
+  /**
+   * @var Endpoint
+   */
+  protected $_endpoint;
+
+  /**
+   * @var string
+   */
+  protected $_originalUrl;
+
+
+  /**
+   * OEmbed constructor.
+   *
+   * @param Endpoint $endpoint
+   * @param string $originalUrl
+   * @param array $config
+   */
+  public function __construct(Endpoint $endpoint, string $originalUrl, $config = []) {
+    parent::__construct($config);
+
+    $this->_endpoint = $endpoint;
+    $this->_originalUrl = $originalUrl;
+  }
 
   /**
    * @inheritDoc
@@ -168,6 +192,20 @@ class OEmbed extends BaseObject
     } else {
       unset($this->_attributes);
     }
+  }
+
+  /**
+   * @return Endpoint
+   */
+  public function getEndpoint() {
+    return $this->_endpoint;
+  }
+
+  /**
+   * @return string
+   */
+  public function getOriginalUrl() {
+    return $this->_originalUrl;
   }
 
   /**
@@ -253,7 +291,32 @@ class OEmbed extends BaseObject
       }
     }
 
+    $this->fixYouTubePlaylistIndex($query);
+
     $url->setQuery($query);
     $element->setAttribute('src', (string)$url);
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * YouTube playlists forget the carry over the video index, patch it.
+   *
+   * @param array $query
+   */
+  private function fixYouTubePlaylistIndex(array &$query) {
+    if (
+      $this->provider_name == 'YouTube' &&
+      isset($query['list']) &&
+      !isset($query['index'])
+    ) {
+      $originalUrl = new UrlHelper($this->_originalUrl);
+      $originalQuery = $originalUrl->getQuery();
+      if (isset($originalQuery['index']) && is_numeric($originalQuery['index'])) {
+        $query['index'] = $originalQuery['index'];
+      }
+    }
   }
 }
