@@ -5,5 +5,4 @@
 /vendor
 /docs/.vuepress/dist
 .DS_Store
-composer.lock
 node_modules

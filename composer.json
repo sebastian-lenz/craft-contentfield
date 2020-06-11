@@ -26,7 +26,8 @@
   },
   "autoload": {
     "psr-4": {
-      "lenz\\contentfield\\": "src/"
+      "lenz\\contentfield\\": "src/",
+      "lenz\\contentfield\\tests\\": "tests/"
     }
   },
   "scripts": {
