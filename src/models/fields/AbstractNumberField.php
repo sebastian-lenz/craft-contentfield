@@ -40,6 +40,9 @@ abstract class AbstractNumberField extends AbstractField
    */
   public $min;
 
+  /**
+   * @var bool
+   */
   public $optional = false;
 
   /**
