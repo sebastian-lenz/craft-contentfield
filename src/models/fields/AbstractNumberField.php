@@ -29,16 +29,16 @@ abstract class AbstractNumberField extends AbstractField
   /**
    * The maximum allowed numeric value.
    *
-   * @var int|float
+   * @var int|float|null
    */
-  public $max;
+  public $max = null;
 
   /**
    * The minimum allowed numeric value.
    *
-   * @var int|float
+   * @var int|float|null
    */
-  public $min;
+  public $min = null;
 
   /**
    * @var bool
@@ -91,21 +91,13 @@ abstract class AbstractNumberField extends AbstractField
    * @inheritdoc
    */
   public function getEditorData(ElementInterface $element = null) {
-    $data = [
+    return parent::getEditorData($element) + [
       'dataType'     => $this->dataType,
       'defaultValue' => $this->getEditorValue($this->defaultValue),
+      'max'          => $this->max,
+      'min'          => $this->min,
       'optional'     => $this->optional,
     ];
-
-    if (isset($this->max)) {
-      $data['max'] = $this->max;
-    }
-
-    if (isset($this->min)) {
-      $data['min'] = $this->min;
-    }
-
-    return parent::getEditorData($element) + $data;
   }
 
   /**
