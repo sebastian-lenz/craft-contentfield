@@ -80,7 +80,7 @@ class NumberField extends AbstractNumberField
   static public function expandFieldConfig(&$config) {
     $type = $config['type'];
 
-    if (in_array($type, AbstractNumberField::DATA_TYPE_ALIASES)) {
+    if (array_key_exists($type, AbstractNumberField::DATA_TYPE_ALIASES)) {
       $config['type']     = 'number';
       $config['dataType'] = AbstractNumberField::DATA_TYPE_ALIASES[$type];
     }
