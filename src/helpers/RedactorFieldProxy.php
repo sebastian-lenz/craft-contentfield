@@ -15,9 +15,9 @@ use ReflectionException;
 use yii\base\InvalidConfigException;
 
 /**
- * Class RedactorSettings
+ * Class RedactorFieldProxy
  */
-class RedactorSettings extends Field
+class RedactorFieldProxy extends Field
 {
   /**
    * @var ReflectionClass
