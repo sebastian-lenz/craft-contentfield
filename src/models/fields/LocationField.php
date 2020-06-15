@@ -40,7 +40,8 @@ class LocationField extends AbstractField
   }
 
   /**
-   * @inheritdoc
+   * @param ElementInterface|null $element
+   * @return array|float[]
    */
   public function getEditorDefaultValue(ElementInterface $element = null) {
     $defaultValue = $this->defaultValue;

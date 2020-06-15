@@ -46,7 +46,9 @@ abstract class AbstractStringField extends AbstractField
    * @inheritdoc
    */
   public function createValue($data, ValueInterface $parent = null) {
-    return is_string($data) ? $data : null;
+    return is_string($data)
+      ? $data
+      : null;
   }
 
   /**
@@ -64,7 +66,9 @@ abstract class AbstractStringField extends AbstractField
    * @inheritDoc
    */
   public function getEditorValue($value) {
-    return is_string($value) ? $value : null;
+    return is_string($value)
+      ? $value
+      : null;
   }
 
   /**
@@ -72,7 +76,9 @@ abstract class AbstractStringField extends AbstractField
    * @return string
    */
   public function getSearchKeywords($value) {
-    return $this->searchable && is_string($value) ? (string)$value : '';
+    return $this->searchable && is_string($value)
+      ? (string)$value
+      : '';
   }
 
   /**

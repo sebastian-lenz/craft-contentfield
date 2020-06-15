@@ -24,9 +24,9 @@ abstract class AbstractField extends Model
 
   /**
    * The instructions displayed to the user.
-   * @var string
+   * @var string|null
    */
-  public $instructions;
+  public $instructions = null;
 
   /**
    * The human readable label of this field.
@@ -165,16 +165,6 @@ abstract class AbstractField extends Model
   }
 
   /**
-   * Transforms the given raw data into a value instance.
-   *
-   * @param mixed $data
-   * @param ValueInterface|null $parent
-   * @return mixed
-   * @throws Exception
-   */
-  abstract public function createValue($data, ValueInterface $parent = null);
-
-  /**
    * Return a list of all schemas this field and all of its children depend on.
    *
    * @return null|AbstractSchema[]
@@ -201,14 +191,6 @@ abstract class AbstractField extends Model
       'type'         => strtolower($this->type),
     );
   }
-
-  /**
-   * Returns the data of this value as required by the cp editor.
-   *
-   * @param mixed $value
-   * @return mixed
-   */
-  abstract public function getEditorValue($value);
 
   /**
    * @param mixed $value
@@ -315,6 +297,28 @@ abstract class AbstractField extends Model
   }
 
 
+  // Abstract methods
+  // ----------------
+
+  /**
+   * Transforms the given raw data into a value instance.
+   *
+   * @param mixed $data
+   * @param ValueInterface|null $parent
+   * @return mixed
+   * @throws Exception
+   */
+  abstract public function createValue($data, ValueInterface $parent = null);
+
+  /**
+   * Returns the data of this value as required by the cp editor.
+   *
+   * @param mixed $value
+   * @return mixed
+   */
+  abstract public function getEditorValue($value);
+
+
   // Private methods
   // ---------------
 
@@ -339,7 +343,7 @@ abstract class AbstractField extends Model
   }
 
   /**
-   * @return array
+   * @return array|null
    */
   private function getEditorGroupStyle() {
     $group = [];

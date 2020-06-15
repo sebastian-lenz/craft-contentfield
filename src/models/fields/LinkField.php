@@ -57,6 +57,11 @@ class LinkField extends AbstractField
    */
   const NAME = 'link';
 
+  /**
+   * @var array
+   */
+  const LINK_TYPES = ['input', 'element'];
+
 
   /**
    * @inheritdoc
@@ -114,5 +119,75 @@ class LinkField extends AbstractField
       'type'            => $value->type,
       'url'             => $value->url,
     );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function rules() {
+    return array_merge(parent::rules(), [
+      ['allowNewWindow', 'boolean'],
+      ['linkTypes', 'validateLinkTypes'],
+      [['allowNewWindow', 'linkTypes'], 'required'],
+    ]);
+  }
+
+  /**
+   * @param string $attribute
+   * @return void
+   */
+  public function validateLinkTypes($attribute) {
+    $value = $this->$attribute;
+    if (!is_array($value)) {
+      return $this->addError($attribute, "$attribute must be an array");
+    }
+
+    foreach ($value as $name => $data) {
+      $this->validateLinkType(function($message) use ($name, $attribute) {
+        $this->addError($attribute, "Link type `$name`: $message");
+      }, $data);
+    }
+  }
+
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @param callable $callback
+   * @param mixed $info
+   * @return void
+   */
+  protected function validateLinkType(callable $callback, $info) {
+    if (!is_array($info)) {
+      return $callback("Definition must be an array");
+    }
+
+    // Validate label
+    if (!array_key_exists('label', $info)) {
+      return $callback("Property `label` is missing");
+    }
+
+    if (!is_string($info['label'])) {
+      return $callback("Property `label` must be a string");
+    }
+
+    // Validate type
+    if (!array_key_exists('type', $info)) {
+      return $callback("Property `type` is missing");
+    }
+
+    $type = $info['type'];
+    if (!in_array($type, self::LINK_TYPES)) {
+      return $callback("The type `{$type}` is invalid.");
+    }
+
+    // Validate element type
+    if ($type == 'element') {
+      $elementType = ReferenceMap::normalizeElementType($info['elementType']);
+      if (!class_exists($elementType)) {
+        return $callback("The element type `{$elementType}` is invalid.");
+      }
+    }
   }
 }
