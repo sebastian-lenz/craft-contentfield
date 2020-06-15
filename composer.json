@@ -15,7 +15,7 @@
     "symfony/yaml": "^3.4"
   },
   "require-dev": {
-    "codeception/codeception": "^3.0",
+    "codeception/codeception": "^3.1",
     "codeception/mockery-module": "^0.3",
     "codeception/specify": "^0.4",
     "codeception/verify": "^1.0",
@@ -26,8 +26,8 @@
   },
   "autoload": {
     "psr-4": {
-      "lenz\\contentfield\\": "src/",
-      "lenz\\contentfield\\tests\\": "tests/"
+      "lenz\\contentfield\\tests\\": "tests/",
+      "lenz\\contentfield\\": "src/"
     }
   },
   "scripts": {
