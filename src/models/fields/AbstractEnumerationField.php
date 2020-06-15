@@ -2,7 +2,6 @@
 
 namespace lenz\contentfield\models\fields;
 
-use Craft;
 use craft\base\ElementInterface;
 use Exception;
 use lenz\contentfield\models\enumerations\EnumerationInterface;
@@ -10,7 +9,6 @@ use lenz\contentfield\models\enumerations\StaticEnumeration;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\EnumerationValue;
 use lenz\contentfield\models\values\ValueInterface;
-use Throwable;
 
 /**
  * Class AbstractEnumField
@@ -51,30 +49,8 @@ abstract class AbstractEnumerationField extends AbstractField
     }
 
     if (isset($config['enumeration'])) {
-      try {
-        if (is_array($config['enumeration'])) {
-          $enumClass = $config['enumeration']['type'];
-          $enumOptions = $config['enumeration'];
-        } else {
-          $enumClass = (string)$config['enumeration'];
-          $enumOptions = [];
-        }
-
-        $enum = new $enumClass($enumOptions);
-        if (!($enum instanceof EnumerationInterface)) {
-          throw new Exception(sprintf('Invalid enumeration class given, %s must implement EnumerationInterface.', $enumClass));
-        } else {
-          $this->_enumeration = $enum;
-        }
-      } catch (Throwable $error) {
-        Craft::warning($error->getMessage());
-      }
-
+      $this->_enumeration = $this->createEnumeration($config['enumeration']);
       unset($config['enumeration']);
-    }
-
-    if (!isset($this->_enumeration)) {
-      $this->_enumeration = new StaticEnumeration();
     }
 
     parent::__construct($schema, $config);
@@ -94,7 +70,7 @@ abstract class AbstractEnumerationField extends AbstractField
   public function getEditorData(ElementInterface $element = null) {
     $options = array_map(function($option) {
       return array_intersect_key($option, self::ALLOWED_OPTION_KEYS);
-    }, $this->_enumeration->getOptions());
+    }, $this->getEnumeration()->getOptions());
 
     return parent::getEditorData($element) + array(
       'defaultValue' => $this->defaultValue,
@@ -117,6 +93,36 @@ abstract class AbstractEnumerationField extends AbstractField
    * @return EnumerationInterface
    */
   public function getEnumeration() {
+    if (!($this->_enumeration instanceof EnumerationInterface)) {
+      $this->_enumeration = new StaticEnumeration();
+    }
+
     return $this->_enumeration;
+  }
+
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @param array|string $config
+   * @return EnumerationInterface
+   * @throws Exception
+   */
+  private function createEnumeration($config) {
+    if (is_array($config)) {
+      $enumClass = $config['type'];
+      $enumOptions = $config;
+    } else {
+      $enumClass = (string)$config;
+      $enumOptions = [];
+    }
+
+    $enum = new $enumClass($enumOptions);
+    if (!($enum instanceof EnumerationInterface)) {
+      throw new Exception(sprintf('Invalid enumeration class given, %s must implement EnumerationInterface.', $enumClass));
+    }
+
+    return $enum;
   }
 }
