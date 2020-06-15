@@ -13,6 +13,11 @@ use lenz\contentfield\Plugin;
 class Endpoint
 {
   /**
+   * @var string
+   */
+  public $embedClass;
+
+  /**
    * @var Provider
    */
   public $provider;
@@ -39,6 +44,10 @@ class Endpoint
     $this->url = array_key_exists('url', $config)
       ? (string)$config['url']
       : '';
+
+    $this->embedClass = array_key_exists('embedClass', $config)
+      ? (string)$config['embedClass']
+      : OEmbed::class;
 
     if (array_key_exists('schemes', $config) && is_array($config['schemes'])) {
       foreach ($config['schemes'] as $scheme) {
@@ -72,9 +81,11 @@ class Endpoint
       ->oembeds
       ->fetchJson((string)$endpoint);
 
+    $embedClass = $this->embedClass;
+
     return is_null($data)
       ? null
-      : new OEmbed($this, $url, $data);
+      : new $embedClass($this, $url, $data);
   }
 
   /**

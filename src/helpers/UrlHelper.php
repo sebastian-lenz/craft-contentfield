@@ -42,6 +42,13 @@ class UrlHelper
   }
 
   /**
+   * @return string
+   */
+  public function getHost() {
+    return $this->_parts['host'];
+  }
+
+  /**
    * @return array
    */
   public function getQuery() {
@@ -56,6 +63,13 @@ class UrlHelper
     }
 
     return $result;
+  }
+
+  /**
+   * @param string $value
+   */
+  public function setHost(string $value) {
+    $this->_parts['host'] = $value;
   }
 
   /**

@@ -31,6 +31,7 @@ class OEmbeds extends Component
       "provider_url" => "https://www.youtube.com/",
       "endpoints" => [
         [
+          "embedClass" => oembeds\YouTubeEmbed::class,
           "schemes" => [
             "http://youtu.be/*",
             "http://www.youtube.com/*",
