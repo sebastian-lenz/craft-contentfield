@@ -131,13 +131,6 @@ class RedactorField extends AbstractField
   }
 
   /**
-   * @return bool
-   */
-  public function hasRedactor() {
-    return class_exists(self::REDACTOR_FIELD_CLASS);
-  }
-
-  /**
    * @inheritDoc
    */
   public function rules() {
