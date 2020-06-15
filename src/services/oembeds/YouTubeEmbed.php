@@ -31,7 +31,7 @@ class YouTubeEmbed extends OEmbed
       $originalQuery = $originalUrl->getQuery();
 
       if (isset($originalQuery['index']) && is_numeric($originalQuery['index'])) {
-        $query['index'] = $originalQuery['index'];
+        $query['index'] = ($originalQuery['index'] - 1);
         $url->setQuery($query);
       }
     }
