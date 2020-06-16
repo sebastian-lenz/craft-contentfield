@@ -157,21 +157,9 @@ class ReferenceField extends AbstractField
    * @return integer|null
    */
   private function getLimit() {
-    if (isset($this->limit)) {
-      return $this->limit;
-    }
-
-    if (isset($this->elementType) && is_string($this->elementType)) {
-      $elementType = strtolower($this->elementType);
-      if (
-        $elementType === 'asset' ||
-        $elementType === 'entry'
-      ) {
-        return 1;
-      }
-    }
-
-    return null;
+    return isset($this->limit) && is_numeric($this->limit)
+      ? intval($this->limit)
+      : null;
   }
 
   /**
