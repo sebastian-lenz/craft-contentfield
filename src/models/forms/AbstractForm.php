@@ -93,7 +93,8 @@ abstract class AbstractForm
     }
 
     try {
-      $this->setAttributes($attributes);
+      $this->setPostAttributes($attributes);
+
       if (!$this->validate()) {
         $this->_genericError = self::ERROR_VALIDATION_FAILED;
       } elseif (!$this->submit($event)) {
@@ -146,6 +147,13 @@ abstract class AbstractForm
    */
   public function setInstance(InstanceValue $instance) {
     $this->_instance = $instance;
+  }
+
+  /**
+   * @param array $values
+   */
+  public function setPostAttributes($values) {
+    $this->setAttributes($values);
   }
 
 
