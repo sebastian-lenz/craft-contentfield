@@ -75,14 +75,14 @@ class YamlAwareTemplateLoader extends TemplateLoader
       throw new Exception('View is required on template loaders.');
     }
 
-    $template = $this->view->resolveTemplate($name);
+    $template = $this->view->resolveTemplate($name, View::TEMPLATE_MODE_SITE);
 
     if ($template === false || !is_readable($template)) {
       throw new TemplateLoaderException($name,
         Craft::t(
           'app',
-          'The template at `{path}` could not be read, check file permissions.',
-          ['path' => $template]
+          'The template `{name}` at `{path}` could not be read, check file permissions.',
+          ['name' => $name, 'path' => $template]
         )
       );
     }

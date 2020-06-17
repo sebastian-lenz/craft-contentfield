@@ -1,0 +1,51 @@
+actor: Tester
+paths:
+  tests: tests
+  log: tests/_output
+  data: tests/_data
+  support: tests/_support
+  envs: tests/_envs
+bootstrap: _bootstrap.php
+settings:
+  colors: true
+  memory_limit: 2048M
+coverage:
+  enabled: true
+  include:
+    - src/*
+  exclude:
+    - src/assets/*
+    - src/migrations/*
+    - src/templates/*
+    - src/translations/*
+params:
+  - tests/.env
+modules:
+  config:
+    \craft\test\Craft:
+      configFile: 'tests/_craft/config/test.php'
+      entryUrl: 'https://contentfield.test/index.php'
+      projectConfig: {}
+      migrations: []
+      fullMock: false
+      plugins:
+        - handle: contentfield
+        - handle: redactor
+
+      # Should tests and fixtures be cleaned
+      cleanup: true
+
+      # Wrap in transaction
+      transaction: true
+
+      # What DB setup work do we need to do.
+      dbSetup:
+        clean: true
+        setupCraft: true
+
+    DataFactory:
+      factories: tests/_craft/config/factories
+      depends: \craft\test\Craft
+
+groups:
+  fields: [tests/unit/fieldTypes]

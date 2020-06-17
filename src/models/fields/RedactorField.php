@@ -4,7 +4,7 @@ namespace lenz\contentfield\models\fields;
 
 use Craft;
 use craft\base\ElementInterface;
-use lenz\contentfield\helpers\RedactorSettings;
+use lenz\contentfield\helpers\RedactorFieldProxy;
 use lenz\contentfield\models\values\RedactorValue;
 use lenz\contentfield\models\values\ValueInterface;
 use Throwable;
@@ -37,14 +37,14 @@ class RedactorField extends AbstractField
   public $translatable = true;
 
   /**
+   * @var RedactorFieldProxy|null
+   */
+  private $_proxy;
+
+  /**
    * The internal name of this widget.
    */
   const NAME = 'redactor';
-
-  /**
-   * The class name of the redactor field.
-   */
-  const REDACTOR_FIELD_CLASS = '\\craft\\redactor\\Field';
 
 
   /**
@@ -76,29 +76,15 @@ class RedactorField extends AbstractField
   }
 
   /**
-   * @return \lenz\contentfield\helpers\RedactorSettings|null
-   */
-  public function getRedactorField() {
-    try {
-      return new RedactorSettings([
-        'purifierConfig' => $this->purifierConfig,
-        'redactorConfig' => $this->redactorConfig,
-      ]);
-    } catch (Throwable $error) { }
-
-    return null;
-  }
-
-  /**
    * @param ElementInterface|null $element
    * @return array
    */
   public function getRedactorSettings(ElementInterface $element = null) {
     try {
-      return $this->getRedactorField()->getFieldSettings($element);
+      return $this->getRedactorFieldProxy()->getFieldSettings($element);
     } catch (Throwable $error) { }
 
-    return array();
+    return [];
   }
 
   /**
@@ -121,20 +107,13 @@ class RedactorField extends AbstractField
     }
 
     try {
-      $field = $this->getRedactorField();
+      $field = $this->getRedactorFieldProxy();
       return $field->serializeValue($value, $value->getElement());
     } catch (Throwable $error) {
       Craft::error($error->getMessage());
     }
 
     return $value->getRawContent();
-  }
-
-  /**
-   * @return bool
-   */
-  public function hasRedactor() {
-    return class_exists(self::REDACTOR_FIELD_CLASS);
   }
 
   /**
@@ -149,5 +128,27 @@ class RedactorField extends AbstractField
         [['searchable', 'translatable'], 'boolean'],
       ]
     );
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * @return RedactorFieldProxy|null
+   */
+  private function getRedactorFieldProxy() {
+    if (!isset($this->_proxy)) {
+      try {
+        $this->_proxy = new RedactorFieldProxy([
+          'purifierConfig' => $this->purifierConfig,
+          'redactorConfig' => $this->redactorConfig,
+        ]);
+      } catch (Throwable $error) {
+        $this->_proxy = null;
+      }
+    }
+
+    return $this->_proxy;
   }
 }
