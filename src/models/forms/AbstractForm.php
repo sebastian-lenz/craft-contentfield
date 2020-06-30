@@ -15,6 +15,7 @@ use lenz\contentfield\models\values\LinkValue;
 use lenz\contentfield\models\values\ReferenceValue;
 use Throwable;
 use yii\base\Request;
+use yii\web\UploadedFile;
 
 /**
  * Class AbstractForm
@@ -50,6 +51,11 @@ abstract class AbstractForm
   const ERROR_SUBMIT_FAILED = 'SUBMIT_FAILED';
   const ERROR_UNKNOWN = 'UNKNOWN';
   const ERROR_VALIDATION_FAILED = 'VALIDATION_FAILED';
+
+  /**
+   * Defines the validators that declare an attribute to be a file.
+   */
+  const FILE_VALIDATORS = ['file', 'image'];
 
 
   /**
@@ -161,6 +167,30 @@ abstract class AbstractForm
   // -----------------
 
   /**
+   * @param array $result
+   * @return array
+   */
+  protected function getPostedFiles($result = []) {
+    $name = $this->getPostedParamName();
+    if (is_null($name)) {
+      return $result;
+    }
+
+    foreach ($this->rules() as $rule) {
+      list($fields, $validator) = $rule;
+      if (!in_array($validator, static::FILE_VALIDATORS)) {
+        continue;
+      }
+
+      foreach (is_array($fields) ? $fields : array($fields) as $field) {
+        $result[$field] = UploadedFile::getInstanceByName($name . '[' . $field . ']');
+      }
+    }
+
+    return $result;
+  }
+
+  /**
    * Returns the posted form data.
    *
    * @param Request $request
@@ -181,7 +211,7 @@ abstract class AbstractForm
 
     $param = $request->getParam($name);
     return is_array($param)
-      ? $param
+      ? $this->getPostedFiles($param)
       : null;
   }
 
