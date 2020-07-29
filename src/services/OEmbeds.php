@@ -26,19 +26,32 @@ class OEmbeds extends Component
    * @var array
    */
   static $CUSTOM_DEFINITIONS = [
-    'youtube' => [
-      "provider_name" => "YouTube",
-      "provider_url" => "https://www.youtube.com/",
-      "endpoints" => [
+    'podigee' => [
+      'provider_name' => 'Podigee',
+      'provider_url' => 'https://www.podigee.com/',
+      'endpoints' => [
         [
-          "embedClass" => oembeds\YouTubeEmbed::class,
-          "schemes" => [
-            "http://youtu.be/*",
-            "http://www.youtube.com/*",
-            "https://youtu.be/*",
-            "https://www.youtube.com/*",
+          'schemes' => [
+            'http://*.podigee.io/*',
+            'https://*.podigee.io/*',
           ],
-          "url" => "https://www.youtube.com/oembed",
+          'url' => 'https://embed.podigee.com/oembed',
+        ]
+      ]
+    ],
+    'youtube' => [
+      'provider_name' => 'YouTube',
+      'provider_url' => 'https://www.youtube.com/',
+      'endpoints' => [
+        [
+          'embedClass' => oembeds\YouTubeEmbed::class,
+          'schemes' => [
+            'http://youtu.be/*',
+            'http://www.youtube.com/*',
+            'https://youtu.be/*',
+            'https://www.youtube.com/*',
+          ],
+          'url' => 'https://www.youtube.com/oembed',
         ]
       ]
     ]
