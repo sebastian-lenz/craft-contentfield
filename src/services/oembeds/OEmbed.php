@@ -5,6 +5,7 @@ namespace lenz\contentfield\services\oembeds;
 use DOMDocument;
 use DOMElement;
 use lenz\contentfield\helpers\UrlHelper;
+use Throwable;
 use yii\base\BaseObject;
 use yii\base\InvalidCallException;
 use yii\base\UnknownPropertyException;
@@ -203,6 +204,7 @@ class OEmbed extends BaseObject
 
   /**
    * @return string
+   * @noinspection PhpUnused
    */
   public function getOriginalUrl() {
     return $this->_originalUrl;
@@ -220,7 +222,7 @@ class OEmbed extends BaseObject
 
       try {
         $doc = new DOMDocument();
-        $doc->loadHTML($html, LIBXML_HTML_NOIMPLIED);
+        $doc->loadHTML($html, constant('LIBXML_HTML_NOIMPLIED'));
         $element = $doc->documentElement;
 
         if (isset($options['attributes'])) {
@@ -229,6 +231,8 @@ class OEmbed extends BaseObject
 
         $this->modifyQuery($element, $options);
         $html = $doc->saveHTML($element);
+      } catch (Throwable $error) {
+        // Just ignore this error
       } finally {
         libxml_use_internal_errors($oldErrorMode);
       }
