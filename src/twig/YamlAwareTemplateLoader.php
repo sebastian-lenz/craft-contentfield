@@ -11,6 +11,7 @@ use craft\web\View;
 use Exception;
 use lenz\contentfield\Config;
 use lenz\contentfield\exceptions\YamlException;
+use lenz\contentfield\models\schemas\AbstractSchema;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
@@ -191,7 +192,10 @@ class YamlAwareTemplateLoader extends TemplateLoader
     } else {
       $sourceOffset = count(explode("\n", $yaml)) - 1;
       try {
-        $preamble = Yaml::parse($yaml);
+        $preamble = AbstractSchema::expandConfig(
+          Yaml::parse($yaml),
+          ['allowStructures' => true]
+        );
       } catch (ParseException $error) {
         throw new YamlException($error, $path);
       }
