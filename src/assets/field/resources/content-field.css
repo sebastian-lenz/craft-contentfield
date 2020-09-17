@@ -802,8 +802,22 @@
 .tcfInstancePreview--content h3,
 .tcfInstancePreview--content h4,
 .tcfInstancePreview--content h5,
-.tcfInstancePreview--content p {
-  margin: 8px 0;
+.tcfInstancePreview--content p,
+.tcfInstancePreview--content ul,
+.tcfInstancePreview--content dl,
+.tcfInstancePreview--content li {
+  margin: 0 0 8px;
+}
+.tcfInstancePreview--content h1:last-child,
+.tcfInstancePreview--content h2:last-child,
+.tcfInstancePreview--content h3:last-child,
+.tcfInstancePreview--content h4:last-child,
+.tcfInstancePreview--content h5:last-child,
+.tcfInstancePreview--content p:last-child,
+.tcfInstancePreview--content ul:last-child,
+.tcfInstancePreview--content dl:last-child,
+.tcfInstancePreview--content li:last-child {
+  margin-bottom: 0;
 }
 .tcfInstancePreview--content .row {
   display: flex;
@@ -884,6 +898,11 @@
 }
 .tcfInstancePreview--content dd {
   flex: 1;
+}
+.tcfInstancePreview--content .pill {
+  padding: 0 8px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 8px;
 }
 .tcfInstancePreview--content .snippet {
   overflow: hidden;
@@ -1370,17 +1389,14 @@
 
 .tcfInstanceWidget {
   padding: 15px;
-  border: 1px solid rgba(0,0,20,0.1);
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 .tcfInstanceWidget--collapsiblePanel {
   position: relative;
   overflow: hidden;
   background: #f1f5f8;
-}
-.tcfInstanceWidget--collapsiblePanel.depth-1 {
-  border: 1px solid #dedee1;
-}
-.tcfInstanceWidget--collapsiblePanel:not(.depth-1) {
+  border-radius: 5px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.2);
 }
 .tcfInstanceWidget--collapsiblePanel.isExpanded:not(.depth-1) {
