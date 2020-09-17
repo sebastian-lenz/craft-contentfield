@@ -111,8 +111,8 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
     }
 
     $attribs = [
-        'href' => $this->getUrl(),
-      ] + $extraAttribs;
+      'href' => $this->getUrl(),
+    ] + $extraAttribs;
 
     if ($this->openInNewWindow) {
       $attribs['target'] = '_blank';

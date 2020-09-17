@@ -100,4 +100,18 @@ class StructureDefinitions extends AbstractDefinitions
 
     return array_merge($parent, $config);
   }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param array $definitions
+   * @return array
+   */
+  static public function transformDefinitions(array $definitions) {
+    return array_map(function($definition) {
+      return AbstractSchema::expandConfig($definition);
+    }, $definitions);
+  }
 }

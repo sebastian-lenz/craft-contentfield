@@ -5,6 +5,8 @@ namespace lenz\contentfield\models\schemas;
 use Craft;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
+use craft\helpers\ArrayHelper;
+use Error;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
@@ -623,5 +625,45 @@ abstract class AbstractSchema extends Model
     }
 
     return $qualifier;
+  }
+
+  /**
+   * @param array $definitions
+   * @param array $options
+   * @return array
+   */
+  static public function expandConfig(array $definitions, array $options = []) {
+    $triggers = [
+      '.' => ['fields', ArrayHelper::getValue($definitions, 'fields', [])],
+    ];
+
+    if (array_key_exists('allowStructures', $options) && $options['allowStructures']) {
+      $triggers['+'] = ['structures', ArrayHelper::getValue($definitions, 'structures', [])];
+    }
+
+    foreach ($triggers as list($name, &$value)) {
+      if (!is_array($value)) {
+        throw new Error("The schema attribute `$name` must be an array.");
+      }
+    }
+
+    $definitions = array_filter($definitions, function($value, $key) use (&$triggers) {
+      if (array_key_exists($key[0], $triggers)) {
+        $triggers[$key[0]][1][substr($key, 1)] = $value;
+        return false;
+      } else {
+        return true;
+      }
+    }, ARRAY_FILTER_USE_BOTH);
+
+    foreach ($triggers as list($name, &$value)) {
+      $definitions[$name] = $name === 'structures'
+        ? array_map(function($definition) {
+            return self::expandConfig($definition);
+          }, $value)
+        : $value;
+    }
+
+    return $definitions;
   }
 }

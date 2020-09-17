@@ -47,13 +47,19 @@ class IteratorLoop implements Iterator, LoopInterface
    */
   public function getSiblings($limit = null, $only = null, $until = null) {
     $siblings = [];
+    $filter = null;
 
     if (!is_null($limit) && !is_numeric($limit)) {
       throw new Exception('"Limit" must be an numeric value');
     }
 
-    if (!is_null($only) && !is_string($only) && !is_array($only)) {
-      throw new Exception('"Only" must be a string or an array of strings');
+    if (!is_null($only)) {
+      if (is_callable($only)) {
+        $filter = $only;
+        $only = null;
+      } elseif (!is_string($only) && !is_array($only)) {
+        throw new Exception('"Only" must be a string, an array of strings or an arrow function');
+      }
     }
 
     if (!is_null($until) && !is_string($until) && !is_array($until)) {
@@ -67,8 +73,9 @@ class IteratorLoop implements Iterator, LoopInterface
       }
 
       if (
-        (!is_null($only)  && !$next->getSchema()->matchesQualifier($only)) ||
-        (!is_null($until) &&  $next->getSchema()->matchesQualifier($until))
+        (!is_null($filter) && !$filter($next)) ||
+        (!is_null($only)   && !$next->getSchema()->matchesQualifier($only)) ||
+        (!is_null($until)  &&  $next->getSchema()->matchesQualifier($until))
       ) {
         break;
       }

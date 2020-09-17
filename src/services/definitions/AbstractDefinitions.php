@@ -182,7 +182,9 @@ abstract class AbstractDefinitions
     foreach ($sources as $key => $source) {
       $definitions = array_merge(
         $definitions,
-        Yaml::parseFile($source['pathname'])
+        static::transformDefinitions(
+          Yaml::parseFile($source['pathname'])
+        )
       );
     }
 
@@ -245,5 +247,17 @@ abstract class AbstractDefinitions
     return empty($config)
       ? $parent
       : $this->mergeDefinitions($config, $parent);
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param array $definitions
+   * @return array
+   */
+  static public function transformDefinitions(array $definitions) {
+    return $definitions;
   }
 }

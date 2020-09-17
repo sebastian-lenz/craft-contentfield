@@ -21,16 +21,21 @@ class SiblingsTokenParser extends AbstractTokenParser
     'with',
   ];
 
+  const ALLOW_FUNCTION = ['only'];
+
+
   /**
    * @inheritdoc
    */
   public function parse(Token $token) {
-    $parser = $this->parser;
-    $stream = $parser->getStream();
-    $nodes  = [];
+    $parser     = $this->parser;
+    $expression = $parser->getExpressionParser();
+    $stream     = $parser->getStream();
+    $nodes      = [];
 
     while ($next = $stream->nextIf(Token::NAME_TYPE, self::ATTRIBUTES)) {
-      $nodes[$next->getValue()] = $this->parser->getExpressionParser()->parseExpression();
+      $name = $next->getValue();
+      $nodes[$name] = $expression->parseExpression(0, in_array($name, self::ALLOW_FUNCTION));
     }
 
     $stream->expect(Token::BLOCK_END_TYPE);

@@ -26,6 +26,15 @@ class InstanceField extends AbstractField
   public $collapsible = false;
 
   /**
+   * The name of the default schema which will be created if the instance
+   * is empty. When not provided the first schema from the list of available
+   * schemas will be used.
+   *
+   * @var string|null
+   */
+  public $defaultSchema = null;
+
+  /**
    * The list of allowed schemas. Supports wildcards.
    *
    * @var string[]
@@ -85,16 +94,35 @@ class InstanceField extends AbstractField
       : null;
 
     if (is_null($schema) || !$this->isValidSchema($schema)) {
-      $schemas = $this->getResolvedSchemas();
-      $defaultSchema = reset($schemas);
-      if (!$defaultSchema) {
-        throw new Exception(sprintf('No schema available on field `%s`.', $this->name));
-      }
-
+      $defaultSchema = $this->getDefaultSchema();
       $data[InstanceValue::TYPE_PROPERTY] = $defaultSchema->qualifier;
     }
 
     return Plugin::getInstance()->schemas->createValue($data, $parent, $this);
+  }
+
+  /**
+   * @return AbstractSchema
+   * @throws Throwable
+   */
+  public function getDefaultSchema() {
+    $defaultSchema = $this->defaultSchema;
+    $schemas = $this->getResolvedSchemas();
+
+    if (!empty($defaultSchema)) {
+      foreach ($schemas as $schema) {
+        if ($schema->matchesQualifier($defaultSchema)) {
+          return $schema;
+        }
+      }
+    }
+
+    $schema = reset($schemas);
+    if (!$schema) {
+      throw new Exception(sprintf('No schema available on field `%s`.', $this->name));
+    }
+
+    return $schema;
   }
 
   /**
