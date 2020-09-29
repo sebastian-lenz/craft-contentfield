@@ -3,6 +3,7 @@
 namespace lenz\contentfield\utilities;
 
 use Craft;
+use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
 use craft\web\assets\cp\CpAsset;
 use craft\web\View;
@@ -69,7 +70,12 @@ class IconPage extends AbstractPage
     $data = Json::decode(file_get_contents($path));
 
     foreach ($data['icons'] as $icon) {
-      $ligatures = explode(',', $icon['properties']['ligatures']);
+      $ligatures = ArrayHelper::getValue($icon, ['properties', 'ligatures']);
+      if (is_null($ligatures)) {
+        continue;
+      }
+
+      $ligatures = explode(',', $ligatures);
       $result[] = trim($ligatures[0]);
     }
 
