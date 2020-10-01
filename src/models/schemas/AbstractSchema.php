@@ -641,7 +641,7 @@ abstract class AbstractSchema extends Model
       $triggers['+'] = ['structures', ArrayHelper::getValue($definitions, 'structures', [])];
     }
 
-    foreach ($triggers as list($name, &$value)) {
+    foreach ($triggers as list($name, $value)) {
       if (!is_array($value)) {
         throw new Error("The schema attribute `$name` must be an array.");
       }
@@ -656,7 +656,7 @@ abstract class AbstractSchema extends Model
       }
     }, ARRAY_FILTER_USE_BOTH);
 
-    foreach ($triggers as list($name, &$value)) {
+    foreach ($triggers as list($name, $value)) {
       $definitions[$name] = $name === 'structures'
         ? array_map(function($definition) {
             return self::expandConfig($definition);
