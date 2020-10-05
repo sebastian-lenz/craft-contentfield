@@ -110,7 +110,7 @@ class OEmbed extends BaseObject
   /**
    * @var array
    */
-  protected $_attributes;
+  protected $_attributes = [];
 
   /**
    * @var Endpoint
