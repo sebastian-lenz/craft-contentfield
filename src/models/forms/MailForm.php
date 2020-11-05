@@ -55,6 +55,20 @@ class MailForm extends AbstractForm
   // -----------------
 
   /**
+   * Creates the message about to be sent.
+   *
+   * @return Message
+   */
+  protected function createMessage() {
+    return new Message([
+      'from'     => $this->getMessageFrom(),
+      'subject'  => $this->getMessageSubject(),
+      'to'       => $this->getMessageTo(),
+      'textBody' => $this->getMessageBody(),
+    ]);
+  }
+
+  /**
    * Transforms a single attribute to a chunk of text.
    *
    * By default this returns a text like this:
@@ -183,21 +197,13 @@ class MailForm extends AbstractForm
     return 'info@' . $host;
   }
 
-
   /**
    * @inheritDoc
    */
   protected function submit(BeforeActionEvent $event) {
-    $options = [
-      'from'     => $this->getMessageFrom(),
-      'subject'  => $this->getMessageSubject(),
-      'to'       => $this->getMessageTo(),
-      'textBody' => $this->getMessageBody(),
-    ];
-
     try {
-      $message = new Message($options);
-      $result  = Craft::$app->mailer->send($message);
+      $message = $this->createMessage();
+      $result = Craft::$app->mailer->send($message);
 
       if ($result) {
         $this->tryRedirect($event);
