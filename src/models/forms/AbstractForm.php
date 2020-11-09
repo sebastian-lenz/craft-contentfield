@@ -89,7 +89,7 @@ abstract class AbstractForm
     }
 
     if (!$request->validateCsrfToken()) {
-      $this->_genericError = self::ERROR_INVALID_CSRF_TOKEN;
+      $this->setGenericError(self::ERROR_INVALID_CSRF_TOKEN);
       return;
     }
 
@@ -102,14 +102,14 @@ abstract class AbstractForm
       $this->setPostAttributes($attributes);
 
       if (!$this->validate()) {
-        $this->_genericError = self::ERROR_VALIDATION_FAILED;
+        $this->setGenericError(self::ERROR_VALIDATION_FAILED);
       } elseif (!$this->submit($event)) {
-        $this->_genericError = self::ERROR_SUBMIT_FAILED;
+        $this->setGenericError(self::ERROR_SUBMIT_FAILED);
       } else {
         $this->_isSubmitted = true;
       }
     } catch (Throwable $error) {
-      $this->_genericError = self::ERROR_UNKNOWN;
+      $this->setGenericError(self::ERROR_UNKNOWN, $error);
     }
   }
 
@@ -254,6 +254,18 @@ abstract class AbstractForm
     }
 
     return null;
+  }
+
+  /**
+   * Sets the general error state of the form after submission.
+   * This is a good hook if one would wish to record form submission errors.
+   *
+   * @param string|null $value
+   * @param Exception|null $exception
+   * @noinspection PhpUnusedParameterInspection
+   */
+  protected function setGenericError(string $value = null, Exception $exception = null) {
+    $this->_genericError = $value;
   }
 
   /**
