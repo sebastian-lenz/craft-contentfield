@@ -33,6 +33,11 @@ class ReferenceField extends AbstractField
   public $limit;
 
   /**
+   * @var string|null
+   */
+  public $modalStorageKey;
+
+  /**
    * @var string[]|string|null
    */
   public $sources;
@@ -66,13 +71,13 @@ class ReferenceField extends AbstractField
    * @throws Exception
    */
   public function getEditorData(ElementInterface $element = null) {
-    return parent::getEditorData() + array(
-      'criteria'    => $this->getCriteria($element),
-      'elementType' => $this->getElementType(),
-      'limit'       => $this->getLimit(),
-      'sources'     => $this->getSources($element),
-      'viewMode'    => $this->viewMode,
-    );
+    return parent::getEditorData() + array_filter([
+      'criteria'        => $this->getCriteria($element),
+      'elementType'     => $this->getElementType(),
+      'modalStorageKey' => $this->modalStorageKey,
+      'sources'         => $this->getSources($element),
+      'viewMode'        => $this->viewMode,
+    ]);
   }
 
   /**
@@ -102,14 +107,12 @@ class ReferenceField extends AbstractField
    * @inheritdoc
    */
   public function rules() {
-    return array_merge(
-      parent::rules(),
-      array(
-        array('elementType', 'validateElementType'),
-        array('limit',       'integer', 'min' => 1),
-        array('viewMode',    'in', 'range' => array('large', 'small'))
-      )
-    );
+    return array_merge(parent::rules(), [
+      ['elementType', 'validateElementType'],
+      ['limit', 'integer', 'min' => 1],
+      ['modalStorageKey', 'string'],
+      ['viewMode', 'in', 'range' => ['large', 'small']]
+    ]);
   }
 
   /**
