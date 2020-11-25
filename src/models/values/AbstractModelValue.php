@@ -176,7 +176,16 @@ abstract class AbstractModelValue
   }
 
   /**
-   * @inheritDoc
+   * @param string $name
+   * @param mixed $default
+   * @return mixed
+   */
+  public function getConstant(string $name, $default = null) {
+    return $this->_schema->getConstant($name, $default);
+  }
+
+  /**
+   * @return array
    */
   public function getEditorValue() {
     $result = [];
@@ -212,7 +221,7 @@ abstract class AbstractModelValue
   }
 
   /**
-   * @inheritDoc
+   * @return string
    */
   public function getSearchKeywords() {
     return implode(
@@ -224,7 +233,7 @@ abstract class AbstractModelValue
   }
 
   /**
-   * @inheritDoc
+   * @return array
    */
   public function getSerializedValue() {
     $result = [];
@@ -250,6 +259,15 @@ abstract class AbstractModelValue
    */
   public function getValues() {
     return $this->_values;
+  }
+
+  /**
+   * @param string|string[] $specs
+   * @return bool
+   * @throws Throwable
+   */
+  public function is($specs) {
+    return $this->_schema->matchesQualifier($specs);
   }
 
   /**
