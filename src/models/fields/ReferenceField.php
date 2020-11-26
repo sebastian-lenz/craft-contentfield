@@ -5,6 +5,8 @@ namespace lenz\contentfield\models\fields;
 use Craft;
 use craft\base\Element;
 use Exception;
+use lenz\contentfield\events\ReferenceFolderSourcesEvent;
+use lenz\contentfield\events\ReferenceSourcesEvent;
 use lenz\contentfield\models\values\ReferenceValue;
 use lenz\contentfield\models\values\ValueInterface;
 use craft\base\ElementInterface;
@@ -33,6 +35,11 @@ class ReferenceField extends AbstractField
   public $limit;
 
   /**
+   * @var string|null
+   */
+  public $modalStorageKey;
+
+  /**
    * @var string[]|string|null
    */
   public $sources;
@@ -52,6 +59,11 @@ class ReferenceField extends AbstractField
    */
   const NAME = 'reference';
 
+  /**
+   * Event triggered when this fields collects the available reference sources.
+   */
+  const EVENT_SOURCES = 'sources';
+
 
   /**
    * @inheritdoc
@@ -66,13 +78,14 @@ class ReferenceField extends AbstractField
    * @throws Exception
    */
   public function getEditorData(ElementInterface $element = null) {
-    return parent::getEditorData() + array(
-      'criteria'    => $this->getCriteria($element),
-      'elementType' => $this->getElementType(),
-      'limit'       => $this->getLimit(),
-      'sources'     => $this->getSources($element),
-      'viewMode'    => $this->viewMode,
-    );
+    return parent::getEditorData() + array_filter([
+      'criteria'        => $this->getCriteria($element),
+      'elementType'     => $this->getElementType(),
+      'limit'           => $this->getLimit(),
+      'modalStorageKey' => $this->modalStorageKey,
+      'sources'         => $this->getSources($element),
+      'viewMode'        => $this->viewMode,
+    ]);
   }
 
   /**
@@ -102,14 +115,12 @@ class ReferenceField extends AbstractField
    * @inheritdoc
    */
   public function rules() {
-    return array_merge(
-      parent::rules(),
-      array(
-        array('elementType', 'validateElementType'),
-        array('limit',       'integer', 'min' => 1),
-        array('viewMode',    'in', 'range' => array('large', 'small'))
-      )
-    );
+    return array_merge(parent::rules(), [
+      ['elementType', 'validateElementType'],
+      ['limit', 'integer', 'min' => 1],
+      ['modalStorageKey', 'string'],
+      ['viewMode', 'in', 'range' => ['large', 'small']]
+    ]);
   }
 
   /**
@@ -167,11 +178,25 @@ class ReferenceField extends AbstractField
    * @return string[]|null
    */
   private function getSources(ElementInterface $element = null) {
+    $sources = null;
     if (isset($this->sources)) {
-      return self::extractSources($this->sources, $element);
+      $sources = self::extractSources($this->sources, $element);
     }
 
-    return null;
+    $eventArgs = [
+      'element' => $element,
+      'field'   => $this,
+      'sources' => $sources,
+    ];
+
+    if ($this->elementType == Asset::class) {
+      $event = new ReferenceFolderSourcesEvent($eventArgs);
+    } else {
+      $event = new ReferenceSourcesEvent($eventArgs);
+    }
+
+    $this->trigger(self::EVENT_SOURCES, $event);
+    return $event->getSources();
   }
 
 
