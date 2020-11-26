@@ -380,7 +380,7 @@
 
 .tcfInstance--controls {
   display: flex;
-  margin: -10px;
+  margin: -10px -10px 10px;
 }
 .tcfInstance--controls > * {
   padding: 10px;
