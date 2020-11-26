@@ -219,7 +219,7 @@ class InputData
         'oembed'         => $urls->createUrl('contentfield/cp/oembed'),
         'translate'      => $urls->createUrl('contentfield/cp/translate'),
       ),
-      'googleMapsApiKey' => $plugin->getSettings()->googleMapsApiKey,
+      'googleMapsApiKey' => $plugin->getSettings()->getGoogleMapsApiKey(),
       'hasTranslator'    => $plugin->translators->hasTranslator(),
       'rootSchemas'      => $this->_rootSchemas,
     ];

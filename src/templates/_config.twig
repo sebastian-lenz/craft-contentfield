@@ -35,10 +35,13 @@
 
 <h2>Fields</h2>
 
-{{- forms.textField({
+{{- forms.autosuggestField({
   label:        'Google Maps API key',
   instructions: 'The Google Maps API key used to display maps in the control panel. Needs access to the "Maps JavaScript API", "Maps Static API" and "Places API" service.',
+  id:           'googleMapsApiKey',
   name:         'googleMapsApiKey',
+  suggestEnvVars: true,
+  suggestAliases: true,
   value:        config.googleMapsApiKey,
 }) -}}
 

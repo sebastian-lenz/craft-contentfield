@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield;
 
+use Craft;
 use craft\base\Model;
 use craft\behaviors\EnvAttributeParserBehavior;
 use craft\helpers\ArrayHelper;
@@ -71,6 +72,13 @@ class Config extends Model
         'attributes' => ['cpCssFile'],
       ],
     ];
+  }
+
+  /**
+   * @return string
+   */
+  public function getGoogleMapsApiKey(): string {
+    return Craft::parseEnv($this->googleMapsApiKey);
   }
 
   /**

@@ -232,12 +232,13 @@ abstract class AbstractSchema extends Model
 
   /**
    * @param string $name
-   * @return mixed|null
+   * @param mixed $default
+   * @return mixed
    */
-  public function getConstant(string $name) {
+  public function getConstant(string $name, $default = null) {
     return array_key_exists($name, $this->constants)
       ? $this->constants[$name]
-      : null;
+      : $default;
   }
 
   /**
