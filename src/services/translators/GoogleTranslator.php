@@ -5,7 +5,7 @@ namespace lenz\contentfield\services\translators;
 use Craft;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
-use lenz\contentfield\helpers\UrlHelper;
+use lenz\craft\utils\models\Url;
 
 /**
  * Class GoogleTranslator
@@ -45,7 +45,7 @@ class GoogleTranslator extends AbstractTranslator
       return null;
     }
 
-    $url = new UrlHelper(self::ENDPOINT);
+    $url = new Url(self::ENDPOINT);
     $url->setQuery([
       'format' => 'html',
       'key'    => $this->_apiKey,

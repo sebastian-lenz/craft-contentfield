@@ -2,8 +2,8 @@
 
 namespace lenz\contentfield\services\oembeds;
 
-use lenz\contentfield\helpers\UrlHelper;
 use lenz\contentfield\Plugin;
+use lenz\craft\utils\models\Url;
 
 /**
  * Class Endpoint
@@ -71,7 +71,7 @@ class Endpoint
    * @return OEmbed|null
    */
   public function getOEmbed($url) {
-    $endpoint = new UrlHelper(str_replace('{format}', 'json', $this->url));
+    $endpoint = new Url(str_replace('{format}', 'json', $this->url));
     $endpoint->setQuery([
       'format' => 'json',
       'url'    => $url,

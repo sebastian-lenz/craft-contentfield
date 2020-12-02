@@ -2,7 +2,7 @@
 
 namespace lenz\contentfield\services\oembeds;
 
-use lenz\contentfield\helpers\UrlHelper;
+use lenz\craft\utils\models\Url;
 
 /**
  * Class YouTubeEmbed
@@ -18,7 +18,7 @@ class YouTubeEmbed extends OEmbed
   /**
    * @inheritDoc
    */
-  protected function modifyUrl(UrlHelper $url, array $options) {
+  protected function modifyUrl(Url $url, array $options) {
     parent::modifyUrl($url, $options);
 
     // YouTube playlists forget to carry over the video index, patch it.
@@ -27,7 +27,7 @@ class YouTubeEmbed extends OEmbed
       isset($query['list']) &&
       !isset($query['index'])
     ) {
-      $originalUrl = new UrlHelper($this->_originalUrl);
+      $originalUrl = new Url($this->_originalUrl);
       $originalQuery = $originalUrl->getQuery();
 
       if (isset($originalQuery['index']) && is_numeric($originalQuery['index'])) {
@@ -38,7 +38,7 @@ class YouTubeEmbed extends OEmbed
 
     // Use the no cookie domain
     if (self::$USE_NOCOOKIE) {
-      $url->setHost('www.youtube-nocookie.com');
+      $url->host = 'www.youtube-nocookie.com';
     }
   }
 }
