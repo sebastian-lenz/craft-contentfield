@@ -4,7 +4,7 @@ namespace lenz\contentfield\services\oembeds;
 
 use DOMDocument;
 use DOMElement;
-use lenz\contentfield\helpers\UrlHelper;
+use lenz\craft\utils\models\Url;
 use Throwable;
 use yii\base\BaseObject;
 use yii\base\InvalidCallException;
@@ -275,16 +275,16 @@ class OEmbed extends BaseObject
       return;
     }
 
-    $url = new UrlHelper($src);
+    $url = new Url($src);
     $this->modifyUrl($url, $options);
     $element->setAttribute('src', (string)$url);
   }
 
   /**
-   * @param UrlHelper $url
+   * @param Url $url
    * @param array $options
    */
-  protected function modifyUrl(UrlHelper $url, array $options) {
+  protected function modifyUrl(Url $url, array $options) {
     if (!isset($options['query'])) {
       return;
     }

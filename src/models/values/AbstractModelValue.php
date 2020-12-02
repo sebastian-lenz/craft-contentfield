@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\values;
 
+use Craft;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
@@ -264,10 +265,14 @@ abstract class AbstractModelValue
   /**
    * @param string|string[] $specs
    * @return bool
-   * @throws Throwable
    */
   public function is($specs) {
-    return $this->_schema->matchesQualifier($specs);
+    try {
+      return $this->_schema->matchesQualifier($specs);
+    } catch (Throwable $e) {
+      Craft::error($e->getMessage());
+      return false;
+    }
   }
 
   /**

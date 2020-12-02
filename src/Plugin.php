@@ -190,6 +190,9 @@ class Plugin extends BasePlugin
     }
   }
 
+  /**
+   * @param Event $event
+   */
   public function onBeforeRequest(Event $event) {
     if (YII_DEBUG) {
       $debugger = Craft::$app->getModule('debug');

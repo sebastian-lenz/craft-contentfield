@@ -5,7 +5,7 @@ namespace lenz\contentfield\services\translators;
 use Craft;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
-use lenz\contentfield\helpers\UrlHelper;
+use lenz\craft\utils\models\Url;
 
 /**
  * Class AzureTranslator
@@ -55,7 +55,7 @@ class AzureTranslator extends AbstractTranslator
       'Content-Length: ' . strlen($body),
     ];
 
-    $url = new UrlHelper(self::ENDPOINT);
+    $url = new Url(self::ENDPOINT);
     $url->setQuery([
       'api-version' => '3.0',
       'from'        => $sourceLanguage,

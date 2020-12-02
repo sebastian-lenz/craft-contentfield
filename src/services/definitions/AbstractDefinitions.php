@@ -4,13 +4,11 @@ namespace lenz\contentfield\services\definitions;
 
 use Craft;
 use Exception;
+use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use RecursiveRegexIterator;
-use RegexIterator;
 use SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
-use Throwable;
 
 /**
  * Class AbstractDefinitions
@@ -108,12 +106,20 @@ abstract class AbstractDefinitions
         'mtime'    => filemtime($file),
       ];
     } elseif (file_exists($path) && is_dir($path)) {
-      $paths = new RecursiveDirectoryIterator($path);
-      $files = new RecursiveIteratorIterator($paths);
-      $filteredFiles = new RegexIterator($files, '/^.+\.yml$/i', RecursiveRegexIterator::GET_MATCH);
+      $fileInfos = new RecursiveCallbackFilterIterator(
+        new RecursiveDirectoryIterator($path),
+        function (SplFileInfo $current) {
+          $fileName = $current->getFilename();
+          return substr($fileName, 0, 1) != '.' && (
+            $current->isDir() ||
+            substr($fileName, -4) == '.yml' ||
+            substr($fileName, -5) == '.yaml'
+          );
+        }
+      );
 
       /** @var SplFileInfo $fileInfo */
-      foreach ($filteredFiles as $fileInfo) {
+      foreach (new RecursiveIteratorIterator($fileInfos) as $fileInfo) {
         $key = $fileInfo->getBasename('.yml');
         $sources[$key] = [
           'pathname' => $fileInfo->getPathname(),
