@@ -144,6 +144,38 @@ class IteratorLoop implements Iterator, LoopInterface
     return $this->_count;
   }
 
+  /**
+   * @return bool
+   */
+  public function hasNext() {
+    return $this->_index < $this->_count - 1;
+  }
+
+  /**
+   * @return bool
+   */
+  public function hasPrevious() {
+    return $this->_index > 0;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function peakNext() {
+    return $this->_index < $this->_count - 1
+      ? $this->_values[$this->_index + 1]
+      : null;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function peakPrevious() {
+    return $this->_index > 0
+      ? $this->_values[$this->_index - 1]
+      : null;
+  }
+
 
   // Iterator implementation
   // -----------------------

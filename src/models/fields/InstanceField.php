@@ -35,6 +35,16 @@ class InstanceField extends AbstractField
   public $defaultSchema = null;
 
   /**
+   * @var string|string[]|null
+   */
+  public $excludes = null;
+
+  /**
+   * @var string[]
+   */
+  public $includes = [];
+
+  /**
    * The list of allowed schemas. Supports wildcards.
    *
    * @var string[]
@@ -67,10 +77,12 @@ class InstanceField extends AbstractField
   public function __construct(AbstractSchema $schema = null, array $config = []) {
     $this->_parentSchema = $schema;
 
-    if (array_key_exists('schemas', $config)) {
-      $config['schemas'] = is_array($config['schemas'])
-        ? $config['schemas']
-        : explode(',', $config['schemas']);
+    foreach (['includes', 'schemas'] as $name) {
+      if (array_key_exists($name, $config)) {
+        $config[$name] = is_array($config[$name])
+          ? $config[$name]
+          : explode(',', $config[$name]);
+      }
     }
 
     parent::__construct($schema, $config);
@@ -176,16 +188,24 @@ class InstanceField extends AbstractField
   public function getResolvedSchemas() {
     if (!isset($this->_resolvedSchemas)) {
       $manager = Plugin::getInstance()->schemas;
-      $parent  = $this->_parentSchema;
+      $parent = $this->_parentSchema;
 
-      $this->_resolvedSchemas = $manager->getSchemas(
+      $schemas = $manager->getSchemas(
         array_map(
           function($schema) use ($parent, $manager) {
             return $manager->parseSchemaQualifier($schema, $parent);
           },
-          $this->schemas
+          array_merge($this->schemas, $this->includes)
         )
       );
+
+      if (isset($this->excludes)) {
+        $schemas = array_filter($schemas, function(AbstractSchema $schema) {
+          return !$schema->matchesQualifier($this->excludes);
+        });
+      }
+
+      $this->_resolvedSchemas = $schemas;
     }
 
     return $this->_resolvedSchemas;
@@ -257,8 +277,10 @@ class InstanceField extends AbstractField
         'member' => array(
             'type' => self::NAME,
           ) + array_intersect_key($config, array(
-            'name'    => true,
-            'schemas' => true,
+            'excludes' => true,
+            'includes' => true,
+            'name'     => true,
+            'schemas'  => true,
           )),
       );
     }
