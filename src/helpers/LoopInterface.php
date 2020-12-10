@@ -57,4 +57,24 @@ interface LoopInterface
    * @return int
    */
   public function getLength();
+
+  /**
+   * @return bool
+   */
+  public function hasNext();
+
+  /**
+   * @return bool
+   */
+  public function hasPrevious();
+
+  /**
+   * @return mixed
+   */
+  public function peakNext();
+
+  /**
+   * @return mixed
+   */
+  public function peakPrevious();
 }

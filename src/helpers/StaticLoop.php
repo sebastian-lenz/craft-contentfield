@@ -62,6 +62,34 @@ class StaticLoop implements LoopInterface
     return 1;
   }
 
+  /**
+   * @return bool
+   */
+  public function hasNext() {
+    return false;
+  }
+
+  /**
+   * @return bool
+   */
+  public function hasPrevious() {
+    return false;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function peakNext() {
+    return null;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function peakPrevious() {
+    return null;
+  }
+
 
   // Static methods
   // --------------
