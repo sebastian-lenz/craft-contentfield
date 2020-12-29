@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\values;
 
+use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\Html;
 use craft\helpers\Template;
@@ -258,6 +259,8 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
     $url = $this->url;
     if (empty($url) || !is_string($url)) {
       $url = '';
+    } elseif ($this->_field->allowAliases) {
+      $url = Craft::getAlias($url);
     }
 
     if (!empty($this->hash)) {

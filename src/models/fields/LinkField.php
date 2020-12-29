@@ -20,6 +20,11 @@ class LinkField extends AbstractField
   /**
    * @var bool
    */
+  public $allowAliases = true;
+
+  /**
+   * @var bool
+   */
   public $allowNewWindow = true;
 
   /**
@@ -126,7 +131,7 @@ class LinkField extends AbstractField
    */
   public function rules() {
     return array_merge(parent::rules(), [
-      ['allowNewWindow', 'boolean'],
+      [['allowAliases', 'allowNewWindow'], 'boolean'],
       ['linkTypes', 'validateLinkTypes'],
       [['allowNewWindow', 'linkTypes'], 'required'],
     ]);
@@ -136,10 +141,11 @@ class LinkField extends AbstractField
    * @param string $attribute
    * @return void
    */
-  public function validateLinkTypes($attribute) {
+  public function validateLinkTypes(string $attribute) {
     $value = $this->$attribute;
     if (!is_array($value)) {
-      return $this->addError($attribute, "$attribute must be an array");
+      $this->addError($attribute, "$attribute must be an array");
+      return;
     }
 
     foreach ($value as $name => $data) {
