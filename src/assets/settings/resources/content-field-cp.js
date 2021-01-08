@@ -1,9 +1,10 @@
 (function($){
-  /** global: contentField */
-  contentField = typeof contentField == 'undefined' ? {} : contentField;
+  /** global: lenz */
+  lenz = typeof lenz == 'undefined' ? {} : lenz;
+  lenz.contentField = typeof lenz.contentField == 'undefined' ? {} : lenz.contentField;
 
   /** global: Garnish */
-  contentField.SettingsTable = Garnish.Base.extend({
+  lenz.contentField.SettingsTable = Garnish.Base.extend({
     init: function(id) {
       var $field = $('#' + id);
 

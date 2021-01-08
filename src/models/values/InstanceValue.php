@@ -11,6 +11,7 @@ use lenz\contentfield\behaviors\InstanceSiblingsBehavior;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\InstanceAwareInterface;
+use lenz\contentfield\helpers\RenderableInterface;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
@@ -29,7 +30,9 @@ use yii\base\Model;
  * @method boolean hasParentInstance($qualifier = null)
  * @method boolean hasPreviousSibling($qualifier = null)
  */
-class InstanceValue extends AbstractModelValue implements DisplayInterface
+class InstanceValue
+  extends AbstractModelValue
+  implements DisplayInterface, RenderableInterface
 {
   /**
    * @var Model|null
@@ -269,12 +272,9 @@ class InstanceValue extends AbstractModelValue implements DisplayInterface
   }
 
   /**
-   * @param array $variables
-   * @param array $options
-   * @return string
-   * @throws Exception
+   * @inheritDoc
    */
-  public function render(array $variables = [], array $options = []) {
+  public function render(array $variables = [], array $options = []): string {
     if (!$this->isVisible()) {
       return '';
     }
@@ -283,7 +283,8 @@ class InstanceValue extends AbstractModelValue implements DisplayInterface
       return $this->_output;
     }
 
-    return $this->getSchema()
+    return $this
+      ->getSchema()
       ->render($this, $variables, $options);
   }
 

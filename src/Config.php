@@ -6,6 +6,8 @@ use Craft;
 use craft\base\Model;
 use craft\behaviors\EnvAttributeParserBehavior;
 use craft\helpers\ArrayHelper;
+use lenz\contentfield\helpers\grids\BootstrapGrid;
+use Throwable;
 
 /**
  * Class Config
@@ -21,6 +23,11 @@ class Config extends Model
    * @var string
    */
   public $googleMapsApiKey = '';
+
+  /**
+   * @var string
+   */
+  public $layoutGridClass = BootstrapGrid::class;
 
   /**
    * @var string
@@ -60,7 +67,10 @@ class Config extends Model
     'templateIndexCache',
     'templateModificationCheck'
   ];
-
+public function __construct($config = [])
+{
+  parent::__construct($config);
+}
 
   /**
    * @inheritDoc
@@ -84,7 +94,7 @@ class Config extends Model
   /**
    * @return array
    */
-  public function getEnvironmentModes() {
+  public function getEnvironmentModes(): array {
     return [
       'never'         => 'Never',
       'always'        => 'Always',
@@ -101,15 +111,19 @@ class Config extends Model
    * @param string $name
    * @return string|null
    */
-  public function getTranslatorSetting(string $handle, string $name) {
-    return ArrayHelper::getValue($this->translatorSettings, [$handle, $name]);
+  public function getTranslatorSetting(string $handle, string $name): ?string {
+    try {
+      return ArrayHelper::getValue($this->translatorSettings, [$handle, $name]);
+    } catch (Throwable $error) {
+      return null;
+    }
   }
 
   /**
    * @param string $handle
    * @return array
    */
-  public function getTranslatorSettings($handle) {
+  public function getTranslatorSettings(string $handle): array {
     if (
       is_array($this->translatorSettings) &&
       array_key_exists($handle, $this->translatorSettings) &&
@@ -139,21 +153,21 @@ class Config extends Model
   /**
    * @return bool
    */
-  public function useTemplateInlining() {
+  public function useTemplateInlining(): bool {
     return $this->resolveEnvironmentMode($this->templateInlining);
   }
 
   /**
    * @return bool
    */
-  public function useTemplateIndexCache() {
+  public function useTemplateIndexCache(): bool {
     return $this->resolveEnvironmentMode($this->templateIndexCache);
   }
 
   /**
    * @return bool
    */
-  public function useTemplateModificationCheck() {
+  public function useTemplateModificationCheck(): bool {
     return $this->resolveEnvironmentMode($this->templateModificationCheck);
   }
 
@@ -161,7 +175,7 @@ class Config extends Model
    * @param string $attribute
    * @return bool
    */
-  public function validateTranslatorSettings($attribute) {
+  public function validateTranslatorSettings(string $attribute): bool {
     return is_array($this->$attribute);
   }
 
@@ -173,7 +187,7 @@ class Config extends Model
    * @param string $mode
    * @return bool
    */
-  private function resolveEnvironmentMode($mode) {
+  private function resolveEnvironmentMode(string $mode): bool {
     switch ($mode) {
       case 'never':
         return false;
@@ -199,7 +213,7 @@ class Config extends Model
   /**
    * @return Config
    */
-  static public function getInstance() {
+  static public function getInstance(): Config {
     return Plugin::getInstance()->getSettings();
   }
 }

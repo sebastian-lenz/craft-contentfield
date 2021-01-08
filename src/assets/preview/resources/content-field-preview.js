@@ -157,7 +157,7 @@
         continue;
       }
 
-      var api = contentField.getInstanceApi(uuid);
+      var api = lenz.contentField.getInstanceApi(uuid);
       if (!api) {
         break;
       }
