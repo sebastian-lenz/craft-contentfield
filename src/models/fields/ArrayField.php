@@ -9,6 +9,7 @@ use lenz\contentfield\models\values\ArrayValue;
 use lenz\contentfield\Plugin;
 use craft\base\ElementInterface;
 use lenz\contentfield\validators\ArrayValueValidator;
+use lenz\contentfield\validators\FieldValidator;
 
 /**
  * Class ArrayField
@@ -24,21 +25,6 @@ class ArrayField extends AbstractField
   public $collapsible = true;
 
   /**
-   * The preview mode to use when elements are collapsed. Affects only
-   * arrays consisting of instances. Defaults to `root`.
-   *
-   * Allowed values are:
-   * - `always`: Always shows the extended preview as defined by the
-   *   `preview` instance property.
-   * - `never`: Never shows a preview, always uses `previewLabel`.
-   * - `root`: Only show the extended preview if the array is at the
-   *   first display level.
-   *
-   * @var string
-   */
-  public $previewMode = 'root';
-
-  /**
    * The maximum number of elements allowed in this array.
    *
    * @var int|mixed
@@ -52,6 +38,21 @@ class ArrayField extends AbstractField
    * @var AbstractField|null
    */
   public $member = null;
+
+  /**
+   * The preview mode to use when elements are collapsed. Affects only
+   * arrays consisting of instances. Defaults to `root`.
+   *
+   * Allowed values are:
+   * - `always`: Always shows the extended preview as defined by the
+   *   `preview` instance property.
+   * - `never`: Never shows a preview, always uses `previewLabel`.
+   * - `root`: Only show the extended preview if the array is at the
+   *   first display level.
+   *
+   * @var string
+   */
+  public $previewMode = 'root';
 
   /**
    * @inheritdoc
@@ -73,10 +74,7 @@ class ArrayField extends AbstractField
         $member = ['type' => $member];
       }
 
-      if (!array_key_exists('name', $member)) {
-        $member['name'] = $config['name'];
-      }
-
+      $member['name'] = $config['name'];
       $member = Plugin::getInstance()
         ->fields
         ->createField($schema, $member);
@@ -179,5 +177,18 @@ class ArrayField extends AbstractField
       [[ArrayValueValidator::class]],
       parent::getValueRules()
     );
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function rules() {
+    return array_merge(parent::rules(), [
+      [['collapsible', 'limit', 'member', 'previewMode'], 'required'],
+      ['collapsible', 'boolean'],
+      ['limit', 'integer'],
+      ['member', FieldValidator::class],
+      ['previewMode', 'in', 'range' => ['always', 'never', 'root']],
+    ]);
   }
 }

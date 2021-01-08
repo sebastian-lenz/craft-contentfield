@@ -11,6 +11,7 @@ use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\IteratorLoop;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
+use lenz\contentfield\helpers\RenderableInterface;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\twig\DisplayInterface;
 use Throwable;
@@ -29,6 +30,7 @@ class ArrayValue
     Countable,
     DisplayInterface,
     ReferenceMappableInterface,
+    RenderableInterface,
     IteratorAggregate,
     ValueTraversableInterface
 {
@@ -219,21 +221,17 @@ class ArrayValue
   }
 
   /**
-   * @param array $variables
-   * @return string
-   * @throws Exception
+   * @inheritDoc
    */
-  public function render(array $variables = []) {
-    $result   = array();
+  public function render(array $variables = [], array $options = []): string {
+    $result = [];
     $iterator = $this->getVisibleIterator();
     $variables['loop'] = $iterator;
 
     foreach ($iterator as $value) {
-      if ($value instanceof InstanceValue) {
-        $result[] = (string)$value->getHtml($variables);
-      } else {
-        $result[] = (string)$value;
-      }
+      $result[] = $value instanceof RenderableInterface
+        ? $value->render($variables, $options)
+        : (string)$value;
     }
 
     return implode('', $result);

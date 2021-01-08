@@ -398,7 +398,7 @@ abstract class AbstractSchema extends Model
     foreach ($validators as $name => $handlers) {
       $id = uniqid();
       $this->fields[$name]->setClientValidationId($id);
-      $result .= 'contentField.registerValidator("' . $id . '", function(attribute, value, messages, deferred, $form) {' . implode('', $handlers) . '});';
+      $result .= 'lenz.contentField.registerValidator("' . $id . '", function(attribute, value, messages, deferred, $form) {' . implode('', $handlers) . '});';
     }
 
     return $result;
@@ -497,13 +497,19 @@ abstract class AbstractSchema extends Model
 
   /**
    * @param string|int $key
-   * @param string|array $config
+   * @param string|array|AbstractField $config
    * @throws Exception
    */
   protected function addField($key, $config) {
     static $fieldManager = null;
     if (is_null($fieldManager)) {
       $fieldManager = Plugin::getInstance()->fields;
+    }
+
+    // If the field is already an instance, use it
+    if ($config instanceof AbstractField) {
+      $this->fields[$config->name] = $config;
+      return;
     }
 
     // If the field is no an array try to load blueprint or use it
@@ -632,6 +638,7 @@ abstract class AbstractSchema extends Model
    * @param array $definitions
    * @param array $options
    * @return array
+   * @throws Exception
    */
   static public function expandConfig(array $definitions, array $options = []) {
     $triggers = [

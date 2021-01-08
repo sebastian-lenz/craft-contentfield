@@ -42,7 +42,7 @@
 
     {% js %}
       {{ data.scripts|raw }}
-      contentField.create("{{ name|namespaceInputId }}");
+      lenz.contentField.create("{{ name|namespaceInputId }}");
     {% endjs %}
   {% endif %}
 {% endnamespace %}
