@@ -822,67 +822,71 @@
 .tcfInstancePreview--content .row {
   display: flex;
   flex-flow: row;
-  margin: 0 -10px;
+  margin: -10px;
+}
+.tcfInstancePreview--content .row > * {
+  box-sizing: border-box;
+  padding: 10px;
 }
 .tcfInstancePreview--content .col-1 {
   box-sizing: border-box;
+  padding: 10px;
   width: 8.333333%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-2 {
   box-sizing: border-box;
+  padding: 10px;
   width: 16.666666%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-3 {
   box-sizing: border-box;
+  padding: 10px;
   width: 24.999999%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-4 {
   box-sizing: border-box;
+  padding: 10px;
   width: 33.333332%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-5 {
   box-sizing: border-box;
+  padding: 10px;
   width: 41.666664999999995%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-6 {
   box-sizing: border-box;
+  padding: 10px;
   width: 49.999998%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-7 {
   box-sizing: border-box;
+  padding: 10px;
   width: 58.333331%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-8 {
   box-sizing: border-box;
+  padding: 10px;
   width: 66.666664%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-9 {
   box-sizing: border-box;
+  padding: 10px;
   width: 74.999997%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-10 {
   box-sizing: border-box;
+  padding: 10px;
   width: 83.33332999999999%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-11 {
   box-sizing: border-box;
+  padding: 10px;
   width: 91.666663%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content .col-12 {
   box-sizing: border-box;
+  padding: 10px;
   width: 99.999996%;
-  padding: 0 10px;
 }
 .tcfInstancePreview--content dl {
   display: flex;
@@ -1416,6 +1420,231 @@
   bottom: 0;
 }
 
+.tcfLayoutPreview {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-flow: row wrap;
+  background: #fbfcfe;
+  border: 1px solid rgba(96,125,159,0.25);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 4px -1px rgba(96,125,159,0.25);
+}
+.tcfLayoutPreview.isSelected {
+  background: rgba(96,125,159,0.2);
+}
+.tcfLayoutPreview.isClickable {
+  cursor: pointer;
+}
+.tcfLayoutPreview.isClickable:hover {
+  border-color: rgba(96,125,159,0.8);
+}
+.tcfLayoutPreview--col {
+  position: relative;
+  height: 24px;
+  box-sizing: border-box;
+  padding: 4px;
+  user-select: none;
+}
+.tcfLayoutPreview--colPanel {
+  content: '';
+  display: block;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.333);
+  border-radius: 3px;
+  color: #fff;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tcfLayoutPreview--grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  pointer-events: none;
+}
+.tcfLayoutPreview--gridColumn {
+  position: relative;
+  flex: 1;
+}
+.tcfLayoutPreview--gridColumn:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 4px;
+  right: 4px;
+  height: 100%;
+  background: rgba(0,0,0,0.05);
+}
+
+.tcfLayoutRowEditor {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-flow: row wrap;
+  flex: 1;
+  background: #fbfcfe;
+  border: 1px solid rgba(96,125,159,0.25);
+  border-radius: 3px;
+  box-shadow: inset 0 1px 4px -1px rgba(96,125,159,0.25);
+}
+.tcfLayoutRowEditor--col {
+  position: relative;
+  height: 50px;
+  box-sizing: border-box;
+  padding: 4px;
+  user-select: none;
+}
+.tcfLayoutRowEditor--colPanel {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.333);
+  border-radius: 3px;
+  cursor: move;
+}
+.isSelected > .tcfLayoutRowEditor--colPanel {
+  background: rgba(11,105,163,0.8);
+}
+.tcfLayoutRowEditor--colLabel {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  text-overflow: hidden;
+  white-space: nowrap;
+}
+.tcfLayoutRowEditor--colHandle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 16px;
+}
+.tcfLayoutRowEditor--colHandle:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  bottom: 4px;
+  left: 6px;
+  background: #fff;
+  border-radius: 4px;
+  cursor: ew-resize;
+}
+
+.tcfLayoutEditor--title {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+.tcfLayoutEditor--row + .tcfLayoutEditor--row {
+  margin-top: 20px;
+}
+.tcfLayoutEditor--rowHead {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.tcfLayoutEditor--rowHead > .tcfIcon {
+  margin-right: 5px;
+  flex: 0 0 auto;
+}
+.tcfLayoutEditor--rowBody {
+  display: flex;
+  flex-flow: row nowrap;
+}
+.tcfLayoutEditor--rowAttributes {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  width: 150px;
+  flex: 0 0 auto;
+  margin-left: 10px;
+}
+.tcfLayoutEditor--columnInput {
+  width: 50px;
+  padding: 0 5px;
+}
+.tcfLayoutEditor--columnInputLabel {
+  position: absolute;
+  width: 40px;
+  margin-top: -20px;
+  font-size: 12px;
+  text-align: center;
+  opacity: 0.5;
+}
+.tcfLayoutEditor--columnInputLabel.hasOwnValue {
+  opacity: 1;
+}
+.tcfLayoutEditor--columnInputField {
+  text-align: center;
+  -moz-appearance: textfield;
+}
+.tcfLayoutEditor--columnInputField::-webkit-outer-spin-button,
+.tcfLayoutEditor--columnInputField::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.tcfLayoutSelect {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+.tcfLayoutSelect--widget {
+  position: relative;
+  max-width: 400px;
+  flex: 1;
+}
+.tcfLayoutSelect--edit {
+  margin-left: 10px;
+  cursor: pointer;
+}
+.tcfLayoutSelect--edit > * {
+  vertical-align: top;
+}
+.tcfLayoutSelect--edit:hover {
+  color: #0b69a3;
+}
+.tcfLayoutSelect--flyout {
+  padding: 10px;
+  width: 300px;
+}
+.tcfLayoutSelect--flyout > * {
+  margin: 0 0 10px 0;
+}
+.tcfLayoutSelect--flyout > *:last-child {
+  margin-bottom: 0;
+}
+
+.tcfLayoutWidget--columns {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 0 -10px -10px;
+}
+.tcfLayoutWidget--columns > * {
+  padding: 10px;
+  flex: 1;
+  box-sizing: border-box;
+}
+.tcfLayoutWidget--columns.isStacked {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
 .tcfLinkWidget {
   display: flex;
   flex-flow: row nowrap;
@@ -1587,5 +1816,20 @@
   white-space: nowrap;
   text-align: center;
   text-overflow: ellipsis;
+}
+.tcfDetailsToggle {
+  position: absolute;
+  right: 24px;
+  margin-top: -8px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+#main-content.has-details.tcfDetailsToggle--collapsed > #content-container {
+  width: auto;
+  max-width: 100%;
+}
+#main-content.has-details.tcfDetailsToggle--collapsed > #details-container {
+  position: absolute;
+  visibility: hidden;
 }
 
