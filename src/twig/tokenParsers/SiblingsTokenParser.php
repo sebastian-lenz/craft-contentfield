@@ -3,6 +3,7 @@
 namespace lenz\contentfield\twig\tokenParsers;
 
 use lenz\contentfield\twig\nodes\SiblingsNode;
+use Twig\Node\Expression\ConstantExpression;
 use Twig\Token;
 use Twig\TokenParser\AbstractTokenParser;
 
@@ -15,6 +16,7 @@ class SiblingsTokenParser extends AbstractTokenParser
    * List all supported attributes.
    */
   const ATTRIBUTES = [
+    'addBack',
     'limit',
     'only',
     'until',
@@ -35,7 +37,11 @@ class SiblingsTokenParser extends AbstractTokenParser
 
     while ($next = $stream->nextIf(Token::NAME_TYPE, self::ATTRIBUTES)) {
       $name = $next->getValue();
-      $nodes[$name] = $expression->parseExpression(0, in_array($name, self::ALLOW_FUNCTION));
+      if ($name == 'addBack') {
+        $nodes['addBack'] = new ConstantExpression(true, $next->getLine());
+      } else {
+        $nodes[$name] = $expression->parseExpression(0, in_array($name, self::ALLOW_FUNCTION));
+      }
     }
 
     $stream->expect(Token::BLOCK_END_TYPE);

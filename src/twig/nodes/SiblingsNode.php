@@ -30,7 +30,7 @@ class SiblingsNode extends Node
       ->write("if (array_key_exists('loop', \$context) && (\$context['loop'] instanceof \\lenz\\contentfield\\helpers\\IteratorLoop)) {\n")
         ->indent()
         ->write("\$displayIterator = \$context['loop']->getSiblings(");
-    $this->addArguments($compiler, ['limit', 'only', 'until']);
+    $this->addArguments($compiler, ['limit', 'only', 'until', 'addBack']);
     $compiler
         ->raw(");\n")
         ->write("\$displayVariables = ");

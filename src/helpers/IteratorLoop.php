@@ -42,10 +42,11 @@ class IteratorLoop implements Iterator, LoopInterface
    * @param int|null|mixed $limit
    * @param string|string[]|null|mixed $only
    * @param string|string[]|null|mixed $until
+   * @param bool|null $addBack
    * @return IteratorLoop
    * @throws Throwable
    */
-  public function getSiblings($limit = null, $only = null, $until = null) {
+  public function getSiblings($limit = null, $only = null, $until = null, $addBack = null) {
     $siblings = [];
     $filter = null;
 
@@ -64,6 +65,10 @@ class IteratorLoop implements Iterator, LoopInterface
 
     if (!is_null($until) && !is_string($until) && !is_array($until)) {
       throw new Exception('"Until" must be a string or an array of strings');
+    }
+
+    if ($addBack === true) {
+      $siblings[] = $this->current();
     }
 
     while ($this->_index < $this->_count - 1) {
