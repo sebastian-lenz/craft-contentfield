@@ -50,7 +50,8 @@ class BootstrapGrid implements GridInterface
 
     switch ($attribute) {
       case 'offset':
-        return $value > 0 ? "offset$suffix-$value" : '';
+        if ($value == 0 && $breakpoint == 'xs') return '';
+        return "offset$suffix-$value";
       case 'order':
         if ($value == 0) return "";
         if ($value < 1) $value = 'first';
