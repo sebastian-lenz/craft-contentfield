@@ -13,12 +13,19 @@ class TynyGrid extends BootstrapGrid
   /**
    * @inheritDoc
    */
+  public $rowClassName = 'row layout';
+
+
+  /**
+   * @inheritDoc
+   */
   public function getClassName(LayoutColumnValue $column, string $attribute, int $value, string $breakpoint): string {
     $suffix = $breakpoint == 'xs' ? '' : "@$breakpoint";
 
     switch ($attribute) {
       case 'offset':
-        return $value > 0 ? "offset-$value$suffix" : '';
+        if ($value == 0 && $breakpoint == 'xs') return '';
+        return "offset-$value$suffix";
       case 'order':
         if ($value == 0) return "";
         if ($value < 1) $value = 'first';
