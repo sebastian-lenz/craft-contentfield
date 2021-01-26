@@ -39,6 +39,11 @@ class ArrayValue
    */
   private $_values;
 
+  /**
+   * @var array
+   */
+  private $_visibleValues;
+
 
   /**
    * ArrayValue constructor.
@@ -176,7 +181,7 @@ class ArrayValue
   /**
    * @return array
    */
-  public function getValues() {
+  public function getValues(): array {
     return $this->_values;
   }
 
@@ -186,8 +191,12 @@ class ArrayValue
    *
    * @return array
    */
-  public function getVisibleValues() {
-    return array_filter($this->_values, function($value) {
+  public function getVisibleValues(): array {
+    if (isset($this->_visibleValues)) {
+      return $this->_visibleValues;
+    }
+
+    return $this->_visibleValues = array_filter($this->_values, function($value) {
       return (
         !($value instanceof InstanceValue) ||
         $value->isVisible()
@@ -197,9 +206,11 @@ class ArrayValue
 
   /**
    * @return IteratorLoop
+   * @throws Exception
+   * @deprecated
    */
-  public function getVisibleIterator() {
-    return new IteratorLoop($this->getVisibleValues());
+  public function getVisibleIterator(): IteratorLoop {
+    return $this->getIterator();
   }
 
   /**
@@ -225,7 +236,7 @@ class ArrayValue
    */
   public function render(array $variables = [], array $options = []): string {
     $result = [];
-    $iterator = $this->getVisibleIterator();
+    $iterator = $this->getIterator();
     $variables['loop'] = $iterator;
 
     foreach ($iterator as $value) {
@@ -243,16 +254,19 @@ class ArrayValue
 
   /**
    * @inheritdoc
+   * @noinspection PhpMissingReturnTypeInspection (Interface method)
    */
   public function offsetExists($offset) {
-    return array_key_exists($offset, $this->_values);
+    $values = $this->getVisibleValues();
+    return array_key_exists($offset, $values);
   }
 
   /**
    * @inheritdoc
    */
   public function offsetGet($offset) {
-    return $this->_values[$offset];
+    $values = $this->getVisibleValues();
+    return $values[$offset];
   }
 
   /**
@@ -273,9 +287,10 @@ class ArrayValue
 
   /**
    * @inheritdoc
+   * @noinspection PhpMissingReturnTypeInspection (Interface method)
    */
   public function count() {
-    return count($this->_values);
+    return count($this->getVisibleValues());
   }
 
 
@@ -286,6 +301,6 @@ class ArrayValue
    * @inheritdoc
    */
   public function getIterator() {
-    return new IteratorLoop($this->_values);
+    return new IteratorLoop($this->getVisibleValues());
   }
 }
