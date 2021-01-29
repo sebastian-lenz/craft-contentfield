@@ -10,6 +10,7 @@ use Exception;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\migration\Instance;
 use lenz\contentfield\records\ContentRecord;
+use yii\db\ActiveQuery;
 
 /**
  * Class Migration
@@ -24,7 +25,7 @@ abstract class Migration extends MigrationBase
    */
   public function safeUp() {
     $this->migrateRecords(
-      $this->findAffectedRecords()
+      $this->findAffectedRecords()->all()
     );
   }
 
@@ -43,9 +44,10 @@ abstract class Migration extends MigrationBase
   /**
    * Retrieve all content records that should be migrated.
    *
-   * @return ContentRecord[]
+   * @return ActiveQuery
+   * @throws Exception
    */
-  protected function findAffectedRecords() {
+  protected function findAffectedRecords(): ActiveQuery {
     $query = ContentRecord::find();
 
     $affectedFields = $this->getAffectedFields();
@@ -56,7 +58,7 @@ abstract class Migration extends MigrationBase
       }
     }
 
-    return $query->all();
+    return $query;
   }
 
   /**
@@ -74,9 +76,10 @@ abstract class Migration extends MigrationBase
    *
    * @param ContentField $field
    * @param Instance $instance
+   * @param array $context
    * @return false|void
    */
-  abstract protected function migrate(ContentField $field, Instance $instance);
+  abstract protected function migrate(ContentField $field, Instance $instance, array $context);
 
   /**
    * Invokes the migrate callback for all given content records.
@@ -84,7 +87,7 @@ abstract class Migration extends MigrationBase
    * @param ContentRecord[] $records
    * @throws Exception
    */
-  protected function migrateRecords($records) {
+  protected function migrateRecords(array $records) {
     $fields = Craft::$app->getFields();
 
     foreach ($records as $record) {
@@ -105,7 +108,11 @@ abstract class Migration extends MigrationBase
         ));
       }
 
-      if ($this->migrate($field, $model) === false) {
+      $context = [
+        'record' => $record,
+      ];
+
+      if ($this->migrate($field, $model, $context) === false) {
         continue;
       }
 
@@ -118,14 +125,16 @@ abstract class Migration extends MigrationBase
     }
   }
 
+
   // Static methods
   // --------------
 
   /**
    * @param string|int|array $values
    * @return int[]
+   * @throws Exception
    */
-  static public function toFieldIds($values) {
+  static public function toFieldIds($values): array {
     $fields = Craft::$app->getFields();
     $values = is_array($values) ? $values : [$values];
 
