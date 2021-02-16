@@ -43,7 +43,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
    * VolumeFolderEnumeration constructor.
    * @param array $options
    */
-  public function __construct($options = array()) {
+  public function __construct($options = []) {
     if (isset($options['rootFolders'])) {
       $args = is_array($options['rootFolders'])
         ? $options['rootFolders']
@@ -77,7 +77,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
    */
   public function getOptions() {
     if (!isset($this->_options)) {
-      $this->_options = array();
+      $this->_options = [];
       foreach ($this->getRootFolders() as $folder) {
         $this->toOptions($this->_options, $folder);
       }

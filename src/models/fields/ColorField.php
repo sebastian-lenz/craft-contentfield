@@ -38,10 +38,10 @@ class ColorField extends AbstractField
    * @inheritdoc
    */
   public function getEditorData(ElementInterface $element = null) {
-    return parent::getEditorData($element) + array(
+    return parent::getEditorData($element) + [
       'alpha'    => $this->alpha,
       'swatches' => $this->swatches,
-    );
+    ];
   }
 
   /**
@@ -52,12 +52,12 @@ class ColorField extends AbstractField
       return null;
     }
 
-    return array(
+    return [
       'alpha' => $value->alpha,
       'blue'  => $value->blue,
       'green' => $value->green,
       'red'   => $value->red,
-    );
+    ];
   }
 
   /**
@@ -96,10 +96,10 @@ class ColorField extends AbstractField
     }
 
     if ($hasInvalidValue) {
-      $this->addError($attribute, implode(' ', array(
+      $this->addError($attribute, implode(' ', [
         "{$attribute} contains invalid values.",
         "All values must be either a hex color string."
-      )));
+      ]));
     }
   }
 

@@ -106,7 +106,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @return string
    * @throws Exception
    */
-  public function getLinkAttributes($extraAttribs = array()) {
+  public function getLinkAttributes($extraAttribs = []) {
     if ($this->isEmpty()) {
       return '';
     }
@@ -141,9 +141,9 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
             ->getElement($elementType, $elementId);
         } else {
           /** @var ElementInterface $elementType */
-          $this->_element = $elementType::findOne(array(
+          $this->_element = $elementType::findOne([
             'id' => $elementId,
-          ));
+          ]);
         }
       }
     }

@@ -37,7 +37,7 @@ class FieldDefinitions extends AbstractDefinitions
    * A map of all known field types.
    * @var array
    */
-  static $FIELD_TYPES = array(
+  static $FIELD_TYPES = [
     ArrayField::NAME       => ArrayField::class,
     CheckboxField::NAME    => CheckboxField::class,
     ColorField::NAME       => ColorField::class,
@@ -54,7 +54,7 @@ class FieldDefinitions extends AbstractDefinitions
     TextAreaField::NAME    => TextAreaField::class,
     TextField::NAME        => TextField::class,
     OEmbedField::NAME      => OEmbedField::class,
-  );
+  ];
 
 
   /**

@@ -138,8 +138,8 @@ class InputData
       ->schemas
       ->getDependedSchemas($rootSchemas);
 
-    $errors  = array();
-    $schemas = array();
+    $errors  = [];
+    $schemas = [];
     $scripts = '';
 
     foreach ($allSchemas as $name => $schema) {
@@ -214,14 +214,14 @@ class InputData
     $urls   = Craft::$app->urlManager;
 
     return [
-      'apiEndpoints'     => array(
-        'fetchSite'      => $urls->createUrl('contentfield/cp/fetch'),
-        'oembed'         => $urls->createUrl('contentfield/cp/oembed'),
-        'translate'      => $urls->createUrl('contentfield/cp/translate'),
-      ),
       'googleMapsApiKey' => $plugin->getSettings()->getGoogleMapsApiKey(),
       'hasTranslator'    => $plugin->translators->hasTranslator(),
       'rootSchemas'      => $this->_rootSchemas,
+      'apiEndpoints'     => [
+        'fetchSite' => $urls->createUrl('contentfield/cp/fetch'),
+        'oembed'    => $urls->createUrl('contentfield/cp/oembed'),
+        'translate' => $urls->createUrl('contentfield/cp/translate'),
+      ],
     ];
   }
 
@@ -240,19 +240,19 @@ class InputData
 
     $model = $content->getModel();
     if (!($model instanceof InstanceValue)) {
-      return array();
+      return [];
     }
 
     $siteId = $content->getOwnerSite()->id;
     $view = Craft::$app->getView();
     return array_map(function(Element $element) use ($view) {
-      $context = array(
+      $context = [
         'element' => $element,
         'context' => 'field',
         'size'    => 'large'
-      );
+      ];
 
-      return array(
+      return [
         'element'  => $view->invokeHook('cp.elements.element', $context),
         'hasThumb' => false,
         'id'       => intval($element->id),
@@ -261,7 +261,7 @@ class InputData
         'status'   => $element->getStatus(),
         'type'     => get_class($element),
         'url'      => $element->getUrl(),
-      );
+      ];
     }, $model->getReferenceMap()->queryAll($siteId));
   }
 }

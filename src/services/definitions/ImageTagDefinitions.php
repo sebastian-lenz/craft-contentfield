@@ -29,12 +29,12 @@ class ImageTagDefinitions extends AbstractDefinitions
    * ImageTags constructor.
    */
   public function __construct() {
-    $this->_imageTags = array(
+    $this->_imageTags = [
       'config'   => ConfigImageTag::class,
       'image'    => ImageImageTag::class,
       'picture'  => PictureImageTag::class,
       'template' => TemplateImageTag::class,
-    );
+    ];
   }
 
   /**

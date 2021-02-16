@@ -72,10 +72,10 @@ abstract class AbstractEnumerationField extends AbstractField
       return array_intersect_key($option, self::ALLOWED_OPTION_KEYS);
     }, $this->getEnumeration()->getOptions());
 
-    return parent::getEditorData($element) + array(
+    return parent::getEditorData($element) + [
       'defaultValue' => $this->defaultValue,
       'options'      => $options,
-    );
+    ];
   }
 
   /**

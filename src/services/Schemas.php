@@ -37,7 +37,7 @@ class Schemas
   /**
    * @var AbstractSchema[]
    */
-  private $_schemas = array();
+  private $_schemas = [];
 
   /**
    * @var StructureLoader
@@ -125,7 +125,7 @@ class Schemas
    * @return AbstractSchema[]
    */
   public function getDependedSchemas($schemas) {
-    $result = array();
+    $result = [];
     $stack  = $schemas;
 
     while ($schema = array_pop($stack)) {
@@ -174,12 +174,12 @@ class Schemas
    * @throws Throwable
    */
   public function getSchemas($qualifiers) {
-    $result = array();
+    $result = [];
 
     foreach ($qualifiers as $qualifier) {
       $schemas = self::isPattern($qualifier)
         ? $this->getSchemasWithWildcard($qualifier)
-        : array($this->getSchema($qualifier));
+        : [$this->getSchema($qualifier)];
 
       foreach ($schemas as $schema) {
         $result[$schema->qualifier] = $schema;
@@ -258,21 +258,21 @@ class Schemas
       $scope->hasLocalStructure($name)
     ) {
       $name = $this->_structureLoader->normalizeName($name);
-      return array(
+      return [
         'loader' => $this->_structureLoader,
         'name'   => StructureLoader::createName($name, $scope),
         'uri'    => StructureLoader::createQualifier($name, $scope),
-      );
+      ];
     }
 
     // If no loader is given, assume it is a template
     if ($divider === false) {
       $name = $this->_templateLoader->normalizeName($name);
-      return array(
+      return [
         'loader' => $this->_templateLoader,
         'name'   => $name,
         'uri'    => TemplateLoader::NAME_PREFIX . $name,
-      );
+      ];
     }
 
     // Otherwise delegate to the loader
@@ -285,11 +285,11 @@ class Schemas
     $name   = $loader->normalizeName($name);
     $uri    = $loader::NAME_PREFIX . $name;
 
-    return array(
+    return [
       'loader' => $loader,
       'name'   => $name,
       'uri'    => $uri,
-    );
+    ];
   }
 
 
@@ -309,14 +309,14 @@ class Schemas
     /** @var AbstractLoader $loader */
     $loader = $parsed['loader'];
     $names  = $loader->findNames(self::toPattern($parsed['name']));
-    $result = array();
+    $result = [];
 
     foreach ($names as $name) {
-      $result[] = $this->getSchema(array(
+      $result[] = $this->getSchema([
         'loader' => $loader,
         'name'   => $name,
         'uri'    => $loader::NAME_PREFIX . $name,
-      ));
+      ]);
     }
 
     return $result;

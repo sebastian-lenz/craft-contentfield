@@ -29,7 +29,7 @@ class ReferenceMap
 
     return array_key_exists($elementType, $this->_elementTypes)
       ? $this->_elementTypes[$elementType]
-      : array();
+      : [];
   }
 
   /**
@@ -61,7 +61,7 @@ class ReferenceMap
     $elementType = self::normalizeElementType($elementType);
 
     if (!array_key_exists($elementType, $this->_elementTypes)) {
-      $this->_elementTypes[$elementType] = array();
+      $this->_elementTypes[$elementType] = [];
     }
 
     if (!in_array($id, $this->_elementTypes[$elementType])) {
@@ -74,7 +74,7 @@ class ReferenceMap
    * @return ElementInterface[]
    */
   public function queryAll($siteId = null) {
-    $result = array();
+    $result = [];
 
     foreach ($this->_elementTypes as $elementType => $ids) {
       /** @var ElementInterface $elementType */

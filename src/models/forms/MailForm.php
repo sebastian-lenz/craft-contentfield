@@ -115,7 +115,7 @@ class MailForm extends AbstractForm
    * @return string
    */
   protected function getMessageBody() {
-    $lines = array();
+    $lines = [];
 
     foreach ($this->attributes as $attribute => $value) {
       if (in_array($attribute, static::OMIT_ATTRIBUTES)) {

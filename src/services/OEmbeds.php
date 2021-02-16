@@ -155,7 +155,7 @@ class OEmbeds extends Component
    */
   private function getAllProviders() {
     if (!isset($this->_allProviders)) {
-      $providers = array();
+      $providers = [];
       $rows = $this->fetchJson(self::DEFINITIONS_URL);
 
       if (is_array($rows)) {

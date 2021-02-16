@@ -98,7 +98,7 @@ class InstanceField extends AbstractField
     }
 
     if (!is_array($data)) {
-      $data = array();
+      $data = [];
     }
 
     $schema = isset($data[InstanceValue::TYPE_PROPERTY])
@@ -165,10 +165,10 @@ class InstanceField extends AbstractField
       return null;
     }
 
-    return parent::getEditorData($element) + array(
+    return parent::getEditorData($element) + [
       'collapsible' => !!$this->collapsible,
       'schemas'     => $qualifiers,
-    );
+    ];
   }
 
   /**
@@ -263,7 +263,19 @@ class InstanceField extends AbstractField
   static public function expandFieldConfig(&$config) {
     // Expand the type `instances` to an array of instance fields
     if ($config['type'] === 'instances') {
-      $config = array_intersect_key($config, array(
+      $member = array_merge([
+        'type'     => self::NAME,
+      ], array_intersect_key($config, [
+        'excludes' => true,
+        'includes' => true,
+        'name'     => true,
+        'schemas'  => true,
+      ]));
+
+      $config = array_merge([
+        'type'        => ArrayField::NAME,
+        'member'      => $member,
+      ], array_intersect_key($config, [
         'collapsible' => true,
         'group'       => true,
         'label'       => true,
@@ -272,17 +284,7 @@ class InstanceField extends AbstractField
         'previewMode' => true,
         'style'       => true,
         'width'       => true,
-      )) + array(
-        'type'  => ArrayField::NAME,
-        'member' => array(
-            'type' => self::NAME,
-          ) + array_intersect_key($config, array(
-            'excludes' => true,
-            'includes' => true,
-            'name'     => true,
-            'schemas'  => true,
-          )),
-      );
+      ]));
     }
   }
 }

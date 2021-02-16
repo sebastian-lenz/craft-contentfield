@@ -25,7 +25,7 @@ class Endpoint
   /**
    * @var string[]
    */
-  public $schemes = array();
+  public $schemes = [];
 
   /**
    * @var string

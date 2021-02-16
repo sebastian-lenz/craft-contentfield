@@ -68,7 +68,7 @@ class TemplateLoader extends AbstractLoader
    */
   public function findNames($pattern) {
     $templates = $this->getAllTemplates();
-    $result    = array();
+    $result    = [];
 
     foreach ($templates as $template) {
       if (preg_match($pattern, $template['name'])) {
@@ -124,11 +124,11 @@ class TemplateLoader extends AbstractLoader
     }
 
     try {
-      return new TemplateSchema($data['preamble'] + array(
+      return new TemplateSchema($data['preamble'] + [
         'path'      => $data['path'],
         'qualifier' => self::NAME_PREFIX . $name,
         'template'  => $name
-      ));
+      ]);
     } catch (Exception $error) {
       if ($error instanceof TemplateConfigException) {
         throw $error;
@@ -201,7 +201,7 @@ class TemplateLoader extends AbstractLoader
    */
   private function getAllTemplatesFromDisk() {
     $basePath = $this->getBasePath();
-    $result   = array();
+    $result   = [];
 
     /** @var SplFileInfo $file */
     foreach ($this->getTemplateIterator($basePath) as $file) {
@@ -216,10 +216,10 @@ class TemplateLoader extends AbstractLoader
 
       $name = substr($fullPath, strlen($basePath) + 1);
       $path = dirname($name);
-      $result[] = array(
+      $result[] = [
         'name' => YamlAwareTemplateLoader::normalizeName($name),
         'path' => $path === '.' ? '' : $path,
-      );
+      ];
     }
 
     return $result;

@@ -62,10 +62,10 @@ class IconPage extends AbstractPage
       $view->registerAssetBundle(CpAsset::class);
       $bundle = $view->getAssetManager()->getBundle(CpAsset::class);
     } catch (Exception $e) {
-      return array();
+      return [];
     }
 
-    $result = array();
+    $result = [];
     $path = $bundle->sourcePath . '/../src/craft-font/selection.json';
     $data = Json::decode(file_get_contents($path));
 
@@ -93,10 +93,10 @@ class IconPage extends AbstractPage
       $view->registerAssetBundle(ContentFieldAsset::class);
       $bundle = $view->getAssetManager()->getBundle(ContentFieldAsset::class);
     } catch (Exception $e) {
-      return array();
+      return [];
     }
 
-    $result = array();
+    $result = [];
     $path = $bundle->sourcePath . '/fonts/codepoints';
     preg_match_all('/^([^ ]+)/m', file_get_contents($path), $matches);
 

@@ -182,7 +182,8 @@ abstract class AbstractForm
         continue;
       }
 
-      foreach (is_array($fields) ? $fields : array($fields) as $field) {
+      $fields = is_array($fields) ? $fields : [$fields];
+      foreach ($fields as $field) {
         $result[$field] = UploadedFile::getInstanceByName($name . '[' . $field . ']');
       }
     }

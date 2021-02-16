@@ -148,7 +148,7 @@ abstract class AbstractModelValue
    * @throws Throwable
    */
   public function findInstances($qualifier) {
-    $result = array();
+    $result = [];
     if ($this->_schema->matchesQualifier($qualifier)) {
       $result[] = $this;
     }
