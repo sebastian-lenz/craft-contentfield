@@ -98,7 +98,7 @@ class ReferenceValue
       $map->push($elementType, $value);
     }
 
-    if (isset($this->_field->with)) {
+    if (!empty($this->_field->with)) {
       $map->with($elementType, $this->_field->with);
     }
 

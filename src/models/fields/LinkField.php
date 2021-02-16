@@ -103,10 +103,10 @@ class LinkField extends AbstractField
       }
     }
 
-    return parent::getEditorData($element) + array(
+    return parent::getEditorData($element) + [
       'allowNewWindow' => $this->allowNewWindow,
       'linkTypes'      => $linkTypes,
-    );
+    ];
   }
 
   /**

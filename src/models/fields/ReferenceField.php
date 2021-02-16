@@ -20,9 +20,9 @@ use yii\base\InvalidConfigException;
 class ReferenceField extends AbstractField
 {
   /**
-   * @var array
+   * @var null|array
    */
-  public $criteria;
+  public $criteria = null;
 
   /**
    * @var string
@@ -32,17 +32,17 @@ class ReferenceField extends AbstractField
   /**
    * @var integer|null
    */
-  public $limit;
+  public $limit = null;
 
   /**
    * @var string|null
    */
-  public $modalStorageKey;
+  public $modalStorageKey = null;
 
   /**
    * @var string[]|string|null
    */
-  public $sources;
+  public $sources = null;
 
   /**
    * @var string
@@ -50,9 +50,9 @@ class ReferenceField extends AbstractField
   public $viewMode = 'large';
 
   /**
-   * @var string|string[]
+   * @var string|string[]|null
    */
-  public $with;
+  public $with = null;
 
   /**
    * The internal name of this field.
@@ -78,14 +78,14 @@ class ReferenceField extends AbstractField
    * @throws Exception
    */
   public function getEditorData(ElementInterface $element = null) {
-    return parent::getEditorData() + array_filter([
+    return parent::getEditorData() + [
       'criteria'        => $this->getCriteria($element),
       'elementType'     => $this->getElementType(),
       'limit'           => $this->getLimit(),
       'modalStorageKey' => $this->modalStorageKey,
       'sources'         => $this->getSources($element),
       'viewMode'        => $this->viewMode,
-    ]);
+    ];
   }
 
   /**

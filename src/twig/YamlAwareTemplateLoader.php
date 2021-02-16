@@ -204,7 +204,11 @@ class YamlAwareTemplateLoader extends TemplateLoader
     if (!$this->_hasMetaDataChanged) {
       $this->_hasMetaDataChanged = true;
       register_shutdown_function(function() {
-        Craft::$app->getCache()->set(self::class, $this->_metaData);
+        try {
+          Craft::$app->getCache()->set(self::class, $this->_metaData);
+        } catch (Throwable $error) {
+          // Ignore this, we are shutting down
+        }
       });
     }
 
