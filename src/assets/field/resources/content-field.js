@@ -1188,7 +1188,7 @@ function n(){return k()(this,n),t.apply(this,arguments)}return O()(n,[{key:"clon
 return X.a.wrap((function(t){for(;;)switch(t.prev=t.next){case 0:return n=e.field,r=e.schemas,a=e.value,t.abrupt("return",this.isValue(n,a)?a:this.createValue({field:n,schemas:r}))
 case 2:case"end":return t.stop()}}),t,this)})))}},{key:"createValue",value:function(e){return e.field.defaultValue}},{key:"isValue",value:function(e,t){return!(!e.optional||null!==t)||("number"==typeof t||t instanceof Number)}},{key:"preview",value:function(e){return e.value}}]),n}(_n)),ja=function(){function e(t){k()(this,e),this.value=t}return O()(e,[{key:"toHTML",value:function(){return new Oe.SafeString(this.value)}},{key:"summary",get:function(){return new Oe.SafeString('<div class="snippet">'.concat(this.value,"</div>"))}}]),e}()
 function xa(e){var t=e.value
-return r.createElement("div",{className:"redactor-box redactor-styles-on redactor-toolbar-on focusable-input redactor-focus focus"},r.createElement("div",{className:"redactor-styles redactor-in redactor-in-0",dangerouslySetInnerHTML:{__html:t}}))}Object(J.b)([qt],ja.prototype,"value",void 0),Object(J.b)([zt],ja.prototype,"summary",null),Object(J.b)([zt],ja.prototype,"toHTML",null)
+return r.createElement("div",{className:"redactor-box redactor-styles-on redactor-toolbar-on focusable-input redactor-focus focus"},r.createElement("div",{className:"redactor-styles redactor-in redactor-in-0",dangerouslySetInnerHTML:{__html:t}}))}Object(J.b)([qt],ja.prototype,"value",void 0),Object(J.b)([qt],ja.prototype,"summary",null),Object(J.b)([zt],ja.prototype,"toHTML",null)
 n(317)
 function Ra(e){var t=function(){if("undefined"==typeof Reflect||!Reflect.construct)return!1
 if(Reflect.construct.sham)return!1
