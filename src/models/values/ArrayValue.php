@@ -58,7 +58,7 @@ class ArrayValue
     $member = $this->_field->member;
 
     if (!is_array($data) || is_null($member)) {
-      $this->_values = array();
+      $this->_values = [];
     } else {
       $this->_values = array_filter(
         array_map(function($value) use ($member) {
@@ -101,7 +101,7 @@ class ArrayValue
    * @inheritDoc
    */
   public function findInstances($qualifier) {
-    $result = array();
+    $result = [];
 
     foreach ($this->_values as $value) {
       if (!($value instanceof ValueTraversableInterface)) {

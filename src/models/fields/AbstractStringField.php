@@ -55,11 +55,11 @@ abstract class AbstractStringField extends AbstractField
    * @inheritdoc
    */
   public function getEditorData(ElementInterface $element = null) {
-    return parent::getEditorData($element) + array(
+    return parent::getEditorData($element) + [
       'maxLength'    => $this->maxLength,
       'minLength'    => $this->minLength,
       'translatable' => !!$this->translatable
-    );
+    ];
   }
 
   /**

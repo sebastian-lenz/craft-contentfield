@@ -184,7 +184,7 @@ abstract class AbstractDefinitions
     }
 
     // Finally read all the definitions
-    $definitions = array();
+    $definitions = [];
     foreach ($sources as $key => $source) {
       $definitions = array_merge(
         $definitions,

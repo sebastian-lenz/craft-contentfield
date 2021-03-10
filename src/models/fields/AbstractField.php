@@ -180,7 +180,7 @@ abstract class AbstractField extends Model
    * @return array
    */
   public function getEditorData(ElementInterface $element = null) {
-    return array(
+    return [
       'group'        => $this->getEditorGroupStyle(),
       'instructions' => Plugin::t($this->instructions),
       'isRequired'   => $this->isRequired(),
@@ -189,7 +189,7 @@ abstract class AbstractField extends Model
       'validatorId'  => $this->_clientValidationId,
       'style'        => $this->getEditorFieldStyle(),
       'type'         => strtolower($this->type),
-    );
+    ];
   }
 
   /**
@@ -223,7 +223,7 @@ abstract class AbstractField extends Model
         : [];
     }
 
-    $result = array();
+    $result = [];
     foreach ($rules as $key => $rule) {
       if (is_numeric($key)) {
         if (is_array($rule) && array_key_exists('type', $rule)) {
@@ -264,9 +264,9 @@ abstract class AbstractField extends Model
    * @inheritdoc
    */
   public function rules() {
-    return array(
-      array('name', 'validateName'),
-    );
+    return [
+      ['name', 'validateName'],
+    ];
   }
 
   /**
@@ -408,7 +408,7 @@ abstract class AbstractField extends Model
       return null;
     }
 
-    $breakpoints = array();
+    $breakpoints = [];
     foreach ($source as $key => $value) {
       if (in_array($key, self::STYLE_BREAKPOINTS)) {
         if (is_string($value) && !is_null($defaultAttribute)) {

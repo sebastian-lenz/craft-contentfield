@@ -248,7 +248,7 @@ abstract class AbstractSchema extends Model
    * @return AbstractSchema[]
    */
   public function getDependedSchemas() {
-    $result = array();
+    $result = [];
 
     foreach ($this->fields as $field) {
       $schemas = $field->getDependedSchemas();
@@ -267,7 +267,7 @@ abstract class AbstractSchema extends Model
    * @return array
    */
   public function getEditorData(ElementInterface $element = null) {
-    $fields = array();
+    $fields = [];
 
     foreach ($this->fields as $name => $field) {
       if (!$field->hasErrors()) {
@@ -275,7 +275,7 @@ abstract class AbstractSchema extends Model
       }
     }
 
-    return array(
+    return [
       'fields'       => $fields,
       'icon'         => $this->getIcon(),
       'label'        => Plugin::t($this->getLabel()),
@@ -284,7 +284,7 @@ abstract class AbstractSchema extends Model
       'previewLabel' => $this->getPreviewLabel(),
       'qualifier'    => $this->qualifier,
       'style'        => $this->getEditorStyle(),
-    );
+    ];
   }
 
   /**

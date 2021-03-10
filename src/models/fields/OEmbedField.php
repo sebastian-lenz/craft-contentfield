@@ -18,7 +18,7 @@ class OEmbedField extends AbstractField
   /**
    * @var Provider[]
    */
-  public $providers = array();
+  public $providers = [];
 
   /**
    * @inheritdoc
@@ -35,7 +35,7 @@ class OEmbedField extends AbstractField
         $config['providers'] = explode(',', (string)$config['providers']);
       }
 
-      $providers = array();
+      $providers = [];
       foreach ($config['providers'] as $source) {
         if (is_string($source)) {
           $source = Plugin::getInstance()->oembeds->findProvider($source);

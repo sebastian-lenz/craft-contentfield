@@ -125,7 +125,7 @@ class RedactorFieldProxy extends Field
       $method->setAccessible(true);
       return $method->invoke($this);
     } catch (Exception $e) {
-      return array();
+      return [];
     }
   }
 
@@ -139,7 +139,7 @@ class RedactorFieldProxy extends Field
       $method->setAccessible(true);
       return $method->invoke($this, $element);
     } catch (Exception $e) {
-      return array();
+      return [];
     }
   }
 
@@ -152,7 +152,7 @@ class RedactorFieldProxy extends Field
       $method->setAccessible(true);
       return $method->invoke($this);
     } catch (Exception $e) {
-      return array();
+      return [];
     }
   }
 
@@ -165,7 +165,7 @@ class RedactorFieldProxy extends Field
       $method->setAccessible(true);
       return $method->invoke($this);
     } catch (Exception $e) {
-      return array();
+      return [];
     }
   }
 }

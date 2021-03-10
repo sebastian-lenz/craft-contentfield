@@ -33,7 +33,7 @@ class ReferenceValue
   /**
    * @var int[]
    */
-  private $_values = array();
+  private $_values = [];
 
 
   /**
@@ -47,7 +47,7 @@ class ReferenceValue
     parent::__construct($parent, $field);
 
     if (!is_array($data)) {
-      $this->_values = array();
+      $this->_values = [];
     } else {
       $this->_values = array_filter($data, function($value) {
         return is_int($value);
@@ -98,7 +98,7 @@ class ReferenceValue
       $map->push($elementType, $value);
     }
 
-    if (isset($this->_field->with)) {
+    if (!empty($this->_field->with)) {
       $map->with($elementType, $this->_field->with);
     }
 
@@ -218,13 +218,13 @@ class ReferenceValue
   private function loadReferences() {
     $elementType = $this->_field->getElementType();
     if (is_null($elementType) || count($this->_values) === 0) {
-      return array();
+      return [];
     }
 
     $content = $this->getContent();
     if (!is_null($content)) {
       $elements = $content->getReferenceLoader()->getElements($elementType);
-      $result = array();
+      $result = [];
 
       foreach ($this->_values as $id) {
         if (array_key_exists($id, $elements)) {
@@ -236,10 +236,10 @@ class ReferenceValue
     }
 
     /** @var ElementInterface $elementType */
-    $result = array();
-    $elements = $elementType::findAll(array(
+    $result = [];
+    $elements = $elementType::findAll([
       'id' => $this->_values,
-    ));
+    ]);
 
     foreach ($this->_values as $id) {
       foreach ($elements as $element) {

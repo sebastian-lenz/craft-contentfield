@@ -89,7 +89,7 @@ class ReferenceLoader
    */
   public function getElements($elementType) {
     if (!(array_key_exists($elementType, $this->_elements))) {
-      $result = array();
+      $result = [];
       $elements = $this->queryElements($elementType);
       foreach ($elements as $element) {
         $result[intval($element->getId())] = $element;
@@ -133,7 +133,7 @@ class ReferenceLoader
     $referenceMap = $this->getReferenceMap();
     $ids = $referenceMap->getElementIds($elementType);
     if (count($ids) === 0 || !class_exists($elementType)) {
-      return array();
+      return [];
     }
 
     /** @var ElementInterface $elementType */

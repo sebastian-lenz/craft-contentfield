@@ -22,17 +22,17 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
    * StaticEnumeration constructor.
    * @param array|string $options
    */
-  public function __construct($options = array()) {
+  public function __construct($options = []) {
     if (is_string($options)) {
       $options = explode(',', $options);
       $options = array_map('trim', $options);
     }
 
     if (!is_array($options)) {
-      $options = array();
+      $options = [];
     }
 
-    $safeOptions = array();
+    $safeOptions = [];
     foreach ($options as $key => $value) {
       if (!is_array($value)) {
         if (is_numeric($key)) {

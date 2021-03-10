@@ -1,7 +1,7 @@
 <?php
 
-use Codeception\Util\Autoload;
+// use Codeception\Util\Autoload;
 
-Autoload::addNamespace('', dirname(__DIR__) . '/fixtures');
+// Autoload::addNamespace('', dirname(__DIR__) . '/fixtures');
 
-Craft::$app->getCache()->flush();
+// Craft::$app->getCache()->flush();

@@ -20,6 +20,7 @@ coverage:
     - src/translations/*
 params:
   - tests/.env
+
 modules:
   config:
     \craft\test\Craft:
@@ -29,8 +30,10 @@ modules:
       migrations: []
       fullMock: false
       plugins:
-        - handle: contentfield
-        - handle: redactor
+        - class: lenz\contentfield\Plugin
+          handle: contentfield
+        - class: craft\redactor\Plugin
+          handle: redactor
 
       # Should tests and fixtures be cleaned
       cleanup: true
@@ -42,10 +45,6 @@ modules:
       dbSetup:
         clean: true
         setupCraft: true
-
-    DataFactory:
-      factories: tests/_craft/config/factories
-      depends: \craft\test\Craft
 
 groups:
   fields: [tests/unit/fieldTypes]

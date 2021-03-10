@@ -113,12 +113,12 @@ class ArrayField extends AbstractField
       return null;
     }
 
-    return parent::getEditorData() + array(
+    return parent::getEditorData() + [
       'collapsible' => !!$this->collapsible,
       'limit'       => is_int($this->limit) ? $this->limit : 0,
       'member'      => $this->member->getEditorData($element),
       'previewMode' => $this->previewMode,
-    );
+    ];
   }
 
   /**

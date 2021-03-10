@@ -56,7 +56,7 @@ class Provider
    * @return array
    */
   public function getEditorData() {
-    $endpoints = array();
+    $endpoints = [];
     foreach ($this->endpoints as $endpoint) {
       $endpoints[] = $endpoint->getEditorData();
     }

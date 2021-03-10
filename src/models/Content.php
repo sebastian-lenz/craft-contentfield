@@ -163,7 +163,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
    * @return int[]
    */
   public function getReferencedIds() {
-    $result = array();
+    $result = [];
     if (
       is_null($this->_model) ||
       !($this->_model instanceof values\InstanceValue)

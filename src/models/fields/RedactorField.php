@@ -58,10 +58,10 @@ class RedactorField extends AbstractField
    * @inheritdoc
    */
   public function getEditorData(ElementInterface $element = null) {
-    return parent::getEditorData($element) + array(
+    return parent::getEditorData($element) + [
       'redactor'     => $this->getRedactorSettings($element),
       'translatable' => !!$this->translatable,
-    );
+    ];
   }
 
   /**
