@@ -4,7 +4,7 @@ namespace lenz\contentfield\models\fields;
 
 use Craft;
 use craft\base\ElementInterface;
-use lenz\contentfield\helpers\RedactorFieldProxy;
+use lenz\contentfield\helpers\redactor\FieldProxy;
 use lenz\contentfield\models\values\RedactorValue;
 use lenz\contentfield\models\values\ValueInterface;
 use Throwable;
@@ -37,7 +37,7 @@ class RedactorField extends AbstractField
   public $translatable = true;
 
   /**
-   * @var RedactorFieldProxy|null
+   * @var FieldProxy|null
    */
   private $_proxy;
 
@@ -135,12 +135,12 @@ class RedactorField extends AbstractField
   // ---------------
 
   /**
-   * @return RedactorFieldProxy|null
+   * @return FieldProxy|null
    */
   private function getRedactorFieldProxy() {
     if (!isset($this->_proxy)) {
       try {
-        $this->_proxy = new RedactorFieldProxy([
+        $this->_proxy = new FieldProxy([
           'purifierConfig' => $this->purifierConfig,
           'redactorConfig' => $this->redactorConfig,
         ]);
