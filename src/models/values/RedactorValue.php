@@ -6,6 +6,7 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\helpers\StringHelper;
 use Exception;
+use lenz\contentfield\helpers\redactor\RefParser;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\RedactorField;
@@ -281,49 +282,22 @@ class RedactorValue
     $this->_pages = null;
     $this->_rawContent = $str;
 
-    $elements = Craft::$app->getElements();
-    if (self::$forceNativeRefParse) {
-      $this->_parsedContent = $elements->parseRefs($str);
-      $this->_parsedTokens = null;
-      return;
-    }
-
     if (!StringHelper::contains($str, '{')) {
       $this->_parsedContent = $str;
       $this->_parsedTokens = null;
       return;
+    } elseif (!self::$forceNativeRefParse) {
+      try {
+        $parser = new RefParser($str);
+        $this->_parsedContent = $parser->content;
+        $this->_parsedTokens = $parser->numMatches == 0 ? null : $parser->tokens;
+        return;
+      } catch (Throwable $error) {
+        // Ignore errors, use default parser
+      }
     }
 
-    try {
-      $allRefTagTokens = [];
-      $count = 0;
-      $str = preg_replace_callback(
-        '/\{([\w\\\\]+)\:([^\:\}]+)(?:\:([^\}]+))?\}/',
-        function($matches) use (&$allRefTagTokens, $elements) {
-          // Does it already have a full element type class name?
-          if (is_subclass_of($matches[1], ElementInterface::class)) {
-            $elementType = $matches[1];
-          } else if (($elementType = $elements->getElementTypeByRefHandle($matches[1])) === null) {
-            // Leave the tag alone
-            return $matches[0];
-          }
-
-          if (!is_numeric($matches[2])) {
-            throw new Exception('Unsupported reference type');
-          }
-
-          $token = '{' . StringHelper::randomString(9) . '}';
-          $allRefTagTokens[$elementType][intval($matches[2])][] = [$token, $matches];
-          return $token;
-        },
-        $str, -1, $count
-      );
-
-      $this->_parsedContent = $str;
-      $this->_parsedTokens = $count == 0 ? null : $allRefTagTokens;
-    } catch (Throwable $error) {
-      $this->_parsedContent = $elements->parseRefs($str);
-      $this->_parsedTokens = null;
-    }
+    $this->_parsedContent = Craft::$app->getElements()->parseRefs($str);
+    $this->_parsedTokens = null;
   }
 }

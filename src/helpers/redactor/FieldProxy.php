@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\helpers;
+namespace lenz\contentfield\helpers\redactor;
 
 use Craft;
 use craft\base\Element;
@@ -15,9 +15,9 @@ use ReflectionException;
 use yii\base\InvalidConfigException;
 
 /**
- * Class RedactorFieldProxy
+ * Class FieldProxy
  */
-class RedactorFieldProxy extends Field
+class FieldProxy extends Field
 {
   /**
    * @var ReflectionClass
