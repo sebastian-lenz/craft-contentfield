@@ -819,75 +819,6 @@
 .tcfInstancePreview--content li:last-child {
   margin-bottom: 0;
 }
-.tcfInstancePreview--content .row {
-  display: flex;
-  flex-flow: row;
-  margin: -10px;
-}
-.tcfInstancePreview--content .row > * {
-  box-sizing: border-box;
-  padding: 10px;
-}
-.tcfInstancePreview--content .col-1 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 8.333333%;
-}
-.tcfInstancePreview--content .col-2 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 16.666666%;
-}
-.tcfInstancePreview--content .col-3 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 24.999999%;
-}
-.tcfInstancePreview--content .col-4 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 33.333332%;
-}
-.tcfInstancePreview--content .col-5 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 41.666664999999995%;
-}
-.tcfInstancePreview--content .col-6 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 49.999998%;
-}
-.tcfInstancePreview--content .col-7 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 58.333331%;
-}
-.tcfInstancePreview--content .col-8 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 66.666664%;
-}
-.tcfInstancePreview--content .col-9 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 74.999997%;
-}
-.tcfInstancePreview--content .col-10 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 83.33332999999999%;
-}
-.tcfInstancePreview--content .col-11 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 91.666663%;
-}
-.tcfInstancePreview--content .col-12 {
-  box-sizing: border-box;
-  padding: 10px;
-  width: 99.999996%;
-}
 .tcfInstancePreview--content dl {
   display: flex;
   flex-flow: row nowrap;
@@ -903,12 +834,13 @@
 .tcfInstancePreview--content dd {
   flex: 1;
 }
-.tcfInstancePreview--content .pill {
+.tcfInstancePreview--content .tcpPill {
   padding: 0 8px;
   background: rgba(0,0,0,0.1);
   border-radius: 8px;
+  text-align: center;
 }
-.tcfInstancePreview--content .snippet {
+.tcfInstancePreview--content .tcpSnippet {
   overflow: hidden;
   max-height: 100px;
   -webkit-mask-image: linear-gradient(to bottom, #000 50px, rgba(0,0,0,0) 100px);
@@ -916,35 +848,89 @@
   pointer-events: none;
   user-select: none;
 }
-.tcfInstancePreview--content .flexRow {
+.tcfInstancePreview--content .tcpRow {
+  display: flex;
+  flex-flow: row;
+  margin: -10px;
+}
+.tcfInstancePreview--content .tcpRow > * {
+  box-sizing: border-box;
+  padding: 10px;
+}
+.tcfInstancePreview--content .tcpWidth-1 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 8.333333%;
+}
+.tcfInstancePreview--content .tcpWidth-2 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 16.666666%;
+}
+.tcfInstancePreview--content .tcpWidth-3 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 24.999999%;
+}
+.tcfInstancePreview--content .tcpWidth-4 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 33.333332%;
+}
+.tcfInstancePreview--content .tcpWidth-5 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 41.666664999999995%;
+}
+.tcfInstancePreview--content .tcpWidth-6 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 49.999998%;
+}
+.tcfInstancePreview--content .tcpWidth-7 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 58.333331%;
+}
+.tcfInstancePreview--content .tcpWidth-8 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 66.666664%;
+}
+.tcfInstancePreview--content .tcpWidth-9 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 74.999997%;
+}
+.tcfInstancePreview--content .tcpWidth-10 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 83.33332999999999%;
+}
+.tcfInstancePreview--content .tcpWidth-11 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 91.666663%;
+}
+.tcfInstancePreview--content .tcpWidth-12 {
+  box-sizing: border-box;
+  padding: 10px;
+  width: 99.999996%;
+}
+.tcfInstancePreview--content .tcpFlex {
   display: flex;
   flex-flow: row wrap;
-  align-items: stretch;
-  margin: -5px;
 }
-.tcfInstancePreview--content .flexRow > * {
-  margin: 5px;
-  max-width: 300px;
+.tcfInstancePreview--content .tcpFlex.column {
+  flex-flow: column wrap;
 }
-.tcfInstancePreview--content .flexRow.noWrap {
+.tcfInstancePreview--content .tcpFlex.noWrap {
   flex-wrap: nowrap;
 }
-.tcfInstancePreview--content .flexRow.withMinWidth > * {
-  min-width: 100px;
-}
-.tcfInstancePreview--content .flexRow.withSeparator > * {
-  padding-left: 10px;
-  border-left: 1px solid #dedee1;
-}
-.tcfInstancePreview--content .flexRow.withSeparator > *:first-child {
-  border-left-color: transparent;
-}
-.tcfInstancePreview--content .flexColumn {
-  display: flex;
-  flex-flow: column nowrap;
+.tcfInstancePreview--content .tcpFlex.gutter {
   margin: -5px;
 }
-.tcfInstancePreview--content .flexColumn > * {
+.tcfInstancePreview--content .tcpFlex.gutter > * {
   margin: 5px;
 }
 .tcfInstancePreview--elements {
