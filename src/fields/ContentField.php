@@ -228,6 +228,18 @@ class ContentField extends ForeignField
   }
 
   /**
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    $result = parent::getSettings();
+    if (array_key_exists('rootSchemasByUsage', $result)) {
+      $result['rootSchemasByUsage'] = (object)$result['rootSchemasByUsage'];
+    }
+
+    return $result;
+  }
+
+  /**
    * Returns a list of all detected field usages. Used by the setting form.
    *
    * @internal
