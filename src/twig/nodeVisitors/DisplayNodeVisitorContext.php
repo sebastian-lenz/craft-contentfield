@@ -268,6 +268,12 @@ class DisplayNodeVisitorContext
       $rootMacros->setNode($name, $macroNode);
     }
 
+    // Copy over macro imports
+    $constructorEnd = $this->_module->getNode('constructor_end');
+    foreach ($module->getNode('constructor_end') as $name => $constructorEndNode) {
+      $constructorEnd->setNode($name, $constructorEndNode);
+    }
+
     // Create an inline template node
     $node     = new InlineTemplateNode($schema, $module);
     $callback = $node->getAttribute('name');
