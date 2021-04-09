@@ -76,7 +76,7 @@ class AnchorBehaviour extends Behavior
   private function collectArrayAnchors(ArrayValue $value) {
     foreach ($value->getValues() as $item) {
       if ($item instanceof InstanceValue) {
-        self::collectInstanceAnchors($item);
+        $this->collectInstanceAnchors($item);
       }
     }
   }
@@ -104,7 +104,12 @@ class AnchorBehaviour extends Behavior
   private function generateAnchors() {
     $ids = [];
     foreach ($this->getChildAnchors() as $anchor) {
-      $slug = StringHelper::slugify($anchor->getRawValue());
+      $rawValue = $anchor->getRawValue();
+      if (is_null($rawValue)) {
+        $rawValue = $anchor->owner->getUuid();
+      }
+
+      $slug = StringHelper::slugify($rawValue);
       $id = $slug;
       $index = 0;
 
@@ -134,10 +139,14 @@ class AnchorBehaviour extends Behavior
    */
   private function getRootBehaviour(): AnchorBehaviour {
     $root = $this->owner->getRoot();
+    if (!($root instanceof InstanceValue)) {
+      return $this;
+    }
 
-    return $root instanceof InstanceValue
-      ? $root->getBehavior('anchor')
-      : $this;
+    $behaviour = $root->getBehavior('anchor');
+    return is_null($behaviour)
+      ? $this
+      : $behaviour;
   }
 
   /**
