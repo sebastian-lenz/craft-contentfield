@@ -173,7 +173,7 @@ class RedactorValue
   /**
    * @return bool
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return empty($this->_rawContent);
   }
 

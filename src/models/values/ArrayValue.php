@@ -100,7 +100,7 @@ class ArrayValue
   /**
    * @inheritDoc
    */
-  public function findInstances($qualifier) {
+  public function findInstances($qualifier): array {
     $result = [];
 
     foreach ($this->_values as $value) {
@@ -120,7 +120,7 @@ class ArrayValue
   /**
    * @inheritDoc
    */
-  public function findUuid(string $uuid) {
+  public function findUuid(string $uuid): ?InstanceValue {
     foreach ($this->_values as $value) {
       if (!($value instanceof ValueTraversableInterface)) {
         continue;
@@ -216,7 +216,7 @@ class ArrayValue
   /**
    * @inheritDoc
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return $this->count() == 0;
   }
 

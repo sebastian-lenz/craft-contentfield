@@ -8,6 +8,7 @@ use craft\elements\Asset;
 use craft\helpers\ArrayHelper;
 use Error;
 use Exception;
+use lenz\contentfield\behaviors\AnchorBehaviour;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
@@ -26,6 +27,13 @@ use yii\helpers\Inflector;
  */
 abstract class AbstractSchema extends Model
 {
+  /**
+   * The name of the field(s) that declare the name of the anchor exposed by
+   * this instance. The value of the first non-empty field will be used.
+   * @var string|string[]|null
+   */
+  public $anchor = null;
+
   /**
    * Custom data attached to this schema.
    * @var array
@@ -454,6 +462,7 @@ abstract class AbstractSchema extends Model
     return [
       [['label', 'qualifier'], 'required'],
       [['icon', 'grid', 'label', 'preview', 'qualifier'], 'string'],
+      ['anchor', 'validateAnchor'],
       ['constants', 'validateArray'],
       ['fields', 'validateFields'],
     ];
@@ -462,7 +471,23 @@ abstract class AbstractSchema extends Model
   /**
    * @param string $attribute
    */
-  public function validateArray($attribute) {
+  public function validateAnchor(string $attribute) {
+    $fields = AnchorBehaviour::parseAnchorFields($this->$attribute);
+    if (is_null($fields)) {
+      return;
+    }
+
+    foreach ($fields as $field) {
+      if (!$this->hasField($field)) {
+        $this->addError($attribute, "Unknown anchor field `$field`.");
+      }
+    }
+  }
+
+  /**
+   * @param string $attribute
+   */
+  public function validateArray(string $attribute) {
     if (!is_array($this->$attribute)){
       $this->addError($attribute, '{attribute} must be an array.');
     }
@@ -473,7 +498,7 @@ abstract class AbstractSchema extends Model
    *
    * @param string $attribute
    */
-  public function validateFields($attribute) {
+  public function validateFields(string $attribute) {
     if (!is_array($this->$attribute)) {
       $this->addError($attribute, "$attribute must be an array.");
       return;

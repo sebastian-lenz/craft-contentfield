@@ -94,9 +94,13 @@ class LinkField extends AbstractField
           $criteria['siteId'] = $element->siteId;
         }
 
-        $linkType['allowHash'] = isset($linkType['allowHash'])
-          ? !!$linkType['allowHash']
-          : false;
+        if (isset($linkType['allowHash'])) {
+          $linkType['allowHash'] = $linkType['allowHash'] == 'select'
+            ? $linkType['allowHash']
+            : !!$linkType['allowHash'];
+        } else {
+          $linkType['allowHash'] = false;
+        }
 
         $linkType['criteria'] = $criteria;
         $linkType['elementType'] = $elementType;

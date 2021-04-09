@@ -146,7 +146,7 @@ class ReferenceValue
    * @inheritDoc
    * @throws Exception
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return $this->count() == 0;
   }
 

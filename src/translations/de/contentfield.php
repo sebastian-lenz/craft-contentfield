@@ -1,6 +1,7 @@
 <?php
 
 return [
+  '(No selection)' => '(Keine Auswahl)',
   'A matching webservice must be configured in the options of this field in order to use this feature.' => 'Um diese Funktion nutzen zu können muss in den Einstellungen ein passender Webservice konfiguriert werden.',
   'After selected element' => 'Nach dem ausgewähltem Element',
   'Apply' => 'Anwenden',

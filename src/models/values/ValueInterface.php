@@ -40,17 +40,22 @@ interface ValueInterface
   /**
    * @return ValueInterface|null
    */
-  public function getParent();
+  public function getParent(): ?ValueInterface;
+
+  /**
+   * @return ValueInterface|null
+   */
+  public function getRoot(): ?ValueInterface;
 
   /**
    * @return bool
    */
-  public function hasValue();
+  public function hasValue(): bool;
 
   /**
    * @return bool
    */
-  public function isEmpty();
+  public function isEmpty(): bool;
 
   /**
    * @param Content $content

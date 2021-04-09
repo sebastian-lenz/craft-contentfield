@@ -82,7 +82,7 @@ class OEmbedValue extends AbstractValue implements DisplayInterface
   /**
    * @return bool
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return is_null($this->getOEmbed());
   }
 }

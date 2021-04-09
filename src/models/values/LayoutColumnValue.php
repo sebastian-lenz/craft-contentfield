@@ -114,7 +114,7 @@ class LayoutColumnValue
   /**
    * @inheritDoc
    */
-  public function findInstances($qualifier) {
+  public function findInstances($qualifier): array {
     return $this->_value instanceof ValueTraversableInterface
       ? $this->_value->findInstances($qualifier)
       : [];
@@ -123,7 +123,7 @@ class LayoutColumnValue
   /**
    * @inheritDoc
    */
-  public function findUuid(string $uuid) {
+  public function findUuid(string $uuid): ?InstanceValue {
     return $this->_value instanceof ValueTraversableInterface
       ? $this->_value->findUuid($uuid)
       : null;
@@ -247,7 +247,7 @@ class LayoutColumnValue
   /**
    * @inheritDoc
    */
-  function isEmpty() {
+  function isEmpty(): bool {
     return is_null($this->_value) || $this->_value->isEmpty();
   }
 

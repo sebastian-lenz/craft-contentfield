@@ -12,19 +12,19 @@ use yii\base\Behavior;
  *
  * @property InstanceValue $owner
  */
-class InstanceSiblingsBehavior extends Behavior
+class SiblingsBehavior extends Behavior
 {
   /**
    * @return InstanceValue|null
    */
-  public function getNextSibling() {
+  public function getNextSibling(): ?InstanceValue {
     return $this->getSibling(1);
   }
 
   /**
    * @return InstanceValue|null
    */
-  public function getParentInstance() {
+  public function getParentInstance(): ?InstanceValue {
     $parent = $this->owner->getParent();
     if ($parent instanceof ArrayValue) {
       $parent = $parent->getParent();
@@ -38,7 +38,7 @@ class InstanceSiblingsBehavior extends Behavior
   /**
    * @return InstanceValue|null
    */
-  public function getPreviousSibling() {
+  public function getPreviousSibling(): ?InstanceValue {
     return $this->getSibling(-1);
   }
 
@@ -47,7 +47,7 @@ class InstanceSiblingsBehavior extends Behavior
    * @return boolean
    * @throws Throwable
    */
-  public function hasNextSibling($qualifier = null) {
+  public function hasNextSibling($qualifier = null): bool {
     return $this->isInstanceWithQualifier(
       $this->getSibling(1),
       $qualifier
@@ -59,7 +59,7 @@ class InstanceSiblingsBehavior extends Behavior
    * @return bool
    * @throws Throwable
    */
-  public function hasParentInstance($qualifier = null) {
+  public function hasParentInstance($qualifier = null): bool {
     return $this->isInstanceWithQualifier(
       $this->getParentInstance(),
       $qualifier
@@ -71,7 +71,7 @@ class InstanceSiblingsBehavior extends Behavior
    * @return boolean
    * @throws Throwable
    */
-  public function hasPreviousSibling($qualifier = null) {
+  public function hasPreviousSibling($qualifier = null): bool {
     return $this->isInstanceWithQualifier(
       $this->getSibling(-1),
       $qualifier
@@ -86,7 +86,7 @@ class InstanceSiblingsBehavior extends Behavior
    * @param int $offset
    * @return InstanceValue|null
    */
-  private function getSibling($offset) {
+  private function getSibling(int $offset): ?InstanceValue {
     $owner  = $this->owner;
     $parent = $owner->getParent();
     if (
@@ -114,7 +114,7 @@ class InstanceSiblingsBehavior extends Behavior
    * @return bool
    * @throws Throwable
    */
-  private function isInstanceWithQualifier($value, $qualifier = null) {
+  private function isInstanceWithQualifier($value, $qualifier = null): bool {
     if (!($value instanceof InstanceValue)) {
       return false;
     }

@@ -10,6 +10,7 @@ use Exception;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\LinkField;
+use lenz\craft\utils\events\AnchorEvent;
 
 /**
  * Class LinkValue
@@ -86,7 +87,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @return string
    * @throws Exception
    */
-  public function __toString() {
+  public function __toString(): string {
     $result = $this->getUrl();
     return is_string($result) ? $result : '';
   }
@@ -94,7 +95,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return null|string
    */
-  public function getElementType() {
+  public function getElementType(): ?string {
     $linkType = $this->getLinkType();
     return !is_null($linkType) && $linkType['type'] === 'element'
       ? ReferenceMap::normalizeElementType($linkType['elementType'])
@@ -106,7 +107,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @return string
    * @throws Exception
    */
-  public function getLinkAttributes($extraAttribs = []) {
+  public function getLinkAttributes($extraAttribs = []): string {
     if ($this->isEmpty()) {
       return '';
     }
@@ -126,7 +127,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @return ElementInterface|null
    * @throws Exception
    */
-  public function getLinkedElement() {
+  public function getLinkedElement(): ?ElementInterface {
     if (!isset($this->_element)) {
       if (!$this->hasLinkedElement()) {
         $this->_element = null;
@@ -154,7 +155,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return array|null
    */
-  public function getLinkType() {
+  public function getLinkType(): ?array {
     return array_key_exists($this->type, $this->_field->linkTypes)
       ? $this->_field->linkTypes[$this->type]
       : null;
@@ -163,7 +164,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @inheritdoc
    */
-  public function getReferenceMap(ReferenceMap $map = null) {
+  public function getReferenceMap(ReferenceMap $map = null): ?ReferenceMap {
     if (is_null($map)) {
       $map = new ReferenceMap();
     }
@@ -178,7 +179,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return string
    */
-  public function getUrl() {
+  public function getUrl(): string {
     $linkType = $this->getLinkType();
     $inputType = is_array($linkType) && array_key_exists('inputType', $linkType)
       ? $linkType['inputType']
@@ -198,7 +199,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return bool
    */
-  public function hasLinkedElement() {
+  public function hasLinkedElement(): bool {
     $elementType = $this->getElementType();
     return (
       !is_null($elementType) &&
@@ -211,7 +212,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @return bool
    * @throws Exception
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     $linkType = $this->getLinkType();
     if (is_null($linkType)) {
       return true;
@@ -229,7 +230,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return string
    */
-  private function getElementUrl() {
+  private function getElementUrl(): string {
     try {
       $element = $this->getLinkedElement();
     } catch (Exception $error) {
@@ -246,7 +247,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
     }
 
     if (!empty($this->hash)) {
-      $url .= '#' . $this->hash;
+      $url .= '#' . AnchorEvent::resolveAnchor($this->hash, $element);
     }
 
     return $url;
@@ -255,7 +256,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return string
    */
-  private function getInputUrl() {
+  private function getInputUrl(): string {
     $url = $this->url;
     if (empty($url) || !is_string($url)) {
       $url = '';
@@ -278,7 +279,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @return string
    */
-  private function getMailUrl() {
+  private function getMailUrl(): string {
     $url = $this->url;
     return empty($url) || !is_string($url)
       ? ''
