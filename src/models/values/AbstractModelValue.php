@@ -129,7 +129,7 @@ abstract class AbstractModelValue
   /**
    * @inheritDoc
    */
-  public function findUuid(string $uuid) {
+  public function findUuid(string $uuid): ?InstanceValue {
     foreach ($this->_values as $value) {
       if ($value instanceof ValueTraversableInterface) {
         $result = $value->findUuid($uuid);
@@ -147,7 +147,7 @@ abstract class AbstractModelValue
    * @return InstanceValue[]
    * @throws Throwable
    */
-  public function findInstances($qualifier) {
+  public function findInstances($qualifier): array {
     $result = [];
     if ($this->_schema->matchesQualifier($qualifier)) {
       $result[] = $this;
@@ -278,7 +278,7 @@ abstract class AbstractModelValue
   /**
    * @inheritDoc
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return false;
   }
 

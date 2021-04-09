@@ -11,11 +11,11 @@ interface ValueTraversableInterface
    * @param string|string[] $qualifier
    * @return InstanceValue[]
    */
-  public function findInstances($qualifier);
+  public function findInstances($qualifier): array;
 
   /**
    * @param string $uuid
    * @return InstanceValue|null
    */
-  public function findUuid(string $uuid);
+  public function findUuid(string $uuid): ?InstanceValue;
 }

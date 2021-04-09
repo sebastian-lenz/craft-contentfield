@@ -7,7 +7,8 @@ use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\web\Response;
 use Exception;
-use lenz\contentfield\behaviors\InstanceSiblingsBehavior;
+use lenz\contentfield\behaviors\AnchorBehaviour;
+use lenz\contentfield\behaviors\SiblingsBehavior;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\InstanceAwareInterface;
@@ -23,6 +24,14 @@ use yii\base\Model;
  * Class InstanceValue
  *
  * @property InstanceField|null $_field
+ *
+ * Inherited from `AnchorBehaviour`
+ * @method AnchorBehaviour[] getAllAnchors()
+ * @method string|null getAnchor()
+ * @method string|null getAnchorId()
+ * @method boolean hasAnchor()
+ *
+ * Inherited from `SiblingsBehavior`
  * @method InstanceValue|null getNextSibling()
  * @method InstanceValue|null getParentInstance()
  * @method InstanceValue|null getPreviousSibling()
@@ -40,7 +49,7 @@ class InstanceValue
   private $_model;
 
   /**
-   * @var string
+   * @var string|null
    */
   private $_output;
 
@@ -100,16 +109,17 @@ class InstanceValue
    * @inheritdoc
    * @throws Exception
    */
-  public function __toString() {
+  public function __toString(): string {
     return $this->render();
   }
 
   /**
    * @inheritDoc
    */
-  public function behaviors() {
+  public function behaviors(): array {
     return [
-      InstanceSiblingsBehavior::class
+      'anchor' => AnchorBehaviour::class,
+      'siblings' => SiblingsBehavior::class,
     ];
   }
 
@@ -130,7 +140,7 @@ class InstanceValue
   /**
    * @inheritDoc
    */
-  public function findUuid(string $uuid) {
+  public function findUuid(string $uuid): ?InstanceValue {
     return $this->_uuid == $uuid
       ? $this
       : parent::findUuid($uuid);
@@ -139,7 +149,7 @@ class InstanceValue
   /**
    * @return string|null
    */
-  public function getCachedOutput() {
+  public function getCachedOutput(): ?string {
     return isset($this->_output)
       ? $this->_output
       : null;
@@ -148,7 +158,7 @@ class InstanceValue
   /**
    * @return string|null
    */
-  public function getChunkUrl() {
+  public function getChunkUrl(): ?string {
     $element = $this->getElement();
     if (is_null($element)) {
       return null;
@@ -209,14 +219,14 @@ class InstanceValue
   /**
    * @return string
    */
-  public function getNamespace() {
+  public function getNamespace(): string {
     return 'cn' . substr($this->_uuid, -12);
   }
 
   /**
    * @return string|null
    */
-  public function getOriginalUuid() {
+  public function getOriginalUuid(): ?string {
     return $this->_originalUuid;
   }
 
@@ -235,21 +245,21 @@ class InstanceValue
   /**
    * @return string
    */
-  public function getUuid() {
+  public function getUuid(): string {
     return $this->_uuid;
   }
 
   /**
    * @return bool
    */
-  public function hasCachedOutput() {
+  public function hasCachedOutput(): bool {
     return isset($this->_output);
   }
 
   /**
    * @return bool
    */
-  public function isVisible() {
+  public function isVisible(): bool {
     return $this->_visible;
   }
 
@@ -289,9 +299,9 @@ class InstanceValue
   }
 
   /**
-   * @param string $value
+   * @param string|null $value
    */
-  public function setCachedOutput($value) {
+  public function setCachedOutput(?string $value) {
     $this->_output = $value;
   }
 
@@ -303,7 +313,7 @@ class InstanceValue
    * @return Model|null
    * @throws Exception
    */
-  private function createModel() {
+  private function createModel(): ?Model {
     $model = $this->getSchema()->model;
     if (empty($model)) {
       return null;
@@ -354,7 +364,7 @@ class InstanceValue
    * @return string
    * @throws Exception
    */
-  static function uuid() {
+  static function uuid(): string {
     $data = random_bytes(16);
     $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
     $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10

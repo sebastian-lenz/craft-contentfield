@@ -93,7 +93,7 @@ class EnumerationValue extends AbstractValue
   /**
    * @inheritDoc
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return empty($this->_value);
   }
 

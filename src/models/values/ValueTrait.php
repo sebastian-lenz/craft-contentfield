@@ -71,21 +71,32 @@ trait ValueTrait
   /**
    * @return ValueInterface|null
    */
-  public function getParent() {
+  public function getParent(): ?ValueInterface {
     return $this->_parent;
+  }
+
+  /**
+   * @return ValueInterface|null
+   */
+  public function getRoot(): ?ValueInterface {
+    if (!is_null($this->_parent)) {
+      return $this->_parent->getRoot();
+    }
+
+    return $this instanceof ValueInterface ? $this : null;
   }
 
   /**
    * @return bool
    */
-  public function hasValue() {
+  public function hasValue(): bool {
     return !$this->isEmpty();
   }
 
   /**
    * @return bool
    */
-  abstract function isEmpty();
+  abstract function isEmpty(): bool;
 
   /**
    * @param Content $content

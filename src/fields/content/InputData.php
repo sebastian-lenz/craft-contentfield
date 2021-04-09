@@ -84,7 +84,7 @@ class InputData
   /**
    * @return string
    */
-  public function getContent() {
+  public function getContent(): string {
     return Json::encode(is_null($this->_value)
       ? null
       : $this->_value->getEditorValue()
@@ -94,7 +94,7 @@ class InputData
   /**
    * @return string
    */
-  public function getPayload() {
+  public function getPayload(): string {
     return Json::encode([
       'config' => array_merge(
         $this->getGlobalConfig(),
@@ -107,21 +107,21 @@ class InputData
   /**
    * @return array
    */
-  public function getSchemaErrors() {
+  public function getSchemaErrors(): array {
     return $this->_schemaErrors;
   }
 
   /**
    * @return string
    */
-  public function getScripts() {
+  public function getScripts(): string {
     return $this->_schemaScripts;
   }
 
   /**
    * @return bool
    */
-  public function hasSchemaErrors() {
+  public function hasSchemaErrors(): bool {
     return count($this->_schemaErrors) > 0;
   }
 
@@ -160,7 +160,7 @@ class InputData
   /**
    * @return array
    */
-  private function getElementConfig() {
+  private function getElementConfig(): array {
     $element = $this->_element;
 
     if (is_null($element)) {
@@ -209,7 +209,7 @@ class InputData
   /**
    * @return array
    */
-  private function getGlobalConfig() {
+  private function getGlobalConfig(): array {
     $plugin = Plugin::getInstance();
     $urls   = Craft::$app->urlManager;
 
@@ -218,6 +218,7 @@ class InputData
       'hasTranslator'    => $plugin->translators->hasTranslator(),
       'rootSchemas'      => $this->_rootSchemas,
       'apiEndpoints'     => [
+        'anchors'   => $urls->createUrl('contentfield/cp/anchors'),
         'fetchSite' => $urls->createUrl('contentfield/cp/fetch'),
         'oembed'    => $urls->createUrl('contentfield/cp/oembed'),
         'translate' => $urls->createUrl('contentfield/cp/translate'),
@@ -233,7 +234,7 @@ class InputData
    * @param Content|null $content
    * @return array
    */
-  static public function loadReferences(Content $content = null) {
+  static public function loadReferences(Content $content = null): array {
     if (is_null($content)) {
       return [];
     }

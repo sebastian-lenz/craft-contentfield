@@ -100,7 +100,7 @@ class ColorValue extends AbstractValue
   /**
    * @inheritDoc
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return false;
   }
 }

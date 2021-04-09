@@ -88,7 +88,7 @@ class LayoutValue
   /**
    * @inheritDoc
    */
-  public function findInstances($qualifier) {
+  public function findInstances($qualifier): array {
     $reducer = function($result, LayoutColumnValue $column) use ($qualifier) {
       return array_merge($result, $column->findInstances($qualifier));
     };
@@ -99,7 +99,7 @@ class LayoutValue
   /**
    * @inheritDoc
    */
-  public function findUuid(string $uuid) {
+  public function findUuid(string $uuid): ?InstanceValue {
     foreach ($this->_columns as $column) {
       $result = $column->findUuid($uuid);
 
@@ -233,7 +233,7 @@ class LayoutValue
   /**
    * @inheritDoc
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return $this->count() == 0;
   }
 
@@ -250,7 +250,7 @@ class LayoutValue
    * @inheritDoc
    */
   public function render(array $variables = [], array $options = []): string {
-    $this->getGrid()->render($this, $variables, $options);
+    return $this->getGrid()->render($this, $variables, $options);
   }
 
 

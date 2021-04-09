@@ -57,7 +57,7 @@ class LocationValue extends AbstractValue
   /**
    * @return bool
    */
-  public function isEmpty() {
+  public function isEmpty(): bool {
     return $this->latitude == 0 || $this->longitude == 0;
   }
 }
