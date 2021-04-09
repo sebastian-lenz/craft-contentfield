@@ -3,12 +3,14 @@
 namespace lenz\contentfield\controllers;
 
 use Craft;
+use craft\errors\InvalidFieldException;
 use craft\web\Controller;
 use Exception;
 use lenz\contentfield\fields\content\InputData;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\Plugin;
+use lenz\craft\utils\events\AnchorsEvent;
 use yii\web\Response;
 
 /**
@@ -17,12 +19,31 @@ use yii\web\Response;
 class CpController extends Controller
 {
   /**
-   * @param integer $siteId
-   * @param integer $elementId
-   * @param string $fieldHandle
+   * @param string $siteId
+   * @param string $elementId
    * @return Response
    */
-  public function actionFetch($siteId, $elementId, $fieldHandle) {
+  public function actionAnchors(string $siteId, string $elementId): Response {
+    try {
+      $anchors = AnchorsEvent::findAnchorsById($elementId, $siteId);
+    } catch (Exception $e) {
+      return $this->asJson([ 'result' => false ]);
+    }
+
+    return $this->asJson([
+      'anchors' => $anchors,
+      'result' => true,
+    ]);
+  }
+
+  /**
+   * @param string|int $siteId
+   * @param string|int $elementId
+   * @param string $fieldHandle
+   * @return Response
+   * @throws InvalidFieldException
+   */
+  public function actionFetch($siteId, $elementId, string $fieldHandle): Response {
     $element = Craft::$app->elements->getElementById($elementId, null, $siteId);
     if (is_null($element)) {
       return $this->asJson([
@@ -60,7 +81,7 @@ class CpController extends Controller
    * @return Response
    * @throws Exception
    */
-  public function actionOembed($schema, $field, $url) {
+  public function actionOembed(string $schema, string $field, string $url): Response {
     $instance = Plugin::getInstance()->schemas->getSchema($schema);
     if (is_null($instance)) {
       throw new Exception('Invalid schema provided: ' . $schema);
@@ -73,7 +94,6 @@ class CpController extends Controller
       throw new Exception('Invalid field provided: ' . $field);
     }
 
-    /** @var OEmbedField $oembedField */
     $oembedField = $instance->fields[$field];
     $oembed = $oembedField->getOEmbed($url);
 
@@ -91,7 +111,7 @@ class CpController extends Controller
    * @param string $text
    * @return Response
    */
-  public function actionTranslate($source, $target, $text) {
+  public function actionTranslate(string $source, string $target, string $text): Response {
     $translated = null;
     $translator = Plugin::getInstance()
       ->translators
