@@ -11,6 +11,7 @@ use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\LinkField;
 use lenz\craft\utils\events\AnchorEvent;
+use Twig\Markup;
 
 /**
  * Class LinkValue
@@ -104,12 +105,13 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
 
   /**
    * @param array $extraAttribs
-   * @return string
+   * @return Markup
    * @throws Exception
+   * @noinspection PhpUnused (Public API)
    */
-  public function getLinkAttributes($extraAttribs = []): string {
+  public function getLinkAttributes($extraAttribs = []): Markup {
     if ($this->isEmpty()) {
-      return '';
+      return Template::raw('');
     }
 
     $attribs = [
