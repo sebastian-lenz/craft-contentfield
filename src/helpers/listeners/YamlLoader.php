@@ -8,6 +8,7 @@ use craft\events\TemplateEvent;
 use craft\web\ErrorHandler;
 use craft\web\View;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
+use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use yii\base\Event;
 
@@ -20,7 +21,10 @@ class YamlLoader
    * @param ExceptionEvent $event
    */
   static public function onBeforeHandleException(ExceptionEvent $event) {
-    if ($event->exception instanceof SyntaxError) {
+    if (
+      $event->exception instanceof RuntimeError ||
+      $event->exception instanceof SyntaxError
+    ) {
       $error  = $event->exception;
       $source = $error->getSourceContext();
       $loader = Craft::$app->getView()->getTwig()->getLoader();
