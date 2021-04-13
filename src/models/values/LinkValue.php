@@ -21,6 +21,11 @@ use Twig\Markup;
 class LinkValue extends AbstractValue implements ReferenceMappableInterface
 {
   /**
+   * @var bool
+   */
+  public $autoNoReferrer = true;
+
+  /**
    * @var int
    */
   public $elementId = 0;
@@ -62,6 +67,10 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
     parent::__construct($parent, $field);
 
     if (is_array($data)) {
+      if (isset($data['autoNoReferrer'])) {
+        $this->autoNoReferrer = !!$data['autoNoReferrer'];
+      }
+
       if (isset($data['elementId']) && is_numeric($data['elementId'])) {
         $this->elementId = $data['elementId'];
       }
@@ -120,6 +129,9 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
 
     if ($this->openInNewWindow) {
       $attribs['target'] = '_blank';
+      if ($this->autoNoReferrer) {
+        $attribs['rel'] = 'noopener noreferrer';
+      }
     }
 
     return Template::raw(Html::renderTagAttributes($attribs));
