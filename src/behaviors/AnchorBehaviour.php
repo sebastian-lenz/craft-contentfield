@@ -96,7 +96,7 @@ class AnchorBehaviour extends Behavior
       $this->_childAnchors[] = $instance->getBehavior('anchor');
     }
 
-    foreach ($instance->getAttributes() as $name => $value) {
+    foreach ($instance->getAttributes() as $value) {
       if ($value instanceof ArrayValue) {
         $this->collectArrayAnchors($value);
       } elseif ($value instanceof InstanceValue) {
@@ -151,9 +151,9 @@ class AnchorBehaviour extends Behavior
     }
 
     $behaviour = $root->getBehavior('anchor');
-    return is_null($behaviour)
-      ? $this
-      : $behaviour;
+    return $behaviour instanceof AnchorBehaviour
+      ? $behaviour
+      : $this;
   }
 
   /**
