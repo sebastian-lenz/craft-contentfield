@@ -28,7 +28,8 @@ use yii\base\Model;
  * Inherited from `AnchorBehaviour`
  * @method AnchorBehaviour[] getAllAnchors()
  * @method string|null getAnchor()
- * @method string|null getAnchorId()
+ * @method string|null getAnchorRawValue()
+ * @method string|null getAnchorTitle()
  * @method boolean hasAnchor()
  *
  * Inherited from `SiblingsBehavior`

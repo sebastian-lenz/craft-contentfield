@@ -22,7 +22,7 @@ class Anchors
       foreach ($anchors->getAllAnchors() as $anchor) {
         $event->addAnchor(
           $anchor->getAnchor(),
-          $anchor->getRawValue(),
+          $anchor->getAnchorTitle(),
           $anchor->owner->getUuid()
         );
       }

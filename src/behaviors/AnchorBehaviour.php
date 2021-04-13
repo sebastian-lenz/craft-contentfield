@@ -51,7 +51,7 @@ class AnchorBehaviour extends Behavior
   /**
    * @return string|null
    */
-  public function getRawValue(): ?string {
+  public function getAnchorRawValue(): ?string {
     if (!isset($this->_rawValue)) {
       $this->_rawValue = $this->loadRawValue();
     }
@@ -60,10 +60,17 @@ class AnchorBehaviour extends Behavior
   }
 
   /**
+   * @return string
+   */
+  public function getAnchorTitle(): ?string {
+    return $this->getAnchorRawValue();
+  }
+
+  /**
    * @return bool
    */
   public function hasAnchor(): bool {
-    return !is_null($this->getRawValue());
+    return !is_null($this->getAnchorRawValue());
   }
 
 
@@ -89,7 +96,7 @@ class AnchorBehaviour extends Behavior
       $this->_childAnchors[] = $instance->getBehavior('anchor');
     }
 
-    foreach ($instance->getAttributes() as $name => $value) {
+    foreach ($instance->getAttributes() as $value) {
       if ($value instanceof ArrayValue) {
         $this->collectArrayAnchors($value);
       } elseif ($value instanceof InstanceValue) {
@@ -104,7 +111,7 @@ class AnchorBehaviour extends Behavior
   private function generateAnchors() {
     $ids = [];
     foreach ($this->getChildAnchors() as $anchor) {
-      $rawValue = $anchor->getRawValue();
+      $rawValue = $anchor->getAnchorRawValue();
       if (is_null($rawValue)) {
         $rawValue = $anchor->owner->getUuid();
       }
@@ -144,9 +151,9 @@ class AnchorBehaviour extends Behavior
     }
 
     $behaviour = $root->getBehavior('anchor');
-    return is_null($behaviour)
-      ? $this
-      : $behaviour;
+    return $behaviour instanceof AnchorBehaviour
+      ? $behaviour
+      : $this;
   }
 
   /**
