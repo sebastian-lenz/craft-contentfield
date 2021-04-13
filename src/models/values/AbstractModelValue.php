@@ -64,7 +64,10 @@ abstract class AbstractModelValue
       substr($name, 0, 4) == 'raw:' &&
       array_key_exists(substr($name, 4), $this->_schema->fields)
     ) {
-      return $this->_values[substr($name, 4)]->getEditorData();
+      $name = substr($name, 4);
+      return $this->_schema
+        ->getField($name)
+        ->getEditorValue($this->_values[$name]);
     } elseif (array_key_exists($name, $this->_schema->fields)) {
       return $this->_values[$name];
     } elseif ($this->_schema->hasConstant($name)) {

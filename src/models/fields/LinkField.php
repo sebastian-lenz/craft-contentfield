@@ -43,6 +43,7 @@ class LinkField extends AbstractField
     ],
     'entry' => [
       'allowHash'   => false,
+      'allowSelf'   => false,
       'elementType' => Entry::class,
       'label'       => 'Entry',
       'sources'     => null,
@@ -194,6 +195,10 @@ class LinkField extends AbstractField
 
     // Validate element type
     if ($type == 'element') {
+      if (array_key_exists('allowSelf', $info) && !is_bool($info['allowSelf'])) {
+        return $callback("Property `allowSelf` must be boolean");
+      }
+
       $elementType = ReferenceMap::normalizeElementType($info['elementType']);
       if (!class_exists($elementType)) {
         return $callback("The element type `{$elementType}` is invalid.");
