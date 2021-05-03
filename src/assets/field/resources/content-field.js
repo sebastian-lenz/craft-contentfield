@@ -431,8 +431,8 @@ function o(){const c=Date.now()-s
 c<t&&c>=0?r=window.setTimeout(o,t-c):(r=null,n||(a=e.apply(l,i),r||(l=i=null)))}return function(){l=this,i=arguments,s=Date.now()
 const c=n&&!r
 return r||(r=window.setTimeout(o,t)),c&&(a=e.apply(l,i),l=i=null),a}}((()=>{this.setState({mode:"loading"})
-const{apiEndpoint:e,model:t,field:n}=this.props,s=[`schema=${encodeURIComponent(t.__type)}`,`field=${encodeURIComponent(n.name)}`,`url=${encodeURIComponent(this.getOEmbed().url)}`],a=new XMLHttpRequest
-a.onreadystatechange=()=>this.handleRequestStateChange(a),a.onerror=()=>this.handleRequestError(),a.open("GET",`${e}&${s.join("&")}`),a.send(),this.request&&this.request.abort(),this.request=a}),500)}getOEmbed(){const{data:e}=this.props
+const{apiEndpoint:e,model:t,field:n}=this.props,s=-1===e.indexOf("?")?"?":"&",a=[`schema=${encodeURIComponent(t.__type)}`,`field=${encodeURIComponent(n.name)}`,`url=${encodeURIComponent(this.getOEmbed().url)}`],r=new XMLHttpRequest
+r.onreadystatechange=()=>this.handleRequestStateChange(r),r.onerror=()=>this.handleRequestError(),r.open("GET",`${e}${s}${a.join("&")}`),r.send(),this.request&&this.request.abort(),this.request=r}),500)}getOEmbed(){const{data:e}=this.props
 return wn(e)?e:{url:""}}handleRequestStateChange(e){if(e.readyState!==XMLHttpRequest.DONE)return
 if(200!==e.status)return this.handleRequestError()
 let t
