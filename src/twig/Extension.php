@@ -6,11 +6,13 @@ use craft\elements\Asset;
 use craft\elements\db\AssetQuery;
 use craft\helpers\Template;
 use Exception;
+use lenz\contentfield\models\values\ReferenceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\nodeVisitors\DisplayNodeVisitor;
 use lenz\contentfield\twig\tokenParsers\DisplayTokenParser;
 use lenz\contentfield\twig\tokenParsers\SiblingsTokenParser;
 use Twig\Extension\AbstractExtension;
+use Twig\Markup;
 use Twig\TwigFunction;
 
 /**
@@ -21,14 +23,17 @@ class Extension extends AbstractExtension
   /**
    * @inheritDoc
    */
-  public function getTokenParsers() {
+  public function getTokenParsers(): array {
     return [
       new DisplayTokenParser(),
       new SiblingsTokenParser(),
     ];
   }
 
-  public function getNodeVisitors() {
+  /**
+   * @inheritDoc
+   */
+  public function getNodeVisitors(): array {
     return [
       new DisplayNodeVisitor()
     ];
@@ -37,24 +42,28 @@ class Extension extends AbstractExtension
   /**
    * @inheritDoc
    */
-  public function getFunctions() {
+  public function getFunctions(): array {
     return [
       new TwigFunction('imageTag', [Extension::class, 'imageTag']),
     ];
   }
 
+
+  // Static methods
+  // --------------
+
   /**
-   * @param Asset $asset
+   * @param Asset|Asset[]|AssetQuery|ReferenceValue $asset
    * @param string|array $config
-   * @return string|null
+   * @return Markup|null
    * @throws Exception
    */
-  static function imageTag($asset, $config) {
+  static function imageTag($asset, $config): ?Markup {
     if ($asset instanceof AssetQuery) {
       $asset = $asset->one();
-    }
-
-    if (is_array($asset) && count($asset) > 0) {
+    } elseif ($asset instanceof ReferenceValue) {
+      $asset = $asset->getFirst();
+    } elseif (is_array($asset) && count($asset) > 0) {
       $asset = $asset[0];
     }
 
