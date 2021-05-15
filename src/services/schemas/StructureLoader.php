@@ -34,7 +34,14 @@ class StructureLoader extends AbstractLoader
       $schemaName = substr($name, $schemaOffset + 1);
       $schema = Plugin::getInstance()->schemas->getSchema($schemaName);
 
-      return $schema->getLocalStructure(substr($name, 0, $schemaOffset));
+      $structName = substr($name, 0, $schemaOffset);
+      $struct = $schema->getLocalStructure($structName);
+
+      if (is_null($struct)) {
+        throw new Exception(printf('The local structure `%s` does not exist in `%s`.', $structName, $schemaName));
+      }
+
+      return $struct;
     }
 
     return Plugin::getInstance()->structures->getStructure($name);
