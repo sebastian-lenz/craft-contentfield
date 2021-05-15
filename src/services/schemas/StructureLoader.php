@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\services\schemas;
 
+use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
 
@@ -17,9 +18,17 @@ class StructureLoader extends AbstractLoader
 
 
   /**
+   * @return array
+   * @throws Exception
+   */
+  public function getAllSchemas(): array {
+    return [Plugin::getInstance()->structures->getAllStructures(), []];
+  }
+
+  /**
    * @inheritDoc
    */
-  public function load($name) {
+  public function load(string $name): AbstractSchema {
     $schemaOffset = strpos($name, '@');
     if ($schemaOffset !== false) {
       $schemaName = substr($name, $schemaOffset + 1);
@@ -40,7 +49,7 @@ class StructureLoader extends AbstractLoader
    * @param AbstractSchema|null $scope
    * @return string
    */
-  public static function createName($name, AbstractSchema $scope = null) {
+  public static function createName(string $name, AbstractSchema $scope = null): string {
     return is_null($scope)
       ? $name
       : $name . '@' . $scope->qualifier;
@@ -51,7 +60,7 @@ class StructureLoader extends AbstractLoader
    * @param AbstractSchema|null $scope
    * @return string
    */
-  static public function createQualifier($name, AbstractSchema $scope = null) {
+  static public function createQualifier(string $name, AbstractSchema $scope = null): string {
     return self::NAME_PREFIX . self::createName($name, $scope);
   }
 }

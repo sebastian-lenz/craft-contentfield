@@ -40,7 +40,7 @@ class Instance
    * @param string $defaultValue
    * @return $this
    */
-  public function convertToHtml(string $name, string $defaultValue = '') {
+  public function convertToHtml(string $name, string $defaultValue = ''): Instance {
     if ($this->hasAttribute($name)) {
       try {
         $text = (string)$this->getAttribute($name);
@@ -62,7 +62,7 @@ class Instance
    * @param string $defaultValue
    * @return $this
    */
-  public function convertToString(string $name, string $defaultValue = '') {
+  public function convertToString(string $name, string $defaultValue = ''): Instance {
     if ($this->hasAttribute($name)) {
       try {
         $text = (string)$this->getAttribute($name);
@@ -84,7 +84,7 @@ class Instance
    * @param mixed $value
    * @return $this
    */
-  public function ensureAttribute(string $name, $value) {
+  public function ensureAttribute(string $name, $value): Instance {
     if (!$this->hasAttribute($name)) {
       $this->setAttribute($name, $value);
     }
@@ -98,8 +98,9 @@ class Instance
    *
    * @param string|array|null $qualifier
    * @return Collection
+   * @throws Throwable
    */
-  public function find($qualifier = null) {
+  public function find($qualifier = null): Collection {
     return $this
       ->findInstances()
       ->append($this)
@@ -112,8 +113,9 @@ class Instance
    *
    * @param string|array|null $qualifier
    * @return Collection
+   * @throws Throwable
    */
-  public function findChildren($qualifier = null) {
+  public function findChildren($qualifier = null): Collection {
     $collection = new Collection();
 
     foreach ($this->_attributes as $value) {
@@ -137,8 +139,10 @@ class Instance
    *
    * @param string|array|null $qualifier
    * @return Collection
+   * @throws Throwable
+   * @noinspection PhpUnused (Public API)
    */
-  public function findChildrenAndSelf($qualifier = null) {
+  public function findChildrenAndSelf($qualifier = null): Collection {
     return $this
       ->findChildren()
       ->append($this)
@@ -152,8 +156,9 @@ class Instance
    *
    * @param string|array|null $qualifier
    * @return Collection
+   * @throws Throwable
    */
-  public function findInstances($qualifier = null) {
+  public function findInstances($qualifier = null): Collection {
     $collection = new Collection();
     $this->findChildren()->each(function(Instance $child) use ($collection) {
       $collection->merge($child->find());
@@ -175,14 +180,14 @@ class Instance
   /**
    * @return array
    */
-  public function getSerializedValue() {
+  public function getSerializedValue(): array {
     return $this->serializeRecursive($this->_attributes);
   }
 
   /**
    * @return string|null
    */
-  public function getType() {
+  public function getType(): ?string {
     $type = $this->getAttribute(InstanceValue::TYPE_PROPERTY);
     return is_null($type) ? null : (string)$type;
   }
@@ -191,7 +196,7 @@ class Instance
    * @param string $name
    * @return bool
    */
-  public function hasAttribute(string $name) {
+  public function hasAttribute(string $name): bool {
     return array_key_exists($name, $this->_attributes);
   }
 
@@ -200,7 +205,7 @@ class Instance
    * @return boolean
    * @throws Throwable
    */
-  public function matchesQualifier($specs) {
+  public function matchesQualifier($specs): bool {
     return Plugin::getInstance()
       ->schemas
       ->matchesQualifier($this->getType(), $specs);
@@ -214,7 +219,7 @@ class Instance
    * @param callable $callback
    * @return $this
    */
-  public function modifyAttribute(string $name, callable $callback) {
+  public function modifyAttribute(string $name, callable $callback): Instance {
     if ($this->hasAttribute($name)) {
       $this->setAttribute($name, $callback($this->getAttribute($name)));
     }
@@ -226,7 +231,7 @@ class Instance
    * @param array $replacements
    * @return $this
    */
-  public function renameAttribute(array $replacements) {
+  public function renameAttribute(array $replacements): Instance {
     foreach ($replacements as $oldName => $newName) {
       if ($this->hasAttribute($oldName)) {
         $this->setAttribute($newName, $this->getAttribute($oldName));
@@ -245,7 +250,7 @@ class Instance
    * @return $this
    * @throws Exception
    */
-  public function renameType(array $replacements) {
+  public function renameType(array $replacements): Instance {
     $type = $this->getType();
 
     foreach ($replacements as $oldType => $newType) {
@@ -262,7 +267,7 @@ class Instance
    * @param string $name
    * @return $this
    */
-  public function removeAttribute(string $name) {
+  public function removeAttribute(string $name): Instance {
     unset ($this->_attributes[$name]);
     return $this;
   }
@@ -274,7 +279,7 @@ class Instance
    * @param mixed $value
    * @return $this
    */
-  public function setAttribute(string $name, $value) {
+  public function setAttribute(string $name, $value): Instance {
     if (self::isInstance($value)) {
       $value = new Instance($value);
     } elseif (is_array($value)) {
@@ -295,7 +300,7 @@ class Instance
    * @param array $attributes
    * @return $this
    */
-  public function setAttributes(array $attributes) {
+  public function setAttributes(array $attributes): Instance {
     foreach ($attributes as $name => $value) {
       $this->setAttribute($name, $value);
     }
@@ -310,7 +315,7 @@ class Instance
    * @return $this
    * @throws Exception
    */
-  public function setType(string $qualifier) {
+  public function setType(string $qualifier): Instance {
     $parsed = Plugin::getInstance()
       ->schemas
       ->parseSchemaQualifier($qualifier);
@@ -327,7 +332,7 @@ class Instance
    * @param array $value
    * @return array
    */
-  private function serializeRecursive(array $value) {
+  private function serializeRecursive(array $value): array {
     return array_map(function($item) {
       if ($item instanceof Instance) {
         return $item->getSerializedValue();
@@ -347,7 +352,7 @@ class Instance
    * @param mixed $value
    * @return bool
    */
-  static function isInstance($value) {
+  static function isInstance($value): bool {
     return (
       is_array($value) &&
       array_key_exists(InstanceValue::TYPE_PROPERTY, $value) &&

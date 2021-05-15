@@ -214,9 +214,8 @@ class Schemas
    * @param string|string[] $specs
    * @param AbstractSchema|null $scope
    * @return bool
-   * @throws Throwable
    */
-  public function matchesQualifier(string $qualifier, $specs, AbstractSchema $scope = null) {
+  public function matchesQualifier(string $qualifier, $specs, AbstractSchema $scope = null): bool {
     $qualifierInfo = $this->parseSchemaQualifier($qualifier, $scope);
 
     if (!is_array($specs)) {

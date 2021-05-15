@@ -26,7 +26,7 @@ abstract class AbstractLoader
    * @return string[]
    * @throws Throwable
    */
-  public function findNames($pattern) {
+  public function findNames(string $pattern): array {
     return [];
   }
 
@@ -38,8 +38,9 @@ abstract class AbstractLoader
    * while loading the schemas.
    *
    * @return array
+   * @throws Exception
    */
-  public function getAllSchemas() {
+  public function getAllSchemas(): array {
     return [[], []];
   }
 
@@ -50,7 +51,7 @@ abstract class AbstractLoader
    * @return AbstractSchema
    * @throws Throwable
    */
-  abstract function load($name);
+  abstract function load(string $name): AbstractSchema;
 
   /**
    * Normalize the given name.
@@ -58,7 +59,7 @@ abstract class AbstractLoader
    * @param string $name
    * @return string
    */
-  public function normalizeName($name) {
+  public function normalizeName(string $name): string {
     return $name;
   }
 }

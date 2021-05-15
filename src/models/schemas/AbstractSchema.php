@@ -255,7 +255,7 @@ abstract class AbstractSchema extends Model
    *
    * @return AbstractSchema[]
    */
-  public function getDependedSchemas() {
+  public function getDependedSchemas(): array {
     $result = [];
 
     foreach ($this->fields as $field) {
@@ -274,7 +274,7 @@ abstract class AbstractSchema extends Model
    * @param ElementInterface|null $element
    * @return array
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     $fields = [];
 
     foreach ($this->fields as $name => $field) {
@@ -301,7 +301,7 @@ abstract class AbstractSchema extends Model
    * @param string $name
    * @return AbstractField|null
    */
-  public function getField(string $name) {
+  public function getField(string $name): ?AbstractField {
     return array_key_exists($name, $this->fields)
       ? $this->fields[$name]
       : null;
@@ -312,8 +312,8 @@ abstract class AbstractSchema extends Model
    *
    * @return string
    */
-  public function getIcon() {
-    return isset($this->icon) ? $this->icon : self::DEFAULT_ICON;
+  public function getIcon(): string {
+    return $this->icon ?? self::DEFAULT_ICON;
   }
 
   /**
@@ -321,7 +321,7 @@ abstract class AbstractSchema extends Model
    *
    * @return string
    */
-  public function getLabel() {
+  public function getLabel(): string {
     return $this->label;
   }
 
@@ -329,14 +329,14 @@ abstract class AbstractSchema extends Model
    * @param string $name
    * @return AbstractSchema|null
    */
-  abstract public function getLocalStructure($name);
+  abstract public function getLocalStructure(string $name): ?AbstractSchema;
 
   /**
    * Returns the name part of this schemas qualifier.
    *
    * @return string
    */
-  public function getName() {
+  public function getName(): string {
     return self::extractName($this->qualifier);
   }
 
@@ -346,14 +346,14 @@ abstract class AbstractSchema extends Model
    *
    * @return string
    */
-  public function getPreview() {
+  public function getPreview(): string {
     return $this->preview;
   }
 
   /**
    * @return array
    */
-  public function getValueRules() {
+  public function getValueRules(): array {
     $result = [];
 
     foreach ($this->fields as $name => $field) {
@@ -380,7 +380,7 @@ abstract class AbstractSchema extends Model
    * @return string
    * @throws Exception
    */
-  public function getClientValidationScript() {
+  public function getClientValidationScript(): string {
     $model      = new InstanceValue([], $this);
     $validators = [];
     $view       = Craft::$app->getView();
@@ -394,7 +394,7 @@ abstract class AbstractSchema extends Model
         $js = $validator->clientValidateAttribute($model, $attribute, $view);
         if ($validator->enableClientValidation && $js != '') {
           if ($validator->whenClient !== null) {
-            $js = "if (({$validator->whenClient})(attribute, value)) { $js }";
+            $js = "if (($validator->whenClient)(attribute, value)) { $js }";
           }
 
           $validators[$attribute][] = $js;
@@ -416,7 +416,7 @@ abstract class AbstractSchema extends Model
    * @param string $name
    * @return bool
    */
-  public function hasConstant(string $name) {
+  public function hasConstant(string $name): bool {
     return array_key_exists($name, $this->constants);
   }
 
@@ -424,7 +424,7 @@ abstract class AbstractSchema extends Model
    * @param string $name
    * @return bool
    */
-  public function hasField(string $name) {
+  public function hasField(string $name): bool {
     return array_key_exists($name, $this->fields);
   }
 
@@ -432,14 +432,14 @@ abstract class AbstractSchema extends Model
    * @param string $name
    * @return bool
    */
-  abstract public function hasLocalStructure($name);
+  abstract public function hasLocalStructure(string $name): bool;
 
   /**
    * @param string|string[] $specs
    * @return boolean
    * @throws Throwable
    */
-  public function matchesQualifier($specs) {
+  public function matchesQualifier($specs): bool {
     return Plugin::getInstance()
       ->schemas
       ->matchesQualifier($this->qualifier, $specs);
@@ -453,12 +453,12 @@ abstract class AbstractSchema extends Model
    * @param array $options
    * @return string
    */
-  abstract function render(InstanceValue $instance, array $variables = [], array $options = []);
+  abstract function render(InstanceValue $instance, array $variables = [], array $options = []): string;
 
   /**
    * @inheritdoc
    */
-  public function rules() {
+  public function rules(): array {
     return [
       [['label', 'qualifier'], 'required'],
       [['icon', 'grid', 'label', 'preview', 'qualifier'], 'string'],
@@ -486,6 +486,7 @@ abstract class AbstractSchema extends Model
 
   /**
    * @param string $attribute
+   * @noinspection PhpUnused (Validator)
    */
   public function validateArray(string $attribute) {
     if (!is_array($this->$attribute)){
@@ -497,6 +498,7 @@ abstract class AbstractSchema extends Model
    * A validator that checks the fields of this schema.
    *
    * @param string $attribute
+   * @noinspection PhpUnused (Validator)
    */
   public function validateFields(string $attribute) {
     if (!is_array($this->$attribute)) {
@@ -577,14 +579,14 @@ abstract class AbstractSchema extends Model
    * @param string $qualifier
    * @return string
    */
-  protected function generateSchemaLabel(string $qualifier) {
+  protected function generateSchemaLabel(string $qualifier): string {
     return Inflector::camel2words(self::extractName($qualifier), true);
   }
 
   /**
    * @return array|null
    */
-  protected function getEditorStyle() {
+  protected function getEditorStyle(): ?array {
     $style = isset($this->style) && is_array($this->style)
       ? $this->style
       : [];
@@ -599,7 +601,7 @@ abstract class AbstractSchema extends Model
   /**
    * @return string|null
    */
-  protected function getPreviewImage() {
+  protected function getPreviewImage(): ?string {
     $candidates = self::PREVIEW_IMAGE_CANDIDATES;
     if (isset($this->previewImage)) {
       array_unshift($candidates, $this->previewImage);
@@ -621,7 +623,7 @@ abstract class AbstractSchema extends Model
   /**
    * @return string|null
    */
-  protected function getPreviewLabel() {
+  protected function getPreviewLabel(): ?string {
     if (isset($this->previewLabel) && is_string($this->previewLabel)) {
       return $this->hasField($this->previewLabel)
         ? '{{' . $this->previewLabel . '}}'
@@ -645,7 +647,7 @@ abstract class AbstractSchema extends Model
    * @param string $qualifier
    * @return bool|string
    */
-  public static function extractName(string $qualifier) {
+  public static function extractName(string $qualifier): string {
     $offset = strpos($qualifier, ':');
     if ($offset !== false) {
       $qualifier = substr($qualifier, $offset + 1);
@@ -665,7 +667,7 @@ abstract class AbstractSchema extends Model
    * @return array
    * @throws Exception
    */
-  static public function expandConfig(array $definitions, array $options = []) {
+  static public function expandConfig(array $definitions, array $options = []): array {
     $triggers = [
       '.' => ['fields', ArrayHelper::getValue($definitions, 'fields', [])],
     ];

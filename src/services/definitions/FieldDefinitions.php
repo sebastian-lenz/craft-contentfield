@@ -29,11 +29,6 @@ use lenz\contentfield\models\schemas\AbstractSchema;
 class FieldDefinitions extends AbstractDefinitions
 {
   /**
-   * @var array
-   */
-  protected $blueprints;
-
-  /**
    * A map of all known field types.
    * @var array
    */
@@ -66,7 +61,7 @@ class FieldDefinitions extends AbstractDefinitions
    * @throws FieldConfigException
    * @throws Exception
    */
-  public function createField(AbstractSchema $schema = null, array $config = []) {
+  public function createField(AbstractSchema $schema = null, array $config = []): AbstractField {
     $type   = strtolower($config['type']);
     $config = $this->resolveDefinition($config);
 
@@ -90,7 +85,7 @@ class FieldDefinitions extends AbstractDefinitions
   /**
    * @return string
    */
-  protected function getDefinitionName() {
+  protected function getDefinitionName(): string {
     return 'fields';
   }
 
@@ -98,7 +93,7 @@ class FieldDefinitions extends AbstractDefinitions
    * @param string $type
    * @return boolean
    */
-  protected function isNativeType($type) {
+  protected function isNativeType(string $type): bool {
     return array_key_exists($type, self::$FIELD_TYPES);
   }
 }

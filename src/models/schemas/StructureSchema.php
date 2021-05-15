@@ -45,7 +45,7 @@ class StructureSchema extends AbstractSchema
    * @return AbstractSchema|null
    * @throws Exception
    */
-  public function getLocalStructure($name) {
+  public function getLocalStructure(string $name): ?AbstractSchema {
     return is_null($this->_container)
       ? $this->getManager()->getStructure($name)
       : $this->_container->getLocalStructure($name);
@@ -55,7 +55,7 @@ class StructureSchema extends AbstractSchema
    * @param string $name
    * @return bool
    */
-  public function hasLocalStructure($name) {
+  public function hasLocalStructure(string $name): bool {
     return is_null($this->_container)
       ? $this->getManager()->hasDefinition($name)
       : $this->_container->hasLocalStructure($name);
@@ -65,7 +65,7 @@ class StructureSchema extends AbstractSchema
    * @inheritDoc
    * @throws Exception
    */
-  public function render(InstanceValue $instance, array $variables = [], array $options = []) {
+  public function render(InstanceValue $instance, array $variables = [], array $options = []): string {
     throw new Exception('Structures cannot be rendered or displayed.');
   }
 

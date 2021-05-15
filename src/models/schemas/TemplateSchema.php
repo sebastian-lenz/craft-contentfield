@@ -94,7 +94,7 @@ class TemplateSchema extends AbstractSchemaContainer
    * @inheritdoc
    * @throws Throwable
    */
-  public function render(InstanceValue $instance, array $variables = [], array $options = []) {
+  public function render(InstanceValue $instance, array $variables = [], array $options = []): string {
     $variables = self::normalizedVariables($instance, $variables);
     $view = array_key_exists('view', $options) && $options['view'] instanceof View
       ? $options['view']
@@ -113,7 +113,7 @@ class TemplateSchema extends AbstractSchemaContainer
    * @return TemplateWrapper
    * @throws Throwable
    */
-  private function getTemplate() {
+  private function getTemplate(): TemplateWrapper {
     if (!isset($this->_template)) {
       $this->_template = self::getTwig()->load($this->template);
     }
@@ -129,7 +129,7 @@ class TemplateSchema extends AbstractSchemaContainer
    * @return Environment
    * @throws Exception
    */
-  static function getTwig() {
+  static function getTwig(): Environment {
     if (!isset(self::$_twig)) {
       self::$_twig = YamlAwareTemplateLoader::getSiteTwig();
     }
@@ -143,7 +143,7 @@ class TemplateSchema extends AbstractSchemaContainer
    * @return array
    * @throws Exception
    */
-  static function normalizedVariables(InstanceValue $instance, array $variables) {
+  static function normalizedVariables(InstanceValue $instance, array $variables): array {
     if (!isset(self::$_globalVariables)) {
       $routeParams = Craft::$app
         ->getUrlManager()

@@ -42,7 +42,7 @@ abstract class AbstractDefinitions
    * @param string $name
    * @return array
    */
-  public function getDefinition($name) {
+  public function getDefinition(string $name): array {
     if (!isset($this->definitions)) {
       $this->loadDefinitions();
     }
@@ -61,7 +61,7 @@ abstract class AbstractDefinitions
    * @param string $name
    * @return bool
    */
-  public function hasDefinition($name) {
+  public function hasDefinition(string $name): bool {
     if (!isset($this->definitions)) {
       $this->loadDefinitions();
     }
@@ -78,19 +78,20 @@ abstract class AbstractDefinitions
    *
    * @return string
    */
-  protected function getCacheKey() {
+  protected function getCacheKey(): string {
     return static::class;
   }
 
   /**
    * @return string
    */
-  abstract protected function getDefinitionName();
+  abstract protected function getDefinitionName(): string;
 
   /**
    * @return array
+   * @noinspection PhpParamsInspection (PHPStorm has false definition of `RecursiveCallbackFilterIterator`)
    */
-  protected function getDefinitionSources() {
+  protected function getDefinitionSources(): array {
     $sources = [];
     $name    = $this->getDefinitionName();
     $path    = implode(DIRECTORY_SEPARATOR, [
@@ -135,12 +136,12 @@ abstract class AbstractDefinitions
    * @param string $type
    * @return boolean
    */
-  abstract protected function isNativeType($type);
+  abstract protected function isNativeType(string $type): bool;
 
   /**
    * @return bool
    */
-  protected function isTypeRequired() {
+  protected function isTypeRequired(): bool {
     return true;
   }
 
@@ -185,7 +186,7 @@ abstract class AbstractDefinitions
 
     // Finally read all the definitions
     $definitions = [];
-    foreach ($sources as $key => $source) {
+    foreach ($sources as $source) {
       $definitions = array_merge(
         $definitions,
         static::transformDefinitions(
@@ -206,7 +207,7 @@ abstract class AbstractDefinitions
    * @param array $parent
    * @return array
    */
-  protected function mergeDefinitions(array $config, array $parent) {
+  protected function mergeDefinitions(array $config, array $parent): array {
     return array_merge($parent, $config);
   }
 
@@ -216,7 +217,7 @@ abstract class AbstractDefinitions
    * @return array
    * @throws Exception
    */
-  protected function resolveDefinition(array $config, array $stack = []) {
+  protected function resolveDefinition(array $config, array $stack = []): array {
     if (
       !array_key_exists(static::DEFINITION_TYPE, $config) ||
       !is_string($config[static::DEFINITION_TYPE])
@@ -263,7 +264,7 @@ abstract class AbstractDefinitions
    * @param array $definitions
    * @return array
    */
-  static public function transformDefinitions(array $definitions) {
+  static public function transformDefinitions(array $definitions): array {
     return $definitions;
   }
 }
