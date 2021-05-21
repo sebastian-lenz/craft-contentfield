@@ -14,7 +14,7 @@ class ContentFieldValidator extends Validator
    * @param mixed $value
    * @return array|null
    */
-  protected function validateValue($value) {
+  protected function validateValue($value): ?array {
     if (!($value instanceof Content)) {
       return ['The value must be an instance of lenz\contentfield\models\Content.', []];
     }

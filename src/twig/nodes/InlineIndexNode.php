@@ -24,7 +24,7 @@ class InlineIndexNode extends Node
    * @param string $qualifier
    * @return string|null
    */
-  public function getInlinedSchema(string $qualifier) {
+  public function getInlinedSchema(string $qualifier): ?string {
     $templates = $this->getAttribute('templates');
 
     return array_key_exists($qualifier, $templates)
@@ -44,7 +44,7 @@ class InlineIndexNode extends Node
   }
 
   /**
-   * @inheritDoc
+   * @param Compiler $compiler
    */
   public function compile(Compiler $compiler) {
     $templates = $this->getAttribute('templates');

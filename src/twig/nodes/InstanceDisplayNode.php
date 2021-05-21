@@ -31,9 +31,9 @@ class InstanceDisplayNode extends DisplayNode
     AbstractExpression $value,
     InstanceField $field,
     AbstractExpression $variables = null,
-    $forceInline = false,
-    $line = 0,
-    $tag = null
+    bool $forceInline = false,
+    int $line = 0,
+    string $tag = null
   ) {
     parent::__construct($value, $field, $variables, $forceInline, $line, $tag);
   }
@@ -42,7 +42,7 @@ class InstanceDisplayNode extends DisplayNode
    * @inheritDoc
    * @throws Throwable
    */
-  public function getInlineSchemaCandidates() {
+  public function getInlineSchemaCandidates(): array {
     if (!Config::getInstance()->useTemplateInlining()) {
       return [];
     }
@@ -61,7 +61,7 @@ class InstanceDisplayNode extends DisplayNode
   /**
    * @inheritDoc
    */
-  public function usesIndexDisplay() {
+  public function usesIndexDisplay(): bool {
     return count($this->_inlinedSchemas) == 0;
   }
 
@@ -88,7 +88,7 @@ class InstanceDisplayNode extends DisplayNode
         ->write("} else {\n")
           ->indent();
 
-    $this->addInstanceDisplay($compiler, '$displayContent', '$displayVariables');
+    $this->addInstanceDisplay($compiler);
 
     $compiler
           ->outdent()

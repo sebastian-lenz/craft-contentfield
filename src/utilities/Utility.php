@@ -114,7 +114,7 @@ class Utility extends UtilityBase
   /**
    * @inheritdoc
    */
-  public static function iconPath() {
+  public static function iconPath(): ?string {
     return dirname(__DIR__) . '/icon-mono.svg';
   }
 

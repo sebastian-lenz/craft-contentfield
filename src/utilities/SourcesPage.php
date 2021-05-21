@@ -55,7 +55,7 @@ class SourcesPage extends AbstractPage
    * @param array $sources
    * @return array
    */
-  private function getSources($sources) {
+  private function getSources(array $sources): array {
     $result = [];
     foreach ($sources as $source) {
       if (
@@ -73,7 +73,7 @@ class SourcesPage extends AbstractPage
   /**
    * @return array
    */
-  private function getSourceTypes() {
+  private function getSourceTypes(): array {
     return [
       'Asset sources'       => $this->getSources(Asset::sources()),
       'Category sources'    => $this->getSources(Category::sources()),

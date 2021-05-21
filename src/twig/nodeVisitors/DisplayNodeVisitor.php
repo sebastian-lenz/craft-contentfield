@@ -26,7 +26,7 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
    * @inheritDoc
    * @throws Throwable
    */
-  protected function doEnterNode(Node $node, Environment $env) {
+  protected function doEnterNode(Node $node, Environment $env): Node {
     if ($node instanceof ModuleNode) {
       $this->_context = new DisplayNodeVisitorContext($node, $this->_context);
     } elseif ($node instanceof DisplayNode) {
@@ -60,7 +60,7 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
   /**
    * @inheritDoc
    */
-  public function getPriority() {
+  public function getPriority(): int {
     return 0;
   }
 

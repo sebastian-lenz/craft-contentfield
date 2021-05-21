@@ -18,12 +18,12 @@ class SiblingsNode extends Node
    * @param int $line
    * @param string|null $tag
    */
-  public function __construct($nodes, $line = 0, $tag = null) {
+  public function __construct(array $nodes, int $line = 0, string $tag = null) {
     parent::__construct($nodes, [], $line, $tag);
   }
 
   /**
-   * @inheritDoc
+   * @param Compiler $compiler
    */
   public function compile(Compiler $compiler) {
     $compiler

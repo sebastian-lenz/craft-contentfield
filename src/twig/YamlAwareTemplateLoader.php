@@ -43,7 +43,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @return array
    * @throws Throwable
    */
-  public function getMetaData($name) {
+  public function getMetaData(string $name): array {
     $name = self::normalizeName($name);
 
     $this->loadCachedMetaData();
@@ -55,23 +55,10 @@ class YamlAwareTemplateLoader extends TemplateLoader
   }
 
   /**
-   * @param string $name
-   * @return array|null
-   */
-  public function getPreamble($name) {
-    try {
-      $data = $this->getMetaData($name);
-      return $data['preamble'];
-    } catch (Throwable $error) {
-      return null;
-    }
-  }
-
-  /**
    * @inheritdoc
    * @throws Throwable
    */
-  public function getSourceContext($name) {
+  public function getSourceContext($name): Source {
     if (is_null($this->view)) {
       throw new Exception('View is required on template loaders.');
     }
@@ -105,7 +92,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @param string $name
    * @return int
    */
-  public function getSourceOffset($name) {
+  public function getSourceOffset(string $name): int {
     try {
       $data = $this->getMetaData($name);
       return $data['sourceOffset'];
@@ -149,7 +136,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @return array
    * @throws Throwable
    */
-  private function loadMetaData($name) {
+  private function loadMetaData(string $name): array {
     $this->loadCachedMetaData();
 
     return YamlAwareTemplateLoader::withSiteView(function(View $view) use ($name) {
@@ -182,7 +169,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @param string|null $yaml
    * @throws Throwable
    */
-  private function saveMetaData($name, $path, $yaml = null) {
+  private function saveMetaData(string $name, string $path, string $yaml = null) {
     $name = self::normalizeName($name);
     $this->loadCachedMetaData();
 
@@ -230,7 +217,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @return Environment
    * @throws \yii\base\Exception
    */
-  static public function getSiteTwig(View $view = null) {
+  static public function getSiteTwig(View $view = null): Environment {
     return self::withSiteView(function(View $view) {
       $twig = $view->getTwig();
       if (!($twig->getLoader() instanceof YamlAwareTemplateLoader)) {
@@ -245,7 +232,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @param string $name
    * @return string
    */
-  static public function normalizeName($name) {
+  static public function normalizeName(string $name): string {
     $name = FileHelper::normalizePath($name, self::SEPARATOR);
     if (substr($name, -5) == '.twig') {
       $name = substr($name, 0, strlen($name) - 5);
