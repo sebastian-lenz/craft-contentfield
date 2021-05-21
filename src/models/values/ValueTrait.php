@@ -36,7 +36,7 @@ trait ValueTrait
   /**
    * @return Content|null
    */
-  public function getContent() {
+  public function getContent(): ?Content {
     if (!is_null($this->_content)) {
       return $this->_content;
     } else if (!is_null($this->_parent)) {
@@ -49,7 +49,7 @@ trait ValueTrait
   /**
    * @return ElementInterface|null
    */
-  public function getElement() {
+  public function getElement(): ?ElementInterface {
     $content = $this->getContent();
     return is_null($content) ? null : $content->getOwner();
   }
@@ -57,14 +57,14 @@ trait ValueTrait
   /**
    * @return AbstractField|null
    */
-  public function getField() {
+  public function getField(): ?AbstractField {
     return $this->_field;
   }
 
   /**
    * @return Markup
    */
-  public function getHtml() {
+  public function getHtml(): Markup {
     return new Markup((string)$this, 'utf-8');
   }
 

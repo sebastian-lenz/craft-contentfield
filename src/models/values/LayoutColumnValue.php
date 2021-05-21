@@ -107,7 +107,7 @@ class LayoutColumnValue
     if ($this->_value instanceof DisplayInterface) {
       $this->_value->display($variables);
     } else {
-      echo (string)$this->_value;
+      echo $this->_value;
     }
   }
 
@@ -130,7 +130,7 @@ class LayoutColumnValue
   }
 
   /**
-   * @return string
+   * @return array
    */
   public function getExtraClasses(): array {
     return $this->_parent->hasPreset()
@@ -162,7 +162,7 @@ class LayoutColumnValue
   /**
    * @inheritDoc
    */
-  public function getHtml() {
+  public function getHtml(): Markup {
     return is_null($this->_value)
       ? new Markup('', 'utf-8')
       : $this->_value->getHtml();
@@ -189,7 +189,7 @@ class LayoutColumnValue
   /**
    * @inheritDoc
    */
-  public function getReferenceMap(ReferenceMap $map = null) {
+  public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
     $map = is_null($map) ? new ReferenceMap() : $map;
 
     return $this->_value instanceof ReferenceMappableInterface

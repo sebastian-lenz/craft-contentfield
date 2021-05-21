@@ -116,7 +116,7 @@ abstract class AbstractModelValue
   /**
    * @inheritDoc
    */
-  public function attributeLabels() {
+  public function attributeLabels(): array {
     return array_map(function(AbstractField $field) {
       return Plugin::t($field->label);
     }, $this->_schema->fields);
@@ -125,7 +125,7 @@ abstract class AbstractModelValue
   /**
    * @inheritdoc
    */
-  public function attributes() {
+  public function attributes(): array {
     return array_keys($this->_schema->fields);
   }
 
@@ -171,7 +171,7 @@ abstract class AbstractModelValue
   /**
    * @inheritDoc
    */
-  public function getAttributeLabel($attribute) {
+  public function getAttributeLabel($attribute): string {
     if (substr($attribute, 0, 4) == 'raw:') {
       $attribute = substr($attribute, 4);
     }
@@ -191,7 +191,7 @@ abstract class AbstractModelValue
   /**
    * @return array
    */
-  public function getEditorValue() {
+  public function getEditorValue(): array {
     $result = [];
     foreach ($this->_schema->fields as $name => $field) {
       $result[$name] = $field->getEditorValue($this->_values[$name]);
@@ -203,11 +203,8 @@ abstract class AbstractModelValue
   /**
    * @inheritdoc
    */
-  public function getReferenceMap(ReferenceMap $map = null) {
-    if (is_null($map)) {
-      $map = new ReferenceMap();
-    }
-
+  public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
+    $map = is_null($map) ? new ReferenceMap() : $map;
     foreach ($this->_values as $value) {
       if ($value instanceof ReferenceMappableInterface) {
         $value->getReferenceMap($map);
@@ -220,14 +217,14 @@ abstract class AbstractModelValue
   /**
    * @return AbstractSchema
    */
-  public function getSchema() {
+  public function getSchema(): AbstractSchema {
     return $this->_schema;
   }
 
   /**
    * @return string
    */
-  public function getSearchKeywords() {
+  public function getSearchKeywords(): string {
     return implode(
       ' ',
       array_map(function(AbstractField $field) {
@@ -239,7 +236,7 @@ abstract class AbstractModelValue
   /**
    * @return array
    */
-  public function getSerializedValue() {
+  public function getSerializedValue(): array {
     $result = [];
     foreach ($this->_schema->fields as $name => $field) {
       $result[$name] = $field->getSerializedValue($this->_values[$name]);
@@ -259,9 +256,9 @@ abstract class AbstractModelValue
   }
 
   /**
-   * @return mixed[]
+   * @return array
    */
-  public function getValues() {
+  public function getValues(): array {
     return $this->_values;
   }
 
@@ -269,7 +266,7 @@ abstract class AbstractModelValue
    * @param string|string[] $specs
    * @return bool
    */
-  public function is($specs) {
+  public function is($specs): bool {
     try {
       return $this->_schema->matchesQualifier($specs);
     } catch (Throwable $e) {
@@ -300,7 +297,7 @@ abstract class AbstractModelValue
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return $this->_schema->getValueRules();
   }
 }

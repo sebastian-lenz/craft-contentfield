@@ -118,7 +118,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @throws Exception
    * @noinspection PhpUnused (Public API)
    */
-  public function getLinkAttributes($extraAttribs = []): Markup {
+  public function getLinkAttributes(array $extraAttribs = []): Markup {
     if ($this->isEmpty()) {
       return Template::raw('');
     }
@@ -178,11 +178,8 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @inheritdoc
    */
-  public function getReferenceMap(ReferenceMap $map = null): ?ReferenceMap {
-    if (is_null($map)) {
-      $map = new ReferenceMap();
-    }
-
+  public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
+    $map = is_null($map) ? new ReferenceMap() : $map;
     if ($this->hasLinkedElement()) {
       $map->push($this->getElementType(), $this->elementId);
     }

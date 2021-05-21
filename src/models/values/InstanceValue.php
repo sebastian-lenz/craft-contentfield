@@ -149,15 +149,15 @@ class InstanceValue
 
   /**
    * @return string|null
+   * @noinspection PhpUnused (Public API)
    */
   public function getCachedOutput(): ?string {
-    return isset($this->_output)
-      ? $this->_output
-      : null;
+    return $this->_output ?? null;
   }
 
   /**
    * @return string|null
+   * @noinspection PhpUnused (Public API)
    */
   public function getChunkUrl(): ?string {
     $element = $this->getElement();
@@ -187,7 +187,7 @@ class InstanceValue
   /**
    * @inheritDoc
    */
-  public function getEditorValue() {
+  public function getEditorValue(): array {
     return parent::getEditorValue() + [
       self::ERRORS_PROPERTY        => $this->getErrors(),
       self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
@@ -201,7 +201,7 @@ class InstanceValue
    * @inheritdoc
    * @throws Exception
    */
-  public function getHtml(array $variables = []) {
+  public function getHtml(array $variables = []): Markup {
     return new Markup($this->render($variables), 'utf-8');
   }
 
@@ -209,7 +209,7 @@ class InstanceValue
    * @return Model|null
    * @throws Exception
    */
-  public function getModel() {
+  public function getModel(): ?Model {
     if (!isset($this->_model)) {
       $this->_model = $this->createModel();
     }
@@ -226,6 +226,7 @@ class InstanceValue
 
   /**
    * @return string|null
+   * @noinspection PhpUnused (Public API)
    */
   public function getOriginalUuid(): ?string {
     return $this->_originalUuid;
@@ -234,7 +235,7 @@ class InstanceValue
   /**
    * @inheritDoc
    */
-  public function getSerializedValue() {
+  public function getSerializedValue(): array {
     return parent::getSerializedValue() + [
       self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
       self::TYPE_PROPERTY          => $this->getSchema()->qualifier,
@@ -301,6 +302,7 @@ class InstanceValue
 
   /**
    * @param string|null $value
+   * @noinspection PhpUnused (Public API)
    */
   public function setCachedOutput(?string $value) {
     $this->_output = $value;

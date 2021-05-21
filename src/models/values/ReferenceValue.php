@@ -33,7 +33,7 @@ class ReferenceValue
   /**
    * @var int[]
    */
-  private $_values = [];
+  private $_values;
 
 
   /**
@@ -71,28 +71,26 @@ class ReferenceValue
    * @return ElementInterface
    * @throws Exception
    */
-  public function getFirst() {
+  public function getFirst(): ?ElementInterface {
     $references = $this->getReferences();
-    return isset($references[0]) ? $references[0] : null;
+    return $references[0] ?? null;
   }
 
   /**
    * Returns a list with all ids of the references elements.
    *
    * @return int[]
+   * @noinspection PhpUnused (Public API)
    */
-  public function getReferencedIds() {
+  public function getReferencedIds(): array {
     return $this->_values;
   }
 
   /**
    * @inheritdoc
    */
-  public function getReferenceMap(ReferenceMap $map = null) {
-    if (is_null($map)) {
-      $map = new ReferenceMap();
-    }
-
+  public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
+    $map = is_null($map) ? new ReferenceMap() : $map;
     $elementType = $this->_field->getElementType();
     foreach ($this->_values as $value) {
       $map->push($elementType, $value);
@@ -111,7 +109,7 @@ class ReferenceValue
    * @return ElementInterface[]
    * @throws Exception
    */
-  public function getReferences() {
+  public function getReferences(): array {
     if (!isset($this->_references)) {
       $this->_references = $this->loadReferences();
     }
@@ -123,10 +121,10 @@ class ReferenceValue
    * Renders an image tag for the first reference in the field.
    *
    * @param string|array $config
-   * @return Markup|Markup|null
+   * @return Markup|null
    * @throws Exception
    */
-  public function imageTag($config = 'default') {
+  public function imageTag($config = 'default'): ?Markup {
     foreach ($this->getReferences() as $reference) {
       if ($reference instanceof Asset) {
         $result = Plugin::getInstance()
@@ -158,7 +156,7 @@ class ReferenceValue
    * @inheritdoc
    * @throws Exception
    */
-  public function offsetExists($offset) {
+  public function offsetExists($offset): bool {
     $references = $this->getReferences();
     return array_key_exists($offset, $references);
   }
@@ -190,7 +188,7 @@ class ReferenceValue
    * @inheritdoc
    * @throws Exception
    */
-  public function count() {
+  public function count(): int {
     $references = $this->getReferences();
     return count($references);
   }
@@ -215,7 +213,7 @@ class ReferenceValue
    * @return ElementInterface[]
    * @throws Exception
    */
-  private function loadReferences() {
+  private function loadReferences(): array {
     $elementType = $this->_field->getElementType();
     if (is_null($elementType) || count($this->_values) === 0) {
       return [];

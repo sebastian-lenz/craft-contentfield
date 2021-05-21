@@ -10,7 +10,7 @@ use IteratorAggregate;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\grids\GridInterface;
-use lenz\contentfield\helpers\IteratorLoop;
+use lenz\contentfield\helpers\loops\IteratorLoop;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\helpers\RenderableInterface;
@@ -143,7 +143,7 @@ class LayoutValue
    * @inheritDoc
    * @throws Exception
    */
-  public function getHtml(array $variables = []) {
+  public function getHtml(array $variables = []): Markup {
     return new Markup($this->render($variables), 'utf-8');
   }
 
@@ -182,7 +182,7 @@ class LayoutValue
   /**
    * @inheritdoc
    */
-  public function getReferenceMap(ReferenceMap $map = null) {
+  public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
     $map = is_null($map) ? new ReferenceMap() : $map;
     foreach ($this->_columns as $column) {
       $column->getReferenceMap($map);
@@ -260,7 +260,7 @@ class LayoutValue
   /**
    * @inheritdoc
    */
-  public function offsetExists($offset) {
+  public function offsetExists($offset): bool {
     return array_key_exists($offset, $this->_columns);
   }
 
@@ -292,7 +292,7 @@ class LayoutValue
   /**
    * @inheritDoc
    */
-  public function count() {
+  public function count(): int {
     return count($this->_columns);
   }
 

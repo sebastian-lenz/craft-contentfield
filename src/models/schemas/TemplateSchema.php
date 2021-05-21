@@ -8,7 +8,7 @@ use craft\web\View;
 use Exception;
 use lenz\contentfield\controllers\TemplatesController;
 use lenz\contentfield\events\BeforeActionEvent;
-use lenz\contentfield\helpers\StaticLoop;
+use lenz\contentfield\helpers\loops\StaticLoop;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;

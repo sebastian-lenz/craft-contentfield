@@ -57,7 +57,7 @@ class OEmbedValue extends AbstractValue implements DisplayInterface
   /**
    * @inheritdoc
    */
-  public function getHtml($options = null) {
+  public function getHtml($options = null): Markup {
     $oEmbed = $this->getOEmbed();
     return new Markup(is_null($oEmbed)
       ? ''
@@ -68,14 +68,14 @@ class OEmbedValue extends AbstractValue implements DisplayInterface
   /**
    * @return OEmbed|null
    */
-  public function getOEmbed() {
+  public function getOEmbed(): ?OEmbed {
     return $this->_field->getOEmbed($this->_url);
   }
 
   /**
    * @return string
    */
-  public function getUrl() {
+  public function getUrl(): string {
     return $this->_url;
   }
 
