@@ -1,8 +1,7 @@
 <?php
 
-namespace lenz\contentfield\helpers;
+namespace lenz\contentfield\helpers\loops;
 
-use craft\helpers\ArrayHelper;
 use Exception;
 use Iterator;
 use lenz\contentfield\models\values\InstanceValue;
@@ -46,7 +45,7 @@ class IteratorLoop implements Iterator, LoopInterface
    * @return IteratorLoop
    * @throws Throwable
    */
-  public function getSiblings($limit = null, $only = null, $until = null, $addBack = null) {
+  public function getSiblings($limit = null, $only = null, $until = null, bool $addBack = null): IteratorLoop {
     $siblings = [];
     $filter = null;
 
@@ -103,63 +102,63 @@ class IteratorLoop implements Iterator, LoopInterface
   /**
    * @inheritDoc
    */
-  public function getIndex() {
+  public function getIndex(): int {
     return $this->_index + 1;
   }
 
   /**
    * @inheritDoc
    */
-  public function getIndex0() {
+  public function getIndex0(): int {
     return $this->_index;
   }
 
   /**
    * @inheritDoc
    */
-  public function getRevindex() {
+  public function getRevindex(): int {
     return $this->_count - $this->_index;
   }
 
   /**
    * @inheritDoc
    */
-  public function getRevindex0() {
+  public function getRevindex0(): int {
     return $this->_count - $this->_index - 1;
   }
 
   /**
    * @inheritDoc
    */
-  public function getFirst() {
+  public function getFirst(): bool {
     return $this->_index == 0;
   }
 
   /**
    * @inheritDoc
    */
-  public function getLast() {
+  public function getLast(): bool {
     return $this->_index == $this->_count - 1;
   }
 
   /**
    * @inheritDoc
    */
-  public function getLength() {
+  public function getLength(): int {
     return $this->_count;
   }
 
   /**
    * @return bool
    */
-  public function hasNext() {
+  public function hasNext(): bool {
     return $this->_index < $this->_count - 1;
   }
 
   /**
    * @return bool
    */
-  public function hasPrevious() {
+  public function hasPrevious(): bool {
     return $this->_index > 0;
   }
 
@@ -209,7 +208,7 @@ class IteratorLoop implements Iterator, LoopInterface
   /**
    * @inheritDoc
    */
-  public function valid() {
+  public function valid(): bool {
     return $this->_index >= 0 && $this->_index < $this->_count;
   }
 

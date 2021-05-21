@@ -5,6 +5,7 @@ namespace lenz\contentfield\models\migration;
 use ArrayAccess;
 use Countable;
 use Exception;
+use Throwable;
 
 /**
  * Class Collection
@@ -32,7 +33,7 @@ class Collection implements ArrayAccess, Countable
    * @param Instance $instance
    * @return $this
    */
-  public function append(Instance $instance) {
+  public function append(Instance $instance): Collection {
     if (!in_array($instance, $this->_instances)) {
       $this->_instances[] = $instance;
     }
@@ -48,8 +49,9 @@ class Collection implements ArrayAccess, Countable
    * @param string $name
    * @param string $defaultValue
    * @return $this
+   * @noinspection PhpUnused (Public API)
    */
-  public function convertToHtml(string $name, string $defaultValue = '') {
+  public function convertToHtml(string $name, string $defaultValue = ''): Collection {
     foreach ($this->_instances as $instance) {
       $instance->convertToHtml($name, $defaultValue);
     }
@@ -65,8 +67,9 @@ class Collection implements ArrayAccess, Countable
    * @param string $name
    * @param string $defaultValue
    * @return $this
+   * @noinspection PhpUnused (Public API)
    */
-  public function convertToString(string $name, string $defaultValue = '') {
+  public function convertToString(string $name, string $defaultValue = ''): Collection {
     foreach ($this->_instances as $instance) {
       $instance->convertToString($name, $defaultValue);
     }
@@ -94,8 +97,9 @@ class Collection implements ArrayAccess, Countable
    * @param string $name
    * @param mixed $value
    * @return $this
+   * @noinspection PhpUnused (Public API)
    */
-  public function ensureAttribute(string $name, $value) {
+  public function ensureAttribute(string $name, $value): Collection {
     foreach ($this->_instances as $instance) {
       $instance->ensureAttribute($name, $value);
     }
@@ -109,8 +113,9 @@ class Collection implements ArrayAccess, Countable
    *
    * @param callable $callback
    * @return Collection
+   * @noinspection PhpUnused (Public API)
    */
-  public function filter(callable $callback) {
+  public function filter(callable $callback): Collection {
     return new Collection(array_filter($this->_instances, $callback));
   }
 
@@ -120,8 +125,10 @@ class Collection implements ArrayAccess, Countable
    *
    * @param string|array|null $qualifier
    * @return $this
+   * @throws Throwable
+   * @noinspection PhpUnused (Public API)
    */
-  public function matchesQualifier($qualifier) {
+  public function matchesQualifier($qualifier): Collection {
     if (is_null($qualifier)) {
       return $this;
     }
@@ -141,7 +148,7 @@ class Collection implements ArrayAccess, Countable
    * @param Collection $collection
    * @return $this
    */
-  public function merge(Collection $collection) {
+  public function merge(Collection $collection): Collection {
     foreach ($collection->_instances as $instance) {
       $this->append($instance);
     }
@@ -156,8 +163,9 @@ class Collection implements ArrayAccess, Countable
    * @param string $name
    * @param callable $callback
    * @return $this
+   * @noinspection PhpUnused (Public API)
    */
-  public function modifyAttribute(string $name, callable $callback) {
+  public function modifyAttribute(string $name, callable $callback): Collection {
     foreach ($this->_instances as $instance) {
       $instance->modifyAttribute($name, $callback);
     }
@@ -171,8 +179,9 @@ class Collection implements ArrayAccess, Countable
    *
    * @param array $replacements
    * @return $this
+   * @noinspection PhpUnused (Public API)
    */
-  public function renameAttribute(array $replacements) {
+  public function renameAttribute(array $replacements): Collection {
     foreach ($this->_instances as $instance) {
       $instance->renameAttribute($replacements);
     }
@@ -188,7 +197,7 @@ class Collection implements ArrayAccess, Countable
    * @return $this
    * @throws Exception
    */
-  public function renameType(array $replacements) {
+  public function renameType(array $replacements): Collection {
     foreach ($this->_instances as $instance) {
       $instance->renameType($replacements);
     }
@@ -203,7 +212,7 @@ class Collection implements ArrayAccess, Countable
    * @param string $name
    * @return $this
    */
-  public function removeAttribute(string $name) {
+  public function removeAttribute(string $name): Collection {
     foreach ($this->_instances as $instance) {
       $instance->removeAttribute($name);
     }
@@ -218,7 +227,7 @@ class Collection implements ArrayAccess, Countable
    * @param mixed $value
    * @return $this
    */
-  public function setAttribute(string $name, $value) {
+  public function setAttribute(string $name, $value): Collection {
     foreach ($this->_instances as $instance) {
       $instance->setAttribute($name, $value);
     }
@@ -232,7 +241,7 @@ class Collection implements ArrayAccess, Countable
    * @param array $attributes
    * @return $this
    */
-  public function setAttributes(array $attributes) {
+  public function setAttributes(array $attributes): Collection {
     foreach ($this->_instances as $instance) {
       $instance->setAttributes($attributes);
     }
@@ -247,7 +256,7 @@ class Collection implements ArrayAccess, Countable
    * @return $this
    * @throws Exception
    */
-  public function setType(string $qualifier) {
+  public function setType(string $qualifier): Collection {
     foreach ($this->_instances as $instance) {
       $instance->setType($qualifier);
     }
@@ -260,7 +269,7 @@ class Collection implements ArrayAccess, Countable
    *
    * @return Instance[]
    */
-  public function toArray() {
+  public function toArray(): array {
     return $this->_instances;
   }
 
@@ -271,7 +280,7 @@ class Collection implements ArrayAccess, Countable
   /**
    * @inheritDoc
    */
-  public function offsetExists($offset) {
+  public function offsetExists($offset): bool {
     return array_key_exists($offset, $this->_instances);
   }
 
@@ -303,7 +312,7 @@ class Collection implements ArrayAccess, Countable
   /**
    * @inheritDoc
    */
-  public function count() {
+  public function count(): int {
     return count($this->_instances);
   }
 }

@@ -20,22 +20,22 @@ interface ValueInterface
   /**
    * @return Content|null
    */
-  public function getContent();
+  public function getContent(): ?Content;
 
   /**
    * @return ElementInterface|null
    */
-  public function getElement();
+  public function getElement(): ?ElementInterface;
 
   /**
    * @return AbstractField|null
    */
-  public function getField();
+  public function getField(): ?AbstractField;
 
   /**
    * @return Markup
    */
-  public function getHtml();
+  public function getHtml(): Markup;
 
   /**
    * @return ValueInterface|null

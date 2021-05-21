@@ -2,7 +2,7 @@
 
 namespace lenz\contentfield\tests\fixtures;
 
-use craft\models\FieldLayout;
+use craft\records\FieldLayout;
 use craft\test\fixtures\FieldLayoutFixture as BaseFieldLayoutFixture;
 
 /**

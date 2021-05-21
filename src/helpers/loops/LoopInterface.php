@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\helpers;
+namespace lenz\contentfield\helpers\loops;
 
 /**
  * Interface LoopInterface
@@ -14,59 +14,59 @@ interface LoopInterface
    *
    * @return int
    */
-  public function getIndex();
+  public function getIndex(): int;
 
   /**
    * The current iteration of the loop. (0 indexed).
    *
    * @return int
    */
-  public function getIndex0();
+  public function getIndex0(): int;
 
   /**
    * The number of iterations from the end of the loop (1 indexed).
    *
    * @return int
    */
-  public function getRevindex();
+  public function getRevindex(): int;
 
   /**
    * The number of iterations from the end of the loop (0 indexed).
    *
    * @return int
    */
-  public function getRevindex0();
+  public function getRevindex0(): int;
 
   /**
    * True if first iteration.
    *
    * @return bool
    */
-  public function getFirst();
+  public function getFirst(): bool;
 
   /**
    * True if last iteration.
    *
    * @return bool
    */
-  public function getLast();
+  public function getLast(): bool;
 
   /**
    * The number of items in the sequence.
    *
    * @return int
    */
-  public function getLength();
+  public function getLength(): int;
 
   /**
    * @return bool
    */
-  public function hasNext();
+  public function hasNext(): bool;
 
   /**
    * @return bool
    */
-  public function hasPrevious();
+  public function hasPrevious(): bool;
 
   /**
    * @return mixed

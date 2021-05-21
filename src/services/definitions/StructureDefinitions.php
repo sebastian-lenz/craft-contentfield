@@ -6,6 +6,7 @@ use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\schemas\StructureSchema;
 use lenz\contentfield\services\schemas\StructureLoader;
+use Throwable;
 
 /**
  * Class StructureDefinitions
@@ -22,7 +23,7 @@ class StructureDefinitions extends AbstractDefinitions
    * @param array $config
    * @return array
    */
-  public function expandDefinition(array $config) {
+  public function expandDefinition(array $config): array {
     if (array_key_exists('type', $config)) {
       $parent = $this->getDefinition($config['type']);
       $config = $this->mergeDefinitions($config, $parent);
@@ -33,11 +34,28 @@ class StructureDefinitions extends AbstractDefinitions
   }
 
   /**
+   * @return array
+   */
+  public function getAllStructures(): array {
+    $this->loadDefinitions();
+
+    return array_filter(
+      array_map(function(string $name) {
+        try {
+          return $this->getStructure($name);
+        } catch (Throwable $error) {
+          return null;
+        }
+      }, array_keys($this->definitions))
+    );
+  }
+
+  /**
    * @param string $name
-   * @return AbstractSchema|null
+   * @return StructureSchema|null
    * @throws Exception
    */
-  public function getStructure($name) {
+  public function getStructure(string $name): StructureSchema {
     if (!array_key_exists($name, $this->_structures)) {
       $definition = $this->resolveDefinition([
         'type' => $name
@@ -63,7 +81,7 @@ class StructureDefinitions extends AbstractDefinitions
   /**
    * @return string
    */
-  protected function getDefinitionName() {
+  protected function getDefinitionName(): string {
     return 'structures';
   }
 
@@ -71,14 +89,14 @@ class StructureDefinitions extends AbstractDefinitions
    * @param string $type
    * @return boolean
    */
-  protected function isNativeType($type) {
+  protected function isNativeType(string $type): bool {
     return false;
   }
 
   /**
    * @return bool
    */
-  protected function isTypeRequired() {
+  protected function isTypeRequired(): bool {
     return false;
   }
 
@@ -87,7 +105,7 @@ class StructureDefinitions extends AbstractDefinitions
    * @param array $parent
    * @return array
    */
-  protected function mergeDefinitions(array $config, array $parent) {
+  protected function mergeDefinitions(array $config, array $parent): array {
     if (
       array_key_exists('fields', $config) &&
       array_key_exists('fields', $parent)
@@ -106,12 +124,15 @@ class StructureDefinitions extends AbstractDefinitions
   // --------------
 
   /**
-   * @param array $definitions
-   * @return array
+   * @inheritDoc
    */
-  static public function transformDefinitions(array $definitions) {
+  static public function transformDefinitions(array $definitions): array {
     return array_map(function($definition) {
-      return AbstractSchema::expandConfig($definition);
+      try {
+        return AbstractSchema::expandConfig($definition);
+      } catch (Throwable $error) {
+        return $definition;
+      }
     }, $definitions);
   }
 }

@@ -10,8 +10,8 @@ interface ReferenceMappableInterface
   /**
    * Return a list of all referenced entries by this field.
    *
-   * @param ReferenceMap $map
+   * @param ReferenceMap|null $map
    * @return ReferenceMap
    */
-  public function getReferenceMap(ReferenceMap $map = null);
+  public function getReferenceMap(ReferenceMap $map = null): ReferenceMap;
 }

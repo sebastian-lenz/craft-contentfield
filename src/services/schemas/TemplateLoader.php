@@ -9,6 +9,7 @@ use Exception;
 use lenz\contentfield\Config;
 use lenz\contentfield\exceptions\TemplateConfigException;
 use lenz\contentfield\exceptions\YamlMissingException;
+use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
 use RecursiveDirectoryIterator;
@@ -66,7 +67,7 @@ class TemplateLoader extends AbstractLoader
   /**
    * @inheritdoc
    */
-  public function findNames($pattern) {
+  public function findNames(string $pattern): array {
     $templates = $this->getAllTemplates();
     $result    = [];
 
@@ -81,9 +82,8 @@ class TemplateLoader extends AbstractLoader
 
   /**
    * @inheritDoc
-   * @throws Exception
    */
-  public function getAllSchemas() {
+  public function getAllSchemas(): array {
     return YamlAwareTemplateLoader::withSiteView(function() {
       $errors  = [];
       $schemas = [];
@@ -105,14 +105,14 @@ class TemplateLoader extends AbstractLoader
   /**
    * @return string
    */
-  public function getBasePath() {
+  public function getBasePath(): string {
     return $this->_basePath;
   }
 
   /**
    * @inheritdoc
    */
-  public function load($name) {
+  public function load(string $name): AbstractSchema {
     $name = $this->normalizeName($name);
     $data = $this->_loader->getMetaData($name);
 
@@ -146,7 +146,7 @@ class TemplateLoader extends AbstractLoader
   /**
    * @inheritdoc
    */
-  public function normalizeName($name) {
+  public function normalizeName(string $name): string {
     return YamlAwareTemplateLoader::normalizeName($name);
   }
 
@@ -158,7 +158,7 @@ class TemplateLoader extends AbstractLoader
    * @param string $basePath
    * @return CallbackFilterIterator
    */
-  private function getTemplateIterator(string $basePath) {
+  private function getTemplateIterator(string $basePath): CallbackFilterIterator {
     $extensions = Craft::$app->getConfig()
       ->getGeneral()
       ->defaultTemplateExtensions;
@@ -181,7 +181,7 @@ class TemplateLoader extends AbstractLoader
    *
    * @return array
    */
-  private function getAllTemplates() {
+  private function getAllTemplates(): array {
     if (!isset($this->_templates)) {
       if (Config::getInstance()->useTemplateIndexCache()) {
         $key = static::class . '::getAllTemplates';
@@ -199,7 +199,7 @@ class TemplateLoader extends AbstractLoader
   /**
    * @return array
    */
-  private function getAllTemplatesFromDisk() {
+  private function getAllTemplatesFromDisk(): array {
     $basePath = $this->getBasePath();
     $result   = [];
 

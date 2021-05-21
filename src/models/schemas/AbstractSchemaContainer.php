@@ -46,7 +46,7 @@ abstract class AbstractSchemaContainer extends AbstractSchema
    * @param string $name
    * @return AbstractSchema|null
    */
-  public function getLocalStructure($name) {
+  public function getLocalStructure(string $name): ?AbstractSchema {
     return array_key_exists($name, $this->_localStructures)
       ? $this->_localStructures[$name]
       : null;
@@ -63,7 +63,7 @@ abstract class AbstractSchemaContainer extends AbstractSchema
    * @param string $name
    * @return bool
    */
-  public function hasLocalStructure($name) {
+  public function hasLocalStructure(string $name): bool {
     return array_key_exists($name, $this->_localStructures);
   }
 
@@ -77,7 +77,7 @@ abstract class AbstractSchemaContainer extends AbstractSchema
    * @return StructureSchema
    * @throws Exception
    */
-  protected function addLocalStructure($name, $config) {
+  protected function addLocalStructure(string $name, array $config): StructureSchema {
     if ($this->hasLocalStructure($name)) {
       throw new Exception(sprintf(
         'The local structure `%s` already exists in `%s`.',

@@ -8,7 +8,7 @@ use Exception;
 use IteratorAggregate;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
-use lenz\contentfield\helpers\IteratorLoop;
+use lenz\contentfield\helpers\loops\IteratorLoop;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\helpers\RenderableInterface;
@@ -85,14 +85,14 @@ class ArrayValue
    * @throws Exception
    */
   public function display(array $variables = []) {
-    $iterator = $this->getVisibleIterator();
+    $iterator = $this->getIterator();
     $variables['loop'] = $iterator;
 
     foreach ($iterator as $value) {
       if ($value instanceof InstanceValue) {
         $value->display($variables);
       } else {
-        echo (string)$value;
+        echo $value;
       }
     }
   }
@@ -157,18 +157,15 @@ class ArrayValue
    * @inheritDoc
    * @throws Exception
    */
-  public function getHtml(array $variables = []) {
+  public function getHtml(array $variables = []): Markup {
     return new Markup($this->render($variables), 'utf-8');
   }
 
   /**
    * @inheritdoc
    */
-  public function getReferenceMap(ReferenceMap $map = null) {
-    if (is_null($map)) {
-      $map = new ReferenceMap();
-    }
-
+  public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
+    $map = is_null($map) ? new ReferenceMap() : $map;
     foreach ($this->_values as $value) {
       if ($value instanceof ReferenceMappableInterface) {
         $value->getReferenceMap($map);
@@ -196,21 +193,14 @@ class ArrayValue
       return $this->_visibleValues;
     }
 
-    return $this->_visibleValues = array_filter($this->_values, function($value) {
-      return (
-        !($value instanceof InstanceValue) ||
-        $value->isVisible()
-      );
-    });
-  }
+    $result = [];
+    foreach ($this->_values as $value) {
+      if (!($value instanceof InstanceValue) || $value->isVisible()) {
+        $result[] = $value;
+      }
+    }
 
-  /**
-   * @return IteratorLoop
-   * @throws Exception
-   * @deprecated
-   */
-  public function getVisibleIterator(): IteratorLoop {
-    return $this->getIterator();
+    return ($this->_visibleValues = $result);
   }
 
   /**
@@ -233,6 +223,7 @@ class ArrayValue
 
   /**
    * @inheritDoc
+   * @throws Exception
    */
   public function render(array $variables = [], array $options = []): string {
     $result = [];

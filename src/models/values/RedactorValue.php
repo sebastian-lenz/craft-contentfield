@@ -95,7 +95,7 @@ class RedactorValue
   /**
    * @inheritdoc
    */
-  public function getHtml() {
+  public function getHtml(): Markup {
     return new Markup($this->getCompiledContent(), Craft::$app->charset);
   }
 
@@ -121,7 +121,7 @@ class RedactorValue
    * @param int $pageNumber
    * @return Markup|null
    */
-  public function getPage(int $pageNumber) {
+  public function getPage(int $pageNumber): ?Markup {
     $pages = $this->getPages();
 
     if (isset($pages[$pageNumber - 1])) {
@@ -137,7 +137,7 @@ class RedactorValue
    * @return string
    * @internal
    */
-  public function getRawContent() {
+  public function getRawContent(): string {
     return $this->_rawContent;
   }
 
@@ -145,11 +145,8 @@ class RedactorValue
    * @inheritDoc
    * @internal
    */
-  public function getReferenceMap(ReferenceMap $map = null) {
-    if (is_null($map)) {
-      $map = new ReferenceMap();
-    }
-
+  public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
+    $map = is_null($map) ? new ReferenceMap() : $map;
     if (is_null($this->_parsedTokens)) {
       return $map;
     }
@@ -165,6 +162,7 @@ class RedactorValue
 
   /**
    * @return int
+   * @noinspection PhpUnused (Public API)
    */
   public function getTotalPages(): int {
     return count($this->getPages());
@@ -180,7 +178,7 @@ class RedactorValue
   /**
    * @inheritDoc
    */
-  public function jsonSerialize() {
+  public function jsonSerialize(): ?string {
     return $this->getCompiledContent();
   }
 
@@ -191,7 +189,7 @@ class RedactorValue
   /**
    * @return string
    */
-  private function compile() {
+  private function compile(): string {
     if (is_null($this->_parsedTokens) || count($this->_parsedTokens) == 0) {
       return $this->_parsedContent;
     }
@@ -230,7 +228,7 @@ class RedactorValue
   /**
    * @return string
    */
-  private function getCompiledContent() {
+  private function getCompiledContent(): string {
     if (is_null($this->_compiledContent)) {
       $this->_compiledContent = $this->compile();
     }

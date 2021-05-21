@@ -127,7 +127,7 @@ class ImageTagDefinitions extends AbstractDefinitions
   /**
    * @return string
    */
-  protected function getDefinitionName() {
+  protected function getDefinitionName(): string {
     return 'imagetags';
   }
 
@@ -149,7 +149,7 @@ class ImageTagDefinitions extends AbstractDefinitions
    * @param string $type
    * @return boolean
    */
-  protected function isNativeType($type) {
+  protected function isNativeType(string $type): bool {
     return array_key_exists($type, $this->_imageTags);
   }
 
@@ -159,7 +159,7 @@ class ImageTagDefinitions extends AbstractDefinitions
    * @return array
    * @throws Exception
    */
-  protected function mergeDefinitions(array $config, array $parent) {
+  protected function mergeDefinitions(array $config, array $parent): array {
     $imageTagClass = $this->getImageTagClass($parent);
     return $imageTagClass::mergeConfig($config, $parent);
   }

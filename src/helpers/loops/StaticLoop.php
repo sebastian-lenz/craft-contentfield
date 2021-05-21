@@ -1,6 +1,6 @@
 <?php
 
-namespace lenz\contentfield\helpers;
+namespace lenz\contentfield\helpers\loops;
 
 /**
  * Class StaticLoop
@@ -16,63 +16,63 @@ class StaticLoop implements LoopInterface
   /**
    * @inheritDoc
    */
-  public function getIndex() {
+  public function getIndex(): int {
     return 1;
   }
 
   /**
    * @inheritDoc
    */
-  public function getIndex0() {
+  public function getIndex0(): int {
     return 0;
   }
 
   /**
    * @inheritDoc
    */
-  public function getRevindex() {
+  public function getRevindex(): int {
     return 1;
   }
 
   /**
    * @inheritDoc
    */
-  public function getRevindex0() {
+  public function getRevindex0(): int {
     return 0;
   }
 
   /**
    * @inheritDoc
    */
-  public function getFirst() {
+  public function getFirst(): bool {
     return true;
   }
 
   /**
    * @inheritDoc
    */
-  public function getLast() {
+  public function getLast(): bool {
     return true;
   }
 
   /**
    * @inheritDoc
    */
-  public function getLength() {
+  public function getLength(): int {
     return 1;
   }
 
   /**
    * @return bool
    */
-  public function hasNext() {
+  public function hasNext(): bool {
     return false;
   }
 
   /**
    * @return bool
    */
-  public function hasPrevious() {
+  public function hasPrevious(): bool {
     return false;
   }
 
@@ -97,7 +97,7 @@ class StaticLoop implements LoopInterface
   /**
    * @return StaticLoop
    */
-  static public function getInstance() {
+  static public function getInstance(): StaticLoop {
     if (!isset(self::$_instance)) {
       self::$_instance = new StaticLoop();
     }
