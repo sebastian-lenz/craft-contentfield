@@ -67,12 +67,12 @@ class DisplayNode extends Node
       ->addDebugInfo($this)
       ->write("\$displayContent = ")
       ->subcompile($this->getNode('value'))
-      ->write(";\n");
+      ->raw(";\n");
 
     // Set `$displayVariables` to the `with` node part
     $compiler->write("\$displayVariables = ");
     $this->addTemplateArguments($compiler);
-    $compiler->write(";\n");
+    $compiler->raw(";\n");
 
     // Let the current class handle the display code
     $this->addDisplay($compiler);

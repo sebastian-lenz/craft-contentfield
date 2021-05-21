@@ -294,7 +294,7 @@ class DisplayNodeVisitorContext
    * @return string|null
    */
   private function inlineCached(?array $config, Environment $env): ?string {
-    if (!is_array($config)) {
+    if (is_null($config)) {
       return null;
     }
 
