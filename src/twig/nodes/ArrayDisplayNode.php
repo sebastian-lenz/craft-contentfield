@@ -86,7 +86,7 @@ class ArrayDisplayNode extends DisplayNode
     $compiler
       ->write("if (\$displayContent instanceof \\lenz\\contentfield\\models\\values\\ArrayValue) {\n")
         ->indent()
-        ->write("\$displayIterator = \$displayContent->getVisibleIterator();\n")
+        ->write("\$displayIterator = \$displayContent->getIterator();\n")
         ->write("\$displayVariables['loop'] = \$displayIterator;\n")
         ->write("foreach (\$displayIterator as \$displayContentItem) {\n")
           ->indent()
