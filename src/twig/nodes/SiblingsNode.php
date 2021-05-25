@@ -27,7 +27,7 @@ class SiblingsNode extends Node
    */
   public function compile(Compiler $compiler) {
     $compiler
-      ->write("if (array_key_exists('loop', \$context) && (\$context['loop'] instanceof \\lenz\\contentfield\\helpers\\IteratorLoop)) {\n")
+      ->write("if (array_key_exists('loop', \$context) && (\$context['loop'] instanceof \\lenz\\contentfield\\helpers\\loops\\IteratorLoop)) {\n")
         ->indent()
         ->write("\$displayIterator = \$context['loop']->getSiblings(");
     $this->addArguments($compiler, ['limit', 'only', 'until', 'addBack']);
