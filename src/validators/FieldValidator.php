@@ -13,7 +13,7 @@ class FieldValidator extends Validator
   /**
    * @inheritDoc
    */
-  protected function validateValue($value) {
+  protected function validateValue($value): ?array {
     if (!($value instanceof AbstractField)) {
       return ['Must be an instances of `lenz\contentfield\models\fields\AbstractField`.', []];
     }

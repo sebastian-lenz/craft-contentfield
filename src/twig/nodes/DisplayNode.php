@@ -43,9 +43,9 @@ class DisplayNode extends Node
     AbstractExpression $value,
     AbstractField $field = null,
     AbstractExpression $variables = null,
-    $forceInline = false,
-    $line = 0,
-    $tag = null
+    bool $forceInline = false,
+    int $line = 0,
+    string $tag = null
   ) {
     $nodes = ['value' => $value];
     if (null !== $variables) {
@@ -59,7 +59,7 @@ class DisplayNode extends Node
   }
 
   /**
-   * @inheritDoc
+   * @param Compiler $compiler
    */
   public function compile(Compiler $compiler) {
     // Set `$displayContent` to the passed variable
@@ -67,12 +67,12 @@ class DisplayNode extends Node
       ->addDebugInfo($this)
       ->write("\$displayContent = ")
       ->subcompile($this->getNode('value'))
-      ->write(";\n");
+      ->raw(";\n");
 
     // Set `$displayVariables` to the `with` node part
     $compiler->write("\$displayVariables = ");
     $this->addTemplateArguments($compiler);
-    $compiler->write(";\n");
+    $compiler->raw(";\n");
 
     // Let the current class handle the display code
     $this->addDisplay($compiler);
@@ -81,14 +81,14 @@ class DisplayNode extends Node
   /**
    * @return AbstractField|null
    */
-  public function getField() {
+  public function getField(): ?AbstractField {
     return $this->_field;
   }
 
   /**
    * @return TemplateSchema[]
    */
-  public function getInlineSchemaCandidates() {
+  public function getInlineSchemaCandidates(): array {
     return [];
   }
 
@@ -103,7 +103,7 @@ class DisplayNode extends Node
   /**
    * @return bool
    */
-  public function usesIndexDisplay() {
+  public function usesIndexDisplay(): bool {
     return true;
   }
 
@@ -135,6 +135,7 @@ class DisplayNode extends Node
    * @param Compiler $compiler
    * @param string $instanceVar
    * @param string $variablesVar
+   * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection (cause PhpStorm is stupid)
    */
   protected function addInstanceDisplay(
     Compiler $compiler,

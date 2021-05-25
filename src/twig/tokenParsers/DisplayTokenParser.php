@@ -5,7 +5,7 @@ namespace lenz\contentfield\twig\tokenParsers;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\models\fields\InstanceField;
-use lenz\contentfield\models\schemas\TemplateSchema;
+use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\nodes\ArrayDisplayNode;
 use lenz\contentfield\twig\nodes\DisplayNode;
@@ -55,7 +55,7 @@ class DisplayTokenParser extends AbstractTokenParser
   /**
    * @inheritdoc
    */
-  public function getTag() {
+  public function getTag(): string {
     return 'display';
   }
 
@@ -69,7 +69,7 @@ class DisplayTokenParser extends AbstractTokenParser
    * @param string $name
    * @return AbstractField|null
    */
-  private function getField($name) {
+  private function getField(string $name): ?AbstractField {
     $schema = $this->getSchema();
     if (is_null($schema) || !is_string($name)) {
       return null;
@@ -83,9 +83,10 @@ class DisplayTokenParser extends AbstractTokenParser
   /**
    * Return the schema of the parsed template.
    *
-   * @return TemplateSchema|null
+   * @return AbstractSchema|null
+   * @noinspection PhpInternalEntityUsedInspection
    */
-  private function getSchema() {
+  private function getSchema(): ?AbstractSchema {
     try {
       $source = $this->parser->getStream()->getSourceContext();
       $loader = Plugin::getInstance()->schemas->getTemplateLoader();
@@ -101,7 +102,7 @@ class DisplayTokenParser extends AbstractTokenParser
    * @param AbstractExpression $name
    * @return AbstractField|null
    */
-  private function resolveField(AbstractExpression $name) {
+  private function resolveField(AbstractExpression $name): ?AbstractField {
     if ($name instanceof NameExpression) {
       return $this->getField($name->getAttribute('name'));
     }

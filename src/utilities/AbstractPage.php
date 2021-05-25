@@ -33,7 +33,7 @@ abstract class AbstractPage
   /**
    * @return string
    */
-  public function getUrl() {
+  public function getUrl(): string {
     return '/admin/utilities/tcf-utilities?tab=' . $this->getHandle();
   }
 }

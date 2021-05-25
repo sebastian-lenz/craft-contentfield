@@ -55,8 +55,9 @@ class IconPage extends AbstractPage
   /**
    * @param View $view
    * @return array
+   * @throws Exception
    */
-  private function getCraftIcons(View $view) {
+  private function getCraftIcons(View $view): array {
     /** @var CpAsset $bundle */
     try {
       $view->registerAssetBundle(CpAsset::class);
@@ -87,7 +88,7 @@ class IconPage extends AbstractPage
    * @param View $view
    * @return array
    */
-  private function getMaterialIcons(View $view) {
+  private function getMaterialIcons(View $view): array {
     /** @var ContentFieldAsset $bundle */
     try {
       $view->registerAssetBundle(ContentFieldAsset::class);

@@ -32,9 +32,9 @@ class ArrayDisplayNode extends DisplayNode
     AbstractExpression $value,
     ArrayField $field,
     AbstractExpression $variables = null,
-    $forceInline = false,
-    $line = 0,
-    $tag = null
+    bool $forceInline = false,
+    int $line = 0,
+    string $tag = null
   ) {
     parent::__construct($value, $field, $variables, $forceInline, $line, $tag);
   }
@@ -43,7 +43,7 @@ class ArrayDisplayNode extends DisplayNode
    * @inheritDoc
    * @throws Throwable
    */
-  public function getInlineSchemaCandidates() {
+  public function getInlineSchemaCandidates(): array {
     $member = $this->_field->member;
     if (
       !Config::getInstance()->useTemplateInlining() ||
@@ -66,7 +66,7 @@ class ArrayDisplayNode extends DisplayNode
   /**
    * @inheritDoc
    */
-  public function usesIndexDisplay() {
+  public function usesIndexDisplay(): bool {
     return count($this->_inlinedSchemas) == 0;
   }
 
@@ -97,7 +97,7 @@ class ArrayDisplayNode extends DisplayNode
             ->outdent()
           ->write("}\n\n");
 
-    $this->addInstanceDisplay($compiler, '$displayContentItem', '$displayVariables');
+    $this->addInstanceDisplay($compiler, '$displayContentItem');
 
     $compiler
           ->write("\n")

@@ -79,7 +79,7 @@ class DisplayNodeVisitorContext
    *
    * @return ModuleNode
    */
-  public function getModule() {
+  public function getModule(): ModuleNode {
     return $this->_module;
   }
 
@@ -88,7 +88,7 @@ class DisplayNodeVisitorContext
    *
    * @return DisplayNodeVisitorContext|null
    */
-  public function getParent() {
+  public function getParent(): ?DisplayNodeVisitorContext {
     return $this->_parent;
   }
 
@@ -125,7 +125,7 @@ class DisplayNodeVisitorContext
    * @param Environment $env
    * @return string|null
    */
-  public function tryInline(TemplateSchema $schema, Environment $env) {
+  public function tryInline(TemplateSchema $schema, Environment $env): ?string {
     if ($this->_isInlining) {
       $this->addDependency($schema);
       return $this->inline($schema, $env);
@@ -183,7 +183,7 @@ class DisplayNodeVisitorContext
    * @param Environment $env
    * @return ModuleNode|null
    */
-  private function compile(TemplateSchema $schema, Environment $env) {
+  private function compile(TemplateSchema $schema, Environment $env): ?ModuleNode {
     $template = $schema->template;
 
     if (!isset(self::$_compiledModules[$template])) {
@@ -206,7 +206,7 @@ class DisplayNodeVisitorContext
    * @param Environment $env
    * @return string|null
    */
-  private function inline(TemplateSchema $schema, Environment $env) {
+  private function inline(TemplateSchema $schema, Environment $env): ?string {
     // If the parent is inlining, delegate this call to the parent
     if (
       !is_null($this->_parent) &&
@@ -237,7 +237,7 @@ class DisplayNodeVisitorContext
    * @param Environment $env
    * @return string|null
    */
-  private function inlineCompile(TemplateSchema $schema, Environment $env) {
+  private function inlineCompile(TemplateSchema $schema, Environment $env): ?string {
     $module = $this->compile($schema, $env);
 
     return is_null($module)
@@ -253,7 +253,7 @@ class DisplayNodeVisitorContext
    * @param ModuleNode $module
    * @return string
    */
-  private function inlineModule(TemplateSchema $schema, ModuleNode $module) {
+  private function inlineModule(TemplateSchema $schema, ModuleNode $module): string {
     // Check whether the module is already present
     $classEnd = $this->_module->getNode('class_end');
     if ($classEnd->hasNode($schema->qualifier)) {
@@ -293,8 +293,8 @@ class DisplayNodeVisitorContext
    * @param Environment $env
    * @return string|null
    */
-  private function inlineCached($config, Environment $env) {
-    if (!is_array($config)) {
+  private function inlineCached(?array $config, Environment $env): ?string {
+    if (is_null($config)) {
       return null;
     }
 
@@ -313,7 +313,7 @@ class DisplayNodeVisitorContext
   /**
    * @return InlineIndexNode
    */
-  private function getIndexNode() {
+  private function getIndexNode(): InlineIndexNode {
     if (is_null($this->_indexNode)) {
       $this->_indexNode = new InlineIndexNode();
     }

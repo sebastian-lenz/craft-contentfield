@@ -88,7 +88,8 @@ abstract class AbstractSchema extends Model
 
   /**
    * A handlebars template used to display instances of this schema in the editor.
-   * @var string
+   *
+   * @var string|null
    */
   public $preview;
 
@@ -346,7 +347,7 @@ abstract class AbstractSchema extends Model
    *
    * @return string
    */
-  public function getPreview(): string {
+  public function getPreview(): ?string {
     return $this->preview;
   }
 

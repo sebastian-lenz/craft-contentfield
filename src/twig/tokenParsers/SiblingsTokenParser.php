@@ -52,7 +52,7 @@ class SiblingsTokenParser extends AbstractTokenParser
   /**
    * @inheritdoc
    */
-  public function getTag() {
+  public function getTag(): string {
     return 'siblings';
   }
 }
