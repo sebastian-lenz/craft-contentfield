@@ -19,6 +19,11 @@ class ReferenceMap
    */
   private $_with = [];
 
+  /**
+   * @var array
+   */
+  private $_withTransforms = [];
+
 
   /**
    * @param string $elementType
@@ -40,6 +45,13 @@ class ReferenceMap
     return array_key_exists($elementType, $this->_with)
       ? $this->_with[$elementType]
       : [];
+  }
+
+  /**
+   * @return array
+   */
+  public function getWithTransforms(): array {
+    return $this->_withTransforms;
   }
 
   /**
@@ -95,10 +107,7 @@ class ReferenceMap
    * @param string|string[] $values
    */
   public function with(string $elementType, $values) {
-    if (!is_array($values)) {
-      $values = [$values];
-    }
-
+    $values = self::splitWithValue($values);
     $with = array_key_exists($elementType, $this->_with)
       ? $this->_with[$elementType]
       : [];
@@ -114,6 +123,19 @@ class ReferenceMap
     $this->_with[$elementType] = $with;
   }
 
+  /**
+   * @param string|string[] $values
+   */
+  public function withTransforms($values) {
+    $values = self::splitWithValue($values);
+
+    foreach ($values as $value) {
+      if (!in_array($value, $this->_withTransforms)) {
+        $this->_withTransforms[] = $value;
+      }
+    }
+  }
+
 
   // Static methods
   // --------------
@@ -124,5 +146,15 @@ class ReferenceMap
    */
   static public function normalizeElementType(string $elementType): string {
     return trim($elementType, '\\');
+  }
+
+  /**
+   * @param string|string[] $value
+   * @return array
+   */
+  static public function splitWithValue($value): array {
+    return is_array($value)
+      ? $value
+      : array_filter(array_map('trim', explode(',', $value)));
   }
 }

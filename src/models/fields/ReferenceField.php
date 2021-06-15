@@ -55,6 +55,11 @@ class ReferenceField extends AbstractField
   public $with = null;
 
   /**
+   * @var string|string[]|null
+   */
+  public $withTransforms = null;
+
+  /**
    * The internal name of this field.
    */
   const NAME = 'reference';

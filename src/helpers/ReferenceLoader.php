@@ -151,7 +151,11 @@ class ReferenceLoader
     }
 
     if ($query instanceof AssetQuery) {
-      $transforms = Plugin::getInstance()->imageTags->getAllTransforms();
+      $transforms = array_unique(array_merge(
+        Plugin::getInstance()->imageTags->getAllTransforms(),
+        $referenceMap->getWithTransforms()
+      ));
+
       if (count($transforms)) {
         $query->withTransforms($transforms);
       }

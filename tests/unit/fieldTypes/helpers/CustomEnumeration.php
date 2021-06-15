@@ -26,7 +26,7 @@ class CustomEnumeration implements EnumerationInterface
   /**
    * @inheritDoc
    */
-  function getOptions() {
+  function getOptions(): array {
     return [
       ['key' => 'a', 'label' => 'Option A'],
       ['key' => 'b', 'label' => 'Option B'],

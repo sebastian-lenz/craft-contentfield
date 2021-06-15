@@ -100,6 +100,10 @@ class ReferenceValue
       $map->with($elementType, $this->_field->with);
     }
 
+    if (!empty($this->_field->withTransforms)) {
+      $map->withTransforms($this->_field->withTransforms);
+    }
+
     return $map;
   }
 
