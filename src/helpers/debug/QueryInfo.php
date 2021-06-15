@@ -171,11 +171,11 @@ class QueryInfo extends Model
 
   /**
    * @param array $value
-   * @return mixed
+   * @return array|string
    */
-  static public function removeEntries($value) {
+  static public function removeEntries(array $value) {
     if ($value instanceof Element) {
-      return 'Element ( ' . (string)$value . ', ' . $value->id . ' )';
+      return 'Element ( ' . $value . ', ' . $value->id . ' )';
     } else if (is_array($value)) {
       return array_map([__CLASS__, 'removeEntries'], $value);
     }

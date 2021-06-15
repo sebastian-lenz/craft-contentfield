@@ -43,7 +43,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
    * VolumeFolderEnumeration constructor.
    * @param array $options
    */
-  public function __construct($options = []) {
+  public function __construct(array $options = []) {
     if (isset($options['rootFolders'])) {
       $args = is_array($options['rootFolders'])
         ? $options['rootFolders']
@@ -65,7 +65,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
    * @param string $name
    * @return mixed
    */
-  public function getCustomData($key, $name) {
+  public function getCustomData($key, string $name) {
     $folder = $this->getFolder($key);
     return $folder instanceof VolumeFolder && isset($folder->$name)
       ? $folder->$name
@@ -75,7 +75,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
   /**
    * @inheritdoc
    */
-  public function getOptions() {
+  public function getOptions(): array {
     if (!isset($this->_options)) {
       $this->_options = [];
       foreach ($this->getRootFolders() as $folder) {
@@ -89,7 +89,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
   /**
    * @inheritDoc
    */
-  public function hasCustomData($key, $name) {
+  public function hasCustomData($key, string $name): bool {
     $folder = $this->getFolder($key);
     return $folder instanceof VolumeFolder && isset($folder->$name);
   }
@@ -102,7 +102,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
    * @param string $key
    * @return VolumeFolder|null
    */
-  private function getFolder($key) {
+  private function getFolder(string $key): ?VolumeFolder {
     if (!array_key_exists($key, $this->_folders)) {
       $this->_folders[$key] = Craft::$app
         ->getAssets()
@@ -115,7 +115,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
   /**
    * @return VolumeFolder[]
    */
-  private function getRootFolders() {
+  private function getRootFolders(): array {
     if (!isset($this->_rootFolders)) {
       $assets = Craft::$app->getAssets();
 
@@ -134,7 +134,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
    * @param VolumeFolder $folder
    * @param int $depth
    */
-  private function toOptions(&$options, $folder, $depth = 0) {
+  private function toOptions(array &$options, VolumeFolder $folder, int $depth = 0) {
     $options[] = [
       'key'    => $folder->id,
       'label'  => $folder->name,

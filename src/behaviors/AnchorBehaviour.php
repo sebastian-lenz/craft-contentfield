@@ -68,6 +68,7 @@ class AnchorBehaviour extends Behavior
 
   /**
    * @return bool
+   * @noinspection PhpUnused (Public API)
    */
   public function hasAnchor(): bool {
     return !is_null($this->getAnchorRawValue());

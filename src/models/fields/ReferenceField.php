@@ -77,7 +77,7 @@ class ReferenceField extends AbstractField
    * @return array|null
    * @throws Exception
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData() + [
       'criteria'        => $this->getCriteria($element),
       'elementType'     => $this->getElementType(),
@@ -114,7 +114,7 @@ class ReferenceField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       ['elementType', 'validateElementType'],
       ['limit', 'integer', 'min' => 1],
@@ -128,16 +128,15 @@ class ReferenceField extends AbstractField
    *
    * @param string $attribute
    * @internal
+   * @noinspection PhpUnused (Validator)
    */
-  public function validateElementType($attribute) {
-    if (
-      !isset($this->$attribute) ||
-      !is_string($this->$attribute) ||
-      empty($this->$attribute)
-    ) {
+  public function validateElementType(string $attribute) {
+    $value = $this->$attribute;
+
+    if (!is_string($value) || empty($value)) {
       $this->addError($attribute, "The element type is required.");
-    } elseif (is_null(self::resolveElementType($this->$attribute))) {
-      $this->addError($attribute, "Unknown element type '{$this->$attribute}'.");
+    } elseif (is_null(self::resolveElementType($value))) {
+      $this->addError($attribute, "Unknown element type '$value'.");
     }
   }
 
@@ -150,7 +149,7 @@ class ReferenceField extends AbstractField
    * @return array
    * @throws Exception
    */
-  private function getCriteria(ElementInterface $element = null) {
+  private function getCriteria(ElementInterface $element = null): array {
     $criteria = is_array($this->criteria)
       ? $this->criteria
       : [];
@@ -167,7 +166,7 @@ class ReferenceField extends AbstractField
   /**
    * @return integer|null
    */
-  private function getLimit() {
+  private function getLimit(): ?int {
     return isset($this->limit) && is_numeric($this->limit)
       ? intval($this->limit)
       : null;
@@ -177,7 +176,7 @@ class ReferenceField extends AbstractField
    * @param ElementInterface|null $element
    * @return string[]|null
    */
-  private function getSources(ElementInterface $element = null) {
+  private function getSources(ElementInterface $element = null): ?array {
     $sources = null;
     if (isset($this->sources)) {
       $sources = self::extractSources($this->sources, $element);
@@ -206,7 +205,7 @@ class ReferenceField extends AbstractField
   /**
    * @inheritdoc
    */
-  static public function expandFieldConfig(&$config) {
+  static public function expandFieldConfig(array &$config) {
     // Expand the type `instances` to an array of instance fields
     if (in_array($config['type'], ['image', 'images'])) {
       $config = array(
@@ -245,7 +244,7 @@ class ReferenceField extends AbstractField
    * @param string $elementType
    * @return string|null
    */
-  static public function resolveElementType($elementType) {
+  static public function resolveElementType(string $elementType) {
     if (is_subclass_of($elementType, ElementInterface::class)) {
       return $elementType;
     }
@@ -319,9 +318,9 @@ class ReferenceField extends AbstractField
    *   ```
    *
    * @param string[]|string|null $rawValue
-   * @return array|string|string[]|null
+   * @return array|string[]
    */
-  static private function parseSources($rawValue) {
+  static private function parseSources($rawValue): array {
     if (is_array($rawValue)) {
       $sources = [];
 
@@ -348,7 +347,7 @@ class ReferenceField extends AbstractField
    * @param string $rawValue
    * @return string[]
    */
-  static private function splitSourcesString($rawValue) {
+  static private function splitSourcesString(string $rawValue): array {
     if (!is_string($rawValue) || empty($rawValue)) {
       return [];
     }

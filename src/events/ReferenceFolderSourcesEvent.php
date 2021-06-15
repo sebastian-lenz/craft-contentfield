@@ -8,10 +8,10 @@ use craft\base\Volume;
 use craft\errors\InvalidSubpathException;
 use craft\errors\InvalidVolumeException;
 use craft\errors\VolumeException;
-use craft\helpers\ArrayHelper;
 use craft\helpers\FileHelper;
 use craft\models\VolumeFolder;
 use Exception;
+use lenz\craft\utils\helpers\ArrayHelper;
 use Throwable;
 use yii\base\InvalidConfigException;
 
@@ -37,8 +37,8 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
   public function __construct($config = []) {
     parent::__construct([
       'sources' => self::resolveSources(
-        ArrayHelper::getValue($config, 'sources', null),
-        ArrayHelper::getValue($config, 'element', null)
+        ArrayHelper::get($config, 'sources'),
+        ArrayHelper::get($config, 'element')
       ),
     ] + $config);
   }
@@ -70,7 +70,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param mixed $value
    * @return bool
    */
-  public function contains($value) {
+  public function contains($value): bool {
     $value = self::toFolder($value);
     if (is_null($value) || !is_array($this->_folders)) {
       return false;
@@ -88,14 +88,14 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
   /**
    * @return VolumeFolder[]|null
    */
-  public function getFolders() {
+  public function getFolders(): ?array {
     return $this->_folders;
   }
 
   /**
    * @inheritDoc
    */
-  public function getSources() {
+  public function getSources(): ?array {
     $folders = $this->_folders;
     if (is_null($folders)) {
       return null;
@@ -136,7 +136,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param VolumeFolder[] $folders
    * @return VolumeFolder[]
    */
-  static public function filterPermittedFolders(array $folders) {
+  static public function filterPermittedFolders(array $folders): array {
     if (empty($folders)) {
       return $folders;
     }
@@ -152,7 +152,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
 
       return (
         !($volume instanceof Volume) ||
-        $users->checkPermission("viewVolume:{$volume->uid}")
+        $users->checkPermission('viewVolume:' . $volume->uid)
       );
     });
   }
@@ -163,7 +163,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @return string
    * @throws InvalidSubpathException
    */
-  static public function resolvePath(string $path, ElementInterface $element = null) {
+  static public function resolvePath(string $path, ElementInterface $element = null): string {
     try {
       $result = Craft::$app->getView()->renderObjectTemplate($path, $element);
     } catch (Throwable $e) {
@@ -187,7 +187,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param ElementInterface|null $element
    * @return VolumeFolder[]|null
    */
-  static public function resolveSources(array $sources = null, ElementInterface $element = null) {
+  static public function resolveSources(array $sources = null, ElementInterface $element = null): ?array {
     if (is_null($sources)) {
       return null;
     }
@@ -251,7 +251,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param string $value
    * @return string
    */
-  static public function sanitizePath(string $value) {
+  static public function sanitizePath(string $value): string {
     $asciiOnly =  Craft::$app
       ->getConfig()
       ->getGeneral()
@@ -284,7 +284,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param VolumeFolder $folder
    * @return string
    */
-  static public function toSource(VolumeFolder $folder) {
+  static public function toSource(VolumeFolder $folder): string {
     return 'folder:' . $folder->uid;
   }
 
@@ -307,7 +307,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param Volume|VolumeFolder|string|null $value
    * @return Volume|null
    */
-  static public function toVolume($value) {
+  static public function toVolume($value): ?Volume {
     $value = self::toVolumeOrFolder($value);
 
     if ($value instanceof VolumeFolder) {

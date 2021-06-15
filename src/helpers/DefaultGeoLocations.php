@@ -264,13 +264,13 @@ class DefaultGeoLocations
     'ZM' => ['latitude' => -15.41666667,  'longitude' =>   28.283333], // Lusaka, Zambia
     'ZW' => ['latitude' => -17.81666667,  'longitude' =>   31.033333], // Harare, Zimbabwe
   ];
-  
-  
+
+
   /**
    * @param ElementInterface|null $element
    * @return array
    */
-  static public function get(ElementInterface $element = null) {
+  static public function get(ElementInterface $element = null): array {
     $language = null;
 
     try {

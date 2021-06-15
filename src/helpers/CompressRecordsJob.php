@@ -78,7 +78,7 @@ class CompressRecordsJob extends BaseJob
   /**
    * @inheritDoc
    */
-  protected function defaultDescription() {
+  protected function defaultDescription(): ?string {
     return Plugin::t('Compress content data');
   }
 }

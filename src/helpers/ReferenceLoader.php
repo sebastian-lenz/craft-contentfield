@@ -75,7 +75,7 @@ class ReferenceLoader
    * @param int $id
    * @return ElementInterface|null
    */
-  public function getElement($elementType, $id) {
+  public function getElement(string $elementType, int $id): ?ElementInterface {
     $elements = $this->getElements($elementType);
 
     return array_key_exists($id, $elements)
@@ -87,7 +87,7 @@ class ReferenceLoader
    * @param string $elementType
    * @return ElementInterface[]
    */
-  public function getElements($elementType) {
+  public function getElements(string $elementType): array {
     if (!(array_key_exists($elementType, $this->_elements))) {
       $result = [];
       $elements = $this->queryElements($elementType);
@@ -108,7 +108,7 @@ class ReferenceLoader
   /**
    * @return ReferenceMap
    */
-  private function getReferenceMap() {
+  private function getReferenceMap(): ReferenceMap {
     if (!isset($this->_referenceMap)) {
       $referenceMap = new ReferenceMap();
 
@@ -129,7 +129,7 @@ class ReferenceLoader
    * @param string $elementType
    * @return ElementInterface[]
    */
-  private function queryElements($elementType) {
+  private function queryElements(string $elementType): array {
     $referenceMap = $this->getReferenceMap();
     $ids = $referenceMap->getElementIds($elementType);
     if (count($ids) === 0 || !class_exists($elementType)) {

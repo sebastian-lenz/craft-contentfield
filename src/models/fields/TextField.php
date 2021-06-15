@@ -43,7 +43,7 @@ class TextField extends AbstractStringField
   /**
    * @inheritDoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'inputType'   => $this->getInputType(),
       'placeholder' => $this->getPlaceholder(),
@@ -53,7 +53,7 @@ class TextField extends AbstractStringField
   /**
    * @inheritDoc
    */
-  public function getValueRules() {
+  public function getValueRules(): array {
     $rules = parent::getValueRules();
 
     if ($this->inputType == 'url') {
@@ -68,7 +68,7 @@ class TextField extends AbstractStringField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(
       parent::rules(),
       [
@@ -86,7 +86,7 @@ class TextField extends AbstractStringField
   /**
    * @return string
    */
-  private function getInputType() {
+  private function getInputType(): string {
     return in_array($this->inputType, self::INPUT_TYPES)
       ? $this->inputType
       : 'text';
@@ -95,8 +95,8 @@ class TextField extends AbstractStringField
   /**
    * @return string
    */
-  private function getPlaceholder() {
-    $placeholder = trim((string)$this->placeholder);
+  private function getPlaceholder(): string {
+    $placeholder = trim($this->placeholder);
 
     return empty($placeholder)
       ? ''

@@ -37,7 +37,7 @@ class ColorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'alpha'    => $this->alpha,
       'swatches' => $this->swatches,
@@ -63,7 +63,7 @@ class ColorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(
       parent::rules(),
       [
@@ -75,15 +75,16 @@ class ColorField extends AbstractField
   }
 
   /**
-   * @param $attribute
+   * @param string $attribute
+   * @noinspection PhpUnused (Validator)
    */
-  public function validateSwatches($attribute) {
+  public function validateSwatches(string $attribute) {
     if (!isset($this->$attribute) || empty($this->$attribute)) {
       return;
     }
 
     if (!is_array($this->$attribute)) {
-      $this->addError($attribute, "{$attribute} must be an array.");
+      $this->addError($attribute, "$attribute must be an array.");
       return;
     }
 
@@ -97,7 +98,7 @@ class ColorField extends AbstractField
 
     if ($hasInvalidValue) {
       $this->addError($attribute, implode(' ', [
-        "{$attribute} contains invalid values.",
+        "$attribute contains invalid values.",
         "All values must be either a hex color string."
       ]));
     }
@@ -109,9 +110,9 @@ class ColorField extends AbstractField
 
   /**
    * @param string $value
-   * @return false|int
+   * @return bool
    */
-  static public function isHexColor($value) {
-    return preg_match('/#([a-f0-9]{3}){1,2}\b/i', $value);
+  static public function isHexColor(string $value): bool {
+    return !!preg_match('/#([a-f0-9]{3}){1,2}\b/i', $value);
   }
 }

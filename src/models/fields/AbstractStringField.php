@@ -54,7 +54,7 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'maxLength'    => $this->maxLength,
       'minLength'    => $this->minLength,
@@ -75,7 +75,7 @@ abstract class AbstractStringField extends AbstractField
    * @param mixed $value
    * @return string
    */
-  public function getSearchKeywords($value) {
+  public function getSearchKeywords($value): string {
     return $this->searchable && is_string($value)
       ? (string)$value
       : '';
@@ -84,7 +84,7 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getValueRules() {
+  public function getValueRules(): array {
     $stringRule = ['string'];
 
     if (isset($this->maxLength)) {
@@ -109,7 +109,7 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(
       parent::rules(),
       [
@@ -122,7 +122,7 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function useRawValueValidation() {
+  public function useRawValueValidation(): bool {
     return true;
   }
 }

@@ -80,9 +80,9 @@ class LinkField extends AbstractField
    * @inheritdoc
    * @throws Exception
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     $linkTypes = $this->linkTypes;
-    foreach ($linkTypes as $key => &$linkType) {
+    foreach ($linkTypes as &$linkType) {
       if (isset($linkType['elementType'])) {
         $elementType = ReferenceMap::normalizeElementType($linkType['elementType']);
         $criteria = isset($linkType['criteria']) && is_array($linkType['criteria'])
@@ -134,7 +134,7 @@ class LinkField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       [['allowAliases', 'allowNewWindow'], 'boolean'],
       ['linkTypes', 'validateLinkTypes'],
@@ -145,6 +145,7 @@ class LinkField extends AbstractField
   /**
    * @param string $attribute
    * @return void
+   * @noinspection PhpUnused (Validator)
    */
   public function validateLinkTypes(string $attribute) {
     $value = $this->$attribute;
@@ -190,7 +191,7 @@ class LinkField extends AbstractField
 
     $type = $info['type'];
     if (!in_array($type, self::LINK_TYPES)) {
-      return $callback("The type `{$type}` is invalid.");
+      return $callback("The type `$type` is invalid.");
     }
 
     // Validate element type
@@ -201,7 +202,7 @@ class LinkField extends AbstractField
 
       $elementType = ReferenceMap::normalizeElementType($info['elementType']);
       if (!class_exists($elementType)) {
-        return $callback("The element type `{$elementType}` is invalid.");
+        return $callback("The element type `$elementType` is invalid.");
       }
     }
   }

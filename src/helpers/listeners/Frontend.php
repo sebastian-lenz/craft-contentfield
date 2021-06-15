@@ -76,7 +76,6 @@ class Frontend
     $uuid             = $request->getParam(Plugin::$UUID_PARAM);
     $isPreviewRequest = $request->getIsPreview();
     $isChunkRequest   = !is_null($uuid);
-    $pageTemplate     = null;
 
     if (!$element) {
       return;
@@ -100,7 +99,7 @@ class Frontend
           'requestedUuid'    => $isChunkRequest ? $uuid : null,
         ]));
       }
-    };
+    }
 
     // If this was a chunk request and we did not resolve it, raise
     // an error

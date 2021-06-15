@@ -45,7 +45,7 @@ class ReferenceSourcesEvent extends Event
    * @param mixed $value
    * @return bool
    */
-  public function contains($value) {
+  public function contains($value): bool {
     if (is_string($value) || !is_array($this->_sources)) {
       return false;
     }
@@ -62,7 +62,7 @@ class ReferenceSourcesEvent extends Event
   /**
    * @return string[]|null
    */
-  public function getSources() {
+  public function getSources(): ?array {
     return $this->_sources;
   }
 

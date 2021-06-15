@@ -26,7 +26,7 @@ abstract class AbstractBooleanField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + array(
       'defaultValue' => !!$this->defaultValue
     );
@@ -42,7 +42,7 @@ abstract class AbstractBooleanField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function useRawValueValidation() {
+  public function useRawValueValidation(): bool {
     return true;
   }
 }

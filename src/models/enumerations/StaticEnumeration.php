@@ -80,7 +80,7 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
   /**
    * @inheritDoc
    */
-  public function getCustomData($key, $name) {
+  public function getCustomData($key, string $name) {
     foreach ($this->_options as $option) {
       if ($option['key'] === $key) {
         return array_key_exists($name, $option)
@@ -95,7 +95,7 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
   /**
    * @inheritdoc
    */
-  public function getOptions() {
+  public function getOptions(): array {
     $options = $this->_options;
     $count   = count($options);
 
@@ -113,7 +113,7 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
   /**
    * @inheritDoc
    */
-  public function hasCustomData($key, $name) {
+  public function hasCustomData($key, string $name): bool {
     foreach ($this->_options as $option) {
       if ($option['key'] === $key) {
         return array_key_exists($name, $option);

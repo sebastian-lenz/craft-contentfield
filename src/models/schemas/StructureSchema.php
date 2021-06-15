@@ -76,7 +76,7 @@ class StructureSchema extends AbstractSchema
   /**
    * @return StructureDefinitions
    */
-  protected function getManager() {
+  protected function getManager(): StructureDefinitions {
     return Plugin::getInstance()->structures;
   }
 }

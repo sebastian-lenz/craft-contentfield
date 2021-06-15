@@ -99,7 +99,7 @@ class ArrayField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getDependedSchemas() {
+  public function getDependedSchemas(): ?array {
     return $this->member instanceof AbstractField
       ? $this->member->getDependedSchemas()
       : null;
@@ -108,7 +108,7 @@ class ArrayField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): ?array {
     if (is_null($this->member)) {
       return null;
     }
@@ -130,15 +130,17 @@ class ArrayField extends AbstractField
       return null;
     }
 
-    return array_map(function($value) use ($member) {
-      return $member->getEditorValue($value);
-    }, $value->getValues());
+    return array_values(
+      array_map(function($value) use ($member) {
+        return $member->getEditorValue($value);
+      }, $value->getValues())
+    );
   }
 
   /**
    * @inheritDoc
    */
-  public function getSearchKeywords($value) {
+  public function getSearchKeywords($value): string {
     $member = $this->member;
     if (
       !($value instanceof ArrayValue) ||
@@ -164,15 +166,17 @@ class ArrayField extends AbstractField
       return null;
     }
 
-    return array_map(function($value) use ($member) {
-      return $member->getSerializedValue($value);
-    }, $value->getValues());
+    return array_values(
+      array_map(function($value) use ($member) {
+        return $member->getSerializedValue($value);
+      }, $value->getValues())
+    );
   }
 
   /**
    * @return array
    */
-  public function getValueRules() {
+  public function getValueRules(): array {
     return array_merge(
       [[ArrayValueValidator::class]],
       parent::getValueRules()
@@ -182,7 +186,7 @@ class ArrayField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       [['collapsible', 'limit', 'member', 'previewMode'], 'required'],
       ['collapsible', 'boolean'],

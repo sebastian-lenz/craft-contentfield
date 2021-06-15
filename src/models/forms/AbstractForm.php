@@ -66,7 +66,7 @@ abstract class AbstractForm
    *
    * @return string|null
    */
-  public function getGenericError() {
+  public function getGenericError(): ?string {
     return $this->_genericError;
   }
 
@@ -75,7 +75,7 @@ abstract class AbstractForm
    *
    * @return InstanceValue|null
    */
-  public function getInstance() {
+  public function getInstance(): ?InstanceValue {
     return $this->_instance;
   }
 
@@ -116,7 +116,7 @@ abstract class AbstractForm
   /**
    * @inheritDoc
    */
-  public function hasErrors($attribute = null) {
+  public function hasErrors($attribute = null): bool {
     if (is_null($attribute) && $this->hasGenericError()) {
       return true;
     }
@@ -158,7 +158,7 @@ abstract class AbstractForm
   /**
    * @param array $values
    */
-  public function setPostAttributes($values) {
+  public function setPostAttributes(array $values) {
     $this->setAttributes($values);
   }
 
@@ -170,7 +170,7 @@ abstract class AbstractForm
    * @param array $result
    * @return array
    */
-  protected function getPostedFiles($result = []) {
+  protected function getPostedFiles(array $result = []): array {
     $name = $this->getPostedParamName();
     if (is_null($name)) {
       return $result;
@@ -197,7 +197,7 @@ abstract class AbstractForm
    * @param Request $request
    * @return array|null
    */
-  protected function getPostedParam(Request $request) {
+  protected function getPostedParam(Request $request): ?array {
     if (
       !$request instanceof ConsoleRequest &&
       !$request instanceof WebRequest
@@ -219,7 +219,7 @@ abstract class AbstractForm
   /**
    * @return string|null
    */
-  protected function getPostedParamName() {
+  protected function getPostedParamName(): ?string {
     return is_null($this->_instance)
       ? null
       : $this->_instance->getNamespace();
@@ -236,7 +236,7 @@ abstract class AbstractForm
    *
    * @return string|null
    */
-  protected function getRedirectUrl() {
+  protected function getRedirectUrl(): ?string {
     try {
       $instance = $this->getInstance();
 
@@ -276,7 +276,7 @@ abstract class AbstractForm
    * @return bool
    * @throws Exception
    */
-  protected function tryRedirect(BeforeActionEvent $event) {
+  protected function tryRedirect(BeforeActionEvent $event): bool {
     $url = $this->getRedirectUrl();
     if (empty($url)) {
       return false;
@@ -298,5 +298,5 @@ abstract class AbstractForm
    * @param BeforeActionEvent $event
    * @return bool
    */
-  abstract protected function submit(BeforeActionEvent $event);
+  abstract protected function submit(BeforeActionEvent $event): bool;
 }

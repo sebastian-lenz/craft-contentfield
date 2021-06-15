@@ -71,7 +71,7 @@ class InputData
     ContentField $field,
     Content $value = null,
     ElementInterface $element = null,
-    $disabled = false
+    bool $disabled = false
   ) {
     $this->_disabled = $disabled;
     $this->_element = $element;
@@ -93,6 +93,7 @@ class InputData
 
   /**
    * @return string
+   * @noinspection PhpUnused (Used in templates)
    */
   public function getPayload(): string {
     return Json::encode([
@@ -106,6 +107,7 @@ class InputData
 
   /**
    * @return array
+   * @noinspection PhpUnused (Used in templates)
    */
   public function getSchemaErrors(): array {
     return $this->_schemaErrors;
@@ -113,6 +115,7 @@ class InputData
 
   /**
    * @return string
+   * @noinspection PhpUnused (Used in templates)
    */
   public function getScripts(): string {
     return $this->_schemaScripts;

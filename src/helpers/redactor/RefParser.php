@@ -59,7 +59,7 @@ class RefParser
 
     $count = 0;
     $this->content = preg_replace_callback(
-      '/\{([\w\\\\]+)\:([^@\:\}]+)(?:@([^\:\}]+))?(?:\:([^\}\| ]+))?(?: *\|\| *([^\}]+))?\}/',
+      '/{([\w\\\\]+):([^@:}]+)(?:@([^:}]+))?(?::([^}| ]+))?(?: *\|\| *([^}]+))?}/',
       $this, $value, -1, $count
     );
 
@@ -75,7 +75,7 @@ class RefParser
    */
   public function __invoke(array $matches) {
     $matches = array_pad($matches, 6, null);
-    [$fullMatch, $elementType, $ref, $siteId, $attribute, $fallback] = $matches;
+    [$fullMatch, $elementType, $ref, $siteId, /* $attribute */, $fallback] = $matches;
     if ($fallback === null) {
       $fallback = $fullMatch;
     }

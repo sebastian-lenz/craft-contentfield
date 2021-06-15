@@ -169,7 +169,7 @@ abstract class AbstractField extends Model
    *
    * @return null|AbstractSchema[]
    */
-  public function getDependedSchemas() {
+  public function getDependedSchemas(): ?array {
     return null;
   }
 
@@ -179,7 +179,7 @@ abstract class AbstractField extends Model
    * @param ElementInterface|null $element
    * @return array
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): ?array {
     return [
       'group'        => $this->getEditorGroupStyle(),
       'instructions' => Plugin::t($this->instructions),
@@ -196,7 +196,7 @@ abstract class AbstractField extends Model
    * @param mixed $value
    * @return string
    */
-  public function getSearchKeywords($value) {
+  public function getSearchKeywords($value): string {
     return '';
   }
 
@@ -214,7 +214,7 @@ abstract class AbstractField extends Model
   /**
    * @return array
    */
-  public function getValueRules() {
+  public function getValueRules(): array {
     if (is_string($this->valueRules)) {
       $rules = [$this->valueRules];
     } else {
@@ -250,7 +250,7 @@ abstract class AbstractField extends Model
   /**
    * @return bool
    */
-  public function isRequired() {
+  public function isRequired(): bool {
     foreach ($this->getValueRules() as $rule) {
       if ($rule[0] == 'required') {
         return true;
@@ -263,7 +263,7 @@ abstract class AbstractField extends Model
   /**
    * @inheritdoc
    */
-  public function rules() {
+  public function rules(): array {
     return [
       ['name', 'validateName'],
     ];
@@ -272,7 +272,7 @@ abstract class AbstractField extends Model
   /**
    * @param string $id
    */
-  public function setClientValidationId($id) {
+  public function setClientValidationId(string $id) {
     $this->_clientValidationId = $id;
   }
 
@@ -281,14 +281,14 @@ abstract class AbstractField extends Model
    *
    * @return bool
    */
-  public function useRawValueValidation() {
+  public function useRawValueValidation(): bool {
     return false;
   }
 
   /**
    * @param string $attribute
    */
-  public function validateName($attribute) {
+  public function validateName(string $attribute) {
     if (!isset($this->$attribute) || !is_string($this->$attribute) || empty($this->$attribute)) {
       $this->addError($attribute, 'Field name is required.');
     } elseif (substr($this->name, 0 , 2) === '___') {
@@ -325,7 +325,7 @@ abstract class AbstractField extends Model
   /**
    * @return array|null
    */
-  private function getEditorFieldStyle() {
+  private function getEditorFieldStyle(): ?array {
     $style = isset($this->style) && is_array($this->style)
       ? $this->style
       : [];
@@ -345,7 +345,7 @@ abstract class AbstractField extends Model
   /**
    * @return array|null
    */
-  private function getEditorGroupStyle() {
+  private function getEditorGroupStyle(): ?array {
     $group = [];
     $style = [];
     if (!isset($this->group)) {
@@ -397,7 +397,7 @@ abstract class AbstractField extends Model
    * @param string|null $defaultAttribute
    * @return array|null
    */
-  static public function createBreakpoints($source, array $allowedAttributes, $defaultAttribute = null) {
+  static public function createBreakpoints($source, array $allowedAttributes, string $defaultAttribute = null): ?array {
     if (is_string($source) && !is_null($defaultAttribute)) {
       $source = [
         $defaultAttribute => $source
@@ -457,5 +457,5 @@ abstract class AbstractField extends Model
    *
    * @param array $config
    */
-  static public function expandFieldConfig(&$config) {}
+  static public function expandFieldConfig(array &$config) {}
 }
