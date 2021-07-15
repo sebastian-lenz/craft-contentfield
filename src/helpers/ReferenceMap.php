@@ -19,12 +19,17 @@ class ReferenceMap
    */
   private $_with = [];
 
+  /**
+   * @var array
+   */
+  private $_withTransforms = [];
+
 
   /**
    * @param string $elementType
    * @return int[]
    */
-  public function getElementIds($elementType) {
+  public function getElementIds(string $elementType): array {
     $elementType = self::normalizeElementType($elementType);
 
     return array_key_exists($elementType, $this->_elementTypes)
@@ -36,17 +41,24 @@ class ReferenceMap
    * @param string $elementType
    * @return array
    */
-  public function getWith(string $elementType) {
+  public function getWith(string $elementType): array {
     return array_key_exists($elementType, $this->_with)
       ? $this->_with[$elementType]
       : [];
   }
 
   /**
+   * @return array
+   */
+  public function getWithTransforms(): array {
+    return $this->_withTransforms;
+  }
+
+  /**
    * @param string $elementType
    * @return bool
    */
-  public function hasWith(string $elementType) {
+  public function hasWith(string $elementType): bool {
     return (
       array_key_exists($elementType, $this->_with) &&
       count($this->_with[$elementType]) > 0
@@ -57,7 +69,7 @@ class ReferenceMap
    * @param string $elementType
    * @param int $id
    */
-  public function push($elementType, $id) {
+  public function push(string $elementType, int $id) {
     $elementType = self::normalizeElementType($elementType);
 
     if (!array_key_exists($elementType, $this->_elementTypes)) {
@@ -73,7 +85,7 @@ class ReferenceMap
    * @param int|null $siteId
    * @return ElementInterface[]
    */
-  public function queryAll($siteId = null) {
+  public function queryAll(int $siteId = null): array {
     $result = [];
 
     foreach ($this->_elementTypes as $elementType => $ids) {
@@ -94,11 +106,8 @@ class ReferenceMap
    * @param string $elementType
    * @param string|string[] $values
    */
-  public function with($elementType, $values) {
-    if (!is_array($values)) {
-      $values = [$values];
-    }
-
+  public function with(string $elementType, $values) {
+    $values = self::splitWithValue($values);
     $with = array_key_exists($elementType, $this->_with)
       ? $this->_with[$elementType]
       : [];
@@ -114,6 +123,19 @@ class ReferenceMap
     $this->_with[$elementType] = $with;
   }
 
+  /**
+   * @param string|string[] $values
+   */
+  public function withTransforms($values) {
+    $values = self::splitWithValue($values);
+
+    foreach ($values as $value) {
+      if (!in_array($value, $this->_withTransforms)) {
+        $this->_withTransforms[] = $value;
+      }
+    }
+  }
+
 
   // Static methods
   // --------------
@@ -122,7 +144,17 @@ class ReferenceMap
    * @param string $elementType
    * @return string
    */
-  static public function normalizeElementType($elementType) {
+  static public function normalizeElementType(string $elementType): string {
     return trim($elementType, '\\');
+  }
+
+  /**
+   * @param string|string[] $value
+   * @return array
+   */
+  static public function splitWithValue($value): array {
+    return is_array($value)
+      ? $value
+      : array_filter(array_map('trim', explode(',', $value)));
   }
 }

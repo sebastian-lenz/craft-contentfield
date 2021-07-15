@@ -16,6 +16,7 @@ class SiblingsBehavior extends Behavior
 {
   /**
    * @return InstanceValue|null
+   * @noinspection PhpUnused (Public API)
    */
   public function getNextSibling(): ?InstanceValue {
     return $this->getSibling(1);
@@ -37,6 +38,7 @@ class SiblingsBehavior extends Behavior
 
   /**
    * @return InstanceValue|null
+   * @noinspection PhpUnused (Public API)
    */
   public function getPreviousSibling(): ?InstanceValue {
     return $this->getSibling(-1);
@@ -46,6 +48,7 @@ class SiblingsBehavior extends Behavior
    * @param string|string[]|null $qualifier
    * @return boolean
    * @throws Throwable
+   * @noinspection PhpUnused (Public API)
    */
   public function hasNextSibling($qualifier = null): bool {
     return $this->isInstanceWithQualifier(
@@ -58,6 +61,7 @@ class SiblingsBehavior extends Behavior
    * @param string|string[]|null $qualifier
    * @return bool
    * @throws Throwable
+   * @noinspection PhpUnused (Public API)
    */
   public function hasParentInstance($qualifier = null): bool {
     return $this->isInstanceWithQualifier(
@@ -70,6 +74,7 @@ class SiblingsBehavior extends Behavior
    * @param string|string[]|null $qualifier
    * @return boolean
    * @throws Throwable
+   * @noinspection PhpUnused (Public API)
    */
   public function hasPreviousSibling($qualifier = null): bool {
     return $this->isInstanceWithQualifier(
@@ -119,8 +124,6 @@ class SiblingsBehavior extends Behavior
       return false;
     }
 
-    return is_null($qualifier)
-      ? true
-      : $value->getSchema()->matchesQualifier($qualifier);
+    return is_null($qualifier) || $value->getSchema()->matchesQualifier($qualifier);
   }
 }

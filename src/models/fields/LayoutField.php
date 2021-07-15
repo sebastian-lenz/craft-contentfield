@@ -14,7 +14,6 @@ use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\validators\ColumnsValueValidator;
 use lenz\contentfield\validators\FieldValidator;
-use Throwable;
 use yii\helpers\Inflector;
 
 /**
@@ -123,8 +122,9 @@ class LayoutField extends AbstractField
 
   /**
    * @inheritdoc
+   * @throws Exception
    */
-  public function getDependedSchemas() {
+  public function getDependedSchemas(): ?array {
     if (!($this->member instanceof AbstractField)) {
       return null;
     }
@@ -144,7 +144,7 @@ class LayoutField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): ?array {
     if (is_null($this->member)) {
       return null;
     }
@@ -199,7 +199,7 @@ class LayoutField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSearchKeywords($value) {
+  public function getSearchKeywords($value): string {
     $member = $this->member;
     if (!($value instanceof LayoutValue) || is_null($member)) {
       return '';
@@ -222,7 +222,7 @@ class LayoutField extends AbstractField
   /**
    * @return array
    */
-  public function getValueRules() {
+  public function getValueRules(): array {
     return array_merge(parent::getValueRules(), [
       [ColumnsValueValidator::class]
     ]);
@@ -251,7 +251,7 @@ class LayoutField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(parent::rules(), [
       [['breakpoints', 'canEdit', 'columnsPerRow', 'maxColumns', 'maxColumnWidth',
         'minColumns', 'minColumnWidth', 'member'], 'required'],
@@ -470,22 +470,6 @@ class LayoutField extends AbstractField
         ]),
       ]),
     ]);
-  }
-
-  /**
-   * @param array $data
-   * @param string $name
-   * @param int $defaultValue
-   * @return array
-   */
-  private function parseBreakpointMap(array $data, string $name, int $defaultValue): array {
-    try {
-      $source = ArrayHelper::getValue($data, $name);
-    } catch (Throwable $error) {
-      $source = [];
-    }
-
-    return self::toBreakpointMap($source, $this->breakpoints, $defaultValue);
   }
 
 

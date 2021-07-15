@@ -3,7 +3,6 @@
 namespace lenz\contentfield\exceptions;
 
 use Exception;
-use Symfony\Component\Yaml\Exception\ParseException;
 use Throwable;
 
 /**
@@ -25,7 +24,7 @@ class FieldConfigException extends Exception
    * @param int $code
    * @param Throwable|null $previous
    */
-  public function __construct($fieldConfiguration, $message = "", $code = 0, Throwable $previous = null) {
+  public function __construct(array $fieldConfiguration, string $message = '', int $code = 0, Throwable $previous = null) {
     parent::__construct($message, $code, $previous);
 
     $this->fieldConfiguration = $fieldConfiguration;

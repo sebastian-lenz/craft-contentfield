@@ -45,7 +45,7 @@ class QueryNode
    * @param string $template
    * @return QueryNode
    */
-  public function getTemplateChild(string $template) {
+  public function getTemplateChild(string $template): QueryNode {
     foreach ($this->children as $child) {
       if ($child->name == $template && $child->type == self::TYPE_TEMPLATE) {
         return $child;
@@ -62,7 +62,7 @@ class QueryNode
   /**
    * @return bool
    */
-  public function hasQueries() {
+  public function hasQueries(): bool {
     return count($this->queries) > 0;
   }
 }

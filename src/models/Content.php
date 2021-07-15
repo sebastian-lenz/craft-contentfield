@@ -5,7 +5,6 @@ namespace lenz\contentfield\models;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
-use craft\helpers\Json;
 use craft\models\Site;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
@@ -24,6 +23,7 @@ use Twig\Markup;
 
 /**
  * Class Content
+ *
  * @method ContentField getField()
  * @property ContentField $_field
  */
@@ -77,7 +77,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @inheritDoc
    */
-  public function attributes() {
+  public function attributes(): array {
     return ['model'];
   }
 
@@ -99,16 +99,17 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @param string $uuid
    * @return InstanceValue|null
+   * @noinspection PhpUnused (Public API)
    */
-  public function findUuid(string $uuid) {
+  public function findUuid(string $uuid): ?InstanceValue {
     $model = $this->getModel();
     return is_null($model) ? null : $model->findUuid($uuid);
   }
 
   /**
-   * @return mixed
+   * @return array|null
    */
-  public function getEditorValue() {
+  public function getEditorValue(): ?array {
     return is_null($this->_model)
       ? null
       : $this->_model->getEditorValue();
@@ -119,35 +120,35 @@ class Content extends ForeignFieldModel implements DisplayInterface
    * @return Markup
    * @throws Exception
    */
-  public function getHtml(array $variables = []) {
+  public function getHtml(array $variables = []): Markup {
     return new Markup($this->render($variables), 'utf-8');
   }
 
   /**
    * @return ContentLoadException|null
    */
-  public function getLoadError() {
-    return isset($this->_loadError) ? $this->_loadError : null;
+  public function getLoadError(): ?ContentLoadException {
+    return $this->_loadError ?? null;
   }
 
   /**
-   * @return values\InstanceValue|null
+   * @return InstanceValue|null
    */
-  public function getModel() {
+  public function getModel(): ?InstanceValue {
     return $this->_model;
   }
 
   /**
    * @return ElementInterface|null
    */
-  public function getOwner() {
+  public function getOwner(): ?ElementInterface {
     return $this->_owner;
   }
 
   /**
    * @return Site
    */
-  public function getOwnerSite() {
+  public function getOwnerSite(): Site {
     if ($this->_owner instanceof Element) {
       try {
         return $this->_owner->getSite();
@@ -162,7 +163,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @return int[]
    */
-  public function getReferencedIds() {
+  public function getReferencedIds(): array {
     $result = [];
     if (
       is_null($this->_model) ||
@@ -182,7 +183,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
    * @return ReferenceLoader
    * @throws Exception
    */
-  public function getReferenceLoader() {
+  public function getReferenceLoader(): ReferenceLoader {
     if (!isset($this->_referenceLoader)) {
       $this->_referenceLoader = new ReferenceLoader($this);
     }
@@ -193,7 +194,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @return string
    */
-  public function getSearchKeywords() {
+  public function getSearchKeywords(): string {
     return is_null($this->_model)
       ? ''
       : $this->_model->getSearchKeywords();
@@ -224,7 +225,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
    * @return string
    * @throws Exception
    */
-  public function render(array $variables = [], array $options = []) {
+  public function render(array $variables = [], array $options = []): string {
     $model = $this->_model;
     if (is_null($model)) {
       return '';
@@ -297,7 +298,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @inheritDoc
    */
-  public function validate($attributeNames = null, $clearErrors = true) {
+  public function validate($attributeNames = null, $clearErrors = true): bool {
     $model = $this->getModel();
     if (is_null($model)) {
       return true;

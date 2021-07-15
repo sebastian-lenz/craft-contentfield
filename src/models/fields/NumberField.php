@@ -36,7 +36,7 @@ class NumberField extends AbstractNumberField
   /**
    * @inheritDoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'placeholder' => $this->getPlaceholder(),
       'unit'        => $this->unit,
@@ -46,7 +46,7 @@ class NumberField extends AbstractNumberField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(
       parent::rules(),
       [
@@ -62,8 +62,8 @@ class NumberField extends AbstractNumberField
   /**
    * @return string
    */
-  private function getPlaceholder() {
-    $placeholder = trim((string)$this->placeholder);
+  private function getPlaceholder(): string {
+    $placeholder = trim($this->placeholder);
 
     return empty($placeholder)
       ? ''
@@ -77,7 +77,7 @@ class NumberField extends AbstractNumberField
   /**
    * @inheritDoc
    */
-  static public function expandFieldConfig(&$config) {
+  static public function expandFieldConfig(array &$config) {
     $type = $config['type'];
 
     if (array_key_exists($type, AbstractNumberField::DATA_TYPE_ALIASES)) {

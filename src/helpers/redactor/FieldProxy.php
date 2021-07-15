@@ -11,7 +11,6 @@ use craft\redactor\assets\redactor\RedactorAsset;
 use craft\redactor\Field;
 use Exception;
 use ReflectionClass;
-use ReflectionException;
 use yii\base\InvalidConfigException;
 
 /**
@@ -28,7 +27,6 @@ class FieldProxy extends Field
   /**
    * RedactorSettings constructor.
    * @param array $config
-   * @throws ReflectionException
    */
   public function __construct(array $config = []) {
     parent::__construct($config);
@@ -37,11 +35,11 @@ class FieldProxy extends Field
 
   /**
    * @param Element|null $element
-   * @return array|string
+   * @return array
    * @throws SiteNotFoundException
    * @throws InvalidConfigException
    */
-  public function getFieldSettings(Element $element = null) {
+  public function getFieldSettings(Element $element = null): array {
     // Register the asset/redactor bundles
     $view = Craft::$app->getView();
     $view->registerAssetBundle(FieldAsset::class);
@@ -89,7 +87,7 @@ class FieldProxy extends Field
    * @param ElementInterface|null $element
    * @return string
    */
-  public function exportValue(string $value, ElementInterface $element = null) {
+  public function exportValue(string $value, ElementInterface $element = null): string {
     return str_replace(
       '<!--pagebreak-->',
       '<hr class="redactor_pagebreak" style="display:none" unselectable="on" contenteditable="false" />',
@@ -102,7 +100,7 @@ class FieldProxy extends Field
    * @param ElementInterface|null $element
    * @return string
    */
-  public function parseRefs(string $value, ElementInterface $element = null) {
+  public function parseRefs(string $value, ElementInterface $element = null): string {
     try {
       $method = $this->reflection->getMethod('_parseRefs');
       $method->setAccessible(true);
@@ -119,7 +117,7 @@ class FieldProxy extends Field
   /**
    * @return array
    */
-  protected function getRedactorConfig() {
+  protected function getRedactorConfig(): array {
     try {
       $method = $this->reflection->getMethod('_getRedactorConfig');
       $method->setAccessible(true);
@@ -133,7 +131,7 @@ class FieldProxy extends Field
    * @param Element|null $element
    * @return array
    */
-  protected function getLinkOptions(Element $element = null) {
+  protected function getLinkOptions(Element $element = null): array {
     try {
       $method = $this->reflection->getMethod('_getLinkOptions');
       $method->setAccessible(true);
@@ -146,7 +144,7 @@ class FieldProxy extends Field
   /**
    * @return array
    */
-  protected function getVolumeKeys() {
+  protected function getVolumeKeys(): array {
     try {
       $method = $this->reflection->getMethod('_getVolumeKeys');
       $method->setAccessible(true);
@@ -159,7 +157,7 @@ class FieldProxy extends Field
   /**
    * @return array
    */
-  protected function getTransforms() {
+  protected function getTransforms(): array {
     try {
       $method = $this->reflection->getMethod('_getTransforms');
       $method->setAccessible(true);

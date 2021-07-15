@@ -47,7 +47,7 @@ class ElementQueryPanel extends Panel
   /**
    * @inheritDoc
    */
-  public function getDetail() {
+  public function getDetail(): string {
     if (!array_key_exists('@contentfieldDebug', Craft::$aliases)) {
       Craft::$aliases['@contentfieldDebug'] = implode(DIRECTORY_SEPARATOR, [__DIR__, 'views']);
     }
@@ -62,14 +62,14 @@ class ElementQueryPanel extends Panel
   /**
    * @inheritDoc
    */
-  public function getName() {
+  public function getName(): string {
     return 'Element queries';
   }
 
   /**
    * @inheritDoc
    */
-  public function getSummary() {
+  public function getSummary(): string {
     return implode('', [
       '<div class="yii-debug-toolbar__block">',
         '<a href="', $this->getUrl(), '">',
@@ -119,7 +119,7 @@ class ElementQueryPanel extends Panel
   /**
    * @return QueryNode
    */
-  private function getStructure() {
+  private function getStructure(): QueryNode {
     $root = new QueryNode();
 
     foreach ($this->_queries as $query) {

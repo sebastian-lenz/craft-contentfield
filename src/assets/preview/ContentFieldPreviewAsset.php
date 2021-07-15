@@ -3,7 +3,6 @@
 namespace lenz\contentfield\assets\preview;
 
 use craft\web\AssetBundle;
-use craft\web\assets\cp\CpAsset;
 
 /**
  * Class ContentFieldPreviewAsset

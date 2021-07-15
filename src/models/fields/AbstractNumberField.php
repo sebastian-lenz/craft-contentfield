@@ -90,7 +90,7 @@ abstract class AbstractNumberField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'dataType'     => $this->dataType,
       'defaultValue' => $this->getEditorValue($this->defaultValue),
@@ -130,7 +130,7 @@ abstract class AbstractNumberField extends AbstractField
   /**
    * @return array
    */
-  public function getValueRules() {
+  public function getValueRules(): array {
     $numberRule = [$this->dataType];
 
     if (is_numeric($this->max)) {
@@ -150,7 +150,7 @@ abstract class AbstractNumberField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(
       parent::rules(),
       [
@@ -166,7 +166,7 @@ abstract class AbstractNumberField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function useRawValueValidation() {
+  public function useRawValueValidation(): bool {
     return true;
   }
 }

@@ -21,7 +21,7 @@ class RegisterTranslatorsEvent extends Event
    * RegisterTranslatorsEvent constructor.
    * @param array $config
    */
-  public function __construct($config = []) {
+  public function __construct(array $config = []) {
     parent::__construct($config);
   }
 }

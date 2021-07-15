@@ -4,6 +4,7 @@ namespace lenz\contentfield\fields\content;
 
 use craft\elements\db\ElementQuery;
 use craft\events\PopulateElementEvent;
+use Exception;
 use lenz\contentfield\helpers\ReferenceLoader;
 use lenz\contentfield\models\Content;
 use lenz\craft\utils\foreignField\ForeignFieldQueryExtension;
@@ -33,7 +34,7 @@ class QueryExtension extends ForeignFieldQueryExtension
 
   /**
    * @param PopulateElementEvent $event
-   * @throws \Exception
+   * @throws Exception
    */
   public function onAfterPopulateElement(PopulateElementEvent $event) {
     $handle  = $this->field->handle;
@@ -48,7 +49,7 @@ class QueryExtension extends ForeignFieldQueryExtension
 
       try {
         $content->setReferenceLoader($this->_referenceLoader);
-      } catch (\Exception $error) {
+      } catch (Exception $error) {
         unset($this->_referenceLoader);
       }
     }

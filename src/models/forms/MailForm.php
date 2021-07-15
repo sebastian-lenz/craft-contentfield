@@ -59,7 +59,7 @@ class MailForm extends AbstractForm
    *
    * @return Message
    */
-  protected function createMessage() {
+  protected function createMessage(): Message {
     return new Message([
       'from'     => $this->getMessageFrom(),
       'subject'  => $this->getMessageSubject(),
@@ -81,7 +81,7 @@ class MailForm extends AbstractForm
    * @param mixed $value
    * @return string
    */
-  protected function getAttributeString($attribute, $value) {
+  protected function getAttributeString(string $attribute, $value): ?string {
     if (empty($value) && static::OMIT_EMPTY_ATTRIBUTES) {
       return null;
     }
@@ -101,8 +101,9 @@ class MailForm extends AbstractForm
    * @param string $attribute
    * @param mixed $value
    * @return string
+   * @noinspection PhpUnusedParameterInspection (API signature)
    */
-  protected function getAttributeStringValue($attribute, $value) {
+  protected function getAttributeStringValue(string $attribute, $value): string {
     return wordwrap((string)$value);
   }
 
@@ -114,7 +115,7 @@ class MailForm extends AbstractForm
    *
    * @return string
    */
-  protected function getMessageBody() {
+  protected function getMessageBody(): string {
     $lines = [];
 
     foreach ($this->attributes as $attribute => $value) {
@@ -138,15 +139,16 @@ class MailForm extends AbstractForm
    * with the constant `MESSAGE_FROM` or override this method.
    *
    * @return string|array|User|User[]
+   * @noinspection PhpReturnDocTypeMismatchInspection (API signature)
    */
   protected function getMessageFrom() {
     if (!is_null(static::MESSAGE_FROM)) {
       return static::MESSAGE_FROM;
     }
 
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $mail = 'noreply@' . $host;
-    $name = (string)Craft::$app->name;
+    $name = Craft::$app->name;
 
     return [
       $mail => $name
@@ -161,7 +163,7 @@ class MailForm extends AbstractForm
    *
    * @return string
    */
-  protected function getMessageSubject() {
+  protected function getMessageSubject(): ?string {
     if (!is_null(static::MESSAGE_SUBJECT)) {
       return static::MESSAGE_SUBJECT;
     }
@@ -187,20 +189,21 @@ class MailForm extends AbstractForm
    * recipient with the constant `MESSAGE_TO` or override this method.
    *
    * @return string|array|User|User[]
+   * @noinspection PhpReturnDocTypeMismatchInspection (API signature)
    */
   protected function getMessageTo() {
     if (!is_null(static::MESSAGE_TO)) {
       return static::MESSAGE_TO;
     }
 
-    $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
     return 'info@' . $host;
   }
 
   /**
    * @inheritDoc
    */
-  protected function submit(BeforeActionEvent $event) {
+  protected function submit(BeforeActionEvent $event): bool {
     try {
       $message = $this->createMessage();
       $result = Craft::$app->mailer->send($message);

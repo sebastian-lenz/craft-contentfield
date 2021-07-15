@@ -145,8 +145,9 @@ class ContentField extends ForeignField
    *
    * @internal
    * @return AbstractSchema[][]
+   * @noinspection PhpUnused (Used in templates)
    */
-  public function getAllRootSchemas() {
+  public function getAllRootSchemas(): array {
     if (!isset($this->_allRootSchemas)) {
       $groups = [];
       $schemas = $this->fetchAllRootSchemas();
@@ -172,14 +173,15 @@ class ContentField extends ForeignField
   /**
    * Returns the data required by the JavaScript editor to work.
    *
-   * @internal
    * @param Content $value
    * @param ElementInterface|null $element
    * @param bool $disabled
    * @return InputData
    * @throws Throwable
+   * @internal
+   * @noinspection PhpUnused (Used in templates)
    */
-  public function getInputData(Content $value, ElementInterface $element = null, $disabled = false) {
+  public function getInputData(Content $value, ElementInterface $element = null, bool $disabled = false): InputData {
     return new InputData($this, $value, $element, $disabled);
   }
 
@@ -192,7 +194,7 @@ class ContentField extends ForeignField
    * @return AbstractSchema[]
    * @throws Throwable
    */
-  public function getRootSchemas(ElementInterface $element = null) {
+  public function getRootSchemas(ElementInterface $element = null): array {
     $schemas = $this->rootSchemas;
     $uids = Plugin::getInstance()->fieldUsage->toUids($element);
 
@@ -245,7 +247,7 @@ class ContentField extends ForeignField
    * @internal
    * @return Usage[]
    */
-  public function getUsages() {
+  public function getUsages(): array {
     return Plugin::getInstance()->fieldUsage->findUsages($this);
   }
 
@@ -256,7 +258,7 @@ class ContentField extends ForeignField
    * @internal
    * @return bool
    */
-  public function hasSchemaErrors() {
+  public function hasSchemaErrors(): bool {
     return !empty(Plugin::getInstance()->schemas->getAllErrors());
   }
 
@@ -266,7 +268,7 @@ class ContentField extends ForeignField
    * @internal
    * @return boolean
    */
-  public function hasLocalizedRelations() {
+  public function hasLocalizedRelations(): bool {
     return $this->translationMethod !== Field::TRANSLATION_METHOD_NONE;
   }
 
@@ -288,6 +290,7 @@ class ContentField extends ForeignField
    *
    * @internal
    * @param mixed $value
+   * @noinspection PhpUnused (Used by Craft when applying settings)
    */
   public function setCpRootSchemasByUsage($value) {
     if (!is_array($value)) {
@@ -315,11 +318,11 @@ class ContentField extends ForeignField
    * This settings has been renamed to `rootSchemas`. This method
    * helps bootstrapping old installs before the migration has run.
    *
-   * @internal
-   * @deprecated
    * @param array $value
+   * @deprecated
+   * @internal
    */
-  public function setRootTemplates($value) {
+  public function setRootTemplates(array $value) {
     $this->rootSchemas = $value;
   }
 
@@ -339,7 +342,7 @@ class ContentField extends ForeignField
    * @param ElementInterface|null $element
    * @return string|null
    */
-  public function shouldCompress(ElementInterface $element = null) {
+  public function shouldCompress(ElementInterface $element = null): ?string {
     $compression = ContentRecord::getAvailableCompression();
 
     if ($this->compression == 'always') {
@@ -363,7 +366,7 @@ class ContentField extends ForeignField
    * @internal
    * @return AbstractSchema[]
    */
-  protected function fetchAllRootSchemas() {
+  protected function fetchAllRootSchemas(): array {
     $schemas = Plugin::getInstance()->schemas->getAllSchemas();
     $rootSchemas = array_filter($schemas, function(AbstractSchema $schema) {
       return $schema->rootSchema;
@@ -376,7 +379,7 @@ class ContentField extends ForeignField
   /**
    * @inheritDoc
    */
-  protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element = null) {
+  protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element = null): array {
     $content = $model instanceof Content ? $model : null;
     $contentModel = is_null($content)
       ? null
@@ -438,7 +441,7 @@ class ContentField extends ForeignField
   /**
    * @inheritDoc
    */
-  public static function settingsTemplate() {
+  public static function settingsTemplate(): ?string {
     return 'contentfield/_settings';
   }
 

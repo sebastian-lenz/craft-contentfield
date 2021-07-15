@@ -44,7 +44,7 @@ class TextAreaField extends AbstractStringField
   /**
    * @inheritDoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'monospace'   => $this->monospace,
       'placeholder' => $this->getPlaceholder(),
@@ -55,7 +55,7 @@ class TextAreaField extends AbstractStringField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(
       parent::rules(),
       [
@@ -74,8 +74,8 @@ class TextAreaField extends AbstractStringField
   /**
    * @return string
    */
-  private function getPlaceholder() {
-    $placeholder = trim((string)$this->placeholder);
+  private function getPlaceholder(): string {
+    $placeholder = trim($this->placeholder);
 
     return empty($placeholder)
       ? ''

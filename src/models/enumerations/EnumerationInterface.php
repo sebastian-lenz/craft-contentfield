@@ -11,5 +11,5 @@ interface EnumerationInterface
    * Return an array of all options.
    * @return array
    */
-  function getOptions();
+  function getOptions(): array;
 }

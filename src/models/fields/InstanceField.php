@@ -101,9 +101,7 @@ class InstanceField extends AbstractField
       $data = [];
     }
 
-    $schema = isset($data[InstanceValue::TYPE_PROPERTY])
-      ? $data[InstanceValue::TYPE_PROPERTY]
-      : null;
+    $schema = $data[InstanceValue::TYPE_PROPERTY] ?? null;
 
     if (is_null($schema) || !$this->isValidSchema($schema)) {
       $defaultSchema = $this->getDefaultSchema();
@@ -117,7 +115,7 @@ class InstanceField extends AbstractField
    * @return AbstractSchema
    * @throws Throwable
    */
-  public function getDefaultSchema() {
+  public function getDefaultSchema(): AbstractSchema {
     $defaultSchema = $this->defaultSchema;
     $schemas = $this->getResolvedSchemas();
 
@@ -141,7 +139,7 @@ class InstanceField extends AbstractField
    * @inheritdoc
    * @throws Throwable
    */
-  public function getDependedSchemas() {
+  public function getDependedSchemas(): array {
     $schemas = $this->getResolvedSchemas();
     $result  = $schemas;
 
@@ -159,7 +157,7 @@ class InstanceField extends AbstractField
    * @inheritdoc
    * @throws Throwable
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): ?array {
     $qualifiers = array_keys($this->getResolvedSchemas());
     if (count($qualifiers) === 0) {
       return null;
@@ -185,7 +183,7 @@ class InstanceField extends AbstractField
    * @throws Throwable
    * @internal
    */
-  public function getResolvedSchemas() {
+  public function getResolvedSchemas(): array {
     if (!isset($this->_resolvedSchemas)) {
       $manager = Plugin::getInstance()->schemas;
       $parent = $this->_parentSchema;
@@ -215,7 +213,7 @@ class InstanceField extends AbstractField
    * @param mixed $value
    * @return string
    */
-  public function getSearchKeywords($value) {
+  public function getSearchKeywords($value): string {
     if (!($value instanceof InstanceValue)) {
       return '';
     }
@@ -235,7 +233,7 @@ class InstanceField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getValueRules() {
+  public function getValueRules(): array {
     return array_merge(
       [[InstanceValueValidator::class]],
       parent::getValueRules()
@@ -247,10 +245,38 @@ class InstanceField extends AbstractField
    * @return bool
    * @throws Throwable
    */
-  public function isValidSchema($qualifier) {
+  public function isValidSchema(string $qualifier): bool {
     return Plugin::getInstance()
       ->schemas
       ->matchesQualifier($qualifier, $this->schemas, $this->_parentSchema);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function rules(): array {
+    return array_merge(parent::rules(), [
+      ['collapsible', 'boolean'],
+      ['defaultSchema', 'string'],
+      ['schemas', 'validateSchemas'],
+    ]);
+  }
+
+  /**
+   * @param string $attribute
+   */
+  public function validateSchemas(string $attribute) {
+    try {
+      $schemas = $this->getResolvedSchemas();
+      if (!count($schemas)) {
+        $this->addError($attribute, 'An instance field must accept at least one valid schema.');
+      }
+    } catch (Throwable $error) {
+      $this->addError($attribute, sprintf(
+        'The schemas of the instance field couldn\'t be resolved: %s',
+        $error->getMessage()
+      ));
+    }
   }
 
 
@@ -260,7 +286,7 @@ class InstanceField extends AbstractField
   /**
    * @inheritdoc
    */
-  static public function expandFieldConfig(&$config) {
+  static public function expandFieldConfig(array &$config) {
     // Expand the type `instances` to an array of instance fields
     if ($config['type'] === 'instances') {
       $member = array_merge([

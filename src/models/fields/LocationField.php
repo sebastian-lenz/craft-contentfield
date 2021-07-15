@@ -33,7 +33,7 @@ class LocationField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'defaultValue' => $this->getEditorDefaultValue($element),
     ];
@@ -43,7 +43,7 @@ class LocationField extends AbstractField
    * @param ElementInterface|null $element
    * @return array|float[]
    */
-  public function getEditorDefaultValue(ElementInterface $element = null) {
+  public function getEditorDefaultValue(ElementInterface $element = null): array {
     $defaultValue = $this->defaultValue;
 
     if (

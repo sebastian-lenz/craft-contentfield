@@ -15,7 +15,7 @@ interface CustomDataInterface
    * @param string $name
    * @return mixed
    */
-  function getCustomData($key, $name);
+  function getCustomData($key, string $name);
 
   /**
    * Checks whether custom data with the specified name exists
@@ -25,5 +25,5 @@ interface CustomDataInterface
    * @param string $name
    * @return bool
    */
-  function hasCustomData($key, $name);
+  function hasCustomData($key, string $name): bool;
 }

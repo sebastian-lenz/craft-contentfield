@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\fields;
 
 use Craft;
+use craft\base\Element;
 use craft\base\ElementInterface;
 use lenz\contentfield\helpers\redactor\FieldProxy;
 use lenz\contentfield\models\values\RedactorValue;
@@ -57,7 +58,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'redactor'     => $this->getRedactorSettings($element),
       'translatable' => !!$this->translatable,
@@ -79,9 +80,11 @@ class RedactorField extends AbstractField
    * @param ElementInterface|null $element
    * @return array
    */
-  public function getRedactorSettings(ElementInterface $element = null) {
+  public function getRedactorSettings(ElementInterface $element = null): array {
     try {
-      return $this->getRedactorFieldProxy()->getFieldSettings($element);
+      return $this->getRedactorFieldProxy()->getFieldSettings(
+        $element instanceof Element ? $element : null
+      );
     } catch (Throwable $error) { }
 
     return [];
@@ -90,7 +93,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSearchKeywords($value) {
+  public function getSearchKeywords($value): string {
     if (!$this->searchable || !($value instanceof RedactorValue)) {
       return '';
     }
@@ -119,7 +122,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function rules() {
+  public function rules(): array {
     return array_merge(
       parent::rules(),
       [
@@ -137,7 +140,7 @@ class RedactorField extends AbstractField
   /**
    * @return FieldProxy|null
    */
-  private function getRedactorFieldProxy() {
+  private function getRedactorFieldProxy(): ?FieldProxy {
     if (!isset($this->_proxy)) {
       try {
         $this->_proxy = new FieldProxy([

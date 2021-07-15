@@ -67,7 +67,7 @@ abstract class AbstractEnumerationField extends AbstractField
    * @param ElementInterface|null $element
    * @return array
    */
-  public function getEditorData(ElementInterface $element = null) {
+  public function getEditorData(ElementInterface $element = null): array {
     $options = array_map(function($option) {
       return array_intersect_key($option, self::ALLOWED_OPTION_KEYS);
     }, $this->getEnumeration()->getOptions());
@@ -109,7 +109,7 @@ abstract class AbstractEnumerationField extends AbstractField
    * @return EnumerationInterface
    * @throws Exception
    */
-  private function createEnumeration($config) {
+  private function createEnumeration($config): EnumerationInterface {
     if (is_array($config)) {
       $enumClass = $config['type'];
       $enumOptions = $config;

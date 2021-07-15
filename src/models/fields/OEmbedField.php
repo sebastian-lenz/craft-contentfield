@@ -80,7 +80,7 @@ class OEmbedField extends AbstractField
    * @param string $url
    * @return Endpoint|null
    */
-  public function getEndpoint($url) {
+  public function getEndpoint(string $url): ?Endpoint {
     foreach ($this->providers as $provider) {
       $endpoint = $provider->getEndpoint($url);
       if (!is_null($endpoint)) {
@@ -95,7 +95,7 @@ class OEmbedField extends AbstractField
    * @param string $url
    * @return OEmbed|null
    */
-  public function getOEmbed($url) {
+  public function getOEmbed(string $url): ?OEmbed {
     $endpoint = $this->getEndpoint($url);
     return is_null($endpoint)
       ? null
@@ -120,7 +120,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritdoc
    */
-  static public function expandFieldConfig(&$config) {
+  static public function expandFieldConfig(array &$config) {
     if ($config['type'] === 'youtube') {
       $config = array(
         'type'      => self::NAME,
