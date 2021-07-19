@@ -170,10 +170,10 @@ class QueryInfo extends Model
   }
 
   /**
-   * @param array $value
-   * @return array|string
+   * @param mixed $value
+   * @return mixed
    */
-  static public function removeEntries(array $value) {
+  static public function removeEntries($value) {
     if ($value instanceof Element) {
       return 'Element ( ' . $value . ', ' . $value->id . ' )';
     } else if (is_array($value)) {
