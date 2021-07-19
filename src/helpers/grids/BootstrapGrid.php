@@ -53,8 +53,7 @@ class BootstrapGrid implements GridInterface
         if ($value == 0 && $breakpoint == 'xs') return '';
         return "offset$suffix-$value";
       case 'order':
-        if ($value == 0) return "";
-        if ($value < 1) $value = 'first';
+        if ($value < 0) $value = 'first';
         if ($value > $column->getField()->columnsPerRow) $value = 'last';
         return "order$suffix-$value";
       case 'width':
