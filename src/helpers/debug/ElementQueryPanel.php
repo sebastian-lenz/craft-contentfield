@@ -13,6 +13,11 @@ use yii\debug\Panel;
 class ElementQueryPanel extends Panel
 {
   /**
+   * @var bool
+   */
+  protected $_isLoaded = false;
+
+  /**
    * @var QueryInfo[]
    */
   protected $_queries = [];
@@ -35,6 +40,10 @@ class ElementQueryPanel extends Panel
     $this->module = Craft::$app->getModule('debug');
 
     Event::on(ElementQuery::class, ElementQuery::EVENT_AFTER_PREPARE, function(Event $event) {
+      if ($this->_isLoaded) {
+        return;
+      }
+
       $query = $event->sender;
       if ($query instanceof ElementQuery) {
         $info = new QueryInfo();
@@ -92,6 +101,8 @@ class ElementQueryPanel extends Panel
       return;
     }
 
+    $this->_isLoaded = true;
+    $this->_queries = [];
     foreach ($data['queries'] as $query) {
       $this->_queries[] = new QueryInfo($query);
     }

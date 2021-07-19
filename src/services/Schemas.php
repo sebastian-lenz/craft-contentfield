@@ -7,6 +7,7 @@ use Exception;
 use lenz\contentfield\exceptions\ContentLoadException;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\StructureSchema;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\services\schemas\AbstractLoader;
@@ -214,6 +215,7 @@ class Schemas
    * @param string|string[] $specs
    * @param AbstractSchema|null $scope
    * @return bool
+   * @throws Exception
    */
   public function matchesQualifier(string $qualifier, $specs, AbstractSchema $scope = null): bool {
     $qualifierInfo = $this->parseSchemaQualifier($qualifier, $scope);

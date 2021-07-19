@@ -4,6 +4,7 @@ namespace lenz\contentfield\models\fields;
 
 use Craft;
 use craft\base\Element;
+use craft\elements\Category;
 use Exception;
 use lenz\contentfield\events\ReferenceFolderSourcesEvent;
 use lenz\contentfield\events\ReferenceSourcesEvent;
@@ -228,6 +229,15 @@ class ReferenceField extends AbstractField
         'type'        => self::NAME,
         'elementType' => Asset::class,
         'limit'       => in_array($config['type'], ['asset', 'file']) ? 1 : null,
+        'viewMode'    => 'small'
+      ) + $config;
+    }
+
+    if (in_array($config['type'], ['category', 'categories'])) {
+      $config = array(
+        'type'        => self::NAME,
+        'elementType' => Category::class,
+        'limit'       => $config['type'] == 'category' ? 1 : null,
         'viewMode'    => 'small'
       ) + $config;
     }

@@ -603,10 +603,9 @@ abstract class AbstractSchema extends Model
    * @return string|null
    */
   protected function getPreviewImage(): ?string {
-    $candidates = self::PREVIEW_IMAGE_CANDIDATES;
-    if (isset($this->previewImage)) {
-      array_unshift($candidates, $this->previewImage);
-    }
+    $candidates = isset($this->previewImage)
+      ? [$this->previewImage]
+      : self::PREVIEW_IMAGE_CANDIDATES;
 
     foreach ($candidates as $candidate) {
       $field = $this->getField($candidate);

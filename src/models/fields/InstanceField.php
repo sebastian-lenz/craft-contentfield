@@ -246,9 +246,13 @@ class InstanceField extends AbstractField
    * @throws Throwable
    */
   public function isValidSchema(string $qualifier): bool {
-    return Plugin::getInstance()
-      ->schemas
-      ->matchesQualifier($qualifier, $this->schemas, $this->_parentSchema);
+    foreach ($this->getResolvedSchemas() as $schema) {
+      if ($schema->matchesQualifier($qualifier)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
