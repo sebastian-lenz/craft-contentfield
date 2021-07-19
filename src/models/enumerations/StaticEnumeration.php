@@ -93,6 +93,15 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
   }
 
   /**
+   * @return array
+   */
+  public function getOptionKeys(): array {
+    return array_map(function(array $option) {
+      return $option['key'];
+    }, $this->_options);
+  }
+
+  /**
    * @inheritdoc
    */
   public function getOptions(): array {
@@ -108,6 +117,13 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
     });
 
     return $options;
+  }
+
+  /**
+   * @return array
+   */
+  public function getRawOptions(): array {
+    return $this->_options;
   }
 
   /**
