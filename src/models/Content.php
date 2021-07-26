@@ -5,6 +5,7 @@ namespace lenz\contentfield\models;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\helpers\ArrayHelper;
 use craft\models\Site;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
@@ -18,6 +19,7 @@ use lenz\contentfield\records\ContentRecord;
 use lenz\contentfield\twig\DisplayInterface;
 use lenz\craft\utils\foreignField\ForeignField;
 use lenz\craft\utils\foreignField\ForeignFieldModel;
+use lenz\craft\utils\helpers\ElementHelpers;
 use Throwable;
 use Twig\Markup;
 
@@ -305,5 +307,32 @@ class Content extends ForeignFieldModel implements DisplayInterface
     }
 
     return $model->validate();
+  }
+
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @inheritDoc
+   */
+  protected function getSerializedData(): array {
+    return [
+      '_model' => $this->_model ? $this->_model->getSerializedValue() : null,
+      '_field' => $this->_field->handle,
+      '_owner' => ElementHelpers::serialize($this->_owner),
+    ];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected function setSerializedData(array $data) {
+    parent::setSerializedData($data);
+
+    $model = ArrayHelper::getValue($data, '_model');
+    if (is_array($model)) {
+      $this->_model = $this->getField()->normalizeValue($model, $this->getOwner());
+    }
   }
 }
