@@ -90,13 +90,13 @@ class ImageTagDefinitions extends AbstractDefinitions
       $config['type'] = 'image';
     }
 
-    $config   = $this->resolveDefinition($config);
-    $cache    = Plugin::getInstance()->imageTagCache;
+    $config = $this->resolveDefinition($config);
+    $cache = Plugin::getInstance()->imageTagCache;
     $cacheKey = __METHOD__ . '(' . md5(Json::encode([
       'asset'  => $asset->uid,
       'config' => $config,
       'mtime'  => $asset->dateModified,
-      'site'   => $asset->getSite()->id,
+      'site'   => $asset->siteId,
     ])) . ')';
 
     $result = $cache->get($cacheKey);
