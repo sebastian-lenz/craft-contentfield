@@ -29,6 +29,7 @@ abstract class AbstractEnumerationField extends AbstractField
    * Defines the keys of an option array.
    */
   const ALLOWED_OPTION_KEYS = [
+    'color'  => true,
     'indent' => true,
     'key'    => true,
     'label'  => true,
