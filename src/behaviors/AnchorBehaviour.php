@@ -74,6 +74,14 @@ class AnchorBehaviour extends Behavior
     return !is_null($this->getAnchorRawValue());
   }
 
+  /**
+   * @return string
+   */
+  public function __toString(): string {
+    $anchor = $this->getAnchor();
+    return is_null($anchor) ? '' : $anchor;
+  }
+
 
   // Private methods
   // ---------------

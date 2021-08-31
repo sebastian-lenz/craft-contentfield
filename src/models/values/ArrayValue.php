@@ -183,8 +183,7 @@ class ArrayValue
   }
 
   /**
-   * Returns an array containing only visible values in the
-   * array.
+   * Returns an array containing only visible values in the array.
    *
    * @return array
    */
@@ -237,6 +236,13 @@ class ArrayValue
     }
 
     return implode('', $result);
+  }
+
+  /**
+   * @param array $value
+   */
+  public function setVisibleValues(array $value) {
+    $this->_visibleValues = $value;
   }
 
 
