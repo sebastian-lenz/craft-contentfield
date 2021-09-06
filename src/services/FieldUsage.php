@@ -27,6 +27,7 @@ class FieldUsage
     $adapters = [
       new fieldUsages\EntryAdapter(),
       new fieldUsages\GlobalSetAdapter(),
+      new fieldUsages\CategoryAdapter(),
     ];
 
     $plugins = Craft::$app->getPlugins();
@@ -44,7 +45,7 @@ class FieldUsage
    * @param Field $field
    * @return fieldUsages\Usage[]
    */
-  public function findUsages(Field $field) {
+  public function findUsages(Field $field): array {
     $usage = new fieldUsages\Usage();
     $fields = Craft::$app->getFields();
     $layoutFields = FieldLayoutField::findAll([
@@ -76,7 +77,7 @@ class FieldUsage
    * @param ElementInterface|null $element
    * @return string[]
    */
-  public function toUids(ElementInterface $element = null) {
+  public function toUids(ElementInterface $element = null): array {
     foreach ($this->_adapters as $adapter) {
       try {
         $result = $adapter->toUids($element);
