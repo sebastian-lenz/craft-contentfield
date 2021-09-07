@@ -11,7 +11,7 @@ use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\LinkField;
 use lenz\craft\utils\events\AnchorEvent;
-use Twig\Markup;
+use lenz\craft\utils\models\Attributes;
 
 /**
  * Class LinkValue
@@ -114,27 +114,26 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
 
   /**
    * @param array $extraAttribs
-   * @return Markup
+   * @return Attributes
    * @throws Exception
    * @noinspection PhpUnused (Public API)
    */
-  public function getLinkAttributes(array $extraAttribs = []): Markup {
+  public function getLinkAttributes(array $extraAttribs = []): Attributes {
+    $attr = new Attributes($extraAttribs);
     if ($this->isEmpty()) {
-      return Template::raw('');
+      return $attr;
     }
 
-    $attribs = [
-      'href' => $this->getUrl(),
-    ] + $extraAttribs;
-
     if ($this->openInNewWindow) {
-      $attribs['target'] = '_blank';
+      $attr->set('target', '_blank');
+
       if ($this->autoNoReferrer) {
-        $attribs['rel'] = 'noopener noreferrer';
+        $attr->set('rel', 'noopener noreferrer');
       }
     }
 
-    return Template::raw(Html::renderTagAttributes($attribs));
+    $attr->set('href', $this->getUrl());
+    return $attr;
   }
 
   /**

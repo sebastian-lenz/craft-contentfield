@@ -37,7 +37,7 @@ class Usage
    * FieldUsage constructor.
    * @param array $options
    */
-  public function __construct($options = []) {
+  public function __construct(array $options = []) {
     BaseYii::configure($this, $options);
   }
 
@@ -45,7 +45,7 @@ class Usage
    * @param array $options
    * @return Usage
    */
-  public function findOrCreate($options) {
+  public function findOrCreate(array $options): Usage {
     if (!is_array($this->children)) {
       $this->children = [];
     }
@@ -64,7 +64,7 @@ class Usage
   /**
    * @return Usage[]
    */
-  public function getFlattened() {
+  public function getFlattened(): array {
     $result = [];
     foreach ($this->children as $child) {
       $result[] = $child;
