@@ -25,9 +25,9 @@ use Throwable;
 class TemplateLoader extends AbstractLoader
 {
   /**
-   * @var string
+   * @var string[]
    */
-  private $_basePath;
+  private $_basePaths;
 
   /**
    * @var YamlAwareTemplateLoader
@@ -50,18 +50,12 @@ class TemplateLoader extends AbstractLoader
    * @throws Throwable
    */
   public function __construct() {
-    $basePath = FileHelper::normalizePath(
-      Craft::$app->getPath()->getSiteTemplatesPath(),
-      YamlAwareTemplateLoader::SEPARATOR
-    );
-
     $loader = TemplateSchema::getTwig()->getLoader();
     if (!($loader instanceof YamlAwareTemplateLoader)) {
       throw new Exception('Twig template loader is not patched correctly.');
     }
 
-    $this->_basePath = $basePath;
-    $this->_loader   = $loader;
+    $this->_loader = $loader;
   }
 
   /**
@@ -103,10 +97,23 @@ class TemplateLoader extends AbstractLoader
   }
 
   /**
-   * @return string
+   * @return string[]
+   * @throws \yii\base\Exception
    */
-  public function getBasePath(): string {
-    return $this->_basePath;
+  public function getBasePaths(): array {
+    if (!isset($this->_basePaths)) {
+      $templateRoots = Craft::$app->getView()->getSiteTemplateRoots();
+      $basePaths = array_key_exists('', $templateRoots) ? $templateRoots[''] : [];
+
+      array_unshift($basePaths, FileHelper::normalizePath(
+        Craft::$app->getPath()->getSiteTemplatesPath(),
+        YamlAwareTemplateLoader::SEPARATOR
+      ));
+
+      $this->_basePaths = $basePaths;
+    }
+
+    return $this->_basePaths;
   }
 
   /**
@@ -198,28 +205,31 @@ class TemplateLoader extends AbstractLoader
 
   /**
    * @return array
+   * @throws \yii\base\Exception
    */
   private function getAllTemplatesFromDisk(): array {
-    $basePath = $this->getBasePath();
-    $result   = [];
+    $basePaths = $this->getBasePaths();
+    $result = [];
 
     /** @var SplFileInfo $file */
-    foreach ($this->getTemplateIterator($basePath) as $file) {
-      $fullPath = FileHelper::normalizePath(
-        $file->getRealPath(),
-        YamlAwareTemplateLoader::SEPARATOR
-      );
+    foreach ($basePaths as $basePath) {
+      foreach ($this->getTemplateIterator($basePath) as $file) {
+        $fullPath = FileHelper::normalizePath(
+          $file->getRealPath(),
+          YamlAwareTemplateLoader::SEPARATOR
+        );
 
-      if (substr($fullPath, 0, strlen($basePath)) !== $basePath) {
-        continue;
+        if (substr($fullPath, 0, strlen($basePath)) !== $basePath) {
+          continue;
+        }
+
+        $name = substr($fullPath, strlen($basePath) + 1);
+        $path = dirname($name);
+        $result[] = [
+          'name' => YamlAwareTemplateLoader::normalizeName($name),
+          'path' => $path === '.' ? '' : $path,
+        ];
       }
-
-      $name = substr($fullPath, strlen($basePath) + 1);
-      $path = dirname($name);
-      $result[] = [
-        'name' => YamlAwareTemplateLoader::normalizeName($name),
-        'path' => $path === '.' ? '' : $path,
-      ];
     }
 
     return $result;
