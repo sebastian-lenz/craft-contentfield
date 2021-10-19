@@ -243,7 +243,7 @@ if(!i)return s.createElement("div",null,`Could not resolve schema for "${n.__typ
 const o=[],c=Object.keys(i.fields)
 let u
 if(0===c.length)return s.createElement("div",{className:"tcfInstanceForm--empty"},s.createElement(Ne,{value:"This element has no properties."}))
-for(const d of c){const c=i.fields[d],m=n.__errors[d]||null,{isAlwaysPlainField:h}=v.getDefinition(c)
+for(const d of c){const c=i.fields[d],m=n.__errors.hasOwnProperty(d)&&n.__errors[d]||null,{isAlwaysPlainField:h}=v.getDefinition(c)
 if(!u||c.group){const e=c.group?c.group.label:void 0,t=c.group?Ve(l,c.group.style):void 0
 u={index:e===$e?-1:o.length,label:e,fields:[],style:t},o.push(u)}u.fields.push(s.createElement(Ae,{errors:m,instructions:c.instructions,isPlainField:t||h,isRequired:c.isRequired,key:c.name,label:c.label,style:Ve(l,c.style)},s.createElement(De,{data:n[c.name],disabled:e,errors:m,field:c,model:n,onUpdate:e=>a(d,e),path:r})))}const d=o.sort(ze).map((e=>s.createElement(Te,{isBorderless:t,key:e.index,label:e.label,style:e.style},e.fields))),m=Ve(l,i.style)
 return m?s.createElement("div",{className:"tcfInstanceForm",style:m},d):s.createElement(s.Fragment,null,d)}))
