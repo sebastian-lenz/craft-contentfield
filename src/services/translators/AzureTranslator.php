@@ -3,8 +3,8 @@
 namespace lenz\contentfield\services\translators;
 
 use Craft;
-use craft\helpers\ArrayHelper;
 use craft\helpers\Json;
+use lenz\craft\utils\helpers\ArrayHelper;
 use lenz\craft\utils\models\Url;
 
 /**
@@ -15,33 +15,73 @@ class AzureTranslator extends AbstractTranslator
   /**
    * @var string
    */
+  private $_endpoint = self::DEFAULT_ENDPOINT;
+
+  /**
+   * @var string
+   */
   private $_subscriptionKey;
+
+  /**
+   * @var string
+   */
+  private $_subscriptionRegion;
 
   /**
    * The url of the API endpoint.
    */
-  const ENDPOINT = 'https://api.cognitive.microsofttranslator.com/translate';
+  const DEFAULT_ENDPOINT = 'https://api.cognitive.microsofttranslator.com/translate';
 
 
   /**
    * @return string
    */
-  public function getSubscriptionKey() {
+  public function getEndpoint(): string {
+    return empty($this->_endpoint) ? self::DEFAULT_ENDPOINT : $this->_endpoint;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSubscriptionKey(): string {
     return $this->_subscriptionKey;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSubscriptionRegion(): string {
+    return $this->_subscriptionRegion;
   }
 
   /**
    * @param string $value
    */
-  public function setSubscriptionKey($value) {
-    $this->_subscriptionKey = (string)$value;
+  public function setEndpoint(string $value) {
+    $this->_endpoint = $value;
+  }
+
+  /**
+   * @param string $value
+   */
+  public function setSubscriptionKey(string $value) {
+    $this->_subscriptionKey = $value;
+  }
+
+  /**
+   * @param string $value
+   */
+  public function setSubscriptionRegion(string $value) {
+    $this->_subscriptionRegion = $value;
   }
 
   /**
    * @inheritDoc
    */
   public function translate($sourceLanguage, $targetLanguage, $message) {
-    if (empty($this->_subscriptionKey)) {
+    $endpoint = Craft::parseEnv($this->getEndpoint());
+    $subscriptionKey = Craft::parseEnv($this->getSubscriptionKey());
+    if (empty($endpoint) || empty($subscriptionKey)) {
       return null;
     }
 
@@ -50,12 +90,17 @@ class AzureTranslator extends AbstractTranslator
     ]);
 
     $headers = [
-      'Ocp-Apim-Subscription-Key: ' . $this->_subscriptionKey,
+      'Ocp-Apim-Subscription-Key: ' . $subscriptionKey,
       'Content-Type: application/json',
       'Content-Length: ' . strlen($body),
     ];
 
-    $url = new Url(self::ENDPOINT);
+    $subscriptionRegion = $this->getSubscriptionRegion();
+    if (!empty($subscriptionRegion)) {
+      $headers[] = 'Ocp-Apim-Subscription-Region: ' . $subscriptionRegion;
+    }
+
+    $url = new Url($endpoint);
     $url->setQuery([
       'api-version' => '3.0',
       'from'        => $sourceLanguage,
@@ -82,7 +127,7 @@ class AzureTranslator extends AbstractTranslator
       return null;
     }
 
-    return ArrayHelper::getValue(
+    return ArrayHelper::get(
       $responseDecoded,
       [0, 'translations', 0, 'text']
     );
@@ -95,21 +140,21 @@ class AzureTranslator extends AbstractTranslator
   /**
    * @return string
    */
-  static function getDisplayName() {
+  static function getDisplayName(): string {
     return 'Azure Text Translation';
   }
 
   /**
    * @return string
    */
-  static function getHandle() {
+  static function getHandle(): string {
     return 'azure';
   }
 
   /**
    * @inheritDoc
    */
-  static function getSettingsHtml() {
+  static function getSettingsHtml(): ?string {
     return Craft::$app->getView()->renderTemplate(
       'contentfield/_config-translator-azure',
       self::getSettings()

@@ -67,10 +67,7 @@ class Config extends Model
     'templateIndexCache',
     'templateModificationCheck'
   ];
-public function __construct($config = [])
-{
-  parent::__construct($config);
-}
+
 
   /**
    * @inheritDoc

@@ -4,6 +4,7 @@ namespace lenz\contentfield\controllers;
 
 use Craft;
 use craft\errors\InvalidFieldException;
+use craft\helpers\HtmlPurifier;
 use craft\web\Controller;
 use Exception;
 use lenz\contentfield\fields\content\InputData;
@@ -106,18 +107,20 @@ class CpController extends Controller
   }
 
   /**
-   * @param string $source
-   * @param string $target
-   * @param string $text
    * @return Response
    */
-  public function actionTranslate(string $source, string $target, string $text): Response {
+  public function actionTranslate(): Response {
     $translated = null;
     $translator = Plugin::getInstance()
       ->translators
       ->getTranslator();
 
-    if (!is_null($translator)) {
+    $request = $this->request;
+    $source = $request->post('source');
+    $target = $request->post('target');
+    $text = HtmlPurifier::process($request->post('text'));
+
+    if (!empty($source) && !empty($target) && !empty($text) && !is_null($translator)) {
       $translated = $translator->translate($source, $target, $text);
     }
 

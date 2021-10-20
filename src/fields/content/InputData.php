@@ -217,6 +217,8 @@ class InputData
     $urls   = Craft::$app->urlManager;
 
     return [
+      'csrfTokenName'  => Craft::$app->request->csrfParam,
+      'csrfTokenValue' => Craft::$app->request->csrfToken,
       'googleMapsApiKey' => $plugin->getSettings()->getGoogleMapsApiKey(),
       'hasTranslator'    => $plugin->translators->hasTranslator(),
       'rootSchemas'      => $this->_rootSchemas,
