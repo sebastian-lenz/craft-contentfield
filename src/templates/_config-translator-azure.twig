@@ -1,8 +1,31 @@
 {% import '_includes/forms' as forms %}
 
 {{- forms.textField({
-  label:        'Subscription key',
-  instructions: 'The subscription key of your subscription to "Microsoft.CognitiveServicesTextTranslation".',
-  name:         'subscriptionKey',
-  value:        subscriptionKey is defined ? subscriptionKey : '',
+  label:          'Endpoint',
+  instructions:   'The endpoint that should be used. Defaults to "https://api.cognitive.microsofttranslator.com/translate".',
+  id:             'endpoint',
+  name:           'endpoint',
+  suggestEnvVars: true,
+  suggestAliases: true,
+  value:          endpoint is defined ? endpoint : '',
+}) -}}
+
+{{- forms.textField({
+  label:          'Subscription key',
+  instructions:   'The subscription key of your subscription to "Microsoft.CognitiveServicesTextTranslation".',
+  id:             'subscriptionKey',
+  name:           'subscriptionKey',
+  suggestEnvVars: true,
+  suggestAliases: true,
+  value:          subscriptionKey is defined ? subscriptionKey : '',
+}) -}}
+
+{{- forms.textField({
+  label:          'Subscription region',
+  instructions:   'The region the subscription is activated for.',
+  id:             'subscriptionRegion',
+  name:           'subscriptionRegion',
+  suggestEnvVars: true,
+  suggestAliases: true,
+  value:          subscriptionRegion is defined ? subscriptionRegion : '',
 }) -}}
