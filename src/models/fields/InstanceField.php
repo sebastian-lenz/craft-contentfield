@@ -5,8 +5,8 @@ namespace lenz\contentfield\models\fields;
 use craft\base\ElementInterface;
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
-use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
+use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\validators\InstanceValueValidator;
 use Throwable;
@@ -49,7 +49,7 @@ class InstanceField extends AbstractField
    *
    * @var string[]
    */
-  public $schemas;
+  public $schemas = [];
 
   /**
    * @var AbstractSchema|null
@@ -272,12 +272,12 @@ class InstanceField extends AbstractField
   public function validateSchemas(string $attribute) {
     try {
       $schemas = $this->getResolvedSchemas();
-      if (!count($schemas)) {
+      if (count($schemas) < 1) {
         $this->addError($attribute, 'An instance field must accept at least one valid schema.');
       }
     } catch (Throwable $error) {
       $this->addError($attribute, sprintf(
-        'The schemas of the instance field couldn\'t be resolved: %s',
+        'The schemas of the instance field could not be resolved: %s',
         $error->getMessage()
       ));
     }
