@@ -193,6 +193,14 @@ class Instance
   }
 
   /**
+   * @return bool
+   */
+  public function getVisibility(): bool {
+    $visibility = $this->getAttribute(InstanceValue::VISIBLE_PROPERTY);
+    return is_null($visibility) || !!$visibility;
+  }
+
+  /**
    * @param string $name
    * @return bool
    */
@@ -324,6 +332,15 @@ class Instance
     return $this;
   }
 
+  /**
+   * @param bool $value
+   * @return $this
+   */
+  public function setVisibility(bool $value): Instance {
+    $this->setAttribute(InstanceValue::VISIBLE_PROPERTY, $value);
+    return $this;
+  }
+
 
   // Private methods
   // ---------------
@@ -347,6 +364,25 @@ class Instance
 
   // Static methods
   // --------------
+
+  /**
+   * @param string $qualifier
+   * @param array $attributes
+   * @return Instance
+   * @throws Exception
+   */
+  static function create(string $qualifier, array $attributes): Instance {
+    $parsed = Plugin::getInstance()
+      ->schemas
+      ->parseSchemaQualifier($qualifier);
+
+    return new Instance(array_merge([
+      InstanceValue::TYPE_PROPERTY => $parsed['uri'],
+      InstanceValue::UUID_PROPERTY => InstanceValue::uuid(),
+      InstanceValue::ORIGINAL_UUID_PROPERTY => null,
+      InstanceValue::VISIBLE_PROPERTY => true,
+    ], $attributes));
+  }
 
   /**
    * @param mixed $value
