@@ -262,10 +262,10 @@ abstract class AbstractForm
    * This is a good hook if one would wish to record form submission errors.
    *
    * @param string|null $value
-   * @param Exception|null $exception
+   * @param Throwable|null $exception
    * @noinspection PhpUnusedParameterInspection
    */
-  protected function setGenericError(string $value = null, Exception $exception = null) {
+  protected function setGenericError(string $value = null, Throwable $exception = null) {
     $this->_genericError = $value;
   }
 
