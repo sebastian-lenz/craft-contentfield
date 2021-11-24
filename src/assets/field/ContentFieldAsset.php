@@ -24,7 +24,7 @@ class ContentFieldAsset extends AssetBundle
 
     $config = Plugin::getInstance()->getSettings();
     if (isset($config->cpCssFile) && !empty($config->cpCssFile)) {
-      $this->css[] = [Craft::parseEnv($config->cpCssFile)];
+      $this->css[] = Craft::parseEnv($config->cpCssFile);
     }
 
     parent::init();
