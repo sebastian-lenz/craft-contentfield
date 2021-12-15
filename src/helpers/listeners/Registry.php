@@ -17,14 +17,14 @@ class Registry
   /**
    * @param RegisterComponentTypesEvent $event
    */
-  public function onRegisterFieldTypes(RegisterComponentTypesEvent $event) {
+  static public function onRegisterFieldTypes(RegisterComponentTypesEvent $event) {
     $event->types[] = ContentField::class;
   }
 
   /**
    * @param RegisterComponentTypesEvent $event
    */
-  public function onRegisterUtilityTypes(RegisterComponentTypesEvent $event) {
+  static public function onRegisterUtilityTypes(RegisterComponentTypesEvent $event) {
     $event->types[] = Utility::class;
   }
 
