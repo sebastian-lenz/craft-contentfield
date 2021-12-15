@@ -3,6 +3,7 @@
 namespace lenz\contentfield\utilities;
 
 use Craft;
+use craft\base\Volume;
 use craft\elements\Asset;
 use craft\elements\Category;
 use craft\elements\Entry;
@@ -81,6 +82,19 @@ class SourcesPage extends AbstractPage
       'Globals set sources' => $this->getSources(GlobalSet::sources()),
       'Tag sources'         => $this->getSources(Tag::sources()),
       'User sources'        => $this->getSources(User::sources()),
+      'Volumes'             => $this->getVolumes(),
     ];
+  }
+
+  /**
+   * @return array
+   */
+  private function getVolumes(): array {
+    return array_map(function(Volume $volume) {
+      return [
+        'key' => 'volume:' . $volume->uid,
+        'label' => $volume->name
+      ];
+    }, Craft::$app->volumes->getAllVolumes());
   }
 }
