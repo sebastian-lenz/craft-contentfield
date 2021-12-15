@@ -3,6 +3,7 @@
 namespace lenz\contentfield\fields\content;
 
 use craft\elements\db\ElementQuery;
+use craft\errors\InvalidFieldException;
 use craft\events\PopulateElementEvent;
 use Exception;
 use lenz\contentfield\helpers\ReferenceLoader;
@@ -37,10 +38,16 @@ class QueryExtension extends ForeignFieldQueryExtension
    * @throws Exception
    */
   public function onAfterPopulateElement(PopulateElementEvent $event) {
-    $handle  = $this->field->handle;
-    $content = is_null($event->element) || is_null($handle)
-      ? null
-      : $event->element->getFieldValue($handle);
+    try {
+      $handle = $this->field->handle;
+      $content = is_null($event->element) || is_null($handle)
+        ? null
+        : $event->element->getFieldValue($handle);
+    } catch (InvalidFieldException $exception) {
+      // This happens queries eager load fields that are present only
+      // on a part of the query results, we can safely ignore it
+      $content = null;
+    }
 
     if ($content instanceof Content) {
       if (!isset($this->_referenceLoader)) {
