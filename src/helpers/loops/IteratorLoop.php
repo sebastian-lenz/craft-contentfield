@@ -5,12 +5,13 @@ namespace lenz\contentfield\helpers\loops;
 use Exception;
 use Iterator;
 use lenz\contentfield\models\values\InstanceValue;
+use lenz\contentfield\twig\DisplayInterface;
 use Throwable;
 
 /**
  * Class IteratorLoop
  */
-class IteratorLoop implements Iterator, LoopInterface
+class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
 {
   /**
    * @var int
@@ -35,6 +36,23 @@ class IteratorLoop implements Iterator, LoopInterface
   public function __construct(array $values) {
     $this->_count  = count($values);
     $this->_values = array_values($values);
+  }
+
+  /**
+   * @param array $variables
+   * @return void
+   * @throws Exception
+   */
+  public function display(array $variables = []) {
+    $variables['loop'] = $this;
+
+    foreach ($this as $value) {
+      if ($value instanceof InstanceValue) {
+        $value->display($variables);
+      } else {
+        echo $value;
+      }
+    }
   }
 
   /**
