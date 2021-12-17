@@ -8,10 +8,9 @@
     "ext-dom": "*",
     "ext-libxml": "*",
     "ext-zlib": "*",
-    "php": "^7.2",
     "craftcms/cms": "^3.6.0",
     "craftcms/redactor": "^2.8.0",
-    "sebastianlenz/craft-utils": "^2.3.2",
+    "sebastianlenz/craft-utils": "^2.3.3",
     "symfony/yaml": "^5.2.5"
   },
   "require-dev": {
