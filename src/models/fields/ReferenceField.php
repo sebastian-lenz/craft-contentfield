@@ -4,15 +4,15 @@ namespace lenz\contentfield\models\fields;
 
 use Craft;
 use craft\base\Element;
+use craft\base\ElementInterface;
+use craft\elements\Asset;
 use craft\elements\Category;
+use craft\elements\Entry;
 use Exception;
 use lenz\contentfield\events\ReferenceFolderSourcesEvent;
 use lenz\contentfield\events\ReferenceSourcesEvent;
 use lenz\contentfield\models\values\ReferenceValue;
 use lenz\contentfield\models\values\ValueInterface;
-use craft\base\ElementInterface;
-use craft\elements\Asset;
-use craft\elements\Entry;
 use yii\base\InvalidConfigException;
 
 /**
@@ -20,6 +20,11 @@ use yii\base\InvalidConfigException;
  */
 class ReferenceField extends AbstractField
 {
+  /**
+   * @var bool
+   */
+  public $allowSelfReference = false;
+
   /**
    * @var null|array
    */
@@ -85,12 +90,13 @@ class ReferenceField extends AbstractField
    */
   public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData() + [
-      'criteria'        => $this->getCriteria($element),
-      'elementType'     => $this->getElementType(),
-      'limit'           => $this->getLimit(),
-      'modalStorageKey' => $this->modalStorageKey,
-      'sources'         => $this->getSources($element),
-      'viewMode'        => $this->viewMode,
+      'allowSelfReference' => !!$this->allowSelfReference,
+      'criteria'           => $this->getCriteria($element),
+      'elementType'        => $this->getElementType(),
+      'limit'              => $this->getLimit(),
+      'modalStorageKey'    => $this->modalStorageKey,
+      'sources'            => $this->getSources($element),
+      'viewMode'           => $this->viewMode,
     ];
   }
 
@@ -122,6 +128,7 @@ class ReferenceField extends AbstractField
    */
   public function rules(): array {
     return array_merge(parent::rules(), [
+      ['allowSelfReference', 'boolean'],
       ['elementType', 'validateElementType'],
       ['limit', 'integer', 'min' => 1],
       ['modalStorageKey', 'string'],
