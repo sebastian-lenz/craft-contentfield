@@ -106,6 +106,8 @@ abstract class AbstractScope extends BaseObject implements ScopeInterface
    *   PHP style variables like `{$width}` within strings.
    * - Replaces attribute values starting with `$` as this is is easier
    *   to use in yaml definitions.
+   * - Multiple fields can be given seperated by a pipe `|`, the first 
+   *   non empty attribute value will be used
    *
    * @param callable[] $variables
    * @param array $attributes
@@ -113,25 +115,32 @@ abstract class AbstractScope extends BaseObject implements ScopeInterface
    */
   static public function expandAttributes(array $variables, array $attributes) : array {
     $result = [];
-    foreach ($attributes as $key => $value) {
-      if (
-        strlen($value) > 0 &&
-        substr($value, 0, 1) == '$' &&
-        array_key_exists(substr($value, 1), $variables)
-      ) {
-        $value = $variables[substr($value, 1)]();
+    $replace = function($match) use ($variables) {
+      $names = explode('|', $match[1]);
+      $isEmpty = false;
+      foreach ($names as $name) {
+        $name = trim($name);
+        if (!array_key_exists($name, $variables)) {
+          continue;
+        }
+
+        $result = $variables[$name]();
+        if (!empty($result)) {
+          return $result;
+        } else {
+          $isEmpty = true;
+        }
       }
 
-      $value = preg_replace_callback(
-        '/\{\s*\$?([^}\s]*)\s*\}/u',
-        function($match) use ($variables) {
-          return array_key_exists($match[1], $variables)
-            ? $variables[$match[1]]()
-            : $match[0];
-        },
-        $value
-      );
+      return $isEmpty ? '' : $match[0];
+    };
 
+    foreach ($attributes as $key => $value) {
+      if (strlen($value) > 0 && substr($value, 0, 1) == '$') {
+        $value = $replace([$value, substr($value, 1)]);
+      }
+
+      $value = preg_replace_callback('/\{\s*\$?([^}\s]*)\s*\}/u', $replace, $value);
       if (!empty($value)) {
         $result[$key] = $value;
       }
