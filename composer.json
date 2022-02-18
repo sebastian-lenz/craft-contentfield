@@ -9,7 +9,7 @@
     "ext-libxml": "*",
     "ext-zlib": "*",
     "craftcms/cms": "^3.6.0",
-    "craftcms/redactor": "^2.8.0",
+    "craftcms/redactor": "^2.10.0",
     "sebastianlenz/craft-utils": "^2.3.3",
     "symfony/yaml": "^5.2.5"
   },
@@ -35,5 +35,11 @@
     "name": "Content Field",
     "developer": "Sebastian Lenz",
     "developerUrl": "https://github.com/sebastian-lenz/"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
   }
 }
