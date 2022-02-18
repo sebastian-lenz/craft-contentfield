@@ -40,39 +40,55 @@ class FieldProxy extends Field
    * @throws InvalidConfigException
    */
   public function getFieldSettings(Element $element = null): array {
-    // Register the asset/redactor bundles
+    // register the asset/redactor bundles
     $view = Craft::$app->getView();
     $view->registerAssetBundle(FieldAsset::class);
 
+    // figure out which language we ended up with
     /** @var RedactorAsset $bundle */
     $bundle = $view->getAssetManager()->getBundle(RedactorAsset::class);
     $redactorLang = $bundle::$redactorLanguage ?? 'en';
 
-    // Register plugins
+    // register plugins
     $redactorConfig = $this->getRedactorConfig();
+
     if (isset($redactorConfig['plugins'])) {
       foreach ($redactorConfig['plugins'] as $plugin) {
-        Field::registerRedactorPlugin($plugin);
+        static::registerRedactorPlugin($plugin);
       }
     }
 
-    $site = $element
-      ? $element->getSite()
-      : Craft::$app->getSites()->getCurrentSite();
+    if (!$this->showHtmlButtonForNonAdmins && !Craft::$app->getUser()->getIsAdmin()) {
+      $redactorConfig['buttonsHide'] = array_merge($redactorConfig['buttonsHide'] ?? [], ['html']);
+    }
+
+    $sitesService = Craft::$app->getSites();
+    $site = ($element ? $element->getSite() : $sitesService->getCurrentSite());
+
+    $defaultTransform = '';
+    if (!empty($this->defaultTransform) && $transform = Craft::$app->getAssetTransforms()->getTransformByUid($this->defaultTransform)) {
+      $defaultTransform = $transform->handle;
+    }
+
+    $allSites = [];
+    foreach ($sitesService->getAllSites(false) as $allSite) {
+      $allSites[$allSite->id] = $allSite->name;
+    }
 
     $settings = [
-      'linkOptions'    => $this->getLinkOptions($element),
-      'volumes'        => $this->getVolumeKeys(),
-      'transforms'     => $this->getTransforms(),
-      'elementSiteId'  => $site->id,
+      // 'id' => $view->namespaceInputId($id),   <-- Will be set by React
+      'linkOptions' => $this->getLinkOptions($element),
+      'volumes' => $this->getVolumeKeys(),
+      'transforms' => $this->getTransforms(),
+      'defaultTransform' => $defaultTransform,
+      'elementSiteId' => $site->id,
+      'allSites' => $allSites,
       'redactorConfig' => $redactorConfig,
-      'redactorLang'   => $redactorLang,
+      'redactorLang' => $redactorLang,
+      'showAllUploaders' => $this->showUnpermittedFiles,
     ];
 
-    if (
-      $this->translationMethod != self::TRANSLATION_METHOD_NONE &&
-      !is_null($site->language)
-    ) {
+    if ($this->translationMethod != self::TRANSLATION_METHOD_NONE) {
       // Explicitly set the text direction
       $locale = Craft::$app->getI18n()->getLocaleById($site->language);
       $settings['direction'] = $locale->getOrientation();
