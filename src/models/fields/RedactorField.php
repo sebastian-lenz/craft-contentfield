@@ -6,6 +6,7 @@ use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use lenz\contentfield\helpers\redactor\FieldProxy;
+use lenz\contentfield\helpers\StringHelper;
 use lenz\contentfield\models\values\RedactorValue;
 use lenz\contentfield\models\values\ValueInterface;
 use Throwable;
@@ -111,12 +112,16 @@ class RedactorField extends AbstractField
 
     try {
       $field = $this->getRedactorFieldProxy();
-      return $field->serializeValue($value, $value->getElement());
+      return StringHelper::sanitizeString(
+        $field->serializeValue($value, $value->getElement())
+      );
     } catch (Throwable $error) {
       Craft::error($error->getMessage());
     }
 
-    return $value->getRawContent();
+    return StringHelper::sanitizeString(
+      $value->getRawContent()
+    );
   }
 
   /**

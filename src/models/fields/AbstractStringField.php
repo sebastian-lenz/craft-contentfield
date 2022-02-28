@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
+use lenz\contentfield\helpers\StringHelper;
 use lenz\contentfield\models\values\ValueInterface;
 
 /**
@@ -79,6 +80,19 @@ abstract class AbstractStringField extends AbstractField
     return $this->searchable && is_string($value)
       ? (string)$value
       : '';
+  }
+
+  /**
+   * @param $value
+   * @return mixed
+   */
+  public function getSerializedValue($value) {
+    $result = $this->getEditorValue($value);
+    if (is_string($result)) {
+      $result = StringHelper::sanitizeString($result);
+    }
+
+    return $result;
   }
 
   /**
