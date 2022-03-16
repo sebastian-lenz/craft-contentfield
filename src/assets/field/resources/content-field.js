@@ -56,7 +56,7 @@ if(O(l,i)||O(l,[...m.targetPath,m.targetSegment]))return!1
 if(!(O(n,a)&&r.name===s.name)&&u.limit>0&&d.length>=u.limit)return!1
 const{member:h}=u,f=v.getDefinition(h.type),g=p(e.model,l)
 return f.isValue(h,g)}function k(e){return Object.assign(Object.assign({},e),{type:"moveModel"})}function N(e){return{overlay:e,type:"setOverlay"}}const j="tcfUserState"
-function I(e,t){if(!c(t))return
+function M(e,t){if(!c(t))return
 const n=e.schemas[t.__type]
 n&&(t.__errors=Object.keys(n.fields).reduce(((e,s)=>{const a=function(e,t,n){const{validatorId:s}=e.fields[n]
 if(!s)return null
@@ -64,7 +64,7 @@ const a=Ls.getValidator(s)
 if(!a)return null
 const r=[]
 return a(n,t[n],r),r}(n,t,s)
-return a&&a.length&&(e[s]=a),e}),{}))}function M(e,t){return{direction:t,type:"uuidOrder",uuid:e}}function L(e){return{type:"uuidVisibility",uuid:e}}function T(e,t,n){return{path:e,key:t,type:"updateValue",value:n}}function A(e){return{sync:e,type:"updateSync"}}var P=n(655)
+return a&&a.length&&(e[s]=a),e}),{}))}function I(e,t){return{direction:t,type:"uuidOrder",uuid:e}}function L(e){return{type:"uuidVisibility",uuid:e}}function T(e,t,n){return{path:e,key:t,type:"updateValue",value:n}}function A(e){return{sync:e,type:"updateSync"}}var P=n(655)
 function R(e){var{source:t}=e,n=(0,P._T)(e,["source"])
 return(0,P.mG)(this,void 0,void 0,(function*(){const e=n.schemas[t.__type]
 if(!e)throw new Error("Invalid source schema.")
@@ -111,15 +111,15 @@ if(!a)throw new Error("Invalid schema")
 const r=Object.assign({},n)
 e.group(`Syncing model ${e.model(t)} > ${e.model(n)}`)
 for(const l of Object.keys(a.fields)){const i=a.fields[l]
-"layout"===i.type?(e.group(`Layout ${l}`),r[l]=yield Q(Object.assign(Object.assign({},s),{field:i,source:t[l],target:n[l]})),e.groupEnd()):"array"===i.type?(e.group(`Array ${l}`),r[l]=yield z(Object.assign(Object.assign({},s),{field:i,source:t[l],target:n[l]})),e.groupEnd()):"instance"===i.type&&(e.group(`Instance ${l}`),r[l]=yield Z(Object.assign(Object.assign({},s),{source:t[l],target:n[l]})),e.groupEnd())}return e.groupEnd(),r}))}function ee(e){return(t,n)=>(0,P.mG)(this,void 0,void 0,(function*(){try{yield function(e,t,n){var{siteId:s}=e,a=(0,P._T)(e,["siteId"])
+"layout"===i.type?(e.group(`Layout ${l}`),r[l]=yield Q(Object.assign(Object.assign({},s),{field:i,source:t[l],target:n[l]})),e.groupEnd()):"array"===i.type?(e.group(`Array ${l}`),r[l]=yield z(Object.assign(Object.assign({},s),{field:i,source:t[l],target:n[l]})),e.groupEnd()):"instance"===i.type&&(e.group(`Instance ${l}`),r[l]=yield Z(Object.assign(Object.assign({},s),{source:t[l],target:n[l]})),e.groupEnd())}return e.groupEnd(),r}))}function ee(e){return(t,n)=>(0,P.mG)(this,void 0,void 0,(function*(){try{yield function(e,t,n){var{siteId:s,syncMode:a}=e,r=(0,P._T)(e,["siteId","syncMode"])
 return(0,P.mG)(this,void 0,void 0,(function*(){t(A({status:"working"}))
-const{config:e,model:r,schemas:l}=n()
+const{config:e,model:l,schemas:i}=n()
 if("number"!=typeof e.elementId)throw new Error("Entry must be saved before it can be synchronized.")
-const{data:i,references:o}=yield U({apiEndpoint:e.apiEndpoints.fetchSite,elementId:e.elementId,fieldHandle:e.fieldHandle,siteId:s})
-if(!c(i)||!e.rootSchemas.some((e=>e===i.__type)))throw new Error("Selected target site does not contain a valid model.")
-a.translate&&(a.translate.csrfParams={[e.csrfTokenName]:e.csrfTokenValue})
-const u=c(r)&&r.__type===i.__type?yield Z(Object.assign(Object.assign({},a),{schemas:l,source:i,target:r})):yield R(Object.assign(Object.assign({},a),{schemas:l,source:i}))
-t(y(o)),t(T([],void 0,u)),t(A({status:"finished"}))}))}(e,t,n)}catch(e){t(A({status:"error",message:`${e}`}))}}))}const te={addReferences:function(e,t){const n=e.config.references.slice(),s=document.createElement("div")
+const{data:o,references:u}=yield U({apiEndpoint:e.apiEndpoints.fetchSite,elementId:e.elementId,fieldHandle:e.fieldHandle,siteId:s})
+if(!c(o)||!e.rootSchemas.some((e=>e===o.__type)))throw new Error("Selected target site does not contain a valid model.")
+r.translate&&(r.translate.csrfParams={[e.csrfTokenName]:e.csrfTokenValue})
+const d=c(l)&&l.__type===o.__type&&"clone"!==a?yield Z(Object.assign(Object.assign({},r),{schemas:i,source:o,target:l})):yield R(Object.assign(Object.assign({},r),{schemas:i,source:o}))
+t(y(u)),t(T([],void 0,d)),t(A({status:"finished"}))}))}(e,t,n)}catch(e){t(A({status:"error",message:`${e}`}))}}))}const te={addReferences:function(e,t){const n=e.config.references.slice(),s=document.createElement("div")
 for(const e of t.references)if(!n.some((t=>{let{id:n,type:s}=t
 return e.id===n&&e.type===s}))){s.innerHTML=e.element
 const t=s.firstElementChild
@@ -151,7 +151,7 @@ if(!Array.isArray(s))return t
 const r=[...s],l=o+("after"===n?1:0)
 r.splice(l,0,a)
 const i=Object.assign(Object.assign({},t),{[u]:r})
-return I(e,i),i}))})},uuidOrder:function(e,t){let{direction:n,uuid:s}=t
+return M(e,i),i}))})},uuidOrder:function(e,t){let{direction:n,uuid:s}=t
 const a=d(e,s)
 if(!a)return e
 const r=f(e,a.path)
@@ -163,7 +163,7 @@ if(!Array.isArray(s))return t
 const a=i+("up"===n?-1:1),r=[...s],l=r.splice(i,1)
 r.splice(a,0,...l)
 const o=Object.assign(Object.assign({},t),{[c]:r})
-return I(e,o),o}))})},uuidRemove:function(e,t){let{uuid:n}=t
+return M(e,o),o}))})},uuidRemove:function(e,t){let{uuid:n}=t
 const s=d(e,n)
 if(!s)return e
 const a=f(e,s.path)
@@ -175,12 +175,12 @@ if(!Array.isArray(n))return t
 const s=[...n]
 s.splice(l,1)
 const a=Object.assign(Object.assign({},t),{[o]:s})
-return I(e,a),a}))})},uuidVisibility:function(e,t){let{uuid:n}=t
+return M(e,a),a}))})},uuidVisibility:function(e,t){let{uuid:n}=t
 const s=d(e,n)
 return s?Object.assign(Object.assign({},e),{model:C(e.model,s.path,(e=>e?Object.assign(Object.assign({},e),{__visible:!e.__visible}):e))}):e},updateSync:function(e,t){let{sync:n}=t,{overlay:s}=e
 return s&&"synchronize"===s.type&&(s=Object.assign(Object.assign({},s),{preventClose:"working"===n.status})),Object.assign(Object.assign({},e),{overlay:s,sync:n})},updateValue:function(e,t){let{path:n,key:s,value:a}=t
 return Object.assign(Object.assign({},e),{model:C(e.model,n,(t=>{const n=s?Object.assign(Object.assign({},t),{[s]:a}):a
-return I(e,n),n}))})}}
+return M(e,n),n}))})}}
 const ne=[function(e){let{location:{uuid:t},owner:n}=e
 return n&&"array"===n.field.type?{group:se.Manipulation,icon:"material:add",id:"create",invoke:function(e){let n=arguments.length>1&&void 0!==arguments[1]&&arguments[1]
 e(N({afterCreate:n?"layer":"expand",type:"create",uuid:t}))},label:g("Create")}:null},function(e){let{location:{uuid:t}}=e
@@ -189,10 +189,10 @@ return t&&"array"===t.field.type?{group:se.Manipulation,icon:"material:delete",i
 return{group:se.Visibility,icon:n?"material:visibility_off":"material:visibility",id:"visibility",invoke:e=>{e(L(t))},label:g(n?"Hide":"Show")}},function(e){let{location:{uuid:t},owner:n}=e
 if(!n||"array"!==n.field.type)return null
 const s=n.owner[n.field.name]
-return!Array.isArray(s)||void 0===n.index||n.index<=0?null:{group:se.Movement,icon:"material:arrow_upward",id:"moveUp",invoke:e=>e(M(t,"up")),label:g("Move up")}},function(e){let{location:{uuid:t},owner:n}=e
+return!Array.isArray(s)||void 0===n.index||n.index<=0?null:{group:se.Movement,icon:"material:arrow_upward",id:"moveUp",invoke:e=>e(I(t,"up")),label:g("Move up")}},function(e){let{location:{uuid:t},owner:n}=e
 if(!n||"array"!==n.field.type)return null
 const s=n.owner[n.field.name]
-return!Array.isArray(s)||void 0===n.index||n.index>=s.length-1?null:{group:se.Movement,icon:"material:arrow_downward",id:"moveDown",invoke:e=>e(M(t,"down")),label:g("Move down")}},function(){return null},function(e){let{owner:t}=e
+return!Array.isArray(s)||void 0===n.index||n.index>=s.length-1?null:{group:se.Movement,icon:"material:arrow_downward",id:"moveDown",invoke:e=>e(I(t,"down")),label:g("Move down")}},function(){return null},function(e){let{owner:t}=e
 return null},function(e){let{owner:t}=e
 return null}]
 var se
@@ -234,11 +234,11 @@ void 0===t&&(t=-1===n.indexOf(e)),t?s.push(e):s=s.filter((t=>t!==e)),a(s)}}},t)}
 return s.createElement("div",{className:Ce()("tcfButton btn",{disabled:n,submit:r,secondary:l}),onClick:e=>{e.preventDefault(),n||a(e)}},t)}function ke(e){let{className:t,params:n,value:a}=e
 return s.createElement("span",{className:t},g(a,n))}function Ne(e){let{children:t,className:n}=e
 return s.createElement("div",{className:Ce()("tcfWindow--content",n)},t)}function je(e){let{children:t,className:n,flex:a=!0}=e
-return s.createElement("div",{className:Ce()("tcfWindow--footer flex-nowrap",n,{flex:a})},t)}function Ie(e){let{children:t,className:n,width:a}=e
-return s.createElement("div",{className:Ce()("tcfWindow",n),style:{width:a}},t)}!function(e){e.Content=Ne,e.Footer=je}(Ie||(Ie={}))
-var Me=Ie
+return s.createElement("div",{className:Ce()("tcfWindow--footer flex-nowrap",n,{flex:a})},t)}function Me(e){let{children:t,className:n,width:a}=e
+return s.createElement("div",{className:Ce()("tcfWindow",n),style:{width:a}},t)}!function(e){e.Content=Ne,e.Footer=je}(Me||(Me={}))
+var Ie=Me
 function Le(e){let{onClose:t}=e
-return s.createElement(Me,{width:600},s.createElement(Me.Content,null,s.createElement(ke,{value:"Cannot create an element at the given location."})),s.createElement(Me.Footer,null,s.createElement(xe,{onClick:t,secondary:!0},s.createElement(ke,{value:"Cancel"}))))}const Te="toolbar"
+return s.createElement(Ie,{width:600},s.createElement(Ie.Content,null,s.createElement(ke,{value:"Cannot create an element at the given location."})),s.createElement(Ie.Footer,null,s.createElement(xe,{onClick:t,secondary:!0},s.createElement(ke,{value:"Cancel"}))))}const Te="toolbar"
 function $e(e){let{children:t,isBorderless:n,label:a,style:r}=e
 return a&&""!==a&&a!==Te?s.createElement("div",{className:"tcfFieldGroup",style:r},s.createElement("div",{className:"tcfFieldGroup--label"},a),s.createElement("div",{className:"tcfFieldGroup--content"},t)):s.createElement("div",{className:Ce()("tcfFieldGroup--content",{isBorderless:n}),style:r},t)}function Ae(e){let{children:t,className:n,errors:a,instructions:r,isPlainField:l,isRequired:i,label:o,style:c}=e
 if(l)return s.createElement(s.Fragment,null,t)
@@ -249,7 +249,7 @@ return s.createElement("div",{className:Ce()("tcfSelect",n)},s.createElement("se
 u&&(n-=1),n>=0&&n<r.length&&(s=r[n].key),(null!==s||t)&&o(s)}},u?s.createElement("option",null,g("(No selection)")):null,r.map(((e,t)=>s.createElement("option",{key:t,value:t},e.indent?"--".repeat(e.indent)+" ":null,e.label)))))}const Ue=[{key:"before",label:"Before selected element"},{key:"after",label:"After selected element"}]
 function Fe(e){let{Factory:t,field:n,onCreate:a,scope:r}=e
 const[l,i]=s.useState("before")
-return s.createElement(Me,{width:600},s.createElement(Me.Content,null,s.createElement($e,null,s.createElement(Ae,{instructions:g("Select where the new element should be inserted."),label:g("Position")},s.createElement(Re,{onChange:i,options:Ue.map((e=>Object.assign(Object.assign({},e),{label:g(e.label)}))),value:l})))),s.createElement(Me.Footer,{flex:!1},s.createElement(t,{field:n,onCreate:e=>a(e,l),scope:r})))}function De(e){let{afterCreate:t="expand",uuid:n}=e
+return s.createElement(Ie,{width:600},s.createElement(Ie.Content,null,s.createElement($e,null,s.createElement(Ae,{instructions:g("Select where the new element should be inserted."),label:g("Position")},s.createElement(Re,{onChange:i,options:Ue.map((e=>Object.assign(Object.assign({},e),{label:g(e.label)}))),value:l})))),s.createElement(Ie.Footer,{flex:!1},s.createElement(t,{field:n,onCreate:e=>a(e,l),scope:r})))}function De(e){let{afterCreate:t="expand",uuid:n}=e
 const a=(0,i.I0)(),r=s.useContext(_e),l=(0,i.v9)((e=>{const t=d(e,n)
 if(!t||!t.path.length)return null
 const s=f(e,t.path)
@@ -281,24 +281,24 @@ if(!d||u.group){const e=u.group?u.group.label:void 0,t=u.group?Ve(o,u.group.styl
 d={index:e===Te?-1:c.length,label:e,fields:[],style:t},c.push(d)}d.fields.push(s.createElement(Ae,{errors:m,instructions:u.instructions,isPlainField:n||h,isRequired:u.isRequired,key:u.name,label:u.label,style:Ve(o,u.style)},s.createElement(We,{data:a[u.name],disabled:t,errors:m,field:u,model:a,onUpdate:t=>r(e,t),path:l})))}const m=c.sort(ze).map((e=>s.createElement($e,{isBorderless:n,key:e.index,label:e.label,style:e.style},e.fields))),h=Ve(o,i.style)
 return h?s.createElement("div",{className:"tcfInstanceForm",style:h},m):s.createElement(s.Fragment,null,m)}))
 class Ge extends s.Component{constructor(e){super(e),this.originalModel=null,this.handleCancel=()=>{this.close()},this.handleApply=()=>{this.close()},this.originalModel=e.model}close(){this.props.setOverlay(null)}render(){const{model:e,path:t}=this.props
-return s.createElement(Oe,null,s.createElement(Me,null,s.createElement(Me.Content,null,s.createElement(qe,{model:e,path:t})),s.createElement(Me.Footer,null,s.createElement(xe,{onClick:this.handleApply},s.createElement(ke,{value:"Apply"})))))}}var Xe=(0,i.$j)(((e,t)=>d(e,t.uuid)),(e=>({setOverlay:t=>e(N(t))})))(Ge)
+return s.createElement(Oe,null,s.createElement(Ie,null,s.createElement(Ie.Content,null,s.createElement(qe,{model:e,path:t})),s.createElement(Ie.Footer,null,s.createElement(xe,{onClick:this.handleApply},s.createElement(ke,{value:"Apply"})))))}}var Xe=(0,i.$j)(((e,t)=>d(e,t.uuid)),(e=>({setOverlay:t=>e(N(t))})))(Ge)
 const Ke="craft:",Je="material:"
 function Ye(e){let{className:t,name:n,size:a}=e,r="craft"
 return n.startsWith(Je)?(r="material",n=n.substr(Je.length)):n.startsWith(Ke)&&(n=n.substr(Ke.length)),s.createElement("div",{className:Ce()("tcfIcon",t,r,a)},n)}function Qe(e){let{message:t,onClose:n}=e
-return s.createElement(s.Fragment,null,s.createElement(Me.Content,null,s.createElement("div",{className:"tcfSynchronize--message"},s.createElement(Ye,{className:"tcfSynchronize--messageIcon error",name:"material:error",size:"huge"}),s.createElement("div",{className:"tcfSynchronize--title"},"An error has occured"),t?s.createElement("div",{className:"tcfSynchronize--message"},t):null)),s.createElement(Me.Footer,null,s.createElement(xe,{onClick:n},"Close")))}function Ze(e){let{onClose:t}=e
-return s.createElement(s.Fragment,null,s.createElement(Me.Content,null,s.createElement("div",{className:"tcfSynchronize--message"},s.createElement(Ye,{className:"tcfSynchronize--messageIcon finished",name:"material:check_circle",size:"huge"}),s.createElement("div",{className:"tcfSynchronize--title"},s.createElement(ke,{value:"Sites have been synchronized"})),s.createElement("div",{className:"tcfSynchronize--message"},s.createElement(ke,{value:"If you are not happy with the results, do not save the entry. Reload this page to revert all changes."})))),s.createElement(Me.Footer,null,s.createElement(xe,{onClick:t},s.createElement(ke,{value:"Close"}))))}class et extends s.Component{constructor(){super(...arguments),this.element=null,this.lightswitch=null,this.handleChange=()=>{const{disabled:e,onChange:t}=this.props,{lightswitch:n}=this
+return s.createElement(s.Fragment,null,s.createElement(Ie.Content,null,s.createElement("div",{className:"tcfSynchronize--message"},s.createElement(Ye,{className:"tcfSynchronize--messageIcon error",name:"material:error",size:"huge"}),s.createElement("div",{className:"tcfSynchronize--title"},"An error has occured"),t?s.createElement("div",{className:"tcfSynchronize--message"},t):null)),s.createElement(Ie.Footer,null,s.createElement(xe,{onClick:n},"Close")))}function Ze(e){let{onClose:t}=e
+return s.createElement(s.Fragment,null,s.createElement(Ie.Content,null,s.createElement("div",{className:"tcfSynchronize--message"},s.createElement(Ye,{className:"tcfSynchronize--messageIcon finished",name:"material:check_circle",size:"huge"}),s.createElement("div",{className:"tcfSynchronize--title"},s.createElement(ke,{value:"Sites have been synchronized"})),s.createElement("div",{className:"tcfSynchronize--message"},s.createElement(ke,{value:"If you are not happy with the results, do not save the entry. Reload this page to revert all changes."})))),s.createElement(Ie.Footer,null,s.createElement(xe,{onClick:t},s.createElement(ke,{value:"Close"}))))}class et extends s.Component{constructor(){super(...arguments),this.element=null,this.lightswitch=null,this.handleChange=()=>{const{disabled:e,onChange:t}=this.props,{lightswitch:n}=this
 !e&&n&&t(n.on)},this.setElement=e=>{this.element!==e&&(this.element=e,this.updateInstance())}}componentDidUpdate(e){const{value:t}=this.props,{lightswitch:n}=this
 e.disabled!==this.props.disabled?this.updateInstance():n&&n.on!==t&&n.toggle()}render(){const{className:e,disabled:t,small:n,value:a}=this.props
 return s.createElement("div",null,s.createElement("div",{className:Ce()("lightswitch",e,{disabled:t,on:a,small:n}),ref:this.setElement,tabIndex:0},s.createElement("div",{className:"lightswitch-container"},s.createElement("div",{className:"label on"}),s.createElement("div",{className:"handle"}),s.createElement("div",{className:"label off"}))))}updateInstance(){const{element:e,handleChange:t,lightswitch:n}=this,{disabled:s,value:a}=this.props
-n&&(n.destroy(),this.lightswitch=null),!s&&e&&(this.lightswitch=new Craft.LightSwitch(e,{onChange:t,value:a}))}}class tt extends s.Component{constructor(e){super(e),this.handleApply=e=>{const{currentSite:t,endpoint:n}=this.props,{arrayOrphanMode:s,site:a,useTranslator:r}=this.state
+n&&(n.destroy(),this.lightswitch=null),!s&&e&&(this.lightswitch=new Craft.LightSwitch(e,{onChange:t,value:a}))}}class tt extends s.Component{constructor(e){super(e),this.handleApply=e=>{const{currentSite:t,endpoint:n}=this.props,{arrayOrphanMode:s,site:a,syncMode:r,useTranslator:l}=this.state
 if(!a)return
-let l
-r&&t&&a.language!==t.language&&(l={endpoint:n,source:a.language,target:t.language}),this.props.onSynchronize({arrayOrphanMode:s,siteId:a.id,translate:l,verbose:"altKey"in e&&e.altKey})},this.handleArrayOrphanModeChange=e=>{this.setState({arrayOrphanMode:e})},this.handleSiteChange=e=>{this.setState({site:e})},this.handleToggleTranslator=e=>{this.setState({useTranslator:e})},this.state={arrayOrphanMode:"hide",site:e.availableSites[0]||null,useTranslator:!1}}render(){const{availableSites:e,currentSite:t,hasTranslator:n,onClose:a}=this.props,{arrayOrphanMode:r,site:l,useTranslator:i}=this.state,o=e.map((e=>({label:e.label,key:e})))
-return s.createElement(s.Fragment,null,s.createElement(Me.Content,null,s.createElement("div",{className:"tcfSynchronize--title"},s.createElement(ke,{value:"Synchronize translations"})),s.createElement($e,null,s.createElement(Ae,{instructions:g("Select the site the content should be copied from."),label:g("Site")},s.createElement(Re,{onChange:this.handleSiteChange,options:o,value:l})),s.createElement(Ae,{instructions:g("Defines what happens to elements that do not exist in the selected language."),label:g("Orphaned elements")},s.createElement(Re,{onChange:this.handleArrayOrphanModeChange,options:[{key:"hide",label:g("Hide orphaned elements")},{key:"none",label:g("Do nothing")},{key:"remove",label:g("Remove orphaned elements")}],value:r})),l&&t&&l.language!==t.language?s.createElement(Ae,{instructions:g(n?"Uses a webservice to automatically translate texts.":"A matching webservice must be configured in the options of this field in order to use this feature."),label:g("Translate texts automatically")},s.createElement(et,{disabled:!n,onChange:this.handleToggleTranslator,value:i})):null)),s.createElement(Me.Footer,null,s.createElement(xe,{onClick:a,secondary:!0},s.createElement(ke,{value:"Cancel"})),s.createElement(xe,{onClick:this.handleApply,primary:!0},s.createElement(ke,{value:"Apply"}))))}}var nt=(0,i.$j)((e=>{const{apiEndpoints:t,elementSiteId:n,hasTranslator:s,supportedSites:a}=e.config
+let i
+l&&t&&a.language!==t.language&&(i={endpoint:n,source:a.language,target:t.language}),this.props.onSynchronize({arrayOrphanMode:s,siteId:a.id,syncMode:r,translate:i,verbose:"altKey"in e&&e.altKey})},this.handleArrayOrphanModeChange=e=>{this.setState({arrayOrphanMode:e})},this.handleSiteChange=e=>{this.setState({site:e})},this.handleSyncModeChange=e=>{this.setState({syncMode:e})},this.handleToggleTranslator=e=>{this.setState({useTranslator:e})},this.state={arrayOrphanMode:"hide",site:e.availableSites[0]||null,syncMode:"sync",useTranslator:!1}}render(){const{availableSites:e,currentSite:t,hasTranslator:n,onClose:a}=this.props,{arrayOrphanMode:r,site:l,syncMode:i,useTranslator:o}=this.state,c=e.map((e=>({label:e.label,key:e})))
+return s.createElement(s.Fragment,null,s.createElement(Ie.Content,null,s.createElement("div",{className:"tcfSynchronize--title"},s.createElement(ke,{value:"Synchronize translations"})),s.createElement($e,null,s.createElement(Ae,{instructions:g("Select the site the content should be copied from."),label:g("Site")},s.createElement(Re,{onChange:this.handleSiteChange,options:c,value:l})),s.createElement(Ae,{instructions:g("Defines whether the synchronization should compare individual elements or clone the entire source."),label:g("Synchronization mode")},s.createElement(Re,{onChange:this.handleSyncModeChange,options:[{key:"sync",label:g("Compare elements, adds newly created elements")},{key:"clone",label:g("Clone the source, overwrites everything")}],value:i})),"sync"===i?s.createElement(Ae,{instructions:g("Defines what happens to elements that do not exist in the selected language."),label:g("Orphaned elements")},s.createElement(Re,{onChange:this.handleArrayOrphanModeChange,options:[{key:"hide",label:g("Hide orphaned elements")},{key:"none",label:g("Do nothing")},{key:"remove",label:g("Remove orphaned elements")}],value:r})):null,l&&t&&l.language!==t.language?s.createElement(Ae,{instructions:g(n?"Uses a webservice to automatically translate texts.":"A matching webservice must be configured in the options of this field in order to use this feature."),label:g("Translate texts automatically")},s.createElement(et,{disabled:!n,onChange:this.handleToggleTranslator,value:o})):null)),s.createElement(Ie.Footer,null,s.createElement(xe,{onClick:a,secondary:!0},s.createElement(ke,{value:"Cancel"})),s.createElement(xe,{onClick:this.handleApply,primary:!0},s.createElement(ke,{value:"Apply"}))))}}var nt=(0,i.$j)((e=>{const{apiEndpoints:t,elementSiteId:n,hasTranslator:s,supportedSites:a}=e.config
 return{availableSites:a.filter((e=>e.id!==n)),currentSite:a.find((e=>e.id===n)),endpoint:t.translate,hasTranslator:s}}),(e=>({onSynchronize:t=>e(ee(t))})))(tt)
-function st(){return s.createElement("div",{className:"tcfActivityIndicator"},s.createElement("div",{className:"tcfActivityIndicator--bounce first"}),s.createElement("div",{className:"tcfActivityIndicator--bounce second"}),s.createElement("div",{className:"tcfActivityIndicator--bounce third"}))}function at(){return s.createElement(Me.Content,null,s.createElement("div",{className:"tcfSynchronize--working"},s.createElement(st,null)))}function rt(){const e=(0,i.v9)((e=>e.sync)),t=(0,i.I0)(),n=()=>t(N(null))
+function st(){return s.createElement("div",{className:"tcfActivityIndicator"},s.createElement("div",{className:"tcfActivityIndicator--bounce first"}),s.createElement("div",{className:"tcfActivityIndicator--bounce second"}),s.createElement("div",{className:"tcfActivityIndicator--bounce third"}))}function at(){return s.createElement(Ie.Content,null,s.createElement("div",{className:"tcfSynchronize--working"},s.createElement(st,null)))}function rt(){const e=(0,i.v9)((e=>e.sync)),t=(0,i.I0)(),n=()=>t(N(null))
 let a
-return a="working"===e.status?s.createElement(at,null):"error"===e.status?s.createElement(Qe,{message:e.message,onClose:n}):"finished"===e.status?s.createElement(Ze,{onClose:n}):s.createElement(nt,{onClose:n}),s.createElement(Me,{width:600},a)}const lt=s.createContext(0)
+return a="working"===e.status?s.createElement(at,null):"error"===e.status?s.createElement(Qe,{message:e.message,onClose:n}):"finished"===e.status?s.createElement(Ze,{onClose:n}):s.createElement(nt,{onClose:n}),s.createElement(Ie,{width:600},a)}const lt=s.createContext(0)
 function it(e){let{children:t}=e
 const n=s.useContext(lt)
 return s.createElement(lt.Provider,{value:n+1},t)}function ot(e){let{disabled:t,dispatch:n,model:a,path:r,schemas:l}=e
@@ -317,8 +317,8 @@ e.target===this.element&&t&&t()}
 const t=document.createElement("div")
 t.className="tcfOverlay",t.addEventListener("mousedown",this.handleMouseDown),document.body.appendChild(t),this.element=t}componentWillUnmount(){const{element:e}=this
 e&&(document.body.removeChild(e),e.removeEventListener("mousedown",this.handleMouseDown),this.element=null)}render(){const{children:e}=this.props,{element:t}=this
-return t?(0,a.createPortal)(e,t):null}}function mt(){const e=(0,i.I0)(),t=(0,i.v9)((e=>e.model)),n=(0,i.v9)((e=>e.overlay)),{disabled:a,rootSchemas:r,supportedSites:l}=(0,i.v9)((e=>e.config)),o=l.length>1
-return s.createElement(be.W,{backend:Ee.PD},s.createElement(Oe,null,o&&!a?s.createElement("div",{className:"tcfRoot--options"},s.createElement(Se,{onClick:()=>{e(A({status:"idle"})),e(N({type:"synchronize"}))},outline:!0},s.createElement(Ye,{name:"material:sync"}),s.createElement(ke,{value:"Synchronize translations"}))):null,s.createElement(ut,{disabled:a,model:t,path:[],schemaNames:r}),n?s.createElement(dt,{onClick:()=>{n&&!n.preventClose&&e(N(null))}},function(e){if(!e)return null
+return t?(0,a.createPortal)(e,t):null}}function mt(){const e=(0,i.I0)(),t=(0,i.v9)((e=>e.model)),n=(0,i.v9)((e=>e.overlay)),{disabled:a,hideSyncButton:r,rootSchemas:l,supportedSites:o}=(0,i.v9)((e=>e.config)),c=o.length>1
+return s.createElement(be.W,{backend:Ee.PD},s.createElement(Oe,null,!c||a||r?null:s.createElement("div",{className:"tcfRoot--options"},s.createElement(Se,{onClick:()=>{e(A({status:"idle"})),e(N({type:"synchronize"}))},outline:!0},s.createElement(Ye,{name:"material:sync"}),s.createElement(ke,{value:"Synchronize translations"}))),s.createElement(ut,{disabled:a,model:t,path:[],schemaNames:l}),n?s.createElement(dt,{onClick:()=>{n&&!n.preventClose&&e(N(null))}},function(e){if(!e)return null
 switch(e.type){case"create":return s.createElement(De,Object.assign({},e))
 case"edit":return s.createElement(Xe,Object.assign({},e))
 case"synchronize":return s.createElement(rt,null)}}(n)):null))}function ht(){let e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{config:{apiEndpoints:{anchors:"",fetchSite:"",oembed:"",translate:""},csrfTokenName:"",csrfTokenValue:"",disabled:!1,elementId:null,elementSiteId:0,fieldHandle:"",hasTranslator:!1,references:[],rootSchemas:[],supportedSites:[]},model:{__errors:{},__type:"unknown",__uuid:"0",__visible:!0},overlay:null,schemas:{},sync:{status:"idle"},user:{favoriteSchemas:{}}},t=arguments.length>1?arguments[1]:void 0
@@ -359,8 +359,8 @@ s.style.height=`${n.height}px`,s.getBoundingClientRect(),s.style.transition="hei
 if(t.currentUri!==this.state.currentUri&&n){const e=n.offsetHeight
 return n.style.height=`${e}px`,{height:e}}return null}render(){const{className:e,itemClassName:t}=this.props,{currentChildren:n,currentUri:a,inTransition:r,lastChildren:l,lastUri:i}=this.state,o=[]
 return r&&i&&o.push(s.createElement("div",{className:Ce()(t,"tcfDetailsPanel--item","from"),key:i},l)),o.push(s.createElement("div",{className:Ce()(t,"tcfDetailsPanel--item",{to:r}),key:a,onAnimationEnd:this.handleAnimationEnd},n)),s.createElement("div",{className:Ce()(e,"tcfDetailsPanel"),ref:this.setElement},o)}static getDerivedStateFromProps(e,t){return e.uri===t.currentUri?Object.assign(Object.assign({},t),{currentChildren:e.children}):e.uri===t.currentUri||t.inTransition?null:{inTransition:!0,lastChildren:t.currentChildren,lastUri:t.currentUri,currentChildren:e.children,currentUri:e.uri}}}function jt(e){let{children:t,onClick:n,primary:a}=e
-return s.createElement("div",{className:Ce()("tcfArrayWidgetMember--headerActionsButton",{primary:a}),onClick:e=>{e.preventDefault(),n()}},t)}let It=null
-function Mt(){return null===It&&(It=new Craft.ElementThumbLoader),It}function Lt(e){let{className:t,model:n,schema:a,size:r="small"}=e
+return s.createElement("div",{className:Ce()("tcfArrayWidgetMember--headerActionsButton",{primary:a}),onClick:e=>{e.preventDefault(),n()}},t)}let Mt=null
+function It(){return null===Mt&&(Mt=new Craft.ElementThumbLoader),Mt}function Lt(e){let{className:t,model:n,schema:a,size:r="small"}=e
 const l=s.useRef(null),o=(0,i.v9)((e=>e.config.references)),c=function(e,t){const{previewImage:n}=t
 if(!n)return null
 const s=n in e?e[n]:null
@@ -368,7 +368,7 @@ if(!Array.isArray(s)||0===s.length)return null
 const a=s[0]
 return"number"==typeof a?a:null}(n,a),u=o.find((e=>e.id===c))
 return s.useEffect((()=>{if(l.current){const e=$(".element",l.current)
-Craft.setElementSize(e,r),Mt().load(e)}}),[l.current,u]),u&&u.hasThumb?s.createElement("div",{className:Ce()("tcfInstancePreviewImage",t,r),dangerouslySetInnerHTML:{__html:u.element},ref:l}):s.createElement("div",{className:Ce()("tcfInstancePreviewImage empty",t,r)})}var Tt=s.memo((function(e){var{field:t,model:n,references:a,schemas:r}=e,l=(0,P._T)(e,["field","model","references","schemas"])
+Craft.setElementSize(e,r),It().load(e)}}),[l.current,u]),u&&u.hasThumb?s.createElement("div",{className:Ce()("tcfInstancePreviewImage",t,r),dangerouslySetInnerHTML:{__html:u.element},ref:l}):s.createElement("div",{className:Ce()("tcfInstancePreviewImage empty",t,r)})}var Tt=s.memo((function(e){var{field:t,model:n,references:a,schemas:r}=e,l=(0,P._T)(e,["field","model","references","schemas"])
 const i=pt(v.getDefinition("instance").preview({context:{depth:0,references:a,schemas:r},field:t,mode:"label",value:n})).replace(/<[^>]*>?/gm,"").replace(/[\n\t\r]+/g,"").trim().substr(0,256)
 return s.createElement("div",Object.assign({},l),i)}),(function(e,t){return e.model===t.model}))
 function $t(e){const{references:t,schemas:n}=(0,i.v9)((e=>({references:e.config.references,schemas:e.schemas})))
@@ -527,9 +527,9 @@ const o=e=>{if(-1!==l.indexOf(e))return n(E({schemas:r,schema:e}))}
 return l.length>1?s.createElement(xn,{onCreate:o,schemas:l,scope:a}):s.createElement(kn,{onCreate:o,schema:l[0]})}function jn(e){let{children:t,disabled:n,field:a,model:r}=e
 const l=s.useContext(lt),o=(0,i.v9)((e=>e.schemas)),{isExpanded:c,toggleExpanded:u}=s.useContext(_e),d=o[r.__type],m=c(r.__uuid),h=d&&d.preview,p=()=>u(r.__uuid)
 let f=null
-return m?f=s.createElement("div",{className:"tcfArrayWidgetMember--body"},t):h&&(f=s.createElement(Ht,{field:a,model:r,onClick:p})),s.createElement("div",{className:`tcfInstanceWidget--collapsiblePanel depth-${l}`},s.createElement(Wt,{disabled:n,field:a,hasPreview:!m&&!h,isCollapsible:!0,isExpanded:m,model:r,onToggleExpanded:p,schema:d}),s.createElement(Nt,{uri:m?"details":"summary"},f))}function In(e){let{className:t,data:n,disabled:a,field:r,path:l}=e
+return m?f=s.createElement("div",{className:"tcfArrayWidgetMember--body"},t):h&&(f=s.createElement(Ht,{field:a,model:r,onClick:p})),s.createElement("div",{className:`tcfInstanceWidget--collapsiblePanel depth-${l}`},s.createElement(Wt,{disabled:n,field:a,hasPreview:!m&&!h,isCollapsible:!0,isExpanded:m,model:r,onToggleExpanded:p,schema:d}),s.createElement(Nt,{uri:m?"details":"summary"},f))}function Mn(e){let{className:t,data:n,disabled:a,field:r,path:l}=e
 const i=s.createElement(ut,{canChangeVisibility:!0,disabled:a,model:n,path:[...l,{type:"property",name:r.name}],schemaNames:r.schemas})
-return r.collapsible&&c(n)?s.createElement(jn,{model:n,disabled:a,field:r},i):s.createElement("div",{className:Ce()("tcfInstanceWidget",t)},i)}function Mn(e){var{attribute:t,column:n,max:a,min:r,onUpdate:l}=e,i=(0,P._T)(e,["attribute","column","max","min","onUpdate"])
+return r.collapsible&&c(n)?s.createElement(jn,{model:n,disabled:a,field:r},i):s.createElement("div",{className:Ce()("tcfInstanceWidget",t)},i)}function In(e){var{attribute:t,column:n,max:a,min:r,onUpdate:l}=e,i=(0,P._T)(e,["attribute","column","max","min","onUpdate"])
 const[o,c]=s.useState(null),u=n[t],d=X(u,i),m=i.current.key in u
 return s.createElement("div",{className:"tcfLayoutEditor--columnInput"},s.createElement("div",{className:Ce()("tcfLayoutEditor--columnInputLabel",{hasOwnValue:m})},(h=t).charAt(0).toUpperCase()+h.slice(1)),s.createElement(on,{className:"tcfLayoutEditor--columnInputField",max:a,min:r,onBlur:()=>c(null),onChange:function(e){let{target:s}=e
 c(s.value)
@@ -560,10 +560,10 @@ return s.createElement("div",{className:"tcfLayoutRowEditor"},s.createElement(Tn
 function Fn(e){const{columnsPerRow:t,constraints:n,current:a,selected:r}=e
 let l
 if(r){const a={breakpoints:e.breakpoints,column:r,current:e.current,onUpdate:e.onUpdate}
-l=s.createElement("div",{className:"tcfLayoutEditor--rowAttributes"},s.createElement(Mn,Object.assign({},a,{attribute:"width",max:Math.min(t,n.maxColumnWidth),min:Math.max(1,n.minColumnWidth)})),s.createElement(Mn,Object.assign({},a,{attribute:"offset",min:0,max:t})),s.createElement(Mn,Object.assign({},a,{attribute:"order"})))}else l=s.createElement("div",{className:"tcfLayoutEditor--rowAttributes"})
+l=s.createElement("div",{className:"tcfLayoutEditor--rowAttributes"},s.createElement(In,Object.assign({},a,{attribute:"width",max:Math.min(t,n.maxColumnWidth),min:Math.max(1,n.minColumnWidth)})),s.createElement(In,Object.assign({},a,{attribute:"offset",min:0,max:t})),s.createElement(In,Object.assign({},a,{attribute:"order"})))}else l=s.createElement("div",{className:"tcfLayoutEditor--rowAttributes"})
 return s.createElement("div",{className:"tcfLayoutEditor--row"},s.createElement("div",{className:"tcfLayoutEditor--rowHead"},a.key in Un?s.createElement(Ye,{name:Un[a.key]}):null,s.createElement("span",null,a.label)),s.createElement("div",{className:"tcfLayoutEditor--rowBody"},s.createElement(Rn,Object.assign({},e)),l))}function Dn(e){var{onClose:t,onCreate:n,onDelete:a}=e,r=(0,P._T)(e,["onClose","onCreate","onDelete"])
 const{breakpoints:l,columns:i,constraints:{maxColumns:o,minColumns:c}}=r,[u,d]=s.useState(i.length?i[0].__uuid:null),m=u&&i.find((e=>e.__uuid===u))||null
-function h(e){d(e===u?null:e)}return s.createElement(Me,null,s.createElement(Me.Content,null,s.createElement("div",{className:"tcfLayoutEditor--title"},s.createElement(ke,{value:"Edit columns"})),l.map((e=>s.createElement(Fn,Object.assign({},r,{current:e,key:e.key,selected:m,onSelect:h}))))),s.createElement(Me.Footer,null,s.createElement("div",{className:"btngroup"},i.length<o?s.createElement(xe,{onClick:()=>d(n())},s.createElement(Ye,{name:"plus"}),s.createElement(ke,{value:"Create"})):null,m&&i.length>c?s.createElement(xe,{onClick:()=>a(m.__uuid)},s.createElement(Ye,{name:"minus"}),s.createElement(ke,{value:"Delete"})):null),s.createElement(xe,{onClick:t,primary:!0},s.createElement(ke,{value:"Close"}))))}function Wn(e){var{onClose:t,onPreset:n,preset:a,presets:r}=e,l=(0,P._T)(e,["onClose","onPreset","preset","presets"])
+function h(e){d(e===u?null:e)}return s.createElement(Ie,null,s.createElement(Ie.Content,null,s.createElement("div",{className:"tcfLayoutEditor--title"},s.createElement(ke,{value:"Edit columns"})),l.map((e=>s.createElement(Fn,Object.assign({},r,{current:e,key:e.key,selected:m,onSelect:h}))))),s.createElement(Ie.Footer,null,s.createElement("div",{className:"btngroup"},i.length<o?s.createElement(xe,{onClick:()=>d(n())},s.createElement(Ye,{name:"plus"}),s.createElement(ke,{value:"Create"})):null,m&&i.length>c?s.createElement(xe,{onClick:()=>a(m.__uuid)},s.createElement(Ye,{name:"minus"}),s.createElement(ke,{value:"Delete"})):null),s.createElement(xe,{onClick:t,primary:!0},s.createElement(ke,{value:"Close"}))))}function Wn(e){var{onClose:t,onPreset:n,preset:a,presets:r}=e,l=(0,P._T)(e,["onClose","onPreset","preset","presets"])
 return s.createElement(Rt,{onClick:t},s.createElement("div",{className:"tcfLayoutSelect--flyout"},r.map((e=>s.createElement(An,Object.assign({},l,{columns:e.columns,isSelected:e.key===a,key:e.key,onClick:()=>n(e)}))))))}function Vn(e){var{canEdit:t,onPreset:n,preset:a,presets:r}=e,l=(0,P._T)(e,["canEdit","onPreset","preset","presets"])
 const{breakpoints:i,columns:o,columnsPerRow:c}=l,[u,d]=s.useState(null),m=i[i.length-1]
 function h(){d(null)}let p=null
@@ -586,7 +586,7 @@ function zn(e){let{data:t,disabled:n,onUpdate:a}=e
 return s.createElement(et,{disabled:n,onChange:a,value:!!t})}function qn(e){const t=s.useRef(null)
 return s.useEffect((()=>{const{current:n}=t
 if(!n)return
-const s=Mt()
+const s=It()
 for(const t of function(e){const{data:t,elementType:n,references:s}=e,a=[]
 if(Array.isArray(t))for(const e of t){const t=s.find((t=>t.id===e&&t.type===n))
 t&&a.push(t)}return a}(e)){const a=t.$element.clone(!1,!0)
@@ -732,7 +732,7 @@ return s.createElement("textarea",{className:Ce()("tcfTextareaWidget text fullwi
 if(this.isValue(t,n)){const e=v.getDefinition(t.member.type),a=[]
 for(const r of n)a.push(yield e.cloneValue(Object.assign(Object.assign({},s),{field:t.member,value:r})))
 return a}return this.createValue(e)}))}createValue(e){return[]}isValue(e,t){return Array.isArray(t)}preview(e){return new Et(e)}},checkbox:new class extends Jt{constructor(){super({widget:Qt}),this.isAlwaysPlainField=!0}},color:new class extends Kt{constructor(){super({widget:vn})}createValue(e){return{alpha:1,blue:255,green:255,red:255}}isValue(e,t){return en(t)}preview(e){let{context:t,value:n}=e
-return""}},instance:new class extends Kt{constructor(){super({factory:Nn,widget:In})}cloneValue(e){return(0,P.mG)(this,void 0,void 0,(function*(){const{field:t,value:n}=e,s=(0,P._T)(e,["field","value"])
+return""}},instance:new class extends Kt{constructor(){super({factory:Nn,widget:Mn})}cloneValue(e){return(0,P.mG)(this,void 0,void 0,(function*(){const{field:t,value:n}=e,s=(0,P._T)(e,["field","value"])
 return this.isValue(t,n)?R(Object.assign(Object.assign({},s),{source:n})):this.createValue(e)}))}createValue(e){let{field:t,schema:n,schemas:s}=e
 if(n||(n=s[t.schemas[0]]),!n)throw new Error("The option `schema` is required when creating instances.")
 return E({schema:n,schemas:s})}isValue(e,t){return c(t)&&-1!==e.schemas.indexOf(t.__type)}preview(e){let{context:t,mode:n="default",value:s}=e
@@ -765,7 +765,7 @@ return new as(t)}},number:new class extends ms{constructor(){super({widget:ds})}
 return new _n(wn(t)?t:{url:""})}},redactor:new class extends bs{constructor(){super({widget:ys})}preview(e){let{value:t}=e
 return new hs(t)}},reference:new class extends Kt{constructor(){super({widget:Cs})}createValue(e){return[]}isValue(e,t){return Array.isArray(t)&&t.every((e=>"number"==typeof e))}preview(e){return new ws(e)}},select:new class extends Ss{constructor(){super({widget:_s})}},swatchcolor:new class extends Ss{constructor(){super({widget:xs})}},text:new class extends bs{constructor(){super({widget:ks})}},textarea:new class extends bs{constructor(){super({widget:Ns})}}})
 n(524)
-const js=[],Is={},Ms={create:e=>{try{let t=null
+const js=[],Ms={},Is={create:e=>{try{let t=null
 const n=document.getElementById(e)
 if(!n)throw new Error("Root element not found.")
 const o=n.querySelector(".tcfField--app"),c=n.querySelector('script[type="application/json"]'),u=n.querySelector("input.tcfField--model")
@@ -773,8 +773,8 @@ if(!u||!o||!c)throw new Error("Missing components.")
 const d=(0,l.MT)(ht,ve(c,u),(0,l.md)(r.Z))
 js.push(d),d.subscribe((()=>{const{draftEditor:e}=window,n=JSON.stringify(d.getState().model)
 u.value!==n&&e&&(t&&window.clearTimeout(t),t=window.setTimeout((()=>{e.checkForm(),t=null}),500)),u.value=n})),a.render(s.createElement(i.zt,{store:d},s.createElement(mt,null)),o)}catch(e){console.error("Could not start content editor.",e)}},getInstanceApi:e=>{for(const t of js){const n=d(t.getState(),e)
-return n?re(t,n):null}},getValidator:function(e){return e in Is?Is[e]:null},registerValidator:(e,t)=>{Is[e]=t}}
-if(window){const e=window;(e.lenz||(e.lenz={})).contentField=Ms}var Ls=Ms},524:function(){const e="tcfDetailsToggleState"
+return n?re(t,n):null}},getValidator:function(e){return e in Ms?Ms[e]:null},registerValidator:(e,t)=>{Ms[e]=t}}
+if(window){const e=window;(e.lenz||(e.lenz={})).contentField=Is}var Ls=Is},524:function(){const e="tcfDetailsToggleState"
 function t(e,t,n){t.classList.toggle("tcfDetailsToggle--collapsed",e.isCollapsed),n.classList.toggle("focus",e.isCollapsed)}!function(){const n=function(){try{let n=JSON.parse(sessionStorage.getItem(e)||"{}")
 if("object"!=typeof(t=n)||"boolean"!=typeof t.isCollapsed)throw new Error("Invalid details state.")
 return n}catch(e){return{isCollapsed:!1}}var t}(),s=document.getElementById("main-content"),a=document.getElementById("action-buttons")
