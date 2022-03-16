@@ -11,6 +11,20 @@
 }) -}}
 
 {{- forms.selectField({
+  label: 'Hide the `Synchronize languages` buttons',
+  instructions: 'Whether the button for synchronizing content field between languages should be hidden or not.',
+  name: 'hideSyncButton',
+  value: field.hideSyncButton,
+  options: [
+    { label: 'Never', value: 'never' },
+    { label: 'Always', value: 'always' },
+  ]|merge(craft.app.sites.allSites|map(site => {
+    label: 'In site "%s"'|format(site.name),
+    value: 'site:' ~ site.handle,
+  }))
+}) -}}
+
+{{- forms.selectField({
   label:        'Compression',
   instructions: 'Uses gzip to reduce the size of the json payload when stored to the database.',
   name:         'compression',

@@ -10,8 +10,8 @@ use craft\helpers\ArrayHelper;
 use Exception;
 use InvalidArgumentException;
 use lenz\contentfield\events\RootSchemasEvent;
-use lenz\contentfield\fields\content\QueryExtension;
 use lenz\contentfield\fields\content\InputData;
+use lenz\contentfield\fields\content\QueryExtension;
 use lenz\contentfield\helpers\CompressRecordsJob;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\schemas\AbstractSchema;
@@ -38,6 +38,14 @@ class ContentField extends ForeignField
    * @var string
    */
   public $compression = 'never';
+
+  /**
+   * Whether the button for synchronizing content field between languages
+   * should be hidden or not.
+   *
+   * @var string
+   */
+  public $hideSyncButton = 'never';
 
   /**
    * The list of root schemas set for this field. Do not manipulate
@@ -330,7 +338,13 @@ class ContentField extends ForeignField
    * @inheritDoc
    */
   public function settingsAttributes(): array {
-    return ['compression', 'rootSchemas', 'rootSchemasByUsage', 'useAsPageTemplate'];
+    return [
+      'compression',
+      'hideSyncButton',
+      'rootSchemas',
+      'rootSchemasByUsage',
+      'useAsPageTemplate'
+    ];
   }
 
   /**

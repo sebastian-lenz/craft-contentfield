@@ -165,16 +165,18 @@ class InputData
    */
   private function getElementConfig(): array {
     $element = $this->_element;
+    $result = [
+      'disabled'       => $this->_disabled,
+      'elementId'      => null,
+      'elementSiteId'  => null,
+      'fieldHandle'    => $this->_field->handle,
+      'hideSyncButton' => $this->getHideSyncButton(),
+      'references'     => [],
+      'supportedSites' => [],
+    ];
 
     if (is_null($element)) {
-      return [
-        'disabled'       => $this->_disabled,
-        'elementId'      => null,
-        'elementSiteId'  => null,
-        'fieldHandle'    => $this->_field->handle,
-        'references'     => [],
-        'supportedSites' => [],
-      ];
+      return $result;
     }
 
     try {
@@ -199,14 +201,12 @@ class InputData
       ];
     }
 
-    return [
-      'disabled'       => $this->_disabled,
+    return array_merge($result, [
       'elementId'      => intval($element->getId()),
       'elementSiteId'  => $elementSiteId,
-      'fieldHandle'    => $this->_field->handle,
       'references'     => $this->loadReferences($this->_value),
       'supportedSites' => $supportedSites
-    ];
+    ]);
   }
 
   /**
@@ -229,6 +229,24 @@ class InputData
         'translate' => $urls->createUrl('contentfield/cp/translate'),
       ],
     ];
+  }
+
+  /**
+   * @return bool
+   */
+  private function getHideSyncButton(): bool {
+    $hideSyncButton = $this->_field->hideSyncButton;
+    if ($hideSyncButton == 'always') {
+      return true;
+    }
+
+    if (substr($hideSyncButton, 0, 5) == 'site:') {
+      $element = $this->_element;
+      $site = $element ? $element->getSite() : null;
+      return $site && $hideSyncButton == "site:$site->handle";
+    }
+
+    return false;
   }
 
 
