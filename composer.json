@@ -8,10 +8,10 @@
     "ext-dom": "*",
     "ext-libxml": "*",
     "ext-zlib": "*",
-    "craftcms/cms": "^3.6.0",
-    "craftcms/redactor": "^2.10.0",
-    "sebastianlenz/craft-utils": "^2.3.3",
-    "symfony/yaml": "^5.2.5"
+    "craftcms/cms": "^4.0.2",
+    "craftcms/redactor": "^3.0.0",
+    "sebastianlenz/craft-utils": "^3.0.2",
+    "symfony/yaml": "^5.2.3"
   },
   "require-dev": {
     "codeception/codeception": "^4.0.0",
@@ -40,6 +40,9 @@
     "allow-plugins": {
       "yiisoft/yii2-composer": true,
       "craftcms/plugin-installer": true
+    },
+    "platform": {
+      "php": "8.0.2"
     }
   }
 }
