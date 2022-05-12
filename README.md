@@ -10,7 +10,7 @@ comes with a big performance boost.
 
 ## Requirements
 
-This plugin requires Craft CMS 3.2.1 or later.
+This plugin requires Craft CMS 4 or later.
 
 
 ## Installation
