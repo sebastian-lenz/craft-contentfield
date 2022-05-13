@@ -32,17 +32,17 @@ abstract class AbstractForm
   /**
    * @var string|null
    */
-  private $_genericError = null;
+  private ?string $_genericError = null;
 
   /**
    * @var bool
    */
-  private $_isSubmitted = false;
+  private bool $_isSubmitted = false;
 
   /**
    * @var InstanceValue|null
    */
-  private $_instance = null;
+  private ?InstanceValue $_instance = null;
 
   /**
    * Possible generic errors.
@@ -65,6 +65,7 @@ abstract class AbstractForm
    * attribute, e.g. if the csrf token validation fails.
    *
    * @return string|null
+   * @noinspection PhpUnused
    */
   public function getGenericError(): ?string {
     return $this->_genericError;
@@ -82,7 +83,7 @@ abstract class AbstractForm
   /**
    * @inheritDoc
    */
-  public function onBeforeAction(BeforeActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event): void {
     $request = Craft::$app->getRequest();
     if (!$request->isPost) {
       return;
@@ -143,6 +144,7 @@ abstract class AbstractForm
    * message should be displayed.
    *
    * @return bool
+   * @noinspection PhpUnused
    */
   public function isSubmitted(): bool {
     return $this->_isSubmitted;
@@ -151,7 +153,7 @@ abstract class AbstractForm
   /**
    * @inheritDoc
    */
-  public function setInstance(InstanceValue $instance) {
+  public function setInstance(InstanceValue $instance): void {
     $this->_instance = $instance;
   }
 
@@ -250,7 +252,7 @@ abstract class AbstractForm
           return $redirect->getUrl();
         }
       }
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       // Silently ignore errors
     }
 

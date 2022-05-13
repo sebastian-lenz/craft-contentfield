@@ -18,7 +18,7 @@ class TextAreaField extends AbstractStringField
    *
    * @var bool
    */
-  public $monospace = false;
+  public bool $monospace = false;
 
   /**
    * Placeholder text for the textarea element. Translated using the default
@@ -26,14 +26,14 @@ class TextAreaField extends AbstractStringField
    *
    * @var string
    */
-  public $placeholder = '';
+  public string $placeholder = '';
 
   /**
    * The number of initially visible text lines.
    *
    * @var int
    */
-  public $rows = 5;
+  public int $rows = 5;
 
   /**
    * The internal name of this widget.

@@ -17,7 +17,7 @@ class FieldUsage
   /**
    * @var AbstractAdapter[]
    */
-  protected $_adapters;
+  protected array $_adapters;
 
 
   /**
@@ -53,7 +53,7 @@ class FieldUsage
     ]);
 
     foreach ($layoutFields as $layoutField) {
-      if (is_null($layoutField->layoutId)) {
+      if (empty($layoutField->layoutId)) {
         continue;
       }
 
@@ -81,7 +81,7 @@ class FieldUsage
     foreach ($this->_adapters as $adapter) {
       try {
         $result = $adapter->toUids($element);
-      } catch (Throwable $error) {
+      } catch (Throwable) {
         $result = null;
       }
 

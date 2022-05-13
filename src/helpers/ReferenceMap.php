@@ -12,17 +12,17 @@ class ReferenceMap
   /**
    * @var array
    */
-  private $_elementTypes = [];
+  private array $_elementTypes = [];
 
   /**
    * @var array
    */
-  private $_with = [];
+  private array $_with = [];
 
   /**
    * @var array
    */
-  private $_withTransforms = [];
+  private array $_withTransforms = [];
 
 
   /**
@@ -69,7 +69,7 @@ class ReferenceMap
    * @param string $elementType
    * @param int $id
    */
-  public function push(string $elementType, int $id) {
+  public function push(string $elementType, int $id): void {
     $elementType = self::normalizeElementType($elementType);
 
     if (!array_key_exists($elementType, $this->_elementTypes)) {
@@ -106,7 +106,7 @@ class ReferenceMap
    * @param string $elementType
    * @param string|string[] $values
    */
-  public function with(string $elementType, $values) {
+  public function with(string $elementType, array|string $values): void {
     $values = self::splitWithValue($values);
     $with = array_key_exists($elementType, $this->_with)
       ? $this->_with[$elementType]
@@ -126,7 +126,7 @@ class ReferenceMap
   /**
    * @param string|string[] $values
    */
-  public function withTransforms($values) {
+  public function withTransforms(array|string $values): void {
     $values = self::splitWithValue($values);
 
     foreach ($values as $value) {
@@ -152,7 +152,7 @@ class ReferenceMap
    * @param string|string[] $value
    * @return array
    */
-  static public function splitWithValue($value): array {
+  static public function splitWithValue(array|string $value): array {
     return is_array($value)
       ? $value
       : array_filter(array_map('trim', explode(',', $value)));

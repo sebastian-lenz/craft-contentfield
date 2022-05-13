@@ -2,10 +2,11 @@
 
 namespace lenz\contentfield\services\imageTags\sources;
 
-use Craft;
 use craft\elements\Asset;
-use craft\models\AssetTransform;
+use craft\models\ImageTransform;
+use lenz\craft\utils\helpers\ImageTransforms;
 use Throwable;
+use yii\base\InvalidConfigException;
 use yii\helpers\FileHelper;
 
 /**
@@ -19,41 +20,41 @@ class Source
   /**
    * @var Asset
    */
-  private $_asset;
+  private Asset $_asset;
 
   /**
    * @var string
    */
-  private $_descriptor;
+  private string $_descriptor;
 
   /**
-   * @var int|float|null
+   * @var int|null
    */
-  private $_height;
+  private ?int $_height;
 
   /**
-   * @var AssetTransform|string|array|null
+   * @var ImageTransform|string|array|null
    */
-  private $_transform = null;
+  private ImageTransform|string|array|null $_transform;
 
   /**
    * @var string|null
    */
-  private $_url;
+  private ?string $_url;
 
   /**
-   * @var int|float|null
+   * @var int|null
    */
-  private $_width;
+  private ?int $_width;
 
 
   /**
    * Source constructor.
    *
    * @param Asset $asset
-   * @param AssetTransform|array|string|null $transform
+   * @param array|string|ImageTransform|null $transform
    */
-  public function __construct(Asset $asset, $transform = null) {
+  public function __construct(Asset $asset, ImageTransform|array|string $transform = null) {
     $this->_asset = $asset;
     $this->_transform = $transform;
   }
@@ -61,56 +62,45 @@ class Source
   /**
    * @return float
    */
-  public function getAspect() {
+  public function getAspect(): float {
     return $this->getHeight() / $this->getWidth();
   }
 
   /**
    * @return string
    */
-  public function getAspectPercent() {
+  public function getAspectPercent(): string {
     return round($this->getAspect() * 100, 6) . '%';
   }
 
   /**
    * @return Asset
    */
-  public function getAsset() {
+  public function getAsset(): Asset {
     return $this->_asset;
   }
 
   /**
    * @return string|null
    */
-  public function getBase64() {
-    $asset      = $this->_asset;
-    $volume     = $asset->volume;
-    $transforms = Craft::$app->getAssetTransforms();
-    $transform  = null;
+  public function getBase64(): ?string {
+    $asset = $this->_asset;
 
     try {
-      $transform = $transforms->getTransformIndex($asset, $this->_transform);
+      $transformer = ImageTransforms::getTransformer();
+      $transform = $transformer->getTransformIndex($asset, $this->_transform);
       if (!$transform->fileExists) {
-        $transforms->ensureTransformUrlByIndexModel($transform);
+        ImageTransforms::ensureTransformUrlByIndexModel($asset, $transform);
       }
 
-      $fileName = implode('', [
-        $asset->folderPath,
-        $transforms->getTransformSubpath($asset, $transform)
-      ]);
-
-      $stream   = $volume->getFileStream($fileName);
+      $fileName = ImageTransforms::getTransformPath($asset, $transform);
+      $stream = $asset->getVolume()->getFs()->getFileStream($fileName);
       $mimeType = FileHelper::getMimeTypeByExtension($fileName);
-      $encoded  = base64_encode(stream_get_contents($stream));
+      $encoded = base64_encode(stream_get_contents($stream));
 
       return "url('data:" . $mimeType. ";base64," . $encoded . "')";
-    } catch (Throwable $exception) {
-      if (
-        !is_null($transform) &&
-        !is_null($transform->id)
-      ) {
-        $transforms->deleteTransformIndex($transform->id);
-      }
+    } catch (Throwable) {
+      // Ignore
     }
 
     return null;
@@ -119,14 +109,14 @@ class Source
   /**
    * @return string
    */
-  public function getCssAspect() {
+  public function getCssAspect(): string {
     return 'padding-bottom:' . $this->getAspectPercent() . ';';
   }
 
   /**
    * @return string
    */
-  public function getCssBackground() {
+  public function getCssBackground(): string {
     $base64 = $this->getBase64();
 
     return is_null($base64)
@@ -137,7 +127,7 @@ class Source
   /**
    * @return string
    */
-  public function getDescriptor() {
+  public function getDescriptor(): string {
     if (!isset($this->_descriptor)) {
       $this->_descriptor = $this->getWidth() . 'w';
     }
@@ -148,7 +138,7 @@ class Source
   /**
    * @return float
    */
-  public function getFocusX() {
+  public function getFocusX(): float {
     $focalPoint = $this->_asset->getFocalPoint();
     return is_array($focalPoint)
       ? $focalPoint['x']
@@ -158,14 +148,14 @@ class Source
   /**
    * @return string
    */
-  public function getFocusXPercent() {
+  public function getFocusXPercent(): string {
     return round($this->getFocusX() * 100, 6) . '%';
   }
 
   /**
    * @return float
    */
-  public function getFocusY() {
+  public function getFocusY(): float {
     $focalPoint = $this->_asset->getFocalPoint();
     return is_array($focalPoint)
       ? $focalPoint['y']
@@ -175,14 +165,14 @@ class Source
   /**
    * @return string
    */
-  public function getFocusYPercent() {
+  public function getFocusYPercent(): string {
     return round($this->getFocusY() * 100, 6) . '%';
   }
 
   /**
-   * @return float|int|null
+   * @return int|null
    */
-  public function getHeight() {
+  public function getHeight(): int|null {
     if (!isset($this->_height)) {
       $this->_height = $this->_asset->getHeight($this->_transform);
     }
@@ -193,12 +183,12 @@ class Source
   /**
    * @return callable[]
    */
-  public function getNativeVariables() {
+  public function getNativeVariables(): array {
     $fields = [];
     $layout = $this->_asset->getFieldLayout();
 
     if (!is_null($layout)) {
-      foreach ($layout->getFields() as $field) {
+      foreach ($layout->getCustomFields() as $field) {
         $handle = $field->handle;
         $fields[$handle] = function() use ($handle) {
           return $this->_asset->getFieldValue($handle);
@@ -223,8 +213,9 @@ class Source
 
   /**
    * @return string|null
+   * @throws InvalidConfigException
    */
-  public function getSrc() {
+  public function getSrc(): ?string {
     if (!isset($this->_url)) {
       $this->_url = $this->_asset->getUrl($this->_transform);
     }
@@ -235,7 +226,7 @@ class Source
   /**
    * @return string|null
    */
-  public function getTitle() {
+  public function getTitle(): ?string {
     return $this->_asset->title;
   }
 
@@ -243,7 +234,7 @@ class Source
    * @param string|null $prefix
    * @return callable[]
    */
-  public function getVariables($prefix = null) {
+  public function getVariables(string $prefix = null): array {
     $variables = [
       'aspect'        => [$this, 'getAspect'],
       'aspectPercent' => [$this, 'getAspectPercent'],
@@ -261,9 +252,9 @@ class Source
   }
 
   /**
-   * @return float|int|null
+   * @return int|null
    */
-  public function getWidth() {
+  public function getWidth(): int|null {
     if (!isset($this->_width)) {
       $this->_width = $this->_asset->getWidth($this->_transform);
     }
@@ -274,7 +265,7 @@ class Source
   /**
    * @param string $value
    */
-  public function setDescriptor(string $value) {
+  public function setDescriptor(string $value): void {
     $this->_descriptor = $value;
   }
 

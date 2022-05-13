@@ -16,7 +16,7 @@ class EntryAdapter extends AbstractAdapter
   /**
    * @inheritDoc
    */
-  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField) {
+  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField): void {
     if ($layout->type == Entry::class) {
       $entryType = EntryType::findOne([
         'fieldLayoutId' => $layoutField->layoutId,
@@ -46,7 +46,7 @@ class EntryAdapter extends AbstractAdapter
   /**
    * @inheritDoc
    */
-  public function toUids(ElementInterface $element = null) {
+  public function toUids(ElementInterface $element = null): ?array {
     if ($element instanceof Entry) {
       return [
         $element->getType()->uid,

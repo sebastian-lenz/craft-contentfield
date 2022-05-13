@@ -14,7 +14,7 @@ abstract class AbstractSchemaContainer extends AbstractSchema
   /**
    * @var StructureSchema[]
    */
-  private $_localStructures = [];
+  private array $_localStructures = [];
 
 
   /**
@@ -54,8 +54,9 @@ abstract class AbstractSchemaContainer extends AbstractSchema
 
   /**
    * @return AbstractSchema[]
+   * @noinspection PhpUnused
    */
-  public function getLocalStructures() {
+  public function getLocalStructures(): array {
     return $this->_localStructures;
   }
 

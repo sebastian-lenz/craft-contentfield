@@ -13,5 +13,5 @@ interface InstanceAwareInterface
    * @param InstanceValue $instance
    * @return void
    */
-  public function setInstance(InstanceValue $instance);
+  public function setInstance(InstanceValue $instance): void;
 }

@@ -7,9 +7,8 @@ use Exception;
 use lenz\contentfield\exceptions\ContentLoadException;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
-use lenz\contentfield\models\schemas\StructureSchema;
-use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\InstanceValue;
+use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\services\schemas\AbstractLoader;
 use lenz\contentfield\services\schemas\StructureLoader;
 use lenz\contentfield\services\schemas\TemplateLoader;
@@ -23,32 +22,32 @@ class Schemas
   /**
    * @var Exception[]
    */
-  private $_allErrors;
+  private array $_allErrors;
 
   /**
    * @var AbstractSchema[]
    */
-  private $_allSchemas;
+  private array $_allSchemas;
 
   /**
    * @var AbstractLoader[]
    */
-  private $_loaders;
+  private array $_loaders;
 
   /**
    * @var AbstractSchema[]
    */
-  private $_schemas = [];
+  private array $_schemas = [];
 
   /**
    * @var StructureLoader
    */
-  private $_structureLoader;
+  private StructureLoader $_structureLoader;
 
   /**
    * @var TemplateLoader
    */
-  private $_templateLoader;
+  private TemplateLoader $_templateLoader;
 
 
   /**
@@ -68,10 +67,11 @@ class Schemas
    * @param mixed $data
    * @param ValueInterface|null $parent
    * @param InstanceField|null $field
-   * @return InstanceValue
+   * @return InstanceValue|null
+   * @throws ContentLoadException
    * @throws Exception
    */
-  public function createValue($data, ValueInterface $parent = null, InstanceField $field = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null, InstanceField $field = null): ?InstanceValue {
     if (!is_array($data) || !isset($data[InstanceValue::TYPE_PROPERTY])) {
       return null;
     }
@@ -91,8 +91,9 @@ class Schemas
 
   /**
    * @return Exception[]
+   * @throws Exception
    */
-  public function getAllErrors() {
+  public function getAllErrors(): array {
     if (!isset($this->_allErrors)) {
       $this->getAllSchemas();
     }
@@ -102,8 +103,9 @@ class Schemas
 
   /**
    * @return AbstractSchema[]
+   * @throws Exception
    */
-  public function getAllSchemas() {
+  public function getAllSchemas(): array {
     if (!isset($this->_allSchemas)) {
       $errors  = [];
       $schemas = [];
@@ -125,7 +127,7 @@ class Schemas
    * @param AbstractSchema[] $schemas
    * @return AbstractSchema[]
    */
-  public function getDependedSchemas($schemas) {
+  public function getDependedSchemas(array $schemas): array {
     $result = [];
     $stack  = $schemas;
 
@@ -148,11 +150,11 @@ class Schemas
   /**
    * Returns a schema by its name.
    *
-   * @param string|array $qualifier
+   * @param array|string $qualifier
    * @return null|AbstractSchema
    * @throws Exception
    */
-  public function getSchema($qualifier) {
+  public function getSchema(array|string $qualifier): ?AbstractSchema {
     $parsed = is_array($qualifier)
       ? $qualifier
       : $this->parseSchemaQualifier($qualifier);
@@ -174,7 +176,7 @@ class Schemas
    * @return AbstractSchema[]
    * @throws Throwable
    */
-  public function getSchemas($qualifiers) {
+  public function getSchemas(array $qualifiers): array {
     $result = [];
 
     foreach ($qualifiers as $qualifier) {
@@ -194,8 +196,9 @@ class Schemas
    * Return the structure loader instance.
    *
    * @return StructureLoader
+   * @noinspection PhpUnused
    */
-  public function getStructureLoader() {
+  public function getStructureLoader(): StructureLoader {
     return $this->_structureLoader;
   }
 
@@ -204,7 +207,7 @@ class Schemas
    *
    * @return TemplateLoader
    */
-  public function getTemplateLoader() {
+  public function getTemplateLoader(): TemplateLoader {
     return $this->_templateLoader;
   }
 
@@ -217,7 +220,7 @@ class Schemas
    * @return bool
    * @throws Exception
    */
-  public function matchesQualifier(string $qualifier, $specs, AbstractSchema $scope = null): bool {
+  public function matchesQualifier(string $qualifier, array|string $specs, AbstractSchema $scope = null): bool {
     $qualifierInfo = $this->parseSchemaQualifier($qualifier, $scope);
 
     if (!is_array($specs)) {
@@ -247,7 +250,7 @@ class Schemas
    * @return array
    * @throws Exception
    */
-  public function parseSchemaQualifier($qualifier, AbstractSchema $scope = null) {
+  public function parseSchemaQualifier(string $qualifier, AbstractSchema $scope = null): array {
     $divider = strpos($qualifier, ':');
     $name = $divider === false
       ? trim($qualifier)
@@ -261,8 +264,8 @@ class Schemas
       $name = $this->_structureLoader->normalizeName($name);
       return [
         'loader' => $this->_structureLoader,
-        'name'   => StructureLoader::createName($name, $scope),
-        'uri'    => StructureLoader::createQualifier($name, $scope),
+        'name' => StructureLoader::createName($name, $scope),
+        'uri' => StructureLoader::createQualifier($name, $scope),
       ];
     }
 
@@ -271,25 +274,22 @@ class Schemas
       $name = $this->_templateLoader->normalizeName($name);
       return [
         'loader' => $this->_templateLoader,
-        'name'   => $name,
-        'uri'    => TemplateLoader::NAME_PREFIX . $name,
+        'name' => $name,
+        'uri' => TemplateLoader::NAME_PREFIX . $name,
       ];
     }
 
-    // Otherwise delegate to the loader
+    // Otherwise, delegate to the loader
     $loaderName = substr($qualifier, 0, $divider + 1);
     if (!array_key_exists($loaderName, $this->_loaders)) {
       throw new Exception('Invalid schema name "' . $qualifier . '"');
     }
 
     $loader = $this->_loaders[$loaderName];
-    $name   = $loader->normalizeName($name);
-    $uri    = $loader::NAME_PREFIX . $name;
-
     return [
       'loader' => $loader,
-      'name'   => $name,
-      'uri'    => $uri,
+      'name' => $loader->normalizeName($name),
+      'uri' => $loader::NAME_PREFIX . $name,
     ];
   }
 
@@ -298,11 +298,11 @@ class Schemas
   // ---------------
 
   /**
-   * @param string|array $qualifier
+   * @param array|string $qualifier
    * @return AbstractSchema[]
    * @throws Throwable
    */
-  private function getSchemasWithWildcard($qualifier) {
+  private function getSchemasWithWildcard(array|string $qualifier): array {
     $parsed = is_array($qualifier)
       ? $qualifier
       : $this->parseSchemaQualifier($qualifier);
@@ -328,18 +328,18 @@ class Schemas
   // --------------
 
   /**
-   * @param string $value
+   * @param array|string $value
    * @return bool
    */
-  static public function isPattern($value) {
-    return strpos(is_array($value) ? $value['name'] : $value, '*') !== false;
+  static public function isPattern(array|string $value): bool {
+    return str_contains(is_array($value) ? $value['name'] : $value, '*');
   }
 
   /**
    * @param string $value
    * @return string
    */
-  static function toPattern($value) {
+  static function toPattern(string $value): string {
     $pattern = implode('[A-Za-z0-9-_]+', array_map(function($part) {
       return preg_quote($part, '/');
     }, explode('*', $value)));

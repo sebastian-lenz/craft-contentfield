@@ -19,7 +19,7 @@ class DisplayNodeVisitor extends AbstractNodeVisitor
   /**
    * @var DisplayNodeVisitorContext|null
    */
-  private $_context = null;
+  private ?DisplayNodeVisitorContext $_context = null;
 
 
   /**

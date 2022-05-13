@@ -12,24 +12,24 @@ use yii\base\UnknownPropertyException;
 /**
  * Class TemplateImageTag
  *
- * Renders a image tag by rendering a twig template.
+ * Renders an image tag by rendering a twig template.
  */
 class TemplateImageTag extends AbstractImageTag
 {
   /**
    * @var string
    */
-  public $template;
+  public string $template;
 
   /**
    * @var array
    */
-  public $variables = [];
+  public array $variables = [];
 
   /**
    * @var TemplateWrapper[]
    */
-  private static $_templates = [];
+  private static array $_templates = [];
 
 
   /**
@@ -47,7 +47,7 @@ class TemplateImageTag extends AbstractImageTag
    */
   public function __get($name) {
     try {
-      parent::__get($name);
+      return parent::__get($name);
     } catch (UnknownPropertyException $error) {
       if (array_key_exists($name, $this->variables)) {
         return $this->variables[$name];
@@ -60,10 +60,8 @@ class TemplateImageTag extends AbstractImageTag
   /**
    * @inheritDoc
    */
-  public function __isset($name) {
-    return array_key_exists($name, $this->variables)
-      ? true
-      : parent::__isset($name);
+  public function __isset($name): bool {
+    return array_key_exists($name, $this->variables) || parent::__isset($name);
   }
 
   /**
@@ -72,7 +70,7 @@ class TemplateImageTag extends AbstractImageTag
   public function __set($name, $value) {
     try {
       parent::__set($name, $value);
-    } catch (UnknownPropertyException $error) {
+    } catch (UnknownPropertyException) {
       $this->variables[$name] = $value;
     }
   }
@@ -111,18 +109,14 @@ class TemplateImageTag extends AbstractImageTag
    * @return TemplateWrapper|null
    * @throws Exception
    */
-  private function getTemplate() {
-    if (
-      !isset($this->template) ||
-      !is_string($this->template)
-    ) {
+  private function getTemplate(): ?TemplateWrapper {
+    if (!isset($this->template)) {
       return null;
     }
 
     $hash = md5($this->template);
     if (!array_key_exists($hash, self::$_templates)) {
-      self::$_templates[$hash] = TemplateSchema::getTwig()
-        ->createTemplate($this->template);
+      self::$_templates[$hash] = TemplateSchema::getTwig()->createTemplate($this->template);
     }
 
     return self::$_templates[$hash];

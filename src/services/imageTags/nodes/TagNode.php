@@ -16,22 +16,22 @@ class TagNode extends AbstractScope implements NodeInterface
   /**
    * @var array
    */
-  public $attributes = [];
+  public array $attributes = [];
 
   /**
    * @var mixed
    */
-  public $repeat = null;
+  public mixed $repeat = null;
 
   /**
    * @var string
    */
-  public $tagName = 'div';
+  public string $tagName = 'div';
 
   /**
    * @var NodeInterface[]
    */
-  private $_children = [];
+  private array $_children = [];
 
 
   /**
@@ -66,10 +66,11 @@ class TagNode extends AbstractScope implements NodeInterface
   }
 
   /**
-   * @param string|array $content
+   * @param array|string $content
    * @throws Exception
+   * @noinspection PhpUnused
    */
-  public function setChildren($content) {
+  public function setChildren(array|string $content) {
     $this->_children = [];
 
     if (is_array($content)) {
@@ -87,10 +88,10 @@ class TagNode extends AbstractScope implements NodeInterface
 
   /**
    * @param mixed $value
-   * @param string|int|null $key
+   * @param int|string|null $key
    * @throws Exception
    */
-  private function addChild($value, $key = null) {
+  private function addChild(mixed $value, int|string $key = null) {
     if ($key == 'noscript' && !is_array($value)) {
       $this->_children[] = new NoscriptNode($this);
     } elseif (is_array($value)) {
@@ -108,7 +109,7 @@ class TagNode extends AbstractScope implements NodeInterface
    * @param ScopeInterface|null $scope
    * @return array
    */
-  private function getTagAttributes(ScopeInterface $scope = null) {
+  private function getTagAttributes(ScopeInterface $scope = null): array {
     $scope = is_null($scope)
       ? $this
       : $scope;
@@ -123,11 +124,10 @@ class TagNode extends AbstractScope implements NodeInterface
    * @param ScopeInterface|null $scope
    * @return string
    */
-  private function getTagChildren(ScopeInterface $scope = null) {
-    $tags = array_map(function(NodeInterface $node) use ($scope) {
-      return $node->render($scope);
-    }, $this->_children);
-
-    return implode('', $tags);
+  private function getTagChildren(ScopeInterface $scope = null): string {
+    return implode('', array_map(
+      fn(NodeInterface $node) => $node->render($scope),
+      $this->_children
+    ));
   }
 }

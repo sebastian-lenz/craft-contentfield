@@ -18,7 +18,7 @@ class OEmbedField extends AbstractField
   /**
    * @var Provider[]
    */
-  public $providers = [];
+  public array $providers = [];
 
   /**
    * @inheritdoc
@@ -57,14 +57,14 @@ class OEmbedField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): OEmbedValue {
     return new OEmbedValue($data, $parent, $this);
   }
 
   /**
    * @inheritdoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?array {
     if (!($value instanceof OEmbedValue)) {
       return null;
     }
@@ -105,7 +105,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSerializedValue($value) {
+  public function getSerializedValue(mixed $value): ?string {
     if (!($value instanceof OEmbedValue)) {
       return null;
     }
@@ -120,7 +120,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritdoc
    */
-  static public function expandFieldConfig(array &$config) {
+  static public function expandFieldConfig(array &$config): void {
     if ($config['type'] === 'youtube') {
       $config = array(
         'type'      => self::NAME,

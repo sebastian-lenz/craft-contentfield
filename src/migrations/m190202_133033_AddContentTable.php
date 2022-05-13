@@ -3,19 +3,22 @@
 namespace lenz\contentfield\migrations;
 
 use Craft;
-use lenz\contentfield\fields\ContentField;
-use lenz\contentfield\records\ContentRecord;
 use craft\db\Migration;
 use craft\db\Table;
+use lenz\contentfield\fields\ContentField;
+use lenz\contentfield\records\ContentRecord;
+use yii\db\Exception;
 use yii\db\Query;
 
 /**
  * m190202_133033_AddContentTable migration.
+ * @noinspection PhpUnused
  */
 class m190202_133033_AddContentTable extends Migration
 {
   /**
    * @inheritdoc
+   * @throws Exception
    */
   public function safeUp() {
     $this->update(
@@ -37,10 +40,10 @@ class m190202_133033_AddContentTable extends Migration
     ]);
 
     $this->createIndex('contentfield_elementId_siteId_unq_idx', $table, ['elementId', 'siteId'], true);
-    $this->createIndex('contentfield_siteId_idx', $table, ['siteId'], false);
-    $this->createIndex('contentfield_fieldId_idx', $table, ['fieldId'], false);
-    $this->addForeignKey('contentfield_elementId_fk', $table, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE', null);
-    $this->addForeignKey('contentfield_fieldId_fk', $table, ['fieldId'], Table::FIELDS, ['id'], 'CASCADE', null);
+    $this->createIndex('contentfield_siteId_idx', $table, ['siteId']);
+    $this->createIndex('contentfield_fieldId_idx', $table, ['fieldId']);
+    $this->addForeignKey('contentfield_elementId_fk', $table, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE');
+    $this->addForeignKey('contentfield_fieldId_fk', $table, ['fieldId'], Table::FIELDS, ['id'], 'CASCADE');
 
     $fields = Craft::$app->getFields();
     $fields->refreshFields();

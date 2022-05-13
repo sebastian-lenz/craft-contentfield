@@ -16,12 +16,12 @@ class SourceGroup extends SourceSet implements ScopeInterface
   /**
    * @var array
    */
-  public $attributes = [];
+  public array $attributes = [];
 
   /**
    * @var SourceGroupSet
    */
-  private $_parent;
+  private SourceGroupSet $_parent;
 
 
   /**
@@ -30,8 +30,9 @@ class SourceGroup extends SourceSet implements ScopeInterface
    * @param SourceGroupSet $parent
    * @param mixed $config
    */
-  public function __construct(SourceGroupSet $parent, $config) {
+  public function __construct(SourceGroupSet $parent, mixed $config) {
     $transforms = [];
+    $this->_parent = $parent;
 
     if (!is_array($config)) {
       $transforms = $config;
@@ -48,15 +49,14 @@ class SourceGroup extends SourceSet implements ScopeInterface
       }
     }
 
-    $this->_parent = $parent;
     parent::__construct($parent->getNativeSource(), $transforms);
   }
 
   /**
-   * @param $name
-   * @return SourceGroup|null
+   * @param string $name
+   * @return mixed
    */
-  public function __get($name) {
+  public function __get(string $name): mixed {
     return array_key_exists($name, $this->attributes)
       ? $this->attributes[$name]
       : null;
@@ -66,7 +66,7 @@ class SourceGroup extends SourceSet implements ScopeInterface
    * @param string $name
    * @return boolean
    */
-  public function __isset($name) {
+  public function __isset(string $name) {
     return array_key_exists($name, $this->attributes);
   }
 
@@ -99,8 +99,8 @@ class SourceGroup extends SourceSet implements ScopeInterface
    * @param string $name
    * @param mixed $value
    */
-  protected function setAttribute($name, $value) {
-    if (substr($name, 0, 1) == '.') {
+  protected function setAttribute(string $name, mixed $value) {
+    if (str_starts_with($name, '.')) {
       $name = substr($name, 1);
     }
 

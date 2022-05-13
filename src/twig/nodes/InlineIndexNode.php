@@ -15,7 +15,7 @@ class InlineIndexNode extends Node
    */
   public function __construct() {
     parent::__construct([], [
-      'name'      => 'contentfieldDisplay',
+      'name' => 'contentfieldDisplay',
       'templates' => [],
     ]);
   }
@@ -51,7 +51,7 @@ class InlineIndexNode extends Node
 
     $compiler
       ->addDebugInfo($this)
-      ->write(sprintf("public function %s(\$instance, \$variables = []) {\n", $this->getAttribute('name')))
+      ->write(sprintf("public function %s(mixed \$instance, array \$variables = []) {\n", $this->getAttribute('name')))
       ->indent()
         ->write("if (\$instance instanceof \\lenz\\contentfield\\models\\values\\InstanceValue) {\n")
           ->indent()

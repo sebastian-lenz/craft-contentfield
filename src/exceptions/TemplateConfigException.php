@@ -13,7 +13,7 @@ class TemplateConfigException extends Exception
   /**
    * @var array
    */
-  public $templateConfiguration;
+  public array $templateConfiguration;
 
 
   /**

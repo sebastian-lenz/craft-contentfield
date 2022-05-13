@@ -5,6 +5,7 @@ namespace lenz\contentfield\utilities;
 use Craft;
 use craft\base\Utility as UtilityBase;
 use craft\helpers\Html;
+use lenz\craft\utils\helpers\ArrayHelper;
 use Throwable;
 
 /**
@@ -15,17 +16,17 @@ class Utility extends UtilityBase
   /**
    * @var AbstractPage
    */
-  private $_current;
+  private AbstractPage $_current;
 
   /**
    * @var AbstractPage[]
    */
-  private $_pages;
+  private array $_pages;
 
   /**
    * @var Utility
    */
-  private static $_INSTANCE;
+  private static Utility $_INSTANCE;
 
 
   /**
@@ -36,32 +37,18 @@ class Utility extends UtilityBase
   public function __construct($config = []) {
     parent::__construct($config);
 
-    $pages = [
-      new IconPage(),
-      new SourcesPage(),
-      new ErrorsPage(),
-    ];
+    $pages = [new IconPage(), new SourcesPage(), new ErrorsPage()];
+    $handle = Craft::$app->getRequest()->getQueryParam('tab');
+    $current = ArrayHelper::firstWhere($pages, fn($page) => $page->getHandle() == $handle);
 
-    $current = reset($pages);
-    $handle = Craft::$app
-      ->getRequest()
-      ->getQueryParam('tab');
-
-    foreach ($pages as $page) {
-      if ($page->getHandle() == $handle) {
-        $current = $page;
-        break;
-      }
-    }
-
-    $this->_current = $current;
+    $this->_current = is_null($current) ? reset($pages) : $current;
     $this->_pages = $pages;
   }
 
   /**
    * @return string
    */
-  public function getContentHtml() : string {
+  public function getContentHtml(): string {
     try {
       return $this->_current->contentHtml();
     } catch (Throwable $error) {
@@ -103,7 +90,7 @@ class Utility extends UtilityBase
   /**
    * @return Utility
    */
-  public static function getInstance() : Utility {
+  public static function getInstance(): Utility {
     if (!isset(self::$_INSTANCE)) {
       self::$_INSTANCE = new Utility();
     }
@@ -128,7 +115,7 @@ class Utility extends UtilityBase
   /**
    * @inheritDoc
    */
-  public static function toolbarHtml() : string {
+  public static function toolbarHtml(): string {
     return self::getInstance()->getToolbarHtml();
   }
 }

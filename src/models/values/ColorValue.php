@@ -14,22 +14,22 @@ class ColorValue extends AbstractValue
   /**
    * @var float
    */
-  public $alpha = 1;
+  public mixed $alpha = 1;
 
   /**
    * @var int
    */
-  public $blue = 255;
+  public mixed $blue = 255;
 
   /**
    * @var int
    */
-  public $green = 255;
+  public mixed $green = 255;
 
   /**
    * @var int
    */
-  public $red = 255;
+  public mixed $red = 255;
 
 
   /**
@@ -64,14 +64,14 @@ class ColorValue extends AbstractValue
   /**
    * @inheritDoc
    */
-  public function __toString() {
+  public function __toString(): string {
     return $this->getCssValue();
   }
 
   /**
    * @return string
    */
-  public function getCssValue() {
+  public function getCssValue(): string {
     return $this->_field->alpha
       ? $this->getRgba()
       : $this->getHex();
@@ -80,7 +80,7 @@ class ColorValue extends AbstractValue
   /**
    * @return string
    */
-  public function getHex() {
+  public function getHex(): string {
     return sprintf("#%02x%02x%02x", $this->red, $this->green, $this->blue);
   }
 
@@ -88,7 +88,7 @@ class ColorValue extends AbstractValue
    * @param float|null $alpha
    * @return string
    */
-  public function getRgba($alpha = null) {
+  public function getRgba(float $alpha = null): string {
     return 'rgba(' . implode(',', array(
         $this->red,
         $this->green,

@@ -18,13 +18,13 @@ class QueryExtension extends ForeignFieldQueryExtension
   /**
    * @var ReferenceLoader
    */
-  private $_referenceLoader;
+  private ReferenceLoader $_referenceLoader;
 
 
   /**
    * @return void
    */
-  protected function attachEagerLoad() {
+  protected function attachEagerLoad(): void {
     parent::attachEagerLoad();
 
     $this->query->on(
@@ -40,10 +40,8 @@ class QueryExtension extends ForeignFieldQueryExtension
   public function onAfterPopulateElement(PopulateElementEvent $event) {
     try {
       $handle = $this->field->handle;
-      $content = is_null($event->element) || is_null($handle)
-        ? null
-        : $event->element->getFieldValue($handle);
-    } catch (InvalidFieldException $exception) {
+      $content = is_null($handle) ? null : $event->element->getFieldValue($handle);
+    } catch (InvalidFieldException) {
       // This happens queries eager load fields that are present only
       // on a part of the query results, we can safely ignore it
       $content = null;
@@ -56,7 +54,7 @@ class QueryExtension extends ForeignFieldQueryExtension
 
       try {
         $content->setReferenceLoader($this->_referenceLoader);
-      } catch (Exception $error) {
+      } catch (Exception) {
         unset($this->_referenceLoader);
       }
     }

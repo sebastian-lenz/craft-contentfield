@@ -33,17 +33,17 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @var ContentLoadException
    */
-  private $_loadError;
+  private ContentLoadException $_loadError;
 
   /**
-   * @var values\InstanceValue|null
+   * @var InstanceValue|null
    */
-  private $_model;
+  private ?InstanceValue $_model;
 
   /**
    * @var ReferenceLoader
    */
-  private $_referenceLoader;
+  private ReferenceLoader $_referenceLoader;
 
   /**
    * Event triggered before some content is rendered.
@@ -86,7 +86,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
    * @inheritDoc
    * @throws Exception
    */
-  public function display(array $variables = []) {
+  public function display(array $variables = []): void {
     $model = $this->_model;
     if (!is_null($model)) {
       $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
@@ -127,6 +127,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
 
   /**
    * @return ContentLoadException|null
+   * @noinspection PhpUnused
    */
   public function getLoadError(): ?ContentLoadException {
     return $this->_loadError ?? null;
@@ -153,7 +154,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
     if ($this->_owner instanceof Element) {
       try {
         return $this->_owner->getSite();
-      } catch (Exception $e) {
+      } catch (Exception) {
         // Ignore this error
       }
     }
@@ -166,18 +167,16 @@ class Content extends ForeignFieldModel implements DisplayInterface
    */
   public function getReferencedIds(): array {
     $result = [];
-    if (
-      is_null($this->_model) ||
-      !($this->_model instanceof values\InstanceValue)
-    ) {
+    if (!($this->_model instanceof values\InstanceValue)) {
       return $result;
     }
 
     $siteId = $this->getOwnerSite()->id;
 
-    return array_map(function(ElementInterface $element) {
-      return $element->getId();
-    }, $this->_model->getReferenceMap()->queryAll($siteId));
+    return array_map(
+      fn(ElementInterface $element) => $element->getId(),
+      $this->_model->getReferenceMap()->queryAll($siteId)
+    );
   }
 
   /**
@@ -241,10 +240,10 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
-   * @param InstanceValue|string|null|mixed $value
+   * @param mixed $value
    * @throws Throwable
    */
-  public function setModel($value = null) {
+  public function setModel(mixed $value = null) {
     $model   = null;
     $schemas = Plugin::getInstance()->schemas;
 
@@ -318,7 +317,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   protected function getSerializedData(): array {
     return array_merge(parent::getSerializedData(), [
       '_attributes' => [],
-      '_model' => $this->_model ? $this->_model->getSerializedValue() : null,
+      '_model' => $this->_model?->getSerializedValue(),
     ]);
   }
 
@@ -329,7 +328,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
     parent::setSerializedData($data);
     try {
       $this->setModel(ArrayHelper::get($data, '_model'));
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       // Ignore, let the deserialization move on
     }
   }

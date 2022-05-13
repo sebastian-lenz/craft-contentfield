@@ -25,12 +25,12 @@ class YamlAwareTemplateLoader extends TemplateLoader
   /**
    * @var bool
    */
-  private $_hasMetaDataChanged = false;
+  private bool $_hasMetaDataChanged = false;
 
   /**
    * @var array
    */
-  private $_metaData;
+  private array $_metaData;
 
   /**
    * Unified path separator.
@@ -96,7 +96,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
     try {
       $data = $this->getMetaData($name);
       return $data['sourceOffset'];
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       return 0;
     }
   }
@@ -108,7 +108,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
   /**
    * @throws Throwable
    */
-  private function loadCachedMetaData() {
+  private function loadCachedMetaData(): void {
     if (isset($this->_metaData)) {
       return;
     }
@@ -169,7 +169,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @param string|null $yaml
    * @throws Throwable
    */
-  private function saveMetaData(string $name, string $path, string $yaml = null) {
+  private function saveMetaData(string $name, string $path, string $yaml = null): void {
     $name = self::normalizeName($name);
     $this->loadCachedMetaData();
 
@@ -193,7 +193,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
       register_shutdown_function(function() {
         try {
           Craft::$app->getCache()->set(self::class, $this->_metaData);
-        } catch (Throwable $error) {
+        } catch (Throwable) {
           // Ignore this, we are shutting down
         }
       });
@@ -234,7 +234,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    */
   static public function normalizeName(string $name): string {
     $name = FileHelper::normalizePath($name, self::SEPARATOR);
-    if (substr($name, -5) == '.twig') {
+    if (str_ends_with($name, '.twig')) {
       $name = substr($name, 0, strlen($name) - 5);
     }
 
@@ -247,7 +247,7 @@ class YamlAwareTemplateLoader extends TemplateLoader
    * @return mixed
    * @throws \yii\base\Exception
    */
-  static public function withSiteView(callable $callback, View $view = null) {
+  static public function withSiteView(callable $callback, View $view = null): mixed {
     if (is_null($view)) {
       $view = Craft::$app->getView();
     }

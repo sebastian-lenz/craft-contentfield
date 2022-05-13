@@ -17,7 +17,7 @@ class TextField extends AbstractStringField
    *
    * @var string
    */
-  public $inputType = 'text';
+  public string $inputType = 'text';
 
   /**
    * Placeholder text for the text input element. Translated using the default
@@ -25,7 +25,7 @@ class TextField extends AbstractStringField
    *
    * @var string
    */
-  public $placeholder = '';
+  public string $placeholder = '';
 
   /**
    * The internal name of this widget.

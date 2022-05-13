@@ -15,12 +15,12 @@ abstract class AbstractRootScope implements ScopeInterface
   /**
    * @var Source
    */
-  protected $_nativeSource;
+  protected Source $_nativeSource;
 
   /**
    * @var SourceSet
    */
-  private $_sources;
+  private SourceSet $_sources;
 
 
   /**
@@ -35,7 +35,7 @@ abstract class AbstractRootScope implements ScopeInterface
   /**
    * @inheritDoc
    */
-  public function getNativeSource() : Source {
+  public function getNativeSource(): Source {
     return $this->_nativeSource;
   }
 
@@ -49,7 +49,7 @@ abstract class AbstractRootScope implements ScopeInterface
   /**
    * @inheritDoc
    */
-  public function getSources() : SourceSet {
+  public function getSources(): SourceSet {
     if (!isset($this->_sources)) {
       $this->_sources = new SourceSet($this->_nativeSource, [null]);
     }

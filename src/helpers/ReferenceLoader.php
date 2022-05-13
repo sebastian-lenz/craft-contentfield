@@ -18,22 +18,22 @@ class ReferenceLoader
   /**
    * @var Content[]
    */
-  private $_contents = [];
+  private array $_contents = [];
 
   /**
    * @var ElementInterface[][]
    */
-  private $_elements = [];
+  private array $_elements = [];
 
   /**
    * @var ReferenceMap
    */
-  private $_referenceMap;
+  private ReferenceMap $_referenceMap;
 
   /**
    * @var int|null
    */
-  private $_siteId = null;
+  private ?int $_siteId = null;
 
 
   /**
@@ -51,13 +51,13 @@ class ReferenceLoader
    * @param Content $content
    * @throws Exception
    */
-  public function addContent(Content $content) {
+  public function addContent(Content $content): void {
     if (isset($this->_referenceMap)) {
       throw new Exception('This batch loader is already in used');
     }
 
     $element = $content->getOwner();
-    if (!is_null($element) && $element instanceof Element) {
+    if ($element instanceof Element) {
       if (is_null($this->_siteId)) {
         $this->_siteId = $element->siteId;
       } else if ($this->_siteId !== $element->siteId) {

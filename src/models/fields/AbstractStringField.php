@@ -16,40 +16,38 @@ abstract class AbstractStringField extends AbstractField
    *
    * @var int
    */
-  public $maxLength;
+  public int $maxLength;
 
   /**
    * Specifies the minimum string length.
    *
    * @var int
    */
-  public $minLength;
+  public int $minLength;
 
   /**
    * A regular expression the string must match.
    *
    * @var string
    */
-  public $pattern;
+  public string $pattern;
 
   /**
    * @var bool
    */
-  public $searchable = true;
+  public bool $searchable = true;
 
   /**
    * @var bool
    */
-  public $translatable = true;
+  public bool $translatable = true;
 
 
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
-    return is_string($data)
-      ? $data
-      : null;
+  public function createValue(mixed $data, ValueInterface $parent = null): ?string {
+    return is_string($data) ? $data : null;
   }
 
   /**
@@ -66,27 +64,23 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
-    return is_string($value)
-      ? $value
-      : null;
+  public function getEditorValue(mixed $value): ?string {
+    return is_string($value) ? $value : null;
   }
 
   /**
    * @param mixed $value
    * @return string
    */
-  public function getSearchKeywords($value): string {
-    return $this->searchable && is_string($value)
-      ? (string)$value
-      : '';
+  public function getSearchKeywords(mixed $value): string {
+    return $this->searchable && is_string($value) ? $value : '';
   }
 
   /**
-   * @param $value
-   * @return mixed
+   * @param mixed $value
+   * @return string|null
    */
-  public function getSerializedValue($value) {
+  public function getSerializedValue(mixed $value): ?string {
     $result = $this->getEditorValue($value);
     if (is_string($result)) {
       $result = StringHelper::sanitizeString($result);

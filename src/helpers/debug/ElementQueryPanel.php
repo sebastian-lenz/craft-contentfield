@@ -15,12 +15,12 @@ class ElementQueryPanel extends Panel
   /**
    * @var bool
    */
-  protected $_isLoaded = false;
+  protected bool $_isLoaded = false;
 
   /**
    * @var QueryInfo[]
    */
-  protected $_queries = [];
+  protected array $_queries = [];
 
   /**
    * The internal id of this panel.

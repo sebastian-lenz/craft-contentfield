@@ -17,32 +17,32 @@ abstract class AbstractImageTag extends BaseObject implements ImageTagInterface
   /**
    * @var mixed
    */
-  public $transformGroups = null;
+  public mixed $transformGroups = null;
 
   /**
    * @var mixed
    */
-  public $transforms = null;
+  public mixed $transforms = null;
 
   /**
    * @var Asset
    */
-  private $_asset;
+  private Asset $_asset;
 
   /**
    * @var Source
    */
-  private $_nativeImage;
+  private Source $_nativeImage;
 
   /**
    * @var SourceGroupSet
    */
-  private $_sourceGroups;
+  private SourceGroupSet $_sourceGroups;
 
   /**
    * @var SourceSet
    */
-  private $_sources;
+  private SourceSet $_sources;
 
 
   /**
@@ -87,7 +87,7 @@ abstract class AbstractImageTag extends BaseObject implements ImageTagInterface
   /**
    * @return SourceGroupSet
    */
-  protected function getSourceGroups() {
+  protected function getSourceGroups(): SourceGroupSet {
     if (!isset($this->_sourceGroups)) {
       $this->_sourceGroups = new SourceGroupSet(
         $this->_nativeImage,
@@ -101,7 +101,7 @@ abstract class AbstractImageTag extends BaseObject implements ImageTagInterface
   /**
    * @return SourceSet
    */
-  protected function getSources() {
+  protected function getSources(): SourceSet {
     if (empty($this->transforms)) {
       return $this->getSourceGroups()->getSources();
     }
@@ -123,7 +123,7 @@ abstract class AbstractImageTag extends BaseObject implements ImageTagInterface
    * @param array $config
    * @return array
    */
-  static public function expandConfig(array &$config) {
+  static public function expandConfig(array &$config): array {
     foreach ($config as $key => &$value) {
       if (!is_numeric($key) && $key !== 'transform') {
         continue;
@@ -159,7 +159,7 @@ abstract class AbstractImageTag extends BaseObject implements ImageTagInterface
    * @param array $parent
    * @return array
    */
-  static public function mergeConfig(array $config, array $parent) : array {
+  static public function mergeConfig(array $config, array $parent): array {
     self::expandConfig($parent);
     self::expandConfig($config);
 

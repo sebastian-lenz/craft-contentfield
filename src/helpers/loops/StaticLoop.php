@@ -10,7 +10,7 @@ class StaticLoop implements LoopInterface
   /**
    * @var StaticLoop
    */
-  private static $_instance;
+  private static StaticLoop $_instance;
 
 
   /**
@@ -79,14 +79,14 @@ class StaticLoop implements LoopInterface
   /**
    * @return mixed
    */
-  public function peakNext() {
+  public function peakNext(): mixed {
     return null;
   }
 
   /**
    * @return mixed
    */
-  public function peakPrevious() {
+  public function peakPrevious(): mixed {
     return null;
   }
 

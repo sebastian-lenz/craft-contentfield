@@ -7,6 +7,7 @@ use yii\validators\Validator;
 
 /**
  * Class ContentFieldValidator
+ * @noinspection PhpUnused
  */
 class ContentFieldValidator extends Validator
 {

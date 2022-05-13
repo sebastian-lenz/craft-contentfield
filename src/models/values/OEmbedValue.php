@@ -17,7 +17,7 @@ class OEmbedValue extends AbstractValue implements DisplayInterface
   /**
    * @var string
    */
-  private $_url = '';
+  private string $_url = '';
 
 
   /**
@@ -40,14 +40,14 @@ class OEmbedValue extends AbstractValue implements DisplayInterface
   /**
    * @inheritdoc
    */
-  public function __toString() {
+  public function __toString(): string {
     return $this->_url;
   }
 
   /**
    * @inheritDoc
    */
-  public function display(array $variables = []) {
+  public function display(array $variables = []): void {
     $oEmbed = $this->getOEmbed();
     echo is_null($oEmbed)
       ? ''

@@ -2,10 +2,8 @@
 
 namespace lenz\contentfield\services\imageTags;
 
-use craft\elements\Asset;
 use craft\helpers\Html;
 use lenz\contentfield\services\imageTags\scopes\AbstractScope;
-use lenz\contentfield\services\imageTags\sources\SourceSet;
 
 /**
  * Class ImageImageTag
@@ -17,32 +15,32 @@ class ImageImageTag extends AbstractImageTag
   /**
    * @var string
    */
-  public $alt = '{title}';
+  public string $alt = '{title}';
 
   /**
    * @var string
    */
-  public $class;
+  public string $class;
 
   /**
    * @var string
    */
-  public $height = '{height}';
+  public string $height = '{height}';
 
   /**
    * @var string
    */
-  public $sizes;
+  public string $sizes;
 
   /**
    * @var string
    */
-  public $src = '{src}';
+  public string $src = '{src}';
 
   /**
    * @var string
    */
-  public $width = '{width}';
+  public string $width = '{width}';
 
 
   /**
@@ -51,12 +49,12 @@ class ImageImageTag extends AbstractImageTag
   public function render(): string {
     $sources = $this->getSources();
     $attributes = [
-      'alt'    => $this->alt,
-      'class'  => isset($this->class) ? $this->class : '',
+      'alt' => $this->alt,
+      'class' => $this->class ?? '',
       'height' => $this->height,
-      'sizes'  => isset($this->sizes) ? $this->sizes : '',
-      'src'    => $this->src,
-      'width'  => $this->width,
+      'sizes' => $this->sizes ?? '',
+      'src' => $this->src,
+      'width' => $this->width,
     ];
 
     if (count($sources) > 1) {

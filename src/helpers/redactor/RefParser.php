@@ -18,32 +18,32 @@ class RefParser
   /**
    * @var string
    */
-  public $content = '';
+  public string $content = '';
 
   /**
    * @var int
    */
-  public $numMatches = 0;
+  public int $numMatches = 0;
 
   /**
    * @var array
    */
-  public $tokens = [];
+  public array $tokens = [];
 
   /**
    * @var int
    */
-  private $_defaultSiteId;
+  private int $_defaultSiteId;
 
   /**
    * @var Elements
    */
-  private $_elements;
+  private Elements $_elements;
 
   /**
    * @var Sites
    */
-  private $_sitesService;
+  private Sites $_sitesService;
 
 
   /**
@@ -73,7 +73,7 @@ class RefParser
    * @return mixed|string
    * @throws Exception
    */
-  public function __invoke(array $matches) {
+  public function __invoke(array $matches): mixed {
     $matches = array_pad($matches, 6, null);
     [$fullMatch, $elementType, $ref, $siteId, /* $attribute */, $fallback] = $matches;
     if ($fallback === null) {
@@ -99,7 +99,7 @@ class RefParser
           } else {
             $site = $this->_sitesService->getSiteByHandle($siteId);
           }
-        } catch (SiteNotFoundException $e) {
+        } catch (SiteNotFoundException) {
           $site = null;
         }
 

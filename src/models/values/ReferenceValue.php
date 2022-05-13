@@ -28,12 +28,12 @@ class ReferenceValue
   /**
    * @var ElementInterface[]
    */
-  private $_references;
+  private array $_references;
 
   /**
    * @var int[]
    */
-  private $_values;
+  private array $_values;
 
 
   /**
@@ -49,9 +49,7 @@ class ReferenceValue
     if (!is_array($data)) {
       $this->_values = [];
     } else {
-      $this->_values = array_filter($data, function($value) {
-        return is_int($value);
-      });
+      $this->_values = array_filter($data, fn($value) => is_int($value));
     }
   }
 
@@ -59,7 +57,7 @@ class ReferenceValue
    * @inheritdoc
    * @throws Exception
    */
-  public function __toString() {
+  public function __toString(): string {
     return implode(', ', array_map(function($value) {
       return (string)$value;
     }, $this->getReferences()));
@@ -68,7 +66,7 @@ class ReferenceValue
   /**
    * Returns the first reference or null if no references are set.
    *
-   * @return ElementInterface
+   * @return ElementInterface|null
    * @throws Exception
    */
   public function getFirst(): ?ElementInterface {
@@ -124,20 +122,21 @@ class ReferenceValue
   /**
    * Renders an image tag for the first reference in the field.
    *
-   * @param string|array $config
+   * @param array|string $config
    * @return Markup|null
    * @throws Exception
+   * @noinspection PhpUnused
    */
-  public function imageTag($config = 'default'): ?Markup {
+  public function imageTag(array|string $config = 'default'): ?Markup {
     foreach ($this->getReferences() as $reference) {
       if ($reference instanceof Asset) {
         $result = Plugin::getInstance()
           ->imageTags
           ->render($reference, $config);
 
-        return is_null($result)
-          ? null
-          : Template::raw($result);
+        if (!is_null($result)) {
+          return Template::raw($result);
+        }
       }
     }
 
@@ -169,7 +168,7 @@ class ReferenceValue
    * @inheritdoc
    * @throws Exception
    */
-  public function offsetGet($offset) {
+  public function offsetGet($offset): ElementInterface {
     $references = $this->getReferences();
     return $references[$offset];
   }
@@ -177,12 +176,12 @@ class ReferenceValue
   /**
    * @inheritdoc
    */
-  public function offsetSet($offset, $value) { }
+  public function offsetSet($offset, $value): void { }
 
   /**
    * @inheritdoc
    */
-  public function offsetUnset($offset) { }
+  public function offsetUnset($offset): void { }
 
 
   // Countable
@@ -205,7 +204,7 @@ class ReferenceValue
    * @inheritdoc
    * @throws Exception
    */
-  public function getIterator() {
+  public function getIterator(): ArrayIterator {
     return new ArrayIterator($this->getReferences());
   }
 

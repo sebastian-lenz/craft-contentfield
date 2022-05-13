@@ -13,24 +13,24 @@ use lenz\craft\utils\models\Url;
 class Endpoint
 {
   /**
-   * @var string
+   * @var class-string<OEmbed>
    */
-  public $embedClass;
+  public string $embedClass;
 
   /**
    * @var Provider
    */
-  public $provider;
+  public Provider $provider;
 
   /**
    * @var string[]
    */
-  public $schemes = [];
+  public array $schemes = [];
 
   /**
    * @var string
    */
-  public $url;
+  public string $url;
 
 
   /**
@@ -59,7 +59,7 @@ class Endpoint
   /**
    * @return array
    */
-  public function getEditorData() {
+  public function getEditorData(): array {
     return array(
       'schemes' => $this->schemes,
       'url'     => $this->url,
@@ -70,18 +70,17 @@ class Endpoint
    * @param string $url
    * @return OEmbed|null
    */
-  public function getOEmbed($url) {
+  public function getOEmbed(string $url): ?OEmbed {
     $endpoint = new Url(str_replace('{format}', 'json', $this->url));
-    $endpoint->setQuery([
+    $endpoint->setQuery(array_merge($endpoint->getQuery(), [
       'format' => 'json',
-      'url'    => $url,
-    ] + $endpoint->getQuery());
+      'url' => $url,
+    ]));
 
+    $embedClass = $this->embedClass;
     $data = Plugin::getInstance()
       ->oembeds
       ->fetchJson((string)$endpoint);
-
-    $embedClass = $this->embedClass;
 
     return is_null($data)
       ? null
@@ -92,7 +91,7 @@ class Endpoint
    * @param string $url
    * @return bool
    */
-  public function matches($url) {
+  public function matches(string $url): bool {
     foreach ($this->schemes as $schema) {
       if (fnmatch($schema, $url)) {
         return true;

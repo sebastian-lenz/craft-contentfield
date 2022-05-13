@@ -13,13 +13,13 @@ abstract class AbstractBooleanField extends AbstractField
   /**
    * @var boolean
    */
-  public $defaultValue = false;
+  public bool $defaultValue = false;
 
 
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): bool {
     return !!$data;
   }
 
@@ -35,7 +35,7 @@ abstract class AbstractBooleanField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): bool {
     return !!$value;
   }
 

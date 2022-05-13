@@ -11,7 +11,7 @@ interface ValueTraversableInterface
    * @param string|string[] $qualifier
    * @return InstanceValue[]
    */
-  public function findInstances($qualifier): array;
+  public function findInstances(array|string $qualifier): array;
 
   /**
    * @param string $uuid

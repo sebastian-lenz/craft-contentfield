@@ -53,12 +53,12 @@ class Extension extends AbstractExtension
   // --------------
 
   /**
-   * @param Asset|Asset[]|AssetQuery|ReferenceValue $asset
-   * @param string|array $config
+   * @param mixed $asset
+   * @param array|string $config
    * @return Markup|null
    * @throws Exception
    */
-  static function imageTag($asset, $config): ?Markup {
+  static function imageTag(mixed $asset, array|string $config): ?Markup {
     if ($asset instanceof AssetQuery) {
       $asset = $asset->one();
     } elseif ($asset instanceof ReferenceValue) {

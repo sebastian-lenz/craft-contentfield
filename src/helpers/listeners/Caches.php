@@ -19,7 +19,7 @@ class Caches
   /**
    * @param ElementEvent $event
    */
-  static public function onAfterModifyElement(ElementEvent $event) {
+  static public function onAfterModifyElement(ElementEvent $event): void {
     if ($event->element instanceof Asset) {
       TagDependency::invalidate(Plugin::getInstance()->imageTagCache, $event->element->uid);
     }
@@ -28,7 +28,7 @@ class Caches
   /**
    * @param RegisterCacheOptionsEvent $event
    */
-  static public function onRegisterCacheOptions(RegisterCacheOptionsEvent $event) {
+  static public function onRegisterCacheOptions(RegisterCacheOptionsEvent $event): void {
     $event->options[] = [
       'key'    => 'cache-imagetags',
       'label'  => 'Image tag cache',
@@ -39,7 +39,7 @@ class Caches
   /**
    * @return void
    */
-  static public function register() {
+  static public function register(): void {
     Event::on(
       Elements::class, Elements::EVENT_AFTER_DELETE_ELEMENT,
       [self::class, 'onAfterModifyElement']

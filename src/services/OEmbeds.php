@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection HttpUrlsUsage */
+
 namespace lenz\contentfield\services;
 
 use craft\helpers\Json;
@@ -16,16 +18,16 @@ class OEmbeds extends Component
   /**
    * @var Provider[]
    */
-  private $_allProviders;
+  private array $_allProviders;
   /**
    * @var FileCache
    */
-  private $cache;
+  private FileCache $cache;
 
   /**
    * @var array
    */
-  static $CUSTOM_DEFINITIONS = [
+  static array $CUSTOM_DEFINITIONS = [
     'podigee' => [
       'provider_name' => 'Podigee',
       'provider_url' => 'https://www.podigee.com/',
@@ -72,7 +74,7 @@ class OEmbeds extends Component
    * @param string $url
    * @return array|null
    */
-  public function fetchJson($url) {
+  public function fetchJson(string $url): ?array {
     $cache  = $this->getCache();
     $result = null;
 
@@ -81,18 +83,19 @@ class OEmbeds extends Component
       if ($response !== false) {
         $result = Json::decode($response);
       }
-    } catch (Throwable $error) {}
+    } catch (Throwable) {
+      // Ignore
+    }
 
     if (is_null($result)) {
       try {
         $response = $this->fetch($url);
-        $result   = Json::decode($response);
-        $duration = isset($result['cache_age'])
-          ? $result['cache_age']
-          : self::CACHE_DURATION;
-
+        $result = Json::decode($response);
+        $duration = $result['cache_age'] ?? self::CACHE_DURATION;
         $cache->set($url, $response, $duration);
-      } catch (Throwable $error) {}
+      } catch (Throwable) {
+        // Ignore
+      }
     }
 
     return is_array($result) ? $result : null;
@@ -102,7 +105,7 @@ class OEmbeds extends Component
    * @param string $name
    * @return Provider|null
    */
-  public function findProvider($name) {
+  public function findProvider(string $name): ?Provider {
     $name = strtolower($name);
     if (array_key_exists($name, self::$CUSTOM_DEFINITIONS)) {
       return new Provider(self::$CUSTOM_DEFINITIONS[$name]);
@@ -123,17 +126,13 @@ class OEmbeds extends Component
 
   /**
    * @param string $url
-   * @return mixed
+   * @return bool|null|string
    */
-  private function fetch($url) {
+  private function fetch(string $url): bool|null|string {
     $channel = curl_init();
-    if ($channel === false) {
-      return null;
-    }
-
-    curl_setopt($channel,CURLOPT_URL, $url);
-    curl_setopt($channel,CURLOPT_CONNECTTIMEOUT, 2);
-    curl_setopt($channel,CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($channel, CURLOPT_URL, $url);
+    curl_setopt($channel, CURLOPT_CONNECTTIMEOUT, 2);
+    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($channel, CURLOPT_SSL_VERIFYPEER, false);
 
     $result = curl_exec($channel);
@@ -153,7 +152,7 @@ class OEmbeds extends Component
   /**
    * @return Provider[]
    */
-  private function getAllProviders() {
+  private function getAllProviders(): array {
     if (!isset($this->_allProviders)) {
       $providers = [];
       $rows = $this->fetchJson(self::DEFINITIONS_URL);
@@ -173,7 +172,7 @@ class OEmbeds extends Component
   /**
    * @return FileCache
    */
-  private function getCache() {
+  private function getCache(): FileCache {
     if (!isset($this->cache)) {
       $this->cache = new FileCache([
         'cachePath' => '@runtime/oembed'

@@ -17,33 +17,33 @@ abstract class AbstractNumberField extends AbstractField
    *
    * @var string
    */
-  public $dataType = self::DATA_TYPE_DOUBLE;
+  public string $dataType = self::DATA_TYPE_DOUBLE;
 
   /**
    * The default value of this field.
    *
    * @var int|float
    */
-  public $defaultValue = 0;
+  public int|float $defaultValue = 0;
 
   /**
    * The maximum allowed numeric value.
    *
    * @var int|float|null
    */
-  public $max = null;
+  public int|null|float $max = null;
 
   /**
    * The minimum allowed numeric value.
    *
    * @var int|float|null
    */
-  public $min = null;
+  public int|null|float $min = null;
 
   /**
    * @var bool
    */
-  public $optional = false;
+  public bool $optional = false;
 
   /**
    * Defines the allowed `dataType` values.
@@ -83,7 +83,7 @@ abstract class AbstractNumberField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): int|float|null {
     return $this->getEditorValue($data);
   }
 
@@ -103,7 +103,7 @@ abstract class AbstractNumberField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): int|float|null {
     if (!is_numeric($value)) {
       if ($this->optional) {
         return null;

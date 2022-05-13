@@ -17,17 +17,17 @@ class AnchorBehaviour extends Behavior
   /**
    * @var string|null
    */
-  private $_anchor;
+  private ?string $_anchor;
 
   /**
    * @var AnchorBehaviour[]
    */
-  private $_childAnchors;
+  private array $_childAnchors;
 
   /**
    * @var string|null
    */
-  private $_rawValue;
+  private ?string $_rawValue;
 
 
   /**
@@ -60,7 +60,7 @@ class AnchorBehaviour extends Behavior
   }
 
   /**
-   * @return string
+   * @return string|null
    */
   public function getAnchorTitle(): ?string {
     return $this->getAnchorRawValue();
@@ -89,7 +89,7 @@ class AnchorBehaviour extends Behavior
   /**
    * @param ArrayValue $value
    */
-  private function collectArrayAnchors(ArrayValue $value) {
+  private function collectArrayAnchors(ArrayValue $value): void {
     foreach ($value->getValues() as $item) {
       if ($item instanceof InstanceValue) {
         $this->collectInstanceAnchors($item);
@@ -100,9 +100,12 @@ class AnchorBehaviour extends Behavior
   /**
    * @param InstanceValue $instance
    */
-  private function collectInstanceAnchors(InstanceValue $instance) {
+  private function collectInstanceAnchors(InstanceValue $instance): void {
     if ($instance->hasAnchor()) {
-      $this->_childAnchors[] = $instance->getBehavior('anchor');
+      $anchor = $instance->getBehavior('anchor');
+      if ($anchor instanceof AnchorBehaviour) {
+        $this->_childAnchors[] = $anchor;
+      }
     }
 
     foreach ($instance->getAttributes() as $value) {
@@ -117,7 +120,7 @@ class AnchorBehaviour extends Behavior
   /**
    * @return void
    */
-  private function generateAnchors() {
+  private function generateAnchors(): void {
     $ids = [];
     foreach ($this->getChildAnchors() as $anchor) {
       $rawValue = $anchor->getAnchorRawValue();
@@ -192,7 +195,7 @@ class AnchorBehaviour extends Behavior
    * @param mixed $value
    * @return string[]|null
    */
-  static public function parseAnchorFields($value): ?array {
+  static public function parseAnchorFields(mixed $value): ?array {
     if (empty($value)) {
       return null;
     }

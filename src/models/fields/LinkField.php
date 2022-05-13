@@ -20,17 +20,17 @@ class LinkField extends AbstractField
   /**
    * @var bool
    */
-  public $allowAliases = true;
+  public bool $allowAliases = true;
 
   /**
    * @var bool
    */
-  public $allowNewWindow = true;
+  public bool $allowNewWindow = true;
 
   /**
    * @var array
    */
-  public $linkTypes = [
+  public array $linkTypes = [
     'url' => [
       'inputType'   => 'url',
       'label'       => 'Url',
@@ -72,7 +72,7 @@ class LinkField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): LinkValue {
     return new LinkValue($data, $parent, $this);
   }
 
@@ -89,7 +89,7 @@ class LinkField extends AbstractField
           ? $linkType['criteria']
           : [];
 
-        if (is_null($element) || !($element instanceof Element)) {
+        if (!($element instanceof Element)) {
           $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
         } else {
           $criteria['siteId'] = $element->siteId;
@@ -117,7 +117,7 @@ class LinkField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?array {
     if (!($value instanceof LinkValue)) {
       return null;
     }
@@ -147,7 +147,7 @@ class LinkField extends AbstractField
    * @return void
    * @noinspection PhpUnused (Validator)
    */
-  public function validateLinkTypes(string $attribute) {
+  public function validateLinkTypes(string $attribute): void {
     $value = $this->$attribute;
     if (!is_array($value)) {
       $this->addError($attribute, "$attribute must be an array");
@@ -155,9 +155,11 @@ class LinkField extends AbstractField
     }
 
     foreach ($value as $name => $data) {
-      $this->validateLinkType(function($message) use ($name, $attribute) {
-        $this->addError($attribute, "Link type `$name`: $message");
-      }, $data);
+      try {
+        $this->validateLinkType($data);
+      } catch (Exception $error) {
+        $this->addError($attribute, "Link type `$name`: {$error->getMessage()}");
+      }
     }
   }
 
@@ -166,43 +168,43 @@ class LinkField extends AbstractField
   // -----------------
 
   /**
-   * @param callable $callback
-   * @param mixed $info
+   * @param mixed $data
    * @return void
+   * @throws Exception
    */
-  protected function validateLinkType(callable $callback, $info) {
-    if (!is_array($info)) {
-      return $callback("Definition must be an array");
+  protected function validateLinkType(mixed $data): void {
+    if (!is_array($data)) {
+      throw new Exception("Definition must be an array");
     }
 
     // Validate label
-    if (!array_key_exists('label', $info)) {
-      return $callback("Property `label` is missing");
+    if (!array_key_exists('label', $data)) {
+      throw new Exception("Property `label` is missing");
     }
 
-    if (!is_string($info['label'])) {
-      return $callback("Property `label` must be a string");
+    if (!is_string($data['label'])) {
+      throw new Exception("Property `label` must be a string");
     }
 
     // Validate type
-    if (!array_key_exists('type', $info)) {
-      return $callback("Property `type` is missing");
+    if (!array_key_exists('type', $data)) {
+      throw new Exception("Property `type` is missing");
     }
 
-    $type = $info['type'];
+    $type = $data['type'];
     if (!in_array($type, self::LINK_TYPES)) {
-      return $callback("The type `$type` is invalid.");
+      throw new Exception("The type `$type` is invalid.");
     }
 
     // Validate element type
     if ($type == 'element') {
-      if (array_key_exists('allowSelf', $info) && !is_bool($info['allowSelf'])) {
-        return $callback("Property `allowSelf` must be boolean");
+      if (array_key_exists('allowSelf', $data) && !is_bool($data['allowSelf'])) {
+        throw new Exception("Property `allowSelf` must be boolean");
       }
 
-      $elementType = ReferenceMap::normalizeElementType($info['elementType']);
+      $elementType = ReferenceMap::normalizeElementType($data['elementType']);
       if (!class_exists($elementType)) {
-        return $callback("The element type `$elementType` is invalid.");
+        throw new Exception("The element type `$elementType` is invalid.");
       }
     }
   }

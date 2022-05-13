@@ -16,30 +16,26 @@ class SourceGroupSet implements IteratorAggregate, ScopeInterface
   /**
    * @var SourceGroup[]
    */
-  private $_groups;
+  private array $_groups;
 
   /**
    * @var Source
    */
-  private $_nativeSource;
+  private Source $_nativeSource;
 
 
   /**
    * SourceGroupSet constructor.
    *
    * @param Source $nativeSource
-   * @param mixed $config
+   * @param mixed|null $config
    */
-  public function __construct(Source $nativeSource, $config = null) {
+  public function __construct(Source $nativeSource, mixed $config = null) {
     $this->_nativeSource = $nativeSource;
-
-    if (!is_array($config)) {
-      $config = [$config];
-    }
-
-    $this->_groups = array_map(function($group) {
-      return new SourceGroup($this, $group);
-    }, $config);
+    $this->_groups = array_map(
+      fn($group) => new SourceGroup($this, $group),
+      is_array($config) ? $config : [$config]
+    );
 
     if (empty($this->_groups)) {
       $this->_groups[] = new SourceGroup($this, ['transforms' => null]);
@@ -47,10 +43,10 @@ class SourceGroupSet implements IteratorAggregate, ScopeInterface
   }
 
   /**
-   * @param $name
+   * @param string $name
    * @return SourceGroup|null
    */
-  public function __get($name) {
+  public function __get(string $name): SourceGroup|null {
     return array_key_exists($name, $this->_groups)
       ? $this->_groups[$name]
       : null;
@@ -60,19 +56,20 @@ class SourceGroupSet implements IteratorAggregate, ScopeInterface
    * @param string $name
    * @return boolean
    */
-  public function __isset($name) {
+  public function __isset(string $name): bool {
     return array_key_exists($name, $this->_groups);
   }
 
   /**
    * @return SourceGroup[]
    */
-  public function getGroups() {
+  public function getGroups(): array {
     return $this->_groups;
   }
 
   /**
    * @return SourceSet
+   * @noinspection PhpUnused
    */
   public function getMaxGroup() : SourceSet {
     return end($this->_groups);
@@ -80,6 +77,7 @@ class SourceGroupSet implements IteratorAggregate, ScopeInterface
 
   /**
    * @return SourceSet
+   * @noinspection PhpUnused
    */
   public function getMinGroup() : SourceSet {
     return reset($this->_groups);

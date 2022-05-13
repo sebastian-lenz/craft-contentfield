@@ -17,7 +17,7 @@ class StructureSchema extends AbstractSchema
   /**
    * @var AbstractSchemaContainer|null
    */
-  private $_container = null;
+  private ?AbstractSchemaContainer $_container = null;
 
 
   /**
@@ -36,7 +36,7 @@ class StructureSchema extends AbstractSchema
    * @inheritDoc
    * @throws Exception
    */
-  public function applyPageTemplate(BeforeActionEvent $event, Content $content) {
+  public function applyPageTemplate(BeforeActionEvent $event, Content $content): void {
     throw new Exception('Pure data structures cannot be rendered.');
   }
 

@@ -2,7 +2,7 @@
 
 namespace lenz\contentfield\assets\field;
 
-use Craft;
+use craft\helpers\App;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 use craft\web\View;
@@ -16,15 +16,15 @@ class ContentFieldAsset extends AssetBundle
   /**
    * @return void
    */
-  public function init() {
+  public function init(): void {
     $this->sourcePath = __DIR__ . '/resources';
-    $this->depends    = [CpAsset::class];
-    $this->js         = ['vendor.js', 'content-field.js'];
-    $this->css        = ['content-field.css'];
+    $this->depends = [CpAsset::class];
+    $this->js = ['vendor.js', 'content-field.js'];
+    $this->css = ['content-field.css'];
 
     $config = Plugin::getInstance()->getSettings();
     if (isset($config->cpCssFile) && !empty($config->cpCssFile)) {
-      $this->css[] = Craft::parseEnv($config->cpCssFile);
+      $this->css[] = App::parseEnv($config->cpCssFile);
     }
 
     parent::init();
@@ -33,11 +33,11 @@ class ContentFieldAsset extends AssetBundle
   /**
    * @inheritDoc
    */
-  public function registerAssetFiles($view) {
+  public function registerAssetFiles($view): void {
     parent::registerAssetFiles($view);
 
     if ($view instanceof View) {
-      $this->_registerTranslations($view);
+      $this->registerTranslations($view);
     }
   }
 
@@ -48,7 +48,7 @@ class ContentFieldAsset extends AssetBundle
   /**
    * @param View $view
    */
-  private function _registerTranslations(View $view) {
+  private function registerTranslations(View $view): void {
     $i18nFile = implode(DIRECTORY_SEPARATOR, [
       dirname(__DIR__, 2),
       'translations',

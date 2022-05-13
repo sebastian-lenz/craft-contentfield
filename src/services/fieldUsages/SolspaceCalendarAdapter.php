@@ -11,6 +11,7 @@ use Solspace\Calendar\Models\CalendarModel;
 
 /**
  * Class SolspaceCalendarAdapter
+ * @deprecated
  */
 class SolspaceCalendarAdapter extends AbstractAdapter
 {
@@ -20,7 +21,7 @@ class SolspaceCalendarAdapter extends AbstractAdapter
   /**
    * @inheritDoc
    */
-  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField) {
+  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField): void {
     if ($layout->type == Event::class) {
       $calendar = $this->getCalendarByLayoutId($layout->id);
       if (is_null($calendar)) {
@@ -42,7 +43,7 @@ class SolspaceCalendarAdapter extends AbstractAdapter
   /**
    * @inheritDoc
    */
-  public function toUids(ElementInterface $element = null) {
+  public function toUids(ElementInterface $element = null): ?array {
     if ($element instanceof Event) {
       return [
         'solspace-calendar-' . $element->calendarId,
@@ -61,7 +62,7 @@ class SolspaceCalendarAdapter extends AbstractAdapter
    * @param int $layoutId
    * @return CalendarModel|null
    */
-  protected function getCalendarByLayoutId($layoutId) {
+  protected function getCalendarByLayoutId($layoutId): ?CalendarModel {
     $calendars = Calendar::getInstance()
       ->calendars
       ->getAllCalendars();

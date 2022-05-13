@@ -2,10 +2,9 @@
 
 namespace lenz\contentfield\services;
 
-use lenz\contentfield\fields\ContentField;
 use Craft;
-use craft\base\Element;
 use craft\base\ElementInterface;
+use lenz\contentfield\fields\ContentField;
 use Throwable;
 use yii\base\Component;
 
@@ -25,13 +24,8 @@ class Relations extends Component
    * @param array $targetIds
    * @throws Throwable
    */
-  public function saveRelations(ContentField $field, ElementInterface $source, array $targetIds)
+  public function saveRelations(ContentField $field, ElementInterface $source, array $targetIds): void
   {
-    /** @var Element $source */
-    if (!is_array($targetIds)) {
-      $targetIds = [];
-    }
-
     // Prevent duplicate target IDs.
     $targetIds = array_unique($targetIds);
 

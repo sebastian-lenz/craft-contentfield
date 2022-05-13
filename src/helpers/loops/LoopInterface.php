@@ -71,10 +71,10 @@ interface LoopInterface
   /**
    * @return mixed
    */
-  public function peakNext();
+  public function peakNext(): mixed;
 
   /**
    * @return mixed
    */
-  public function peakPrevious();
+  public function peakPrevious(): mixed;
 }

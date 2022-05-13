@@ -49,8 +49,8 @@ abstract class Migration extends MigrationBase
    */
   protected function findAffectedRecords(): ActiveQuery {
     $query = ContentRecord::find();
-
     $affectedFields = $this->getAffectedFields();
+
     if (!is_null($affectedFields)) {
       $affectedFields = self::toFieldIds($affectedFields);
       if (count($affectedFields) > 0) {
@@ -67,7 +67,7 @@ abstract class Migration extends MigrationBase
    *
    * @return string|string[]|null
    */
-  protected function getAffectedFields() {
+  protected function getAffectedFields(): array|string|null {
     return null;
   }
 
@@ -82,7 +82,7 @@ abstract class Migration extends MigrationBase
   abstract protected function migrate(ContentField $field, Instance $instance, array $context);
 
   /**
-   * Invokes the migrate callback for all given content records.
+   * Invokes the migration callback for all given content records.
    *
    * @param ContentRecord[] $records
    * @throws Exception
@@ -130,11 +130,11 @@ abstract class Migration extends MigrationBase
   // --------------
 
   /**
-   * @param string|int|array $values
+   * @param array|int|string $values
    * @return int[]
    * @throws Exception
    */
-  static public function toFieldIds($values): array {
+  static public function toFieldIds(array|int|string $values): array {
     $fields = Craft::$app->getFields();
     $values = is_array($values) ? $values : [$values];
 

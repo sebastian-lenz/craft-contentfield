@@ -14,15 +14,15 @@ class RootSchemasEvent extends Event
   /**
    * @var ElementInterface
    */
-  public $element;
+  public ElementInterface $element;
 
   /**
    * @var ContentField
    */
-  public $field;
+  public ContentField $field;
 
   /**
    * @var string[]
    */
-  public $schemas;
+  public array $schemas;
 }

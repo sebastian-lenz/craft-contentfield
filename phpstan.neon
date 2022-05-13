@@ -1,5 +1,5 @@
 includes:
-    - vendor/craftcms/phpstan/phpstan.neon
+  - vendor/craftcms/phpstan/phpstan.neon
 parameters:
   paths:
     - src

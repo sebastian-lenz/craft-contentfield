@@ -16,7 +16,7 @@ class CategoryAdapter extends AbstractAdapter
   /**
    * @inheritDoc
    */
-  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField) {
+  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField): void {
     if ($layout->type == Category::class) {
       $group = CategoryGroup::findOne([
         'fieldLayoutId' => $layoutField->layoutId,

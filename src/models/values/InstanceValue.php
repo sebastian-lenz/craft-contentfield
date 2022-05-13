@@ -19,6 +19,7 @@ use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\DisplayInterface;
 use Twig\Markup;
 use yii\base\Model;
+use yii\web\Response as YiiResponse;
 
 /**
  * Class InstanceValue
@@ -47,27 +48,27 @@ class InstanceValue
   /**
    * @var Model|null
    */
-  private $_model;
+  private ?Model $_model;
 
   /**
    * @var string|null
    */
-  private $_output;
+  private ?string $_output;
 
   /**
    * @var string
    */
-  private $_originalUuid = null;
+  private mixed $_originalUuid = null;
 
   /**
    * @var string
    */
-  private $_uuid;
+  private mixed $_uuid;
 
   /**
    * @var bool
    */
-  private $_visible = true;
+  private bool $_visible = true;
 
   /**
    * @var string
@@ -128,7 +129,7 @@ class InstanceValue
    * @inheritDoc
    * @throws Exception
    */
-  public function display(array $variables = []) {
+  public function display(array $variables = []): void {
     if ($this->isVisible()) {
       if (isset($this->_output)) {
         echo $this->_output;
@@ -178,7 +179,7 @@ class InstanceValue
   /**
    * @return Markup|string
    */
-  public function getEditAttributes() {
+  public function getEditAttributes(): string|Markup {
     return Plugin::$IS_ELEMENT_PREVIEW
       ? Template::raw(' data-contentfield-edit-uuid="' . $this->_uuid . '" ')
       : '';
@@ -253,6 +254,7 @@ class InstanceValue
 
   /**
    * @return bool
+   * @noinspection PhpUnused
    */
   public function hasCachedOutput(): bool {
     return isset($this->_output);
@@ -269,11 +271,11 @@ class InstanceValue
    * @inheritDoc
    * @throws Exception
    */
-  public function onBeforeAction(BeforeActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event): void {
     parent::onBeforeAction($event);
 
     $model = $this->getModel();
-    if (!is_null($model) && $model instanceof BeforeActionInterface) {
+    if ($model instanceof BeforeActionInterface) {
       $model->onBeforeAction($event);
     }
 
@@ -304,7 +306,7 @@ class InstanceValue
    * @param string|null $value
    * @noinspection PhpUnused (Public API)
    */
-  public function setCachedOutput(?string $value) {
+  public function setCachedOutput(?string $value): void {
     $this->_output = $value;
   }
 
@@ -337,7 +339,7 @@ class InstanceValue
   /**
    * @throws Exception
    */
-  private function handleChunkRequest() {
+  private function handleChunkRequest(): void {
     $response = Craft::$app->response;
     if (!($response instanceof Response)) {
       throw new Exception('Chunk requests are only supported on web requests.');
@@ -348,7 +350,7 @@ class InstanceValue
     ]);
 
     if (Craft::$app->getRequest()->getAcceptsJson()) {
-      $response->format = Response::FORMAT_JSON;
+      $response->format = YiiResponse::FORMAT_JSON;
       $response->data = [
         'success' => true,
         'uuid'    => $this->_uuid,

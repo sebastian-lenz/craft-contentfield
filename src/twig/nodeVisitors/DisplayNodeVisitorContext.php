@@ -18,49 +18,49 @@ class DisplayNodeVisitorContext
   /**
    * @var InlineIndexNode
    */
-  private $_indexNode;
+  private InlineIndexNode $_indexNode;
 
   /**
    * @var bool
    */
-  private $_isInlining = false;
+  private bool $_isInlining = false;
 
   /**
    * @var array
    */
-  private $_inlineDependencies = [];
+  private array $_inlineDependencies = [];
 
   /**
    * @var bool
    */
-  private $_inlineRequiresIndex = false;
+  private bool $_inlineRequiresIndex = false;
 
   /**
    * @var ModuleNode
    */
-  private $_module;
+  private ModuleNode $_module;
 
   /**
    * @var DisplayNodeVisitorContext|null
    */
-  private $_parent;
+  private ?DisplayNodeVisitorContext $_parent;
 
   /**
    * @var bool
    */
-  private $_requiresIndex = false;
+  private bool $_requiresIndex = false;
 
   /**
    * A list of recorded inline information, indexed by schema qualifier.
    * @var array
    */
-  static private $_inlineCache = [];
+  static private array $_inlineCache = [];
 
   /**
    * A list of all already compiled modules, indexed by template path.
    * @var ModuleNode[]
    */
-  static private $_compiledModules = [];
+  static private array $_compiledModules = [];
 
 
   /**
@@ -98,7 +98,7 @@ class DisplayNodeVisitorContext
    * This means that a node requires the method `contentfieldDisplay`
    * to be present in the compiled template.
    */
-  public function requireIndex() {
+  public function requireIndex(): void {
     // If we are inlining, record the index requirement
     if ($this->_isInlining) {
       $this->_inlineRequiresIndex = true;
@@ -109,7 +109,7 @@ class DisplayNodeVisitorContext
       $this->_parent->requireIndex();
     }
 
-    // Otherwise mark the index as required on this context
+    // Otherwise, mark the index as required on this context
     elseif (!$this->_requiresIndex) {
       $this->_requiresIndex = true;
       $this->_module
@@ -162,7 +162,7 @@ class DisplayNodeVisitorContext
   /**
    * @param TemplateSchema $schema
    */
-  private function addDependency(TemplateSchema $schema) {
+  private function addDependency(TemplateSchema $schema): void {
     if (!$this->_isInlining) {
       return;
     }
@@ -314,7 +314,7 @@ class DisplayNodeVisitorContext
    * @return InlineIndexNode
    */
   private function getIndexNode(): InlineIndexNode {
-    if (is_null($this->_indexNode)) {
+    if (!isset($this->_indexNode)) {
       $this->_indexNode = new InlineIndexNode();
     }
 

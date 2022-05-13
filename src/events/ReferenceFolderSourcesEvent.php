@@ -4,128 +4,79 @@ namespace lenz\contentfield\events;
 
 use Craft;
 use craft\base\ElementInterface;
-use craft\base\Volume;
 use craft\errors\InvalidSubpathException;
-use craft\errors\InvalidVolumeException;
 use craft\errors\VolumeException;
 use craft\helpers\FileHelper;
+use craft\models\Volume;
 use craft\models\VolumeFolder;
 use Exception;
 use lenz\craft\utils\helpers\ArrayHelper;
 use Throwable;
 use yii\base\InvalidConfigException;
+use yii\base\InvalidValueException;
 
 /**
  * Class ReferenceFolderSourcesEvent
+ * @extends AbstractSourcesEvent<VolumeFolder, Volume|VolumeFolder|string|null>
  */
-class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
+class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
 {
   /**
    * @var boolean
    */
-  public $showUnpermittedVolumes = false;
-
-  /**
-   * @var VolumeFolder[]|null
-   */
-  private $_folders;
+  public bool $showUnpermittedVolumes = false;
 
 
   /**
    * @inheritDoc
    */
   public function __construct($config = []) {
-    parent::__construct([
-      'sources' => self::resolveSources(
-        ArrayHelper::get($config, 'sources'),
-        ArrayHelper::get($config, 'element')
-      ),
-    ] + $config);
+    $config['sources'] = self::resolveSources(
+      ArrayHelper::get($config, 'sources'),
+      ArrayHelper::get($config, 'element')
+    );
+
+    parent::__construct($config);
   }
 
   /**
-   * @param VolumeFolder $folder
+   * @return VolumeFolder[]
+   * @noinspection PhpUnused
    */
-  public function addFolder(VolumeFolder $folder) {
-    if (!is_array($this->_folders)) {
-      $this->_folders = [];
-    }
-
-    if (!$this->contains($folder)) {
-      $this->_folders[] = $folder;
-    }
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function addSource(string $source) {
-    $folder = self::toFolder($source);
-    if (!is_null($folder)) {
-      $this->addFolder($folder);
-    }
-  }
-
-  /**
-   * @param mixed $value
-   * @return bool
-   */
-  public function contains($value): bool {
-    $value = self::toFolder($value);
-    if (is_null($value) || !is_array($this->_folders)) {
-      return false;
-    }
-
-    foreach ($this->_folders as $folder) {
-      if ($folder->uid == $value->uid) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * @return VolumeFolder[]|null
-   */
-  public function getFolders(): ?array {
-    return $this->_folders;
+  public function getFolders(): array {
+    return $this->_values;
   }
 
   /**
    * @inheritDoc
    */
   public function getSources(): ?array {
-    $folders = $this->_folders;
-    if (is_null($folders)) {
-      return null;
-    }
-
+    $folders = $this->_values;
     if (!$this->showUnpermittedVolumes) {
       $folders = self::filterPermittedFolders($folders);
     }
 
-    return array_map([self::class, 'toElementSource'], $folders);
+    return empty($folders)
+      ? null
+      : array_map([self::class, 'toElementSource'], $folders);
   }
 
+
+  // Protected methods
+  // -----------------
+
   /**
-   * @param array|null $value
+   * @inheritDoc
    */
-  public function setFolders(array $value = null) {
-    $this->setSources($value);
+  protected function isEqual(mixed $lft, mixed $rgt): bool {
+    return $lft->uid == $rgt->uid;
   }
 
   /**
    * @inheritDoc
    */
-  public function setSources(array $value = null) {
-    if (is_null($value)) {
-      $this->_folders = null;
-    } else {
-      $this->_folders = array_filter(
-        array_map([self::class, 'toFolder'], $value)
-      );
-    }
+  protected function toValue(mixed $value): VolumeFolder|null {
+    return self::toFolder($value);
   }
 
 
@@ -136,7 +87,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param VolumeFolder[] $folders
    * @return VolumeFolder[]
    */
-  static public function filterPermittedFolders(array $folders): array {
+  static private function filterPermittedFolders(array $folders): array {
     if (empty($folders)) {
       return $folders;
     }
@@ -146,7 +97,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
     return array_filter($folders, function(VolumeFolder $folder) use ($users) {
       try {
         $volume = $folder->getVolume();
-      } catch (InvalidConfigException $e) {
+      } catch (InvalidConfigException) {
         $volume = null;
       }
 
@@ -163,7 +114,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @return string
    * @throws InvalidSubpathException
    */
-  static public function resolvePath(string $path, ElementInterface $element = null): string {
+  static private function resolvePath(string $path, ElementInterface $element = null): string {
     try {
       $result = Craft::$app->getView()->renderObjectTemplate($path, $element);
     } catch (Throwable $e) {
@@ -174,7 +125,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
     if (
       $result === '' ||
       trim($result, '/') != $result ||
-      strpos($result, '//') !== false
+      str_contains($result, '//')
     ) {
       throw new InvalidSubpathException($path);
     }
@@ -187,17 +138,17 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param ElementInterface|null $element
    * @return VolumeFolder[]|null
    */
-  static public function resolveSources(array $sources = null, ElementInterface $element = null): ?array {
-    if (is_null($sources)) {
+  static private function resolveSources(array $sources = null, ElementInterface $element = null): ?array {
+    if (empty($sources)) {
       return null;
     }
 
     $sources = array_map(function($source) use ($element) {
-      if (is_string($source) && strpos($source, '/') !== false) {
+      if (is_string($source) && str_contains($source, '/')) {
         try {
           $parts = explode('/', $source, 2);
           return self::resolveVolumePath($parts[0], $parts[1], $element);
-        } catch (Exception $e) {
+        } catch (Exception) {
           return null;
         }
       }
@@ -209,23 +160,27 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
   }
 
   /**
-   * @param Volume|string $volumeSource
+   * @param string|Volume $volumeSource
    * @param string $path
    * @param ElementInterface|null $element
    * @param bool $createFolders
    * @return VolumeFolder
-   * @throws InvalidSubpathException|InvalidVolumeException|VolumeException
+   * @throws InvalidSubpathException
+   * @throws VolumeException
    */
-  static public function resolveVolumePath(
-        $volumeSource, string $path, ElementInterface $element = null,
-        bool $createFolders = true): VolumeFolder {
+  static private function resolveVolumePath(
+    Volume|string $volumeSource,
+    string $path,
+    ElementInterface $element = null,
+    bool $createFolders = true
+  ): VolumeFolder {
     $assets = Craft::$app->getAssets();
     $volume = self::toVolume($volumeSource);
     if (is_null($volume)) {
-      throw new InvalidVolumeException();
+      throw new InvalidValueException();
     }
 
-    $path = is_string($path) ? trim($path, '/') : '';
+    $path = trim($path, '/');
     if (empty($path)) {
       return $assets->getRootFolderByVolumeId($volume->id);
     }
@@ -242,35 +197,32 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
       throw new InvalidSubpathException($path);
     }
 
-    return $assets->getFolderById(
-      $assets->ensureFolderByFullPathAndVolume($path, $volume)
-    );
+    return $assets->ensureFolderByFullPathAndVolume($path, $volume);
   }
 
   /**
    * @param string $value
    * @return string
    */
-  static public function sanitizePath(string $value): string {
+  static private function sanitizePath(string $value): string {
     $asciiOnly =  Craft::$app
       ->getConfig()
       ->getGeneral()
       ->convertFilenamesToAscii;
 
-    $segments = array_map(function(string $segment) use ($asciiOnly) {
-      return FileHelper::sanitizeFilename($segment, [
-        'asciiOnly' => $asciiOnly
-      ]);
-    }, explode('/', $value));
+    $segments = array_map(
+      fn(string $segment) => FileHelper::sanitizeFilename($segment, ['asciiOnly' => $asciiOnly]),
+      explode('/', $value)
+    );
 
     return implode('/', $segments);
   }
 
   /**
-   * @param Volume|VolumeFolder|string|null $value
+   * @param string|Volume|VolumeFolder|null $value
    * @return VolumeFolder|null
    */
-  static public function toFolder($value) {
+  static private function toFolder(VolumeFolder|Volume|string|null $value): VolumeFolder|null {
     $value = self::toVolumeOrFolder($value);
 
     if ($value instanceof Volume) {
@@ -284,7 +236,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param VolumeFolder $folder
    * @return string
    */
-  static public function toSource(VolumeFolder $folder): string {
+  static private function toSource(VolumeFolder $folder): string {
     return 'folder:' . $folder->uid;
   }
 
@@ -292,7 +244,7 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
    * @param VolumeFolder $folder
    * @return string
    */
-  private function toElementSource(VolumeFolder $folder): string {
+  static private function toElementSource(VolumeFolder $folder): string {
     $segments = [self::toSource($folder)];
 
     while ($folder->parentId && $folder->volumeId !== null) {
@@ -304,50 +256,45 @@ class ReferenceFolderSourcesEvent extends ReferenceSourcesEvent
   }
 
   /**
-   * @param Volume|VolumeFolder|string|null $value
+   * @param string|Volume|VolumeFolder|null $value
    * @return Volume|null
    */
-  static public function toVolume($value): ?Volume {
+  static private function toVolume(VolumeFolder|Volume|string|null $value): ?Volume {
     $value = self::toVolumeOrFolder($value);
-
-    if ($value instanceof VolumeFolder) {
-      try {
-        $volume = $value->getVolume();
-        $rootFolder = Craft::$app
-          ->getAssets()
-          ->getRootFolderByVolumeId($volume->id);
-
-        $value = $rootFolder->id === $value->id
-          ? $volume
-          : null;
-      } catch (InvalidConfigException $e) {
-        return null;
-      }
+    if ($value instanceof Volume || is_null($value)) {
+      return $value;
     }
 
-    return $value instanceof Volume ? $value : null;
+    try {
+      $volume = $value->getVolume();
+      $rootFolder = Craft::$app
+        ->getAssets()
+        ->getRootFolderByVolumeId($volume->id);
+
+      return $rootFolder->id === $value->id ? $volume : null;
+    } catch (InvalidConfigException) {
+      return null;
+    }
   }
 
   /**
-   * @param Volume|VolumeFolder|string|null $value
+   * @param string|Volume|VolumeFolder|null $value
    * @return Volume|VolumeFolder|null
    */
-  static public function toVolumeOrFolder($value) {
-    if (is_string($value)) {
-      $parts = explode(':', $value, 2);
-      if (count($parts) !== 2) {
-        return null;
-      }
-
-      if ($parts[0] == 'volume') {
-        $value = Craft::$app->getVolumes()->getVolumeByUid($parts[1]);
-      } elseif ($parts[0] == 'folder') {
-        $value = Craft::$app->getAssets()->getFolderByUid($parts[1]);
-      }
+  static private function toVolumeOrFolder(VolumeFolder|Volume|string|null $value): Volume|VolumeFolder|null {
+    if ($value instanceof Volume || $value instanceof VolumeFolder || is_null($value)) {
+      return $value;
     }
 
-    if ($value instanceof Volume || $value instanceof VolumeFolder) {
-      return $value;
+    $parts = explode(':', $value, 2);
+    if (count($parts) !== 2) {
+      return null;
+    }
+
+    if ($parts[0] == 'volume') {
+      return Craft::$app->getVolumes()->getVolumeByUid($parts[1]);
+    } elseif ($parts[0] == 'folder') {
+      return Craft::$app->getAssets()->getFolderByUid($parts[1]);
     } else {
       return null;
     }

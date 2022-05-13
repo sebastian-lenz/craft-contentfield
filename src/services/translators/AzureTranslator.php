@@ -3,6 +3,7 @@
 namespace lenz\contentfield\services\translators;
 
 use Craft;
+use craft\helpers\App;
 use craft\helpers\Json;
 use lenz\craft\utils\helpers\ArrayHelper;
 use lenz\craft\utils\models\Url;
@@ -15,17 +16,17 @@ class AzureTranslator extends AbstractTranslator
   /**
    * @var string
    */
-  private $_endpoint = self::DEFAULT_ENDPOINT;
+  private string $_endpoint = self::DEFAULT_ENDPOINT;
 
   /**
    * @var string
    */
-  private $_subscriptionKey;
+  private string $_subscriptionKey;
 
   /**
    * @var string
    */
-  private $_subscriptionRegion;
+  private string $_subscriptionRegion;
 
   /**
    * The url of the API endpoint.
@@ -56,31 +57,34 @@ class AzureTranslator extends AbstractTranslator
 
   /**
    * @param string $value
+   * @noinspection PhpUnused
    */
-  public function setEndpoint(string $value) {
+  public function setEndpoint(string $value): void {
     $this->_endpoint = $value;
   }
 
   /**
    * @param string $value
+   * @noinspection PhpUnused
    */
-  public function setSubscriptionKey(string $value) {
+  public function setSubscriptionKey(string $value): void {
     $this->_subscriptionKey = $value;
   }
 
   /**
    * @param string $value
+   * @noinspection PhpUnused
    */
-  public function setSubscriptionRegion(string $value) {
+  public function setSubscriptionRegion(string $value): void {
     $this->_subscriptionRegion = $value;
   }
 
   /**
    * @inheritDoc
    */
-  public function translate($sourceLanguage, $targetLanguage, $message) {
-    $endpoint = Craft::parseEnv($this->getEndpoint());
-    $subscriptionKey = Craft::parseEnv($this->getSubscriptionKey());
+  public function translate(string $sourceLanguage, string $targetLanguage, string $message): ?string {
+    $endpoint = App::parseEnv($this->getEndpoint());
+    $subscriptionKey = App::parseEnv($this->getSubscriptionKey());
     if (empty($endpoint) || empty($subscriptionKey)) {
       return null;
     }
@@ -119,7 +123,7 @@ class AzureTranslator extends AbstractTranslator
     curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
     $response = curl_exec($handle);
-    $responseDecoded = Json::decode($response, true);
+    $responseDecoded = Json::decode($response);
     $responseCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
     curl_close($handle);
 
@@ -154,7 +158,7 @@ class AzureTranslator extends AbstractTranslator
   /**
    * @inheritDoc
    */
-  static function getSettingsHtml(): ?string {
+  static function getSettingsHtml(): string {
     return Craft::$app->getView()->renderTemplate(
       'contentfield/_config-translator-azure',
       self::getSettings()

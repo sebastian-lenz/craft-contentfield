@@ -20,46 +20,46 @@ class InputData
   /**
    * @var bool
    */
-  private $_disabled;
+  private bool $_disabled;
 
   /**
    * @var ElementInterface|null
    */
-  private $_element;
+  private ?ElementInterface $_element;
 
   /**
    * @var ContentField
    */
-  private $_field;
+  private ContentField $_field;
 
   /**
    * @var Content|null
    */
-  private $_value;
+  private ?Content $_value;
 
   /**
    * @var array
    */
-  private $_rootSchemas;
+  private array $_rootSchemas;
 
   /**
    * @var array
    */
-  private $_schemaErrors;
+  private array $_schemaErrors;
 
   /**
    * @var string
    */
-  private $_schemaScripts;
+  private string $_schemaScripts;
 
   /**
    * @var array
    */
-  private $_schemas;
+  private array $_schemas;
 
 
   /**
-   * ContentFieldData constructor.
+   * InputData constructor.
    *
    * @param ContentField $field
    * @param Content|null $value
@@ -123,6 +123,7 @@ class InputData
 
   /**
    * @return bool
+   * @noinspection PhpUnused
    */
   public function hasSchemaErrors(): bool {
     return count($this->_schemaErrors) > 0;
@@ -135,13 +136,13 @@ class InputData
   /**
    * @throws Throwable
    */
-  private function loadSchemas() {
+  private function loadSchemas(): void {
     $rootSchemas = $this->_field->getRootSchemas($this->_element);
     $allSchemas = Plugin::getInstance()
       ->schemas
       ->getDependedSchemas($rootSchemas);
 
-    $errors  = [];
+    $errors = [];
     $schemas = [];
     $scripts = '';
 
@@ -154,9 +155,9 @@ class InputData
       }
     }
 
-    $this->_rootSchemas   = array_keys($rootSchemas);
-    $this->_schemas       = $schemas;
-    $this->_schemaErrors  = $errors;
+    $this->_rootSchemas = array_keys($rootSchemas);
+    $this->_schemas = $schemas;
+    $this->_schemaErrors = $errors;
     $this->_schemaScripts = $scripts;
   }
 
@@ -182,7 +183,7 @@ class InputData
     try {
       /** @var Element $element */
       $elementSiteId = intval($element->site->id);
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       $elementSiteId = null;
     }
 
@@ -240,9 +241,9 @@ class InputData
       return true;
     }
 
-    if (substr($hideSyncButton, 0, 5) == 'site:') {
+    if (str_starts_with($hideSyncButton, 'site:')) {
       $element = $this->_element;
-      $site = $element ? $element->getSite() : null;
+      $site = $element?->getSite();
       return $site && $hideSyncButton == "site:$site->handle";
     }
 

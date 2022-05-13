@@ -24,7 +24,7 @@ class DisplayTokenParser extends AbstractTokenParser
   /**
    * @inheritdoc
    */
-  public function parse(Token $token) {
+  public function parse(Token $token): DisplayNode|InstanceDisplayNode|ArrayDisplayNode {
     $parser      = $this->parser;
     $stream      = $parser->getStream();
     $variables   = null;
@@ -71,7 +71,7 @@ class DisplayTokenParser extends AbstractTokenParser
    */
   private function getField(string $name): ?AbstractField {
     $schema = $this->getSchema();
-    if (is_null($schema) || !is_string($name)) {
+    if (is_null($schema) || empty($name)) {
       return null;
     }
 
@@ -91,7 +91,7 @@ class DisplayTokenParser extends AbstractTokenParser
       $source = $this->parser->getStream()->getSourceContext();
       $loader = Plugin::getInstance()->schemas->getTemplateLoader();
       return $loader->load($source->getName());
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       return null;
     }
   }

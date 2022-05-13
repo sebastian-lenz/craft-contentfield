@@ -19,7 +19,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
   /**
    * @var TagNode
    */
-  private $_rootNode;
+  private TagNode $_rootNode;
 
   /**
    * A list of all attributes that might contain transforms
@@ -116,12 +116,12 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    * Merging is handled by `array_merge`, with an additional check for the
    * attribute `class` which allows appending values
    *
-   * @param array $config
-   * @param array $parent
+   * @param mixed $config
+   * @param mixed $parent
    * @param string $key
    * @return array
    */
-  static public function mergeTagAttributes($config, $parent, $key = 'class') {
+  static public function mergeTagAttributes(mixed $config, mixed $parent, string $key = 'class'): array {
     $config = is_array($config) ? $config : [];
     $parent = is_array($parent) ? $parent : [];
 
@@ -129,7 +129,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
       array_key_exists($key, $config) &&
       array_key_exists($key, $parent)
     ) {
-      if (substr($config[$key], 0, 1) == '+') {
+      if (str_starts_with($config[$key], '+')) {
         $config[$key] = implode(' ', array_unique(array_merge(
           explode(' ', $parent[$key]),
           explode(' ', substr($config[$key], 1))
@@ -149,7 +149,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    * @param array|mixed $parent
    * @return array
    */
-  static private function mergeTagChildren($config, $parent) : array {
+  static private function mergeTagChildren(mixed $config, mixed $parent) : array {
     $config = is_array($config) ? $config : [];
     $parent = is_array($parent) ? $parent : [];
 
@@ -165,7 +165,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
         is_array($parent[$key]) &&
         is_array($value)
       ) {
-        $parent[$key] = static::mergeTags($parent[$key], $value);
+        $parent[$key] = self::mergeTags($parent[$key], $value);
       } else {
         $parent[$key] = $value;
       }
@@ -182,15 +182,14 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    * - Keys starting with `+` are moved to the `children` option.
    *
    * @param array $config
-   * @return array
    */
-  static private function expandConfig(array &$config) {
+  static private function expandConfig(array &$config): void {
     AbstractImageTag::expandConfig($config);
 
     foreach ($config as $key => &$value) {
-      if (substr($key, 0, 1) == '.') {
+      if (str_starts_with($key, '.')) {
         $appendTo = 'attributes';
-      } elseif (substr($key, 0, 1) == '+') {
+      } elseif (str_starts_with($key, '+')) {
         $appendTo = 'children';
       } else {
         continue;
@@ -206,8 +205,6 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
       unset($config[$key]);
       $config[$appendTo][substr($key, 1)] = $value;
     }
-
-    return $config;
   }
 
   /**
@@ -219,7 +216,7 @@ class ConfigImageTag extends AbstractRootScope implements ImageTagInterface, Ima
    * @param array $config
    * @return array
    */
-  static private function expandConfigRecursive(array &$config) {
+  static private function expandConfigRecursive(array &$config): array {
     self::expandConfig($config);
 
     if (

@@ -23,47 +23,47 @@ class ReferenceField extends AbstractField
   /**
    * @var bool
    */
-  public $allowSelfReference = false;
+  public bool $allowSelfReference = false;
 
   /**
    * @var null|array
    */
-  public $criteria = null;
+  public ?array $criteria = null;
 
   /**
    * @var string
    */
-  public $elementType = Entry::class;
+  public string $elementType = Entry::class;
 
   /**
    * @var integer|null
    */
-  public $limit = null;
+  public ?int $limit = null;
 
   /**
    * @var string|null
    */
-  public $modalStorageKey = null;
+  public ?string $modalStorageKey = null;
 
   /**
    * @var string[]|string|null
    */
-  public $sources = null;
+  public string|array|null $sources = null;
 
   /**
    * @var string
    */
-  public $viewMode = 'large';
+  public string $viewMode = 'large';
 
   /**
    * @var string|string[]|null
    */
-  public $with = null;
+  public string|array|null $with = null;
 
   /**
    * @var string|string[]|null
    */
-  public $withTransforms = null;
+  public string|array|null $withTransforms = null;
 
   /**
    * The internal name of this field.
@@ -79,13 +79,13 @@ class ReferenceField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): ReferenceValue {
     return new ReferenceValue($data, $parent, $this);
   }
 
   /**
    * @param ElementInterface|null $element
-   * @return array|null
+   * @return array
    * @throws Exception
    */
   public function getEditorData(ElementInterface $element = null): array {
@@ -104,20 +104,21 @@ class ReferenceField extends AbstractField
    * @inheritdoc
    * @throws Exception
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?array {
     if (!($value instanceof ReferenceValue)) {
       return null;
     }
 
-    return array_map(function(ElementInterface $element) {
-      return intval($element->getId());
-    }, $value->getReferences());
+    return array_map(
+      fn(ElementInterface $element) => intval($element->getId()),
+      $value->getReferences()
+    );
   }
 
   /**
    * @return string|null
    */
-  public function getElementType() {
+  public function getElementType(): string|null {
     return isset($this->elementType)
       ? self::resolveElementType($this->elementType)
       : null;
@@ -167,7 +168,7 @@ class ReferenceField extends AbstractField
       ? $this->criteria
       : [];
 
-    if (is_null($element) || !($element instanceof Element)) {
+    if (!($element instanceof Element)) {
       $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
     } else {
       $criteria['siteId'] = $element->siteId;
@@ -218,7 +219,7 @@ class ReferenceField extends AbstractField
   /**
    * @inheritdoc
    */
-  static public function expandFieldConfig(array &$config) {
+  static public function expandFieldConfig(array &$config): void {
     // Expand the type `instances` to an array of instance fields
     if (in_array($config['type'], ['image', 'images'])) {
       $config = array(
@@ -266,7 +267,7 @@ class ReferenceField extends AbstractField
    * @param string $elementType
    * @return string|null
    */
-  static public function resolveElementType(string $elementType) {
+  static public function resolveElementType(string $elementType): ?string {
     if (is_subclass_of($elementType, ElementInterface::class)) {
       return $elementType;
     }
@@ -281,18 +282,16 @@ class ReferenceField extends AbstractField
   // ----------------------
 
   /**
-   * @param string[]|string|null $rawValue
+   * @param string|string[]|null $rawValue
    * @param ElementInterface|null $element
    * @return string[]|null
    */
-  static private function extractSources($rawValue, ElementInterface $element = null) {
+  static private function extractSources(array|string|null $rawValue, ElementInterface $element = null): ?array {
     $sources = self::parseSources($rawValue);
 
     try {
-      $site = $element instanceof Element
-        ? $element->getSite()->handle
-        : '*';
-    } catch (InvalidConfigException $error) {
+      $site = $element instanceof Element ? $element->getSite()->handle : '*';
+    } catch (InvalidConfigException) {
       $site = '*';
     }
 
@@ -339,30 +338,29 @@ class ReferenceField extends AbstractField
    *       - section:a976f2d5-928e-4040-ad10-00fd6e3011d3
    *   ```
    *
-   * @param string[]|string|null $rawValue
-   * @return array|string[]
+   * @param string|array|null $rawValue
+   * @return array<string, string[]>
    */
-  static private function parseSources($rawValue): array {
-    if (is_array($rawValue)) {
-      $sources = [];
-
-      foreach ($rawValue as $key => $value) {
-        $siteSources = is_array($value) ? $value : self::splitSourcesString($value);
-        $sites = is_numeric($key) ? '*' : $key;
-
-        foreach (explode(',', $sites) as $site) {
-          $sources[$site] = !isset($sources[$site])
-            ? $siteSources
-            : array_merge($sources[$site], $siteSources);
-        }
-      }
-
-      return $sources;
+  static private function parseSources(array|string|null $rawValue): array {
+    if (!is_array($rawValue)) {
+      return [
+        '*' => self::splitSourcesString($rawValue)
+      ];
     }
 
-    return [
-      '*' => self::splitSourcesString($rawValue)
-    ];
+    $sources = [];
+    foreach ($rawValue as $key => $value) {
+      $siteSources = is_array($value) ? $value : self::splitSourcesString($value);
+      $sites = is_numeric($key) ? '*' : $key;
+
+      foreach (explode(',', $sites) as $site) {
+        $sources[$site] = !isset($sources[$site])
+          ? $siteSources
+          : array_merge($sources[$site], $siteSources);
+      }
+    }
+
+    return $sources;
   }
 
   /**
@@ -370,12 +368,13 @@ class ReferenceField extends AbstractField
    * @return string[]
    */
   static private function splitSourcesString(string $rawValue): array {
-    if (!is_string($rawValue) || empty($rawValue)) {
+    if (empty($rawValue)) {
       return [];
     }
 
-    return array_filter(array_map(function($value) {
-      return trim($value);
-    }, explode(',', $rawValue)));
+    return array_filter(array_map(
+      fn($value) => trim($value),
+      explode(',', $rawValue)
+    ));
   }
 }

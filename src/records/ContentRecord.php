@@ -35,7 +35,7 @@ class ContentRecord extends ForeignFieldRecord
   /**
    * @inheritDoc
    */
-  public function attributes() {
+  public function attributes(): array {
     return [
       'id',
       'elementId',
@@ -60,7 +60,7 @@ class ContentRecord extends ForeignFieldRecord
   /**
    * @inheritDoc
    */
-  public static function tableName() {
+  public static function tableName(): string {
     return '{{%lenz_contentfield}}';
   }
 
@@ -76,7 +76,7 @@ class ContentRecord extends ForeignFieldRecord
    * @param string $value
    * @return array
    */
-  static function decodeModel(string $value) {
+  static function decodeModel(string $value): array {
     $format = substr($value, 0, self::FORMAT_LENGTH);
     if (in_array($format, self::FORMATS)) {
       $value = substr($value, self::FORMAT_LENGTH);
@@ -86,7 +86,7 @@ class ContentRecord extends ForeignFieldRecord
       }
     }
 
-    return Json::decode($value, true);
+    return Json::decode($value);
   }
 
   /**
@@ -98,7 +98,7 @@ class ContentRecord extends ForeignFieldRecord
    * @param string|null $compression
    * @return string
    */
-  static function encodeModel(array $model, string $compression = null) {
+  static function encodeModel(array $model, string $compression = null): string {
     $data = Json::encode($model);
 
     if ($compression == self::FORMAT_GZ_BASE64) {
@@ -117,7 +117,7 @@ class ContentRecord extends ForeignFieldRecord
    * @internal
    * @return string|null
    */
-  static function getAvailableCompression() {
+  static function getAvailableCompression(): ?string {
     if (function_exists('gzcompress')) {
       return ContentRecord::FORMAT_GZ_BASE64;
     }
@@ -133,8 +133,9 @@ class ContentRecord extends ForeignFieldRecord
    * @param string $value
    * @return string|null
    */
-  static function getCompression(string $value) {
+  static function getCompression(string $value): ?string {
     $format = substr($value, 0, self::FORMAT_LENGTH);
+
     return in_array($format, self::FORMATS)
       ? $format
       : null;

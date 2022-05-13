@@ -12,22 +12,22 @@ class Provider
   /**
    * @var Endpoint[]
    */
-  public $endpoints;
+  public array $endpoints;
 
   /**
    * @var string
    */
-  public $providerName;
+  public string $providerName;
 
   /**
    * @var string
    */
-  public $providerUrl;
+  public string $providerUrl;
 
   /**
    * @var string
    */
-  public $searchName;
+  public string $searchName;
 
 
   /**
@@ -55,7 +55,7 @@ class Provider
   /**
    * @return array
    */
-  public function getEditorData() {
+  public function getEditorData(): array {
     $endpoints = [];
     foreach ($this->endpoints as $endpoint) {
       $endpoints[] = $endpoint->getEditorData();
@@ -72,7 +72,7 @@ class Provider
    * @param string $url
    * @return Endpoint|null
    */
-  public function getEndpoint($url) {
+  public function getEndpoint(string $url): ?Endpoint {
     foreach ($this->endpoints as $endpoint) {
       if ($endpoint->matches($url)) {
         return $endpoint;

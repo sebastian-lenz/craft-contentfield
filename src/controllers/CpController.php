@@ -16,6 +16,7 @@ use yii\web\Response;
 
 /**
  * Class CpController
+ * @noinspection PhpUnused
  */
 class CpController extends Controller
 {
@@ -23,11 +24,12 @@ class CpController extends Controller
    * @param string $siteId
    * @param string $elementId
    * @return Response
+   * @noinspection PhpUnused
    */
   public function actionAnchors(string $siteId, string $elementId): Response {
     try {
       $anchors = AnchorsEvent::findAnchorsById($elementId, $siteId);
-    } catch (Exception $e) {
+    } catch (Exception) {
       return $this->asJson([ 'result' => false ]);
     }
 
@@ -38,13 +40,14 @@ class CpController extends Controller
   }
 
   /**
-   * @param string|int $siteId
-   * @param string|int $elementId
+   * @param int|string $siteId
+   * @param int|string $elementId
    * @param string $fieldHandle
    * @return Response
    * @throws InvalidFieldException
+   * @noinspection PhpUnused
    */
-  public function actionFetch($siteId, $elementId, string $fieldHandle): Response {
+  public function actionFetch(int|string $siteId, int|string $elementId, string $fieldHandle): Response {
     $element = Craft::$app->elements->getElementById($elementId, null, $siteId);
     if (is_null($element)) {
       return $this->asJson([
@@ -81,6 +84,7 @@ class CpController extends Controller
    * @param string $url
    * @return Response
    * @throws Exception
+   * @noinspection PhpUnused
    */
   public function actionOembed(string $schema, string $field, string $url): Response {
     $instance = Plugin::getInstance()->schemas->getSchema($schema);
@@ -108,6 +112,7 @@ class CpController extends Controller
 
   /**
    * @return Response
+   * @noinspection PhpUnused
    */
   public function actionTranslate(): Response {
     $translated = null;

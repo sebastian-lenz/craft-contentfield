@@ -15,22 +15,22 @@ class Usage
   /**
    * @var Usage[]
    */
-  public $children = [];
+  public array $children = [];
 
   /**
    * @var string
    */
-  public $name;
+  public string $name;
 
   /**
    * @var string
    */
-  public $type;
+  public string $type;
 
   /**
    * @var string
    */
-  public $uid;
+  public string $uid;
 
 
   /**
@@ -46,10 +46,6 @@ class Usage
    * @return Usage
    */
   public function findOrCreate(array $options): Usage {
-    if (!is_array($this->children)) {
-      $this->children = [];
-    }
-
     foreach ($this->children as $child) {
       if ($child->uid == $options['uid']) {
         return $child;
@@ -77,11 +73,7 @@ class Usage
   /**
    * @return void
    */
-  public function sortChildren() {
-    if (!is_array($this->children)) {
-      return;
-    }
-
+  public function sortChildren(): void {
     uasort($this->children, function(Usage $a, Usage $b) {
       return strcmp($a->name, $b->name);
     });

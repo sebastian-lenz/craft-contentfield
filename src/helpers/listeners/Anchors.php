@@ -17,7 +17,7 @@ class Anchors
   /**
    * @param AnchorsEvent $event
    */
-  static public function onFindAnchors(AnchorsEvent $event) {
+  static public function onFindAnchors(AnchorsEvent $event): void {
     self::eachAnchors($event->getElement(), function(AnchorBehaviour $anchors) use ($event) {
       foreach ($anchors->getAllAnchors() as $anchor) {
         $event->addAnchor(
@@ -32,7 +32,7 @@ class Anchors
   /**
    * @param AnchorEvent $event
    */
-  static public function onResolveAnchorId(AnchorEvent $event) {
+  static public function onResolveAnchorId(AnchorEvent $event): void {
     self::eachAnchors($event->getElement(), function(AnchorBehaviour $anchors) use ($event) {
       foreach ($anchors->getAllAnchors() as $anchor) {
         if ($anchor->owner->getUuid() == $event->id) {
@@ -45,7 +45,7 @@ class Anchors
   /**
    * @return void
    */
-  static public function register() {
+  static public function register(): void {
     Event::on(
       AnchorEvent::class, AnchorEvent::EVENT_RESOLVE_ANCHOR_ID,
       [self::class, 'onResolveAnchorId']
@@ -65,7 +65,7 @@ class Anchors
    * @param ElementInterface|null $element
    * @param callable $callback
    */
-  private static function eachAnchors(?ElementInterface $element, callable $callback) {
+  private static function eachAnchors(?ElementInterface $element, callable $callback): void {
     $values = is_null($element) ? [] : $element->getFieldValues();
 
     foreach ($values as $value) {

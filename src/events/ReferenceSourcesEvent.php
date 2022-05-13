@@ -3,91 +3,49 @@
 namespace lenz\contentfield\events;
 
 use Craft;
-use craft\base\ElementInterface;
-use lenz\contentfield\models\fields\ReferenceField;
-use yii\base\Event;
 
 /**
  * Class ReferenceSourcesEvent
+ * @extends AbstractSourcesEvent<string, string|null>
  */
-class ReferenceSourcesEvent extends Event
+class ReferenceSourcesEvent extends AbstractSourcesEvent
 {
   /**
-   * @var ElementInterface|null
-   */
-  public $element;
-
-  /**
-   * @var ReferenceField
-   */
-  public $field;
-
-  /**
-   * @var string[]
-   */
-  private $_sources;
-
-
-  /**
-   * @param string $source
-   */
-  public function addSource(string $source) {
-    if (!is_array($this->_sources)) {
-      $this->_sources = [];
-    }
-
-    if (!$this->contains($source)) {
-      $this->_sources[] = $source;
-    }
-  }
-
-  /**
-   * @param mixed $value
-   * @return bool
-   */
-  public function contains($value): bool {
-    if (is_string($value) || !is_array($this->_sources)) {
-      return false;
-    }
-
-    foreach ($this->_sources as $source) {
-      if ($source == $value) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /**
-   * @return string[]|null
+   * @inheritDoc
    */
   public function getSources(): ?array {
-    return $this->_sources;
+    return empty($this->_values) ? null : $this->_values;
   }
 
   /**
    * @param string $elementType
+   * @noinspection PhpUnused
    */
-  public function resetToDefaults(string $elementType) {
-    $result = [];
+  public function setToDefaults(string $elementType) {
     $sources = Craft::$app
-      ->getElementIndexes()
+      ->getElementSources()
       ->getSources($elementType);
 
-    foreach ($sources as $source) {
-      if (isset($source['key'])) {
-        $result[] = $source['key'];
-      }
-    }
+    $this->_values = array_filter(
+      array_map(fn($source) => $source['key'] ?? null, $sources)
+    );
+  }
 
-    $this->setSources($result);
+
+  // Protected methods
+  // -----------------
+
+  /**
+   * @inheritDoc
+   */
+  protected function isEqual(mixed $lft, mixed $rgt): bool {
+    return $lft === $rgt;
   }
 
   /**
-   * @param string[]|null $value
+   * @inheritDoc
    */
-  public function setSources(array $value = null) {
-    $this->_sources = $value;
+  protected function toValue(mixed $value): ?string {
+    return is_string($value) ? $value : null;
   }
 }

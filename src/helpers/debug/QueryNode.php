@@ -10,22 +10,22 @@ class QueryNode
   /**
    * @var QueryNode[]
    */
-  public $children = [];
+  public array $children = [];
 
   /**
-   * @var string
+   * @var string|null
    */
-  public $name = null;
+  public ?string $name = null;
 
   /**
    * @var QueryInfo[]
    */
-  public $queries = [];
+  public array $queries = [];
 
   /**
    * @var string
    */
-  public $type = self::TYPE_ROOT;
+  public string $type = self::TYPE_ROOT;
 
   /**
    * Known node types.
@@ -37,7 +37,7 @@ class QueryNode
   /**
    * @param QueryInfo $query
    */
-  public function addQuery(QueryInfo $query) {
+  public function addQuery(QueryInfo $query): void {
     $this->queries[] = $query;
   }
 

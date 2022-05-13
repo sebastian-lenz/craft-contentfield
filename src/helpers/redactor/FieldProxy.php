@@ -21,7 +21,7 @@ class FieldProxy extends Field
   /**
    * @var ReflectionClass
    */
-  public $reflection;
+  public ReflectionClass $reflection;
 
 
   /**
@@ -66,7 +66,10 @@ class FieldProxy extends Field
     $site = ($element ? $element->getSite() : $sitesService->getCurrentSite());
 
     $defaultTransform = '';
-    if (!empty($this->defaultTransform) && $transform = Craft::$app->getAssetTransforms()->getTransformByUid($this->defaultTransform)) {
+    if (
+      !empty($this->defaultTransform) &&
+      $transform = Craft::$app->getImageTransforms()->getTransformByUid($this->defaultTransform)
+    ) {
       $defaultTransform = $transform->handle;
     }
 
@@ -102,6 +105,7 @@ class FieldProxy extends Field
    * @param string $value
    * @param ElementInterface|null $element
    * @return string
+   * @noinspection PhpUnused
    */
   public function exportValue(string $value, ElementInterface $element = null): string {
     return str_replace(
@@ -121,7 +125,7 @@ class FieldProxy extends Field
       $method = $this->reflection->getMethod('_parseRefs');
       $method->setAccessible(true);
       return $method->invoke($this, $value, $element);
-    } catch (Exception $e) {
+    } catch (Exception) {
       return $value;
     }
   }
@@ -138,7 +142,7 @@ class FieldProxy extends Field
       $method = $this->reflection->getMethod('_getRedactorConfig');
       $method->setAccessible(true);
       return $method->invoke($this);
-    } catch (Exception $e) {
+    } catch (Exception) {
       return [];
     }
   }
@@ -152,7 +156,7 @@ class FieldProxy extends Field
       $method = $this->reflection->getMethod('_getLinkOptions');
       $method->setAccessible(true);
       return $method->invoke($this, $element);
-    } catch (Exception $e) {
+    } catch (Exception) {
       return [];
     }
   }
@@ -165,7 +169,7 @@ class FieldProxy extends Field
       $method = $this->reflection->getMethod('_getVolumeKeys');
       $method->setAccessible(true);
       return $method->invoke($this);
-    } catch (Exception $e) {
+    } catch (Exception) {
       return [];
     }
   }
@@ -178,7 +182,7 @@ class FieldProxy extends Field
       $method = $this->reflection->getMethod('_getTransforms');
       $method->setAccessible(true);
       return $method->invoke($this);
-    } catch (Exception $e) {
+    } catch (Exception) {
       return [];
     }
   }

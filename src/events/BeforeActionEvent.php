@@ -13,15 +13,15 @@ class BeforeActionEvent extends Event
   /**
    * @var bool
    */
-  public $isPreviewRequest;
+  public bool $isPreviewRequest;
 
   /**
    * @var ActionEvent
    */
-  public $originalEvent;
+  public ActionEvent $originalEvent;
 
   /**
    * @var string|null
    */
-  public $requestedUuid;
+  public ?string $requestedUuid;
 }

@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpUnused */
+
 namespace lenz\contentfield\services\oembeds;
 
 use DOMDocument;
@@ -21,50 +23,50 @@ class OEmbed extends BaseObject
    * The resource type. Valid values, along with value-specific parameters, are described below.
    * @var string
    */
-  public $type;
+  public string $type = '';
 
   /**
    * The oEmbed version number. This must be 1.0.
    * @var string
    */
-  public $version;
+  public string $version = '';
 
   /**
    * A text title, describing the resource.
    * @var string
    */
-  public $title;
+  public string $title = '';
 
   /**
    * The name of the author/owner of the resource.
    * @var string
    */
-  public $author_name;
+  public string $author_name = '';
 
   /**
    * A URL for the author/owner of the resource.
    * @var string
    */
-  public $author_url;
+  public string $author_url = '';
 
   /**
    * The name of the resource provider.
    * @var string
    */
-  public $provider_name;
+  public string $provider_name = '';
 
   /**
    * The url of the resource provider.
    * @var string
    */
-  public $provider_url;
+  public string $provider_url = '';
 
   /**
    * The suggested cache lifetime for this resource, in seconds. Consumers
    * may choose to use this value or not.
    * @var integer
    */
-  public $cache_age;
+  public int $cache_age = 0;
 
   /**
    * A URL to a thumbnail image representing the resource. The thumbnail
@@ -72,55 +74,55 @@ class OEmbed extends BaseObject
    * is present, thumbnail_width and thumbnail_height must also be present.
    * @var string
    */
-  public $thumbnail_url;
+  public string $thumbnail_url = '';
 
   /**
    * The width of the optional thumbnail. If this parameter is present,
    * thumbnail_url and thumbnail_height must also be present.
-   * @var integer
+   * @var int
    */
-  public $thumbnail_width;
+  public int $thumbnail_width = 0;
 
   /**
    * The height of the optional thumbnail. If this parameter is present,
    * thumbnail_url and thumbnail_width must also be present.
-   * @var integer
+   * @var int
    */
-  public $thumbnail_height;
+  public int $thumbnail_height = 0;
 
   /**
    * The HTML required to embed a video player. The HTML should have no
    * padding or margins.
    * @var string
    */
-  public $html;
+  public string $html = '';
 
   /**
    * The width in pixels required to display the HTML.
-   * @var integer
+   * @var int
    */
-  public $width;
+  public int $width = 0;
 
   /**
    * The height in pixels required to display the HTML.
-   * @var integer
+   * @var int
    */
-  public $height;
+  public int $height = 0;
 
   /**
    * @var array
    */
-  protected $_attributes = [];
+  protected array $_attributes = [];
 
   /**
    * @var Endpoint
    */
-  protected $_endpoint;
+  protected Endpoint $_endpoint;
 
   /**
    * @var string
    */
-  protected $_originalUrl;
+  protected string $_originalUrl;
 
 
   /**
@@ -130,7 +132,7 @@ class OEmbed extends BaseObject
    * @param string $originalUrl
    * @param array $config
    */
-  public function __construct(Endpoint $endpoint, string $originalUrl, $config = []) {
+  public function __construct(Endpoint $endpoint, string $originalUrl, array $config = []) {
     parent::__construct($config);
 
     $this->_endpoint = $endpoint;
@@ -140,7 +142,7 @@ class OEmbed extends BaseObject
   /**
    * @inheritDoc
    */
-  public function __get($name) {
+  public function __get($name): mixed {
     $getter = 'get' . $name;
     if (method_exists($this, $getter)) {
       return $this->$getter();
@@ -158,7 +160,7 @@ class OEmbed extends BaseObject
   /**
    * @inheritDoc
    */
-  public function __set($name, $value) {
+  public function __set($name, $value): void {
     $setter = 'set' . $name;
     if (method_exists($this, $setter)) {
       $this->$setter($value);
@@ -172,7 +174,7 @@ class OEmbed extends BaseObject
   /**
    * @inheritDoc
    */
-  public function __isset($name) {
+  public function __isset($name): bool {
     $getter = 'get' . $name;
     if (method_exists($this, $getter)) {
       return $this->$getter() !== null;
@@ -184,7 +186,7 @@ class OEmbed extends BaseObject
   /**
    * @inheritDoc
    */
-  public function __unset($name) {
+  public function __unset($name) : void{
     $setter = 'set' . $name;
     if (method_exists($this, $setter)) {
       $this->$setter(null);
@@ -198,7 +200,7 @@ class OEmbed extends BaseObject
   /**
    * @return Endpoint
    */
-  public function getEndpoint() {
+  public function getEndpoint(): Endpoint {
     return $this->_endpoint;
   }
 
@@ -206,7 +208,7 @@ class OEmbed extends BaseObject
    * @return string
    * @noinspection PhpUnused
    */
-  public function getOriginalUrl() {
+  public function getOriginalUrl(): string {
     return $this->_originalUrl;
   }
 
@@ -214,8 +216,8 @@ class OEmbed extends BaseObject
    * @param array|null $options
    * @return string
    */
-  public function getHtml($options = null) {
-    $html = is_string($this->html) ? $this->html : '';
+  public function getHtml(array $options = null): string {
+    $html = $this->html;
 
     if (!is_null($options) && !empty($html)) {
       $oldErrorMode = libxml_use_internal_errors(true);
@@ -231,7 +233,7 @@ class OEmbed extends BaseObject
 
         $this->modifyQuery($element, $options);
         $html = $doc->saveHTML($element);
-      } catch (Throwable $error) {
+      } catch (Throwable) {
         // Just ignore this error
       } finally {
         libxml_use_internal_errors($oldErrorMode);
@@ -249,7 +251,7 @@ class OEmbed extends BaseObject
    * @param DOMElement $element
    * @param array $options
    */
-  protected function modifyAttributes(DOMElement $element, array $options) {
+  protected function modifyAttributes(DOMElement $element, array $options): void {
     foreach ($options as $name => $value) {
       if (is_null($value)) {
         $element->removeAttribute($name);
@@ -269,7 +271,7 @@ class OEmbed extends BaseObject
    * @param DOMElement $element
    * @param array $options
    */
-  protected function modifyQuery(DOMElement $element, array $options) {
+  protected function modifyQuery(DOMElement $element, array $options): void {
     $src = $element->getAttribute('src');
     if (empty($src)) {
       return;
@@ -284,7 +286,7 @@ class OEmbed extends BaseObject
    * @param Url $url
    * @param array $options
    */
-  protected function modifyUrl(Url $url, array $options) {
+  protected function modifyUrl(Url $url, array $options): void {
     if (!isset($options['query'])) {
       return;
     }

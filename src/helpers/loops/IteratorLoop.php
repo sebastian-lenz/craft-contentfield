@@ -16,17 +16,17 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   /**
    * @var int
    */
-  private $_count;
+  private int $_count;
 
   /**
    * @var int
    */
-  private $_index = 0;
+  private int $_index = 0;
 
   /**
    * @var array
    */
-  private $_values;
+  private array $_values;
 
 
   /**
@@ -43,7 +43,7 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
    * @return void
    * @throws Exception
    */
-  public function display(array $variables = []) {
+  public function display(array $variables = []): void {
     $variables['loop'] = $this;
 
     foreach ($this as $value) {
@@ -56,14 +56,15 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   }
 
   /**
-   * @param int|null|mixed $limit
-   * @param string|string[]|null|mixed $only
-   * @param string|string[]|null|mixed $until
+   * @param mixed|null $limit
+   * @param mixed|null $only
+   * @param mixed|null $until
    * @param bool|null $addBack
    * @return IteratorLoop
    * @throws Throwable
+   * @noinspection PhpUnused
    */
-  public function getSiblings($limit = null, $only = null, $until = null, bool $addBack = null): IteratorLoop {
+  public function getSiblings(mixed $limit = null, mixed $only = null, mixed $until = null, bool $addBack = null): IteratorLoop {
     $siblings = [];
     $filter = null;
 
@@ -183,7 +184,7 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   /**
    * @return mixed
    */
-  public function peakNext() {
+  public function peakNext(): mixed {
     return $this->_index < $this->_count - 1
       ? $this->_values[$this->_index + 1]
       : null;
@@ -192,7 +193,7 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   /**
    * @return mixed
    */
-  public function peakPrevious() {
+  public function peakPrevious(): mixed {
     return $this->_index > 0
       ? $this->_values[$this->_index - 1]
       : null;

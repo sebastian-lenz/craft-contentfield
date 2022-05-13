@@ -21,12 +21,12 @@ abstract class AbstractAdapter
    * @param FieldLayout $layout
    * @param FieldLayoutField $layoutField
    */
-  abstract function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField);
+  abstract function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField): void;
 
   /**
    * @param ElementInterface|null $element
    * @return array|null
    * @throws Throwable
    */
-  abstract function toUids(ElementInterface $element = null);
+  abstract function toUids(ElementInterface $element = null): ?array;
 }
