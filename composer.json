@@ -18,6 +18,8 @@
     "codeception/module-asserts": "^1.0.0",
     "codeception/module-datafactory": "^1.0.0",
     "codeception/module-yii2": "^1.0.0",
+    "craftcms/phpstan": "dev-main",
+    "phpstan/phpstan": "^1.5",
     "vlucas/phpdotenv": "^3.0"
   },
   "autoload": {
