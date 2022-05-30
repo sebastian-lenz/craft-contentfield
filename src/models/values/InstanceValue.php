@@ -53,7 +53,7 @@ class InstanceValue
   /**
    * @var string|null
    */
-  private ?string $_output;
+  private ?string $_output = null;
 
   /**
    * @var string
@@ -131,7 +131,7 @@ class InstanceValue
    */
   public function display(array $variables = []): void {
     if ($this->isVisible()) {
-      if (isset($this->_output)) {
+      if (!is_null($this->_output)) {
         echo $this->_output;
       } else {
         $this->getSchema()->display($this, $variables);
@@ -153,7 +153,7 @@ class InstanceValue
    * @noinspection PhpUnused (Public API)
    */
   public function getCachedOutput(): ?string {
-    return $this->_output ?? null;
+    return $this->_output;
   }
 
   /**
@@ -257,7 +257,7 @@ class InstanceValue
    * @noinspection PhpUnused
    */
   public function hasCachedOutput(): bool {
-    return isset($this->_output);
+    return !is_null($this->_output);
   }
 
   /**
@@ -293,7 +293,7 @@ class InstanceValue
       return '';
     }
 
-    if (isset($this->_output)) {
+    if (!is_null($this->_output)) {
       return $this->_output;
     }
 

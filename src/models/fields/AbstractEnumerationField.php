@@ -16,9 +16,9 @@ use lenz\contentfield\models\values\ValueInterface;
 abstract class AbstractEnumerationField extends AbstractField
 {
   /**
-   * @var string|int
+   * @var string|int|null
    */
-  public string|int $defaultValue;
+  public string|int|null $defaultValue = null;
 
   /**
    * @var EnumerationInterface

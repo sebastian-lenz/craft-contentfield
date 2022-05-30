@@ -18,9 +18,9 @@ abstract class AbstractField extends Model
 {
   /**
    * The group name this field belongs to.
-   * @var array|string
+   * @var array|string|null
    */
-  public string|array $group;
+  public string|array|null $group = null;
 
   /**
    * The instructions displayed to the user.
@@ -29,7 +29,7 @@ abstract class AbstractField extends Model
   public ?string $instructions = null;
 
   /**
-   * The human readable label of this field.
+   * The human-readable label of this field.
    * @var string
    */
   public string $label;
@@ -73,9 +73,9 @@ abstract class AbstractField extends Model
   public string $width;
 
   /**
-   * @var string
+   * @var string|null
    */
-  private string $_clientValidationId;
+  private ?string $_clientValidationId = null;
 
   /**
    * The internal name of this field.
@@ -347,7 +347,7 @@ abstract class AbstractField extends Model
   private function getEditorGroupStyle(): ?array {
     $group = [];
     $style = [];
-    if (!isset($this->group)) {
+    if (empty($this->group)) {
       return null;
     }
 

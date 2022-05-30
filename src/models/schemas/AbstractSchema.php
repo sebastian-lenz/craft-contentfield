@@ -57,18 +57,18 @@ abstract class AbstractSchema extends Model
    *     grid: <value>
    * ```
    *
-   * @var string|array
+   * @var string|array|null
    */
-  public string|array $grid;
+  public string|array|null $grid = null;
 
   /**
    * The name of the icon that represents this schema.
-   * @var string
+   * @var string|null
    */
-  public string $icon;
+  public string|null $icon = null;
 
   /**
-   * A human readable name of this schema.
+   * A human-readable name of this schema.
    * @var string
    */
   public string $label;
@@ -82,16 +82,16 @@ abstract class AbstractSchema extends Model
    * The fully qualified name of the model class that should be attached
    * to this schema.
    *
-   * @var string
+   * @var string|null
    */
-  public string $model;
+  public ?string $model = null;
 
   /**
    * A handlebars template used to display instances of this schema in the editor.
    *
    * @var string|null
    */
-  public ?string $preview;
+  public ?string $preview = null;
 
   /**
    * The name of an asset reference field whose image will be used as an
@@ -591,7 +591,7 @@ abstract class AbstractSchema extends Model
   protected function getEditorStyle(): ?array {
     $style = $this->style ?? [];
 
-    if (isset($this->grid) && !empty($this->grid)) {
+    if (!empty($this->grid)) {
       $style[AbstractField::DEFAULT_BREAKPOINT]['grid'] = $this->grid;
     }
 

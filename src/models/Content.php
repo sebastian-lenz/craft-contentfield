@@ -38,7 +38,7 @@ class Content extends ForeignFieldModel implements DisplayInterface
   /**
    * @var InstanceValue|null
    */
-  private ?InstanceValue $_model;
+  private ?InstanceValue $_model = null;
 
   /**
    * @var ReferenceLoader
@@ -181,7 +181,6 @@ class Content extends ForeignFieldModel implements DisplayInterface
 
   /**
    * @return ReferenceLoader
-   * @throws Exception
    */
   public function getReferenceLoader(): ReferenceLoader {
     if (!isset($this->_referenceLoader)) {

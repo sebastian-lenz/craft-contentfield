@@ -17,7 +17,7 @@ use yii\base\InvalidValueException;
 
 /**
  * Class ReferenceFolderSourcesEvent
- * @extends AbstractSourcesEvent<VolumeFolder, Volume|VolumeFolder|string|null>
+ * @extends AbstractSourcesEvent<Volume|VolumeFolder, Volume|VolumeFolder|string|null>
  */
 class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
 {
@@ -75,8 +75,8 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
   /**
    * @inheritDoc
    */
-  protected function toValue(mixed $value): VolumeFolder|null {
-    return self::toFolder($value);
+  protected function toValue(mixed $value): Volume|VolumeFolder|null {
+    return self::toVolumeOrFolder($value);
   }
 
 
@@ -94,9 +94,9 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
 
     $users = Craft::$app->getUser();
 
-    return array_filter($folders, function(VolumeFolder $folder) use ($users) {
+    return array_filter($folders, function(Volume|VolumeFolder $value) use ($users) {
       try {
-        $volume = $folder->getVolume();
+        $volume = $value instanceof Volume ? $value : $value->getVolume();
       } catch (InvalidConfigException) {
         $volume = null;
       }
@@ -153,7 +153,7 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
         }
       }
 
-      return self::toFolder($source);
+      return self::toVolumeOrFolder($source);
     }, $sources);
 
     return array_filter($sources);
@@ -219,37 +219,28 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
   }
 
   /**
-   * @param string|Volume|VolumeFolder|null $value
-   * @return VolumeFolder|null
+   * @param Volume|VolumeFolder $value
+   * @return string
    */
-  static private function toFolder(VolumeFolder|Volume|string|null $value): VolumeFolder|null {
-    $value = self::toVolumeOrFolder($value);
+  static private function toSource(Volume|VolumeFolder $value): string {
+    return $value instanceof Volume
+      ? 'volume:' . $value->uid
+      : 'folder:' . $value->uid;
+  }
 
+  /**
+   * @param Volume|VolumeFolder $value
+   * @return string
+   */
+  static private function toElementSource(Volume|VolumeFolder $value): string {
     if ($value instanceof Volume) {
-      return Craft::$app->getAssets()->getRootFolderByVolumeId($value->id);
-    } else {
-      return $value;
+      return self::toSource($value);
     }
-  }
 
-  /**
-   * @param VolumeFolder $folder
-   * @return string
-   */
-  static private function toSource(VolumeFolder $folder): string {
-    return 'folder:' . $folder->uid;
-  }
-
-  /**
-   * @param VolumeFolder $folder
-   * @return string
-   */
-  static private function toElementSource(VolumeFolder $folder): string {
-    $segments = [self::toSource($folder)];
-
-    while ($folder->parentId && $folder->volumeId !== null) {
-      $folder = $folder->getParent();
-      $segments[] = self::toSource($folder);
+    $segments = [self::toSource($value)];
+    while ($value->parentId && $value->volumeId !== null) {
+      $value = $value->getParent();
+      $segments[] = self::toSource($value);
     }
 
     return implode('/', array_reverse($segments));

@@ -23,7 +23,7 @@ class ContentFieldAsset extends AssetBundle
     $this->css = ['content-field.css'];
 
     $config = Plugin::getInstance()->getSettings();
-    if (isset($config->cpCssFile) && !empty($config->cpCssFile)) {
+    if (!empty($config->cpCssFile)) {
       $this->css[] = App::parseEnv($config->cpCssFile);
     }
 

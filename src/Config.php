@@ -17,7 +17,7 @@ class Config extends Model
   /**
    * @var string
    */
-  public string $cpCssFile;
+  public string $cpCssFile = '';
 
   /**
    * @var string

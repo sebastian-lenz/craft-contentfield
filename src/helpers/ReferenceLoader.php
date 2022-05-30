@@ -39,11 +39,15 @@ class ReferenceLoader
   /**
    * BatchLoader constructor.
    * @param Content|null $content
-   * @throws Exception
    */
   public function __construct(Content $content = null) {
     if (!is_null($content)) {
-      $this->addContent($content);
+      $element = $content->getOwner();
+      if ($element instanceof Element) {
+        $this->_siteId = $element->siteId;
+      }
+
+      $this->_contents[] = $content;
     }
   }
 
@@ -53,7 +57,7 @@ class ReferenceLoader
    */
   public function addContent(Content $content): void {
     if (isset($this->_referenceMap)) {
-      throw new Exception('This batch loader is already in used');
+      throw new Exception('This batch loader has already been used.');
     }
 
     $element = $content->getOwner();

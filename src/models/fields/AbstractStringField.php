@@ -14,23 +14,23 @@ abstract class AbstractStringField extends AbstractField
   /**
    * Specifies the maximum string length.
    *
-   * @var int
+   * @var int|null
    */
-  public int $maxLength;
+  public ?int $maxLength = null;
 
   /**
    * Specifies the minimum string length.
    *
-   * @var int
+   * @var int|null
    */
-  public int $minLength;
+  public ?int $minLength = null;
 
   /**
    * A regular expression the string must match.
    *
-   * @var string
+   * @var string|null
    */
-  public string $pattern;
+  public ?string $pattern = null;
 
   /**
    * @var bool
@@ -95,16 +95,16 @@ abstract class AbstractStringField extends AbstractField
   public function getValueRules(): array {
     $stringRule = ['string'];
 
-    if (isset($this->maxLength)) {
+    if (!is_null($this->maxLength)) {
       $stringRule['max'] = $this->maxLength;
     }
 
-    if (isset($this->minLength)) {
+    if (!is_null($this->minLength)) {
       $stringRule['min'] = $this->minLength;
     }
 
     $rules = [$stringRule];
-    if (isset($this->pattern)) {
+    if (!is_null($this->pattern)) {
       $rules[] = ['match', 'pattern' => $this->pattern];
     }
 

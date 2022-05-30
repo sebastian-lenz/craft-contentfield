@@ -38,7 +38,7 @@ class SourcesPage extends AbstractPage
    * @inheritDoc
    */
   public function getIcon(): string {
-    return 'category';
+    return 'folder';
   }
 
   /**

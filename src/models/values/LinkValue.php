@@ -113,7 +113,6 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @param array $extraAttribs
    * @return Attributes
-   * @throws Exception
    * @noinspection PhpUnused (Public API)
    */
   public function getLinkAttributes(array $extraAttribs = []): Attributes {
@@ -136,7 +135,6 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
 
   /**
    * @return ElementInterface|null
-   * @throws Exception
    */
   public function getLinkedElement(): ?ElementInterface {
     if (!isset($this->_element)) {
@@ -214,7 +212,6 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
 
   /**
    * @return bool
-   * @throws Exception
    */
   public function isEmpty(): bool {
     $linkType = $this->getLinkType();
