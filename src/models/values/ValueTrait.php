@@ -15,17 +15,17 @@ trait ValueTrait
   /**
    * @var Content|null
    */
-  protected $_content = null;
+  protected ?Content $_content = null;
 
   /**
    * @var AbstractField|null
    */
-  protected $_field;
+  protected ?AbstractField $_field;
 
   /**
    * @var ValueInterface|null
    */
-  protected $_parent;
+  protected ?ValueInterface $_parent;
 
 
   /**
@@ -83,7 +83,7 @@ trait ValueTrait
       return $this->_parent->getRoot();
     }
 
-    return $this instanceof ValueInterface ? $this : null;
+    return $this;
   }
 
   /**
@@ -101,7 +101,7 @@ trait ValueTrait
   /**
    * @param Content $content
    */
-  public function setContent(Content $content) {
+  public function setContent(Content $content): void {
     $this->_content = $content;
   }
 }

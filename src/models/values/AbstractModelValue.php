@@ -27,12 +27,12 @@ abstract class AbstractModelValue
   /**
    * @var AbstractSchema
    */
-  private $_schema;
+  private AbstractSchema $_schema;
 
   /**
    * @var array
    */
-  private $_values = [];
+  private array $_values = [];
 
 
   /**
@@ -61,7 +61,7 @@ abstract class AbstractModelValue
    */
   public function __get($name) {
     if (
-      substr($name, 0, 4) == 'raw:' &&
+      str_starts_with($name, 'raw:') &&
       array_key_exists(substr($name, 4), $this->_schema->fields)
     ) {
       $name = substr($name, 4);
@@ -106,7 +106,7 @@ abstract class AbstractModelValue
    * @inheritDoc
    */
   public function addError($attribute, $error = '') {
-    if (substr($attribute, 0, 4) == 'raw:') {
+    if (str_starts_with($attribute, 'raw:')) {
       $attribute = substr($attribute, 4);
     }
 
@@ -150,7 +150,7 @@ abstract class AbstractModelValue
    * @return InstanceValue[]
    * @throws Throwable
    */
-  public function findInstances($qualifier): array {
+  public function findInstances(array|string $qualifier): array {
     $result = [];
     if ($this->_schema->matchesQualifier($qualifier)) {
       $result[] = $this;
@@ -172,7 +172,7 @@ abstract class AbstractModelValue
    * @inheritDoc
    */
   public function getAttributeLabel($attribute): string {
-    if (substr($attribute, 0, 4) == 'raw:') {
+    if (str_starts_with($attribute, 'raw:')) {
       $attribute = substr($attribute, 4);
     }
 
@@ -181,10 +181,11 @@ abstract class AbstractModelValue
 
   /**
    * @param string $name
-   * @param mixed $default
+   * @param mixed|null $default
    * @return mixed
+   * @noinspection PhpUnused
    */
-  public function getConstant(string $name, $default = null) {
+  public function getConstant(string $name, mixed $default = null): mixed {
     return $this->_schema->getConstant($name, $default);
   }
 
@@ -249,7 +250,7 @@ abstract class AbstractModelValue
    * @param string $name
    * @return mixed|null
    */
-  public function getValue(string $name) {
+  public function getValue(string $name): mixed {
     return array_key_exists($name, $this->_values)
       ? $this->_values[$name]
       : null;
@@ -266,7 +267,7 @@ abstract class AbstractModelValue
    * @param string|string[] $specs
    * @return bool
    */
-  public function is($specs): bool {
+  public function is(array|string $specs): bool {
     try {
       return $this->_schema->matchesQualifier($specs);
     } catch (Throwable $e) {
@@ -286,7 +287,7 @@ abstract class AbstractModelValue
    * @inheritDoc
    * @throws Exception
    */
-  public function onBeforeAction(BeforeActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event): void {
     foreach ($this->_values as $value) {
       if ($value instanceof BeforeActionInterface) {
         $value->onBeforeAction($event);

@@ -16,14 +16,14 @@ use lenz\contentfield\models\values\ValueInterface;
 abstract class AbstractEnumerationField extends AbstractField
 {
   /**
-   * @var string|int
+   * @var string|int|null
    */
-  public $defaultValue;
+  public string|int|null $defaultValue = null;
 
   /**
    * @var EnumerationInterface
    */
-  protected $_enumeration;
+  protected EnumerationInterface $_enumeration;
 
   /**
    * Defines the keys of an option array.
@@ -60,7 +60,7 @@ abstract class AbstractEnumerationField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): EnumerationValue {
     return new EnumerationValue($data, $parent, $this);
   }
 
@@ -82,7 +82,7 @@ abstract class AbstractEnumerationField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): int|string|null {
     if (!($value instanceof EnumerationValue)) {
       return null;
     }
@@ -93,8 +93,8 @@ abstract class AbstractEnumerationField extends AbstractField
   /**
    * @return EnumerationInterface
    */
-  public function getEnumeration() {
-    if (!($this->_enumeration instanceof EnumerationInterface)) {
+  public function getEnumeration(): EnumerationInterface {
+    if (!isset($this->_enumeration)) {
       $this->_enumeration = new StaticEnumeration();
     }
 
@@ -110,12 +110,12 @@ abstract class AbstractEnumerationField extends AbstractField
    * @return EnumerationInterface
    * @throws Exception
    */
-  private function createEnumeration($config): EnumerationInterface {
+  private function createEnumeration(array|string $config): EnumerationInterface {
     if (is_array($config)) {
       $enumClass = $config['type'];
       $enumOptions = $config;
     } else {
-      $enumClass = (string)$config;
+      $enumClass = $config;
       $enumOptions = [];
     }
 

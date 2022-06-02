@@ -17,12 +17,12 @@ class DefaultGeoLocations
   /**
    * @var array
    */
-  static $DEFAULT_LOCATION = ['latitude' => 40.712776, 'longitude' => -74.005974];
+  static array $DEFAULT_LOCATION = ['latitude' => 40.712776, 'longitude' => -74.005974];
 
   /**
    * @var array
    */
-  static $LOCATIONS = [
+  static array $LOCATIONS = [
     'AF' => ['latitude' =>  34.51666667,  'longitude' =>   69.183333], // Kabul, Afghanistan
     'AX' => ['latitude' =>  60.116667,    'longitude' =>   19.9],      // Mariehamn, Aland Islands
     'AL' => ['latitude' =>  41.31666667,  'longitude' =>   19.816667], // Tirana, Albania
@@ -274,10 +274,10 @@ class DefaultGeoLocations
     $language = null;
 
     try {
-      $language = is_null($element) || !($element instanceof Element)
+      $language = !($element instanceof Element)
         ? Craft::$app->sites->currentSite->language
         : $element->getSite()->language;
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       // Ignore errors right here
     }
 

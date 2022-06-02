@@ -17,7 +17,7 @@ abstract class AbstractTranslator extends BaseObject
    * @param string $message
    * @return string|null
    */
-  abstract function translate($sourceLanguage, $targetLanguage, $message);
+  abstract function translate(string $sourceLanguage, string $targetLanguage, string $message): ?string;
 
 
   // Static methods
@@ -26,17 +26,17 @@ abstract class AbstractTranslator extends BaseObject
   /**
    * @return string
    */
-  abstract static function getDisplayName();
+  abstract static function getDisplayName(): string;
 
   /**
    * @return string
    */
-  abstract static function getHandle();
+  abstract static function getHandle(): string;
 
   /**
    * @return array
    */
-  static function getSettings() {
+  static function getSettings(): array {
     return Plugin::getInstance()
       ->getSettings()
       ->getTranslatorSettings(static::getHandle());
@@ -46,7 +46,7 @@ abstract class AbstractTranslator extends BaseObject
    * @return string|null
    * @throws Throwable
    */
-  static function getSettingsHtml() {
+  static function getSettingsHtml(): ?string {
     return null;
   }
 }

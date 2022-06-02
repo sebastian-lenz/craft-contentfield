@@ -30,7 +30,7 @@ class PictureImageTag extends ImageImageTag
   /**
    * @return string[]
    */
-  protected function getSourceTags() {
+  protected function getSourceTags(): array {
     $groups = $this->getSourceGroups()
       ->getGroups();
 

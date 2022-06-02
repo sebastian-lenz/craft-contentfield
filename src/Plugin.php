@@ -28,33 +28,33 @@ class Plugin extends BasePlugin
   /**
    * @var bool
    */
-  public $hasCpSettings = true;
+  public bool $hasCpSettings = true;
 
   /**
    * @inheritdoc
    */
-  public $schemaVersion = '1.1.3';
+  public string $schemaVersion = '1.1.3';
 
   /**
    * @var bool
    */
-  static $IS_ELEMENT_PREVIEW = false;
+  static bool $IS_ELEMENT_PREVIEW = false;
 
   /**
    * @var string
    */
-  static $TRANSLATION_CATEGORY = 'site';
+  static string $TRANSLATION_CATEGORY = 'site';
 
   /**
    * @var string
    */
-  static $UUID_PARAM = 'content-uuid';
+  static string $UUID_PARAM = 'content-uuid';
 
 
   /**
    * @return void
    */
-  public function init() {
+  public function init(): void {
     parent::init();
 
     $this->setComponents([
@@ -85,7 +85,7 @@ class Plugin extends BasePlugin
    * @inheritDoc
    * @throws Throwable
    */
-  public function afterSaveSettings() {
+  public function afterSaveSettings(): void {
     Craft::$app->cache->flush();
     FileHelper::clearDirectory(
       Craft::$app->getPath()->getCompiledTemplatesPath(false)
@@ -101,7 +101,7 @@ class Plugin extends BasePlugin
   /**
    * @inheritdoc
    */
-  protected function createSettingsModel() {
+  protected function createSettingsModel(): Config {
     return new Config();
   }
 

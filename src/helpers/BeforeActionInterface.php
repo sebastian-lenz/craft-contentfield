@@ -13,5 +13,5 @@ interface BeforeActionInterface
    * @param BeforeActionEvent $event
    * @return void
    */
-  public function onBeforeAction(BeforeActionEvent $event);
+  public function onBeforeAction(BeforeActionEvent $event): void;
 }

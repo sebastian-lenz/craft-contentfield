@@ -24,8 +24,6 @@ class StringHelper extends \craft\helpers\StringHelper
     }
 
     // Unify line endings
-    $value = trim(preg_replace('/\R/u', "\n", $value));
-
-    return $value;
+    return trim(preg_replace('/\R/u', "\n", $value));
   }
 }

@@ -16,7 +16,7 @@ class GlobalSetAdapter extends AbstractAdapter
   /**
    * @inheritDoc
    */
-  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField) {
+  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField): void {
     if ($layout->type == GlobalSet::class) {
       $globalSet = GlobalSetRecord::findOne([
         'fieldLayoutId' => $layoutField->layoutId,
@@ -37,7 +37,7 @@ class GlobalSetAdapter extends AbstractAdapter
   /**
    * @inheritDoc
    */
-  public function toUids(ElementInterface $element = null) {
+  public function toUids(ElementInterface $element = null): ?array {
     if ($element instanceof GlobalSet) {
       return [
         $element->uid

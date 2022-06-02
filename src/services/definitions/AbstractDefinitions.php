@@ -18,7 +18,7 @@ abstract class AbstractDefinitions
   /**
    * @var array
    */
-  protected $definitions;
+  protected array $definitions;
 
   /**
    * @var string
@@ -89,7 +89,6 @@ abstract class AbstractDefinitions
 
   /**
    * @return array
-   * @noinspection PhpParamsInspection (PHPStorm has false definition of `RecursiveCallbackFilterIterator`)
    */
   protected function getDefinitionSources(): array {
     $sources = [];
@@ -111,10 +110,11 @@ abstract class AbstractDefinitions
         new RecursiveDirectoryIterator($path),
         function (SplFileInfo $current) {
           $fileName = $current->getFilename();
-          return substr($fileName, 0, 1) != '.' && (
+
+          return !str_starts_with($fileName, '.') && (
             $current->isDir() ||
-            substr($fileName, -4) == '.yml' ||
-            substr($fileName, -5) == '.yaml'
+            str_ends_with($fileName, '.yml') ||
+            str_ends_with($fileName, '.yaml')
           );
         }
       );
@@ -150,7 +150,7 @@ abstract class AbstractDefinitions
    *
    * @return void
    */
-  protected function loadDefinitions() {
+  protected function loadDefinitions(): void {
     if (isset($this->definitions)) {
       return;
     }
@@ -169,7 +169,7 @@ abstract class AbstractDefinitions
       return;
     }
 
-    // Otherwise create a hash of all files and check for updates
+    // Otherwise, create a hash of all files and check for updates
     $sources = $this->getDefinitionSources();
     $hash = md5(implode(';', array_map(function($source) {
       return implode(',', array_values($source));
@@ -184,7 +184,7 @@ abstract class AbstractDefinitions
       return;
     }
 
-    // Finally read all the definitions
+    // Finally, read all the definitions
     $definitions = [];
     foreach ($sources as $source) {
       $definitions = array_merge(
@@ -242,7 +242,7 @@ abstract class AbstractDefinitions
       return $config;
     }
 
-    // If we have already have that type in out stack, bail out
+    // If we already have that type in out stack, bail out
     if (in_array($type, $stack)) {
       throw new Exception('Recursive definition inheritance.');
     }

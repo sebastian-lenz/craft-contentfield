@@ -12,13 +12,13 @@ class YouTubeEmbed extends OEmbed
   /**
    * @var bool
    */
-  static $USE_NOCOOKIE = true;
+  static bool $USE_NOCOOKIE = true;
 
 
   /**
    * @inheritDoc
    */
-  protected function modifyUrl(Url $url, array $options) {
+  protected function modifyUrl(Url $url, array $options): void {
     parent::modifyUrl($url, $options);
 
     // YouTube playlists forget to carry over the video index, patch it.

@@ -6,8 +6,6 @@ use craft\helpers\Template;
 use lenz\contentfield\events\RegisterTranslatorsEvent;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\services\translators\AbstractTranslator;
-use lenz\contentfield\services\translators\AzureTranslator;
-use lenz\contentfield\services\translators\GoogleTranslator;
 use Throwable;
 use yii\base\Component;
 
@@ -19,12 +17,12 @@ class Translators extends Component
   /**
    * @var AbstractTranslator|null
    */
-  private $_translator;
+  private ?AbstractTranslator $_translator;
 
   /**
-   * @var AbstractTranslator[]
+   * @var array<class-string<AbstractTranslator>>
    */
-  private $_translators;
+  private array $_translators;
 
   /**
    * Event that will be triggered when looking for available translators.
@@ -35,39 +33,20 @@ class Translators extends Component
   /**
    * @return AbstractTranslator|null
    */
-  public function getTranslator() {
+  public function getTranslator(): ?AbstractTranslator {
     if (!isset($this->_translator)) {
-      $settings    = Plugin::getInstance()->getSettings();
-      $translators = $this->getTranslatorTypes();
-      $translator  = null;
-      $handle      = $settings->translator;
-
-      foreach ($translators as $translatorClass) {
-        if ($translatorClass::getHandle() == $handle) {
-          $translatorSettings = $settings->getTranslatorSettings($handle);
-          $translator         = new $translatorClass($translatorSettings);
-          break;
-        }
-      }
-
-      $this->_translator = $translator;
+      $this->_translator = $this->createTranslator();
     }
 
     return $this->_translator;
   }
 
   /**
-   * @return AbstractTranslator[]
+   * @return array<class-string<AbstractTranslator>>
    */
-  public function getTranslatorTypes() {
+  public function getTranslatorTypes(): array {
     if (!isset($this->_translators)) {
-      $event = new RegisterTranslatorsEvent([
-        'translators' => [
-          AzureTranslator::class,
-          GoogleTranslator::class,
-        ],
-      ]);
-
+      $event = new RegisterTranslatorsEvent();
       $this->trigger(self::EVENT_REGISTER_TRANSLATORS, $event);
       $this->_translators = $event->translators;
     }
@@ -78,11 +57,8 @@ class Translators extends Component
   /**
    * @return string[]
    */
-  public function getTranslatorTypeOptions() {
-    $options = [
-      '' => '(None)',
-    ];
-
+  public function getTranslatorTypeOptions(): array {
+    $options = ['' => '(None)'];
     foreach ($this->getTranslatorTypes() as $translator) {
       $options[$translator::getHandle()] = $translator::getDisplayName();
     }
@@ -93,28 +69,51 @@ class Translators extends Component
   /**
    * @return array
    * @throws Throwable
+   * @noinspection PhpUnused
    */
-  public function getTranslatorTypeSettings() {
-    $result = [];
-
-    foreach ($this->getTranslatorTypes() as $translator) {
+  public function getTranslatorTypeSettings(): array {
+    return array_filter(array_map(function(string $translator) {
       $html = $translator::getSettingsHtml();
-      if (!is_null($html)) {
-        $result[] = [
-          'displayName' => $translator::getDisplayName(),
-          'handle'      => $translator::getHandle(),
-          'html'        => Template::raw($html),
-        ];
+      if (is_null($html)) {
+        return null;
       }
-    }
 
-    return $result;
+      return [
+        'displayName' => $translator::getDisplayName(),
+        'handle' => $translator::getHandle(),
+        'html' => Template::raw($html),
+      ];
+    }, $this->getTranslatorTypes()));
   }
 
   /**
    * @return bool
    */
-  public function hasTranslator() {
+  public function hasTranslator(): bool {
     return !is_null($this->getTranslator());
+  }
+
+
+  // Private methods
+  // ---------------
+
+  /**
+   * @return AbstractTranslator|null
+   */
+  private function createTranslator(): ?AbstractTranslator {
+    $settings = Plugin::getInstance()->getSettings();
+    $translators = $this->getTranslatorTypes();
+    $handle = $settings->translator;
+
+    foreach ($translators as $translatorClass) {
+      if ($translatorClass::getHandle() != $handle) {
+        continue;
+      }
+
+      $translatorSettings = $settings->getTranslatorSettings($handle);
+      return new $translatorClass($translatorSettings);
+    }
+
+    return null;
   }
 }

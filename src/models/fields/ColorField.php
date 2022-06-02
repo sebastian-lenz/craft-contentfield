@@ -2,9 +2,9 @@
 
 namespace lenz\contentfield\models\fields;
 
+use craft\base\ElementInterface;
 use lenz\contentfield\models\values\ColorValue;
 use lenz\contentfield\models\values\ValueInterface;
-use craft\base\ElementInterface;
 
 /**
  * Class ColorField
@@ -14,12 +14,12 @@ class ColorField extends AbstractField
   /**
    * @var bool
    */
-  public $alpha = false;
+  public bool $alpha = false;
 
   /**
-   * @var array
+   * @var array|null
    */
-  public $swatches = null;
+  public ?array $swatches = null;
 
   /**
    * @inheritdoc
@@ -30,7 +30,7 @@ class ColorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): ColorValue {
     return new ColorValue($data, $parent, $this);
   }
 
@@ -47,7 +47,7 @@ class ColorField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?array {
     if (!($value instanceof ColorValue)) {
       return null;
     }
@@ -79,7 +79,7 @@ class ColorField extends AbstractField
    * @noinspection PhpUnused (Validator)
    */
   public function validateSwatches(string $attribute) {
-    if (!isset($this->$attribute) || empty($this->$attribute)) {
+    if (empty($this->$attribute)) {
       return;
     }
 
@@ -113,6 +113,6 @@ class ColorField extends AbstractField
    * @return bool
    */
   static public function isHexColor(string $value): bool {
-    return !!preg_match('/#([a-f0-9]{3}){1,2}\b/i', $value);
+    return !!preg_match('/#([a-f\d]{3}){1,2}\b/i', $value);
   }
 }

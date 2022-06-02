@@ -37,12 +37,12 @@ class ArrayValue
   /**
    * @var array
    */
-  private $_values;
+  private array $_values;
 
   /**
    * @var array
    */
-  private $_visibleValues;
+  private array $_visibleValues;
 
 
   /**
@@ -64,7 +64,7 @@ class ArrayValue
         array_map(function($value) use ($member) {
           try {
             return $member->createValue($value, $this);
-          } catch (Throwable $error) {
+          } catch (Throwable) {
             return null;
           }
         }, $data)
@@ -76,7 +76,7 @@ class ArrayValue
    * @inheritDoc
    * @throws Exception
    */
-  public function __toString() {
+  public function __toString(): string {
     return $this->render();
   }
 
@@ -84,7 +84,7 @@ class ArrayValue
    * @inheritDoc
    * @throws Exception
    */
-  public function display(array $variables = []) {
+  public function display(array $variables = []): void {
     $iterator = $this->getIterator();
     $variables['loop'] = $iterator;
 
@@ -100,7 +100,7 @@ class ArrayValue
   /**
    * @inheritDoc
    */
-  public function findInstances($qualifier): array {
+  public function findInstances(array|string $qualifier): array {
     $result = [];
 
     foreach ($this->_values as $value) {
@@ -139,8 +139,9 @@ class ArrayValue
    * Returns the first visible value.
    *
    * @return mixed
+   * @noinspection PhpUnused
    */
-  public function getFirst() {
+  public function getFirst(): mixed {
     foreach ($this->_values as $value) {
       if (
         !($value instanceof InstanceValue) ||
@@ -212,7 +213,7 @@ class ArrayValue
   /**
    * @inheritDoc
    */
-  public function onBeforeAction(BeforeActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event): void {
     foreach ($this->_values as $value) {
       if ($value instanceof BeforeActionInterface) {
         $value->onBeforeAction($event);
@@ -240,6 +241,7 @@ class ArrayValue
 
   /**
    * @param array $value
+   * @noinspection PhpUnused
    */
   public function setVisibleValues(array $value) {
     $this->_visibleValues = $value;
@@ -251,9 +253,8 @@ class ArrayValue
 
   /**
    * @inheritdoc
-   * @noinspection PhpMissingReturnTypeInspection (Interface method)
    */
-  public function offsetExists($offset) {
+  public function offsetExists($offset): bool {
     $values = $this->getVisibleValues();
     return array_key_exists($offset, $values);
   }
@@ -261,7 +262,7 @@ class ArrayValue
   /**
    * @inheritdoc
    */
-  public function offsetGet($offset) {
+  public function offsetGet($offset): mixed {
     $values = $this->getVisibleValues();
     return $values[$offset];
   }
@@ -270,13 +271,13 @@ class ArrayValue
    * @inheritdoc
    * @throws Exception
    */
-  public function offsetSet($offset, $value) { }
+  public function offsetSet($offset, $value): void { }
 
   /**
    * @inheritdoc
    * @throws Exception
    */
-  public function offsetUnset($offset) { }
+  public function offsetUnset($offset): void { }
 
 
   // Countable
@@ -284,9 +285,8 @@ class ArrayValue
 
   /**
    * @inheritdoc
-   * @noinspection PhpMissingReturnTypeInspection (Interface method)
    */
-  public function count() {
+  public function count(): int {
     return count($this->getVisibleValues());
   }
 
@@ -297,7 +297,7 @@ class ArrayValue
   /**
    * @inheritdoc
    */
-  public function getIterator() {
+  public function getIterator(): IteratorLoop {
     return new IteratorLoop($this->getVisibleValues());
   }
 }

@@ -20,12 +20,12 @@ interface ImageTagInterface
   /**
    * @return bool
    */
-  public function isSupported() : bool;
+  public function isSupported(): bool;
 
   /**
    * @return string
    */
-  public function render() : string;
+  public function render(): string;
 
 
   // Static methods
@@ -36,5 +36,5 @@ interface ImageTagInterface
    * @param array $parent
    * @return array
    */
-  static public function mergeConfig(array $config, array $parent) : array;
+  static public function mergeConfig(array $config, array $parent): array;
 }

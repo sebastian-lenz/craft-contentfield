@@ -16,7 +16,7 @@ class StructureDefinitions extends AbstractDefinitions
   /**
    * @var StructureSchema[]
    */
-  private $_structures = [];
+  private array $_structures = [];
 
 
   /**
@@ -43,7 +43,7 @@ class StructureDefinitions extends AbstractDefinitions
       array_map(function(string $name) {
         try {
           return $this->getStructure($name);
-        } catch (Throwable $error) {
+        } catch (Throwable) {
           return null;
         }
       }, array_keys($this->definitions))
@@ -52,7 +52,7 @@ class StructureDefinitions extends AbstractDefinitions
 
   /**
    * @param string $name
-   * @return StructureSchema|null
+   * @return StructureSchema
    * @throws Exception
    */
   public function getStructure(string $name): StructureSchema {
@@ -130,7 +130,7 @@ class StructureDefinitions extends AbstractDefinitions
     return array_map(function($definition) {
       try {
         return AbstractSchema::expandConfig($definition);
-      } catch (Throwable $error) {
+      } catch (Throwable) {
         return $definition;
       }
     }, $definitions);

@@ -15,7 +15,7 @@ class Collection implements ArrayAccess, Countable
   /**
    * @var Instance[]
    */
-  private $_instances;
+  private array $_instances;
 
 
   /**
@@ -99,7 +99,7 @@ class Collection implements ArrayAccess, Countable
    * @return $this
    * @noinspection PhpUnused (Public API)
    */
-  public function ensureAttribute(string $name, $value): Collection {
+  public function ensureAttribute(string $name, mixed $value): Collection {
     foreach ($this->_instances as $instance) {
       $instance->ensureAttribute($name, $value);
     }
@@ -123,12 +123,12 @@ class Collection implements ArrayAccess, Countable
    * Returns a new collection containing only the instances
    * matching the given qualifier.
    *
-   * @param string|array|null $qualifier
-   * @return $this
+   * @param array|string|null $qualifier
+   * @return Collection
    * @throws Throwable
    * @noinspection PhpUnused (Public API)
    */
-  public function matchesQualifier($qualifier): Collection {
+  public function matchesQualifier(array|string|null $qualifier): Collection {
     if (is_null($qualifier)) {
       return $this;
     }
@@ -196,6 +196,7 @@ class Collection implements ArrayAccess, Countable
    * @param array $replacements
    * @return $this
    * @throws Exception
+   * @noinspection PhpUnused
    */
   public function renameType(array $replacements): Collection {
     foreach ($this->_instances as $instance) {
@@ -211,6 +212,7 @@ class Collection implements ArrayAccess, Countable
    *
    * @param string $name
    * @return $this
+   * @noinspection PhpUnused
    */
   public function removeAttribute(string $name): Collection {
     foreach ($this->_instances as $instance) {
@@ -227,7 +229,7 @@ class Collection implements ArrayAccess, Countable
    * @param mixed $value
    * @return $this
    */
-  public function setAttribute(string $name, $value): Collection {
+  public function setAttribute(string $name, mixed $value): Collection {
     foreach ($this->_instances as $instance) {
       $instance->setAttribute($name, $value);
     }

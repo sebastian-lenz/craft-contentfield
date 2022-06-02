@@ -18,45 +18,45 @@ abstract class AbstractField extends Model
 {
   /**
    * The group name this field belongs to.
-   * @var array|string
+   * @var array|string|null
    */
-  public $group;
+  public string|array|null $group = null;
 
   /**
    * The instructions displayed to the user.
    * @var string|null
    */
-  public $instructions = null;
+  public ?string $instructions = null;
 
   /**
-   * The human readable label of this field.
+   * The human-readable label of this field.
    * @var string
    */
-  public $label;
+  public string $label;
 
   /**
    * The internal name of this field.
    * @var string
    */
-  public $name;
+  public string $name;
 
   /**
    * The css styles applied to this field, grouped by breakpoint.
    * @var array
    */
-  public $style;
+  public array $style;
 
   /**
    * The type of this field.
    * @var string
    */
-  public $type;
+  public string $type;
 
   /**
    * The validation rules applied to the values of this field.
    * @var array|string
    */
-  public $valueRules = [];
+  public string|array $valueRules = [];
 
   /**
    * The width of this field in the control panel.
@@ -70,12 +70,12 @@ abstract class AbstractField extends Model
    *
    * @var string
    */
-  public $width;
+  public string $width;
 
   /**
-   * @var string
+   * @var string|null
    */
-  private $_clientValidationId;
+  private ?string $_clientValidationId = null;
 
   /**
    * The internal name of this field.
@@ -177,7 +177,7 @@ abstract class AbstractField extends Model
    * Return the data of this field as required by the js editor.
    *
    * @param ElementInterface|null $element
-   * @return array
+   * @return array|null
    */
   public function getEditorData(ElementInterface $element = null): ?array {
     return [
@@ -196,7 +196,7 @@ abstract class AbstractField extends Model
    * @param mixed $value
    * @return string
    */
-  public function getSearchKeywords($value): string {
+  public function getSearchKeywords(mixed $value): string {
     return '';
   }
 
@@ -207,7 +207,7 @@ abstract class AbstractField extends Model
    * @param mixed $value
    * @return mixed
    */
-  public function getSerializedValue($value) {
+  public function getSerializedValue(mixed $value): mixed {
     return $this->getEditorValue($value);
   }
 
@@ -229,16 +229,16 @@ abstract class AbstractField extends Model
         if (is_array($rule) && array_key_exists('type', $rule)) {
           $validator = (string)$rule['type'];
           unset($rule['type']);
-          $options   = $rule;
+          $options = $rule;
         } else if (is_string($rule)) {
-          $validator = (string)$rule;
-          $options   = [];
+          $validator = $rule;
+          $options = [];
         } else {
           continue;
         }
       } else {
         $validator = $key;
-        $options   = is_array($rule) ? $rule : [];
+        $options = is_array($rule) ? $rule : [];
       }
 
       $result[] = [$validator] + $options;
@@ -272,7 +272,7 @@ abstract class AbstractField extends Model
   /**
    * @param string $id
    */
-  public function setClientValidationId(string $id) {
+  public function setClientValidationId(string $id): void {
     $this->_clientValidationId = $id;
   }
 
@@ -287,9 +287,10 @@ abstract class AbstractField extends Model
 
   /**
    * @param string $attribute
+   * @noinspection PhpUnused (Validator)
    */
-  public function validateName(string $attribute) {
-    if (!isset($this->$attribute) || !is_string($this->$attribute) || empty($this->$attribute)) {
+  public function validateName(string $attribute): void {
+    if (empty($this->$attribute) || !is_string($this->$attribute)) {
       $this->addError($attribute, 'Field name is required.');
     } elseif (substr($this->name, 0 , 2) === '___') {
       $this->addError($attribute, 'Field names cannot start with two underscores.');
@@ -308,7 +309,7 @@ abstract class AbstractField extends Model
    * @return mixed
    * @throws Exception
    */
-  abstract public function createValue($data, ValueInterface $parent = null);
+  abstract public function createValue(mixed $data, ValueInterface $parent = null): mixed;
 
   /**
    * Returns the data of this value as required by the cp editor.
@@ -316,7 +317,7 @@ abstract class AbstractField extends Model
    * @param mixed $value
    * @return mixed
    */
-  abstract public function getEditorValue($value);
+  abstract public function getEditorValue(mixed $value): mixed;
 
 
   // Private methods
@@ -326,12 +327,10 @@ abstract class AbstractField extends Model
    * @return array|null
    */
   private function getEditorFieldStyle(): ?array {
-    $style = isset($this->style) && is_array($this->style)
-      ? $this->style
-      : [];
+    $style = $this->style ?? [];
 
     if (isset($this->width) && !empty($this->width)) {
-      $width = (string)$this->width;
+      $width = $this->width;
       if (preg_match('/(\d+)\/(\d+)/', $this->width, $match)) {
         $width = round(intval($match[1]) / intval($match[2]) * 100, 6) . '%';
       }
@@ -348,7 +347,7 @@ abstract class AbstractField extends Model
   private function getEditorGroupStyle(): ?array {
     $group = [];
     $style = [];
-    if (!isset($this->group)) {
+    if (empty($this->group)) {
       return null;
     }
 
@@ -358,7 +357,7 @@ abstract class AbstractField extends Model
     // ```
     $attributes = $this->group;
     if (!is_array($attributes)) {
-      $attributes = ['label' => (string)$attributes];
+      $attributes = ['label' => $attributes];
     }
 
     // If there is a style attribute, use it as the style basis
@@ -397,7 +396,7 @@ abstract class AbstractField extends Model
    * @param string|null $defaultAttribute
    * @return array|null
    */
-  static public function createBreakpoints($source, array $allowedAttributes, string $defaultAttribute = null): ?array {
+  static public function createBreakpoints(array|string $source, array $allowedAttributes, string $defaultAttribute = null): ?array {
     if (is_string($source) && !is_null($defaultAttribute)) {
       $source = [
         $defaultAttribute => $source
@@ -457,5 +456,5 @@ abstract class AbstractField extends Model
    *
    * @param array $config
    */
-  static public function expandFieldConfig(array &$config) {}
+  static public function expandFieldConfig(array &$config): void {}
 }

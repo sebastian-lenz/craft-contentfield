@@ -14,12 +14,12 @@ class LocationValue extends AbstractValue
   /**
    * @var float
    */
-  public $latitude = 0;
+  public float $latitude = 0;
 
   /**
    * @var float
    */
-  public $longitude = 0;
+  public float $longitude = 0;
 
 
   /**
@@ -50,7 +50,7 @@ class LocationValue extends AbstractValue
   /**
    * @return string
    */
-  function __toString() {
+  function __toString(): string {
     return $this->latitude . ',' . $this->longitude;
   }
 

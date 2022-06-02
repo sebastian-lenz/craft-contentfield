@@ -7,6 +7,7 @@ use lenz\contentfield\records\ContentRecord;
 
 /**
  * m190604_193721_RenameContentColumn migration.
+ * @noinspection PhpUnused
  */
 class m190604_193721_RenameContentColumn extends Migration
 {

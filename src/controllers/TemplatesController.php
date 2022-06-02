@@ -16,12 +16,12 @@ class TemplatesController extends BaseTemplatesController
   /**
    * @var Content
    */
-  public $content;
+  public Content $content;
 
   /**
    * @var string
    */
-  public $mimeType = 'text/html';
+  public string $mimeType = 'text/html';
 
 
   /**
@@ -45,7 +45,6 @@ class TemplatesController extends BaseTemplatesController
 
     // Must be set after the template is rendered so Yii creates nice error responses
     $response->format = YiiResponse::FORMAT_RAW;
-
     return $response;
   }
 }

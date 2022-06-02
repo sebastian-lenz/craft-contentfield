@@ -16,27 +16,27 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
   /**
    * @var array
    */
-  protected $_folders = [];
+  protected array $_folders = [];
 
   /**
    * @var int
    */
-  protected $_maxDepth = -1;
+  protected int $_maxDepth = -1;
 
   /**
    * @var array
    */
-  protected $_options;
+  protected array $_options;
 
   /**
    * @var VolumeFolder[]
    */
-  protected $_rootFolders;
+  protected array $_rootFolders;
 
   /**
    * @var string[]
    */
-  protected $_rootUids;
+  protected array $_rootUids;
 
 
   /**
@@ -61,11 +61,11 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
   }
 
   /**
-   * @param string|int $key
+   * @param int|string $key
    * @param string $name
    * @return mixed
    */
-  public function getCustomData($key, string $name) {
+  public function getCustomData(int|string $key, string $name): mixed {
     $folder = $this->getFolder($key);
     return $folder instanceof VolumeFolder && isset($folder->$name)
       ? $folder->$name
@@ -89,7 +89,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
   /**
    * @inheritDoc
    */
-  public function hasCustomData($key, string $name): bool {
+  public function hasCustomData(int|string $key, string $name): bool {
     $folder = $this->getFolder($key);
     return $folder instanceof VolumeFolder && isset($folder->$name);
   }

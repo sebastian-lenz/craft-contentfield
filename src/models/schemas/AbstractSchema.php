@@ -32,19 +32,19 @@ abstract class AbstractSchema extends Model
    * this instance. The value of the first non-empty field will be used.
    * @var string|string[]|null
    */
-  public $anchor = null;
+  public string|array|null $anchor = null;
 
   /**
    * Custom data attached to this schema.
    * @var array
    */
-  public $constants = [];
+  public array $constants = [];
 
   /**
    * A list of all fields attached to this schema.
    * @var AbstractField[]
    */
-  public $fields = [];
+  public array $fields = [];
 
   /**
    * Defines the css grid layout of this schema. Grid layout is used
@@ -57,41 +57,41 @@ abstract class AbstractSchema extends Model
    *     grid: <value>
    * ```
    *
-   * @var string|array
+   * @var string|array|null
    */
-  public $grid;
+  public string|array|null $grid = null;
 
   /**
    * The name of the icon that represents this schema.
-   * @var string
+   * @var string|null
    */
-  public $icon;
+  public string|null $icon = null;
 
   /**
-   * A human readable name of this schema.
+   * A human-readable name of this schema.
    * @var string
    */
-  public $label;
+  public string $label;
 
   /**
    * @var string
    */
-  public $mimeType = 'text/html';
+  public string $mimeType = 'text/html';
 
   /**
    * The fully qualified name of the model class that should be attached
    * to this schema.
    *
-   * @var string
+   * @var string|null
    */
-  public $model;
+  public ?string $model = null;
 
   /**
    * A handlebars template used to display instances of this schema in the editor.
    *
    * @var string|null
    */
-  public $preview;
+  public ?string $preview = null;
 
   /**
    * The name of an asset reference field whose image will be used as an
@@ -106,7 +106,7 @@ abstract class AbstractSchema extends Model
    *
    * @var string
    */
-  public $previewImage;
+  public string $previewImage;
 
   /**
    * A template for a short text displayed in the header of an instance
@@ -123,25 +123,25 @@ abstract class AbstractSchema extends Model
    *
    * @var string
    */
-  public $previewLabel;
+  public string $previewLabel;
 
   /**
    * Marks this schema as a root schema. Only used to tidy up the cp field settings.
    * @var bool
    */
-  public $rootSchema = false;
+  public bool $rootSchema = false;
 
   /**
    * The css styles applied to form of this instance, grouped by breakpoint.
    * @var array
    */
-  public $style;
+  public array $style;
 
   /**
    * The internal name of this schema.
    * @var string
    */
-  public $qualifier;
+  public string $qualifier;
 
   /**
    * The default icon to use if no icon is specified.
@@ -227,7 +227,7 @@ abstract class AbstractSchema extends Model
    * @param BeforeActionEvent $event
    * @param Content $content
    */
-  abstract function applyPageTemplate(BeforeActionEvent $event, Content $content);
+  abstract function applyPageTemplate(BeforeActionEvent $event, Content $content): void;
 
   /**
    * Displays this schema.
@@ -235,16 +235,16 @@ abstract class AbstractSchema extends Model
    * @param InstanceValue $instance
    * @param array $variables
    */
-  public function display(InstanceValue $instance, array $variables = []) {
+  public function display(InstanceValue $instance, array $variables = []): void {
     echo $this->render($instance, $variables);
   }
 
   /**
    * @param string $name
-   * @param mixed $default
+   * @param mixed|null $default
    * @return mixed
    */
-  public function getConstant(string $name, $default = null) {
+  public function getConstant(string $name, mixed $default = null): mixed {
     return array_key_exists($name, $this->constants)
       ? $this->constants[$name]
       : $default;
@@ -345,7 +345,7 @@ abstract class AbstractSchema extends Model
    * Return the handlebars template used to preview instances of this
    * schema in the editor.
    *
-   * @return string
+   * @return string|null
    */
   public function getPreview(): ?string {
     return $this->preview;
@@ -388,7 +388,7 @@ abstract class AbstractSchema extends Model
 
     foreach ($model->getActiveValidators() as $validator) {
       foreach ($validator->attributes as $attribute) {
-        if (substr($attribute, 0, 4) == 'raw:') {
+        if (str_starts_with($attribute, 'raw:')) {
           $attribute = substr($attribute, 4);
         }
 
@@ -440,7 +440,7 @@ abstract class AbstractSchema extends Model
    * @return boolean
    * @throws Throwable
    */
-  public function matchesQualifier($specs): bool {
+  public function matchesQualifier(array|string $specs): bool {
     return Plugin::getInstance()
       ->schemas
       ->matchesQualifier($this->qualifier, $specs);
@@ -471,6 +471,7 @@ abstract class AbstractSchema extends Model
 
   /**
    * @param string $attribute
+   * @noinspection PhpUnused (Validator)
    */
   public function validateAnchor(string $attribute) {
     $fields = AnchorBehaviour::parseAnchorFields($this->$attribute);
@@ -524,11 +525,11 @@ abstract class AbstractSchema extends Model
   // -----------------
 
   /**
-   * @param string|int $key
-   * @param string|array|AbstractField $config
+   * @param int|string $key
+   * @param array|string|AbstractField $config
    * @throws Exception
    */
-  protected function addField($key, $config) {
+  protected function addField(int|string $key, AbstractField|array|string $config): void {
     static $fieldManager = null;
     if (is_null($fieldManager)) {
       $fieldManager = Plugin::getInstance()->fields;
@@ -581,18 +582,16 @@ abstract class AbstractSchema extends Model
    * @return string
    */
   protected function generateSchemaLabel(string $qualifier): string {
-    return Inflector::camel2words(self::extractName($qualifier), true);
+    return Inflector::camel2words(self::extractName($qualifier));
   }
 
   /**
    * @return array|null
    */
   protected function getEditorStyle(): ?array {
-    $style = isset($this->style) && is_array($this->style)
-      ? $this->style
-      : [];
+    $style = $this->style ?? [];
 
-    if (isset($this->grid) && !empty($this->grid)) {
+    if (!empty($this->grid)) {
       $style[AbstractField::DEFAULT_BREAKPOINT]['grid'] = $this->grid;
     }
 
@@ -624,7 +623,7 @@ abstract class AbstractSchema extends Model
    * @return string|null
    */
   protected function getPreviewLabel(): ?string {
-    if (isset($this->previewLabel) && is_string($this->previewLabel)) {
+    if (isset($this->previewLabel) && !empty($this->previewLabel)) {
       return $this->hasField($this->previewLabel)
         ? '{{' . $this->previewLabel . '}}'
         : $this->previewLabel;
@@ -645,7 +644,7 @@ abstract class AbstractSchema extends Model
 
   /**
    * @param string $qualifier
-   * @return bool|string
+   * @return string
    */
   public static function extractName(string $qualifier): string {
     $offset = strpos($qualifier, ':');

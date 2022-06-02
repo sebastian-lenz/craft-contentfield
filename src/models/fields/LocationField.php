@@ -15,7 +15,7 @@ class LocationField extends AbstractField
   /**
    * @var array
    */
-  public $defaultValue;
+  public array $defaultValue;
 
   /**
    * @inheritdoc
@@ -26,7 +26,7 @@ class LocationField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): LocationValue {
     return new LocationValue($data, $parent, $this);
   }
 
@@ -41,13 +41,12 @@ class LocationField extends AbstractField
 
   /**
    * @param ElementInterface|null $element
-   * @return array|float[]
+   * @return float[]
    */
   public function getEditorDefaultValue(ElementInterface $element = null): array {
     $defaultValue = $this->defaultValue;
 
     if (
-      is_array($defaultValue) &&
       is_float($defaultValue['latitude']) &&
       is_float($defaultValue['longitude'])
     ) {
@@ -63,7 +62,7 @@ class LocationField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?array {
     if (!($value instanceof LocationValue)) {
       return null;
     }

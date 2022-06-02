@@ -11,6 +11,7 @@ use Throwable;
 
 /**
  * Class MailForm
+ * @noinspection PhpUnused
  *
  * A simple base class for forms that send a mail when being submitted.
  */
@@ -79,9 +80,9 @@ class MailForm extends AbstractForm
    *
    * @param string $attribute
    * @param mixed $value
-   * @return string
+   * @return string|null
    */
-  protected function getAttributeString(string $attribute, $value): ?string {
+  protected function getAttributeString(string $attribute, mixed $value): ?string {
     if (empty($value) && static::OMIT_EMPTY_ATTRIBUTES) {
       return null;
     }
@@ -95,7 +96,7 @@ class MailForm extends AbstractForm
   /**
    * Transforms a single attribute value to a string.
    *
-   * By default this simply applies a word wrap. Override this function
+   * By default, this simply applies a word wrap. Override this function
    * if you have attribute values that must perform some kind of transformation.
    *
    * @param string $attribute
@@ -103,7 +104,7 @@ class MailForm extends AbstractForm
    * @return string
    * @noinspection PhpUnusedParameterInspection (API signature)
    */
-  protected function getAttributeStringValue(string $attribute, $value): string {
+  protected function getAttributeStringValue(string $attribute, mixed $value): string {
     return wordwrap((string)$value);
   }
 
@@ -135,48 +136,38 @@ class MailForm extends AbstractForm
   /**
    * Returns the sender of the mail.
    *
-   * By default this returns `noreply@HTTP_HOST`. Either set the desired sender
+   * By default, this returns the system default sender. Either set the desired sender
    * with the constant `MESSAGE_FROM` or override this method.
    *
    * @return string|array|User|User[]
-   * @noinspection PhpReturnDocTypeMismatchInspection (API signature)
    */
-  protected function getMessageFrom() {
+  protected function getMessageFrom(): array|string|User|null {
     if (!is_null(static::MESSAGE_FROM)) {
       return static::MESSAGE_FROM;
     }
 
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $mail = 'noreply@' . $host;
-    $name = Craft::$app->name;
-
-    return [
-      $mail => $name
-    ];
+    return Craft::$app->mailer->from;
   }
 
   /**
    * Returns the subject of the mail.
    *
-   * By default this returns `Submission: ENTRY_NAME`. Either set the desired
+   * By default, this returns `Submission: ENTRY_NAME`. Either set the desired
    * subject with the constant `MESSAGE_SUBJECT` or override this method.
    *
-   * @return string
+   * @return string|null
    */
   protected function getMessageSubject(): ?string {
     if (!is_null(static::MESSAGE_SUBJECT)) {
       return static::MESSAGE_SUBJECT;
     }
 
-    $subject  = 'Submission';
+    $subject = 'Submission';
     $instance = $this->getInstance();
 
-    if ($instance) {
-      $element = $instance->getElement();
-
-      if ($element && $element instanceof Element) {
-        $subject .= ': ' . $element->title;
-      }
+    $element = $instance?->getElement();
+    if ($element instanceof Element) {
+      $subject .= ': ' . $element->title;
     }
 
     return $subject;
@@ -189,9 +180,8 @@ class MailForm extends AbstractForm
    * recipient with the constant `MESSAGE_TO` or override this method.
    *
    * @return string|array|User|User[]
-   * @noinspection PhpReturnDocTypeMismatchInspection (API signature)
    */
-  protected function getMessageTo() {
+  protected function getMessageTo(): array|string|User|null {
     if (!is_null(static::MESSAGE_TO)) {
       return static::MESSAGE_TO;
     }
@@ -213,7 +203,7 @@ class MailForm extends AbstractForm
       }
 
       return $result;
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       return false;
     }
   }

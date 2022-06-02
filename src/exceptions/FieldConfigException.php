@@ -13,7 +13,7 @@ class FieldConfigException extends Exception
   /**
    * @var array
    */
-  public $fieldConfiguration;
+  public array $fieldConfiguration;
 
 
   /**

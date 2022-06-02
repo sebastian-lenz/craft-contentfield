@@ -8,12 +8,13 @@ namespace lenz\contentfield\helpers;
 class ColorHelper
 {
   /**
-   * @param float|int $red
-   * @param float|int $green
-   * @param float|int $blue
-   * @return array|float[]
+   * @param float $red
+   * @param float $green
+   * @param float $blue
+   * @return float[]
+   * @noinspection DuplicatedCode
    */
-  static public function toHsl($red, $green, $blue): array {
+  static public function toHsl(float $red, float $green, float $blue): array {
     $red = max(0, min(1, $red / 255));
     $green = max(0, min(1, $green / 255));
     $blue = max(0, min(1, $blue / 255));
@@ -45,12 +46,13 @@ class ColorHelper
 
 
   /**
-   * @param float|int $red
-   * @param float|int $green
-   * @param float|int $blue
-   * @return array|float[]
+   * @param float $red
+   * @param float $green
+   * @param float $blue
+   * @return float[]
+   * @noinspection DuplicatedCode
    */
-  static public function toHsv($red, $green, $blue): array {
+  static public function toHsv(float $red, float $green, float $blue): array {
     $red = max(0, min(1, $red / 255));
     $green = max(0, min(1, $green / 255));
     $blue = max(0, min(1, $blue / 255));

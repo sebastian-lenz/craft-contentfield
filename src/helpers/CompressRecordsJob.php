@@ -22,21 +22,21 @@ class CompressRecordsJob extends BaseJob
    *
    * @var int
    */
-  public $fieldId;
+  public int $fieldId;
 
   /**
    * The ids of the content records that should recompressed.
    *
    * @var int[]
    */
-  public $recordIds;
+  public array $recordIds;
 
 
   /**
    * @inheritdoc
    * @throws Exception
    */
-  public function execute($queue) {
+  public function execute($queue): void {
     $field = Craft::$app->getFields()->getFieldById($this->fieldId);
     if (!($field instanceof ContentField)) {
       throw new Exception('Invalid field given, must be an instance of ContentField.');

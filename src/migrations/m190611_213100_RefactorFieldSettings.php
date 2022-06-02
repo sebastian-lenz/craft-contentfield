@@ -3,12 +3,12 @@
 namespace lenz\contentfield\migrations;
 
 use craft\db\Migration;
-use craft\helpers\Json;
 use craft\records\Field;
 use lenz\contentfield\fields\ContentField;
 
 /**
  * m190611_213100_RefactorFieldSettings migration.
+ * @noinspection PhpUnused
  */
 class m190611_213100_RefactorFieldSettings extends Migration
 {
@@ -18,7 +18,7 @@ class m190611_213100_RefactorFieldSettings extends Migration
   public function safeUp() {
     $fields = Field::findAll(['type' => ContentField::class]);
     foreach ($fields as $field) {
-      $settings = Json::decode($field->settings);
+      $settings = $field->settings;
       if (
         !is_array($settings) ||
         !array_key_exists('rootTemplates', $settings)
@@ -29,7 +29,7 @@ class m190611_213100_RefactorFieldSettings extends Migration
       $settings['rootSchemas'] = $settings['rootTemplates'];
       unset($settings['rootTemplates']);
 
-      $field->settings = Json::encode($settings);
+      $field->settings = $settings;
       $field->save();
     }
   }

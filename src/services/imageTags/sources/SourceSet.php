@@ -4,8 +4,9 @@ namespace lenz\contentfield\services\imageTags\sources;
 
 use ArrayIterator;
 use Countable;
-use craft\models\AssetTransform;
+use craft\models\ImageTransform;
 use IteratorAggregate;
+use yii\base\InvalidConfigException;
 
 /**
  * Class SourceSet
@@ -17,12 +18,12 @@ class SourceSet implements Countable, IteratorAggregate
   /**
    * @var Source
    */
-  protected $_nativeSource;
+  protected Source $_nativeSource;
 
   /**
    * @var Source[]
    */
-  protected $_sources = [];
+  protected array $_sources = [];
 
 
   /**
@@ -31,8 +32,8 @@ class SourceSet implements Countable, IteratorAggregate
    * @param Source $nativeSource
    * @param mixed $transforms
    */
-  public function __construct(Source $nativeSource, $transforms) {
-    $sources    = [];
+  public function __construct(Source $nativeSource, mixed $transforms) {
+    $sources = [];
     $transforms = self::normalizeTransforms($transforms);
 
     foreach ($transforms as $key => $transform) {
@@ -58,35 +59,36 @@ class SourceSet implements Countable, IteratorAggregate
   /**
    * @inheritDoc
    */
-  public function count() {
+  public function count(): int {
     return count($this->_sources);
   }
 
   /**
    * @inheritDoc
    */
-  public function getIterator() {
+  public function getIterator(): ArrayIterator {
     return new ArrayIterator($this->_sources);
   }
 
   /**
    * @return Source
    */
-  public function getMaxSource() {
+  public function getMaxSource(): Source {
     return end($this->_sources);
   }
 
   /**
    * @return Source
    */
-  public function getMinSource() {
+  public function getMinSource(): Source {
     return reset($this->_sources);
   }
 
   /**
    * @return string
+   * @throws InvalidConfigException
    */
-  public function getSrcSet() {
+  public function getSrcSet(): string {
     return implode(',', array_map(function(Source $source) {
       return $source->getSrc() . ' ' . $source->getDescriptor();
     }, $this->_sources));
@@ -95,7 +97,7 @@ class SourceSet implements Countable, IteratorAggregate
   /**
    * @return callable[]
    */
-  public function getVariables() {
+  public function getVariables(): array {
     return array_merge(
       [
         'srcset' => [$this, 'getSrcSet'],
@@ -114,12 +116,12 @@ class SourceSet implements Countable, IteratorAggregate
    * @param mixed $transforms
    * @return array
    */
-  static public function normalizeTransforms($transforms) : array {
+  static public function normalizeTransforms(mixed $transforms) : array {
     if (is_array($transforms)) {
       return $transforms;
     }
 
-    if (is_null($transforms) || $transforms instanceof AssetTransform) {
+    if (is_null($transforms) || $transforms instanceof ImageTransform) {
       return [$transforms];
     }
 

@@ -15,12 +15,12 @@ class BootstrapGrid implements GridInterface
   /**
    * @var array
    */
-  public $baseColumnClassName = [];
+  public array $baseColumnClassName = [];
 
   /**
    * @var string
    */
-  public $rowClassName = 'row';
+  public string $rowClassName = 'row';
 
 
   /**

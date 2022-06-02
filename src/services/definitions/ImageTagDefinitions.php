@@ -20,9 +20,9 @@ use yii\caching\TagDependency;
 class ImageTagDefinitions extends AbstractDefinitions
 {
   /**
-   * @var ImageTagInterface[]|string[]
+   * @var array<string, class-string<ImageTagInterface>>
    */
-  private $_imageTags;
+  private array $_imageTags;
 
 
   /**
@@ -40,14 +40,14 @@ class ImageTagDefinitions extends AbstractDefinitions
   /**
    * @return array
    */
-  public function getAllTransforms() {
+  public function getAllTransforms(): array {
     if (!isset($this->definitions)) {
       $this->loadDefinitions();
     }
 
     $allTransforms = [];
     foreach ($this->_imageTags as $imageTag) {
-      if (!($imageTag instanceof ImageTransformExtractorInterface)) {
+      if (!is_a($imageTag, ImageTransformExtractorInterface::class)) {
         continue;
       }
 
@@ -79,10 +79,10 @@ class ImageTagDefinitions extends AbstractDefinitions
    * @return string|null
    * @throws Exception
    */
-  public function render(Asset $asset, $config) {
+  public function render(Asset $asset, array|string $config): ?string {
     if (!is_array($config)) {
       $config = [
-        'type' => (string)$config
+        'type' => $config
       ];
     }
 
@@ -105,7 +105,7 @@ class ImageTagDefinitions extends AbstractDefinitions
     }
 
     $result = $this->renderInternal($asset, $config);
-    if (strpos($result, 'actions/assets/generate-transform') === false) {
+    if (!str_contains($result, 'actions/assets/generate-transform')) {
       $cache->set($cacheKey, $result, null, new TagDependency(['tags' => $asset->uid]));
     }
 
@@ -114,9 +114,10 @@ class ImageTagDefinitions extends AbstractDefinitions
 
   /**
    * @param string $type
-   * @param string $imageTagClass
+   * @param class-string<ImageTagInterface> $imageTagClass
+   * @noinspection PhpUnused
    */
-  public function registerImageTag($type, $imageTagClass) {
+  public function registerImageTag(string $type, string $imageTagClass) {
     $this->_imageTags[$type] = $imageTagClass;
   }
 
@@ -133,10 +134,10 @@ class ImageTagDefinitions extends AbstractDefinitions
 
   /**
    * @param array $config
-   * @return ImageTagInterface|mixed
+   * @return class-string<ImageTagInterface>
    * @throws Exception
    */
-  protected function getImageTagClass(array $config) {
+  protected function getImageTagClass(array $config): string {
     $type = $config['type'];
     if (!array_key_exists($type, $this->_imageTags)) {
       throw new Exception('Invalid image tag type: ' .  $type);
@@ -170,7 +171,7 @@ class ImageTagDefinitions extends AbstractDefinitions
    * @return string|null
    * @throws Exception
    */
-  protected function renderInternal(Asset $asset, array $config) {
+  protected function renderInternal(Asset $asset, array $config): ?string {
     $imageTagClass = $this->getImageTagClass($config);
     $type = $config['type'];
     unset($config['type']);

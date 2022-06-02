@@ -29,11 +29,11 @@ class SiblingsTokenParser extends AbstractTokenParser
   /**
    * @inheritdoc
    */
-  public function parse(Token $token) {
-    $parser     = $this->parser;
+  public function parse(Token $token): SiblingsNode {
+    $parser = $this->parser;
     $expression = $parser->getExpressionParser();
-    $stream     = $parser->getStream();
-    $nodes      = [];
+    $stream = $parser->getStream();
+    $nodes = [];
 
     while ($next = $stream->nextIf(Token::NAME_TYPE, self::ATTRIBUTES)) {
       $name = $next->getValue();

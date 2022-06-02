@@ -28,7 +28,7 @@ class LayoutField extends AbstractField
    *
    * @var string[]
    */
-  public $breakpoints = [
+  public array $breakpoints = [
     'xs' => 'Mobile',
     'md' => 'Tablet',
     'lg' => 'Desktop',
@@ -37,54 +37,54 @@ class LayoutField extends AbstractField
   /**
    * @var bool
    */
-  public $canEdit = true;
+  public bool $canEdit = true;
 
   /**
    * @var int
    */
-  public $columnsPerRow = 12;
+  public int $columnsPerRow = 12;
 
   /**
    * @var string|null
    */
-  public $defaultPreset = null;
+  public ?string $defaultPreset = null;
 
   /**
    * @var int
    */
-  public $maxColumns = 12;
+  public int $maxColumns = 12;
 
   /**
    * @var int
    */
-  public $maxColumnWidth = 12;
+  public int $maxColumnWidth = 12;
 
   /**
    * @var int
    */
-  public $minColumns = 1;
+  public int $minColumns = 1;
 
   /**
    * @var int
    */
-  public $minColumnWidth = 1;
+  public int $minColumnWidth = 1;
 
   /**
    * A field defining the value of each column.
    *
    * @var AbstractField|null
    */
-  public $member = null;
+  public ?AbstractField $member = null;
 
   /**
    * @var array
    */
-  public $presets = [];
+  public array $presets = [];
 
   /**
    * @var string
    */
-  private $_columnTypeQualifier;
+  private string $_columnTypeQualifier;
 
   /**
    * @inheritdoc
@@ -109,7 +109,7 @@ class LayoutField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): LayoutValue {
     return new LayoutValue($data, $parent, $this);
   }
 
@@ -177,7 +177,7 @@ class LayoutField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?array {
     return $value instanceof LayoutValue
       ? $value->getEditorValue()
       : null;
@@ -199,7 +199,7 @@ class LayoutField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSearchKeywords($value): string {
+  public function getSearchKeywords(mixed $value): string {
     $member = $this->member;
     if (!($value instanceof LayoutValue) || is_null($member)) {
       return '';
@@ -213,7 +213,7 @@ class LayoutField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSerializedValue($value) {
+  public function getSerializedValue(mixed $value): ?array {
     return $value instanceof LayoutValue
       ? $value->getSerializedValue()
       : null;
@@ -320,7 +320,7 @@ class LayoutField extends AbstractField
    * @return AbstractField
    * @throws Exception
    */
-  private function normalizeMember(?AbstractSchema $schema, $member): AbstractField {
+  private function normalizeMember(?AbstractSchema $schema, mixed $member): AbstractField {
     if (!is_array($member)) {
       $member = ['type' => $member];
     }
@@ -338,11 +338,11 @@ class LayoutField extends AbstractField
   }
 
   /**
-   * @param string|int $key
+   * @param int|string $key
    * @param mixed $preset
    * @return array|string
    */
-  private function normalizePreset($key, $preset) {
+  private function normalizePreset(int|string $key, mixed $preset): array|string {
     if (!is_array($preset)) {
       return "The layout preset `$key` must be an array.";
     }
@@ -360,7 +360,7 @@ class LayoutField extends AbstractField
     }
 
     if (!array_key_exists('label', $preset)) {
-      $preset['label'] = Inflector::camel2words($key, true);
+      $preset['label'] = Inflector::camel2words($key);
     }
 
     return [
@@ -386,7 +386,7 @@ class LayoutField extends AbstractField
           } elseif (!is_array($extraClasses)) {
             $extraClasses = [$extraClasses];
           }
-        } catch (Exception $e) {
+        } catch (Exception) {
           $extraClasses = [];
         }
 
@@ -403,7 +403,7 @@ class LayoutField extends AbstractField
    * @param string|null $emitErrors
    * @return array
    */
-  private function normalizePresets($value, string $emitErrors = null): array {
+  private function normalizePresets(mixed $value, string $emitErrors = null): array {
     if (!is_array($value)) {
       if (!is_null($emitErrors)) {
         $this->addError($emitErrors, 'Must be an array.');
@@ -482,7 +482,7 @@ class LayoutField extends AbstractField
    * @param int $defaultValue
    * @return array
    */
-  static public function toBreakpointMap($source, array $breakpoints, int $defaultValue): array {
+  static public function toBreakpointMap(mixed $source, array $breakpoints, int $defaultValue): array {
     $result = [];
     $lastValue = false;
 

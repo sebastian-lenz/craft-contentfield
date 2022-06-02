@@ -50,7 +50,7 @@ class SiblingsBehavior extends Behavior
    * @throws Throwable
    * @noinspection PhpUnused (Public API)
    */
-  public function hasNextSibling($qualifier = null): bool {
+  public function hasNextSibling(array|string $qualifier = null): bool {
     return $this->isInstanceWithQualifier(
       $this->getSibling(1),
       $qualifier
@@ -63,7 +63,7 @@ class SiblingsBehavior extends Behavior
    * @throws Throwable
    * @noinspection PhpUnused (Public API)
    */
-  public function hasParentInstance($qualifier = null): bool {
+  public function hasParentInstance(array|string $qualifier = null): bool {
     return $this->isInstanceWithQualifier(
       $this->getParentInstance(),
       $qualifier
@@ -76,7 +76,7 @@ class SiblingsBehavior extends Behavior
    * @throws Throwable
    * @noinspection PhpUnused (Public API)
    */
-  public function hasPreviousSibling($qualifier = null): bool {
+  public function hasPreviousSibling(array|string $qualifier = null): bool {
     return $this->isInstanceWithQualifier(
       $this->getSibling(-1),
       $qualifier
@@ -92,12 +92,9 @@ class SiblingsBehavior extends Behavior
    * @return InstanceValue|null
    */
   private function getSibling(int $offset): ?InstanceValue {
-    $owner  = $this->owner;
+    $owner = $this->owner;
     $parent = $owner->getParent();
-    if (
-      is_null($parent) ||
-      !($parent instanceof ArrayValue)
-    ) {
+    if (!($parent instanceof ArrayValue)) {
       return null;
     }
 
@@ -119,7 +116,7 @@ class SiblingsBehavior extends Behavior
    * @return bool
    * @throws Throwable
    */
-  private function isInstanceWithQualifier($value, $qualifier = null): bool {
+  private function isInstanceWithQualifier(mixed $value, array|string $qualifier = null): bool {
     if (!($value instanceof InstanceValue)) {
       return false;
     }

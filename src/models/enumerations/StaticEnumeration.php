@@ -15,14 +15,14 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
   /**
    * @var array
    */
-  protected $_options;
+  protected array $_options;
 
 
   /**
    * StaticEnumeration constructor.
    * @param array|string $options
    */
-  public function __construct($options = []) {
+  public function __construct(array|string $options = []) {
     if (is_string($options)) {
       $options = explode(',', $options);
       $options = array_map('trim', $options);
@@ -38,7 +38,7 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
         if (is_numeric($key)) {
           $value = [
             'key'   => $value,
-            'label' => Inflector::camel2words((string)$value, true),
+            'label' => Inflector::camel2words((string)$value),
           ];
         } else {
           $value = [
@@ -80,7 +80,7 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
   /**
    * @inheritDoc
    */
-  public function getCustomData($key, string $name) {
+  public function getCustomData(int|string $key, string $name): mixed {
     foreach ($this->_options as $option) {
       if ($option['key'] === $key) {
         return array_key_exists($name, $option)
@@ -94,6 +94,7 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
 
   /**
    * @return array
+   * @noinspection PhpUnused
    */
   public function getOptionKeys(): array {
     return array_map(function(array $option) {
@@ -121,6 +122,7 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
 
   /**
    * @return array
+   * @noinspection PhpUnused
    */
   public function getRawOptions(): array {
     return $this->_options;
@@ -129,7 +131,7 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
   /**
    * @inheritDoc
    */
-  public function hasCustomData($key, string $name): bool {
+  public function hasCustomData(int|string $key, string $name): bool {
     foreach ($this->_options as $option) {
       if ($option['key'] === $key) {
         return array_key_exists($name, $option);

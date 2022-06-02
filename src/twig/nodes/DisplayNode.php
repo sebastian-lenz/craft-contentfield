@@ -16,17 +16,17 @@ class DisplayNode extends Node
   /**
    * @var AbstractField|null
    */
-  protected $_field;
+  protected ?AbstractField $_field;
 
   /**
    * @var bool
    */
-  protected $_forceInline;
+  protected bool $_forceInline;
 
   /**
    * @var array
    */
-  protected $_inlinedSchemas = [];
+  protected array $_inlinedSchemas = [];
 
 
   /**

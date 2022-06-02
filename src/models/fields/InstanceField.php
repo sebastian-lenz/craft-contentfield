@@ -23,7 +23,7 @@ class InstanceField extends AbstractField
    *
    * @var boolean
    */
-  public $collapsible = false;
+  public bool $collapsible = false;
 
   /**
    * The name of the default schema which will be created if the instance
@@ -32,34 +32,34 @@ class InstanceField extends AbstractField
    *
    * @var string|null
    */
-  public $defaultSchema = null;
+  public ?string $defaultSchema = null;
 
   /**
    * @var string|string[]|null
    */
-  public $excludes = null;
+  public string|array|null $excludes = null;
 
   /**
    * @var string[]
    */
-  public $includes = [];
+  public array $includes = [];
 
   /**
    * The list of allowed schemas. Supports wildcards.
    *
    * @var string[]
    */
-  public $schemas = [];
+  public array $schemas = [];
 
   /**
    * @var AbstractSchema|null
    */
-  private $_parentSchema;
+  private ?AbstractSchema $_parentSchema;
 
   /**
    * @var AbstractSchema[]
    */
-  private $_resolvedSchemas;
+  private array $_resolvedSchemas;
 
   /**
    * The internal name of this field.
@@ -92,7 +92,7 @@ class InstanceField extends AbstractField
    * @inheritdoc
    * @throws Throwable
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): ?InstanceValue {
     if (count($this->schemas) === 0) {
       return null;
     }
@@ -141,13 +141,10 @@ class InstanceField extends AbstractField
    */
   public function getDependedSchemas(): array {
     $schemas = $this->getResolvedSchemas();
-    $result  = $schemas;
+    $result = $schemas;
 
     foreach ($schemas as $schema) {
-      $dependencies = $schema->getDependedSchemas();
-      if (!is_null($dependencies)) {
-        $result += $dependencies;
-      }
+      $result += $schema->getDependedSchemas();
     }
 
     return $result;
@@ -172,7 +169,7 @@ class InstanceField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?array {
     return $value instanceof InstanceValue
       ? $value->getEditorValue()
       : null;
@@ -213,7 +210,7 @@ class InstanceField extends AbstractField
    * @param mixed $value
    * @return string
    */
-  public function getSearchKeywords($value): string {
+  public function getSearchKeywords(mixed $value): string {
     if (!($value instanceof InstanceValue)) {
       return '';
     }
@@ -224,7 +221,7 @@ class InstanceField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSerializedValue($value) {
+  public function getSerializedValue(mixed $value): ?array {
     return $value instanceof InstanceValue
       ? $value->getSerializedValue()
       : null;
@@ -268,6 +265,7 @@ class InstanceField extends AbstractField
 
   /**
    * @param string $attribute
+   * @noinspection PhpUnused (Validator)
    */
   public function validateSchemas(string $attribute) {
     try {
@@ -290,7 +288,7 @@ class InstanceField extends AbstractField
   /**
    * @inheritdoc
    */
-  static public function expandFieldConfig(array &$config) {
+  static public function expandFieldConfig(array &$config): void {
     // Expand the type `instances` to an array of instance fields
     if ($config['type'] === 'instances') {
       $member = array_merge([

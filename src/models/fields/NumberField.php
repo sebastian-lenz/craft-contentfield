@@ -18,14 +18,14 @@ class NumberField extends AbstractNumberField
    *
    * @var string
    */
-  public $placeholder = '';
+  public string $placeholder = '';
 
   /**
    * A unit that will be displayed next to the input field.
    *
    * @var string
    */
-  public $unit;
+  public string $unit;
 
   /**
    * The internal name of this widget.
@@ -77,7 +77,7 @@ class NumberField extends AbstractNumberField
   /**
    * @inheritDoc
    */
-  static public function expandFieldConfig(array &$config) {
+  static public function expandFieldConfig(array &$config): void {
     $type = $config['type'];
 
     if (array_key_exists($type, AbstractNumberField::DATA_TYPE_ALIASES)) {

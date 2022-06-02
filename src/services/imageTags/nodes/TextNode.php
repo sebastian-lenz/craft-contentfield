@@ -12,7 +12,7 @@ class TextNode implements NodeInterface
   /**
    * @var string
    */
-  public $text;
+  public string $text;
 
 
   /**

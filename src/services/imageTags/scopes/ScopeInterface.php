@@ -14,15 +14,15 @@ interface ScopeInterface
   /**
    * @return Source
    */
-  public function getNativeSource() : Source;
+  public function getNativeSource(): Source;
 
   /**
    * @return SourceGroupSet
    */
-  public function getSourceGroups() : SourceGroupSet;
+  public function getSourceGroups(): SourceGroupSet;
 
   /**
    * @return SourceSet
    */
-  public function getSources() : SourceSet;
+  public function getSources(): SourceSet;
 }

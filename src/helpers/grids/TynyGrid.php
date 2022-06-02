@@ -13,7 +13,7 @@ class TynyGrid extends BootstrapGrid
   /**
    * @inheritDoc
    */
-  public $rowClassName = 'row layout';
+  public string $rowClassName = 'row layout';
 
 
   /**

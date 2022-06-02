@@ -9,6 +9,7 @@ use Throwable;
 
 /**
  * m190408_150735_FixContentTableIndex migration.
+ * @noinspection PhpUnused
  */
 class m190408_150735_FixContentTableIndex extends Migration
 {
@@ -20,18 +21,18 @@ class m190408_150735_FixContentTableIndex extends Migration
 
     try {
       $this->dropForeignKey('contentfield_elementId_fk', $tableName);
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       // Ignore this error
     }
 
     try {
       $this->dropIndex('contentfield_elementId_siteId_unq_idx', $tableName);
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       // Ignore this error
     }
 
     $this->createIndex(null, $tableName, ['elementId', 'siteId', 'fieldId'], true);
-    $this->addForeignKey(null, $tableName, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE', null);
+    $this->addForeignKey(null, $tableName, ['elementId'], Table::ELEMENTS, ['id'], 'CASCADE');
   }
 
   /**

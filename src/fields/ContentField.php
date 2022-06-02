@@ -25,6 +25,7 @@ use yii\base\Event;
 
 /**
  * Class ContentField
+ * @extends ForeignField<Content, ContentRecord>
  */
 class ContentField extends ForeignField
 {
@@ -37,7 +38,7 @@ class ContentField extends ForeignField
    *
    * @var string
    */
-  public $compression = 'never';
+  public string $compression = 'never';
 
   /**
    * Whether the button for synchronizing content field between languages
@@ -45,7 +46,7 @@ class ContentField extends ForeignField
    *
    * @var string
    */
-  public $hideSyncButton = 'never';
+  public string $hideSyncButton = 'never';
 
   /**
    * The list of root schemas set for this field. Do not manipulate
@@ -54,28 +55,28 @@ class ContentField extends ForeignField
    *
    * @var string[]
    */
-  public $rootSchemas = [];
+  public array $rootSchemas = [];
 
   /**
    * The list of root schemas by usage uid set for this field.
    *
    * @var string[][]
    */
-  public $rootSchemasByUsage = [];
+  public array $rootSchemasByUsage = [];
 
   /**
    * Whether this field should take over the page rendering or not.
    *
    * @var bool
    */
-  public $useAsPageTemplate = false;
+  public bool $useAsPageTemplate = false;
 
   /**
    * Cached output of `ContentField::getAllRootSchemas`.
    *
    * @var AbstractSchema[][]
    */
-  private $_allRootSchemas;
+  private array $_allRootSchemas;
 
   /**
    * Value used by cp settings to mark enabled type settings.
@@ -94,7 +95,7 @@ class ContentField extends ForeignField
    * @inheritdoc
    * @throws Throwable
    */
-  public function afterElementSave(ElementInterface $element, bool $isNew) {
+  public function afterElementSave(ElementInterface $element, bool $isNew): void {
     parent::afterElementSave($element, $isNew);
     if (is_null($this->handle)) {
       return;
@@ -124,7 +125,7 @@ class ContentField extends ForeignField
   /**
    * @inheritDoc
    */
-  public function afterSave(bool $isNew) {
+  public function afterSave(bool $isNew): void {
     $oldCompression = is_array($this->oldSettings) && array_key_exists('compression', $this->oldSettings)
       ? $this->oldSettings['compression']
       : 'never';
@@ -252,8 +253,9 @@ class ContentField extends ForeignField
   /**
    * Returns a list of all detected field usages. Used by the setting form.
    *
-   * @internal
    * @return Usage[]
+   * @internal
+   * @noinspection PhpUnused
    */
   public function getUsages(): array {
     return Plugin::getInstance()->fieldUsage->findUsages($this);
@@ -265,6 +267,7 @@ class ContentField extends ForeignField
    *
    * @internal
    * @return bool
+   * @noinspection PhpUnused
    */
   public function hasSchemaErrors(): bool {
     return !empty(Plugin::getInstance()->schemas->getAllErrors());
@@ -300,7 +303,7 @@ class ContentField extends ForeignField
    * @param mixed $value
    * @noinspection PhpUnused (Used by Craft when applying settings)
    */
-  public function setCpRootSchemasByUsage($value) {
+  public function setCpRootSchemasByUsage(mixed $value) {
     if (!is_array($value)) {
       throw new InvalidArgumentException();
     }
@@ -320,18 +323,6 @@ class ContentField extends ForeignField
     }
 
     $this->rootSchemasByUsage = $usages;
-  }
-
-  /**
-   * This settings has been renamed to `rootSchemas`. This method
-   * helps bootstrapping old installs before the migration has run.
-   *
-   * @param array $value
-   * @deprecated
-   * @internal
-   */
-  public function setRootTemplates(array $value) {
-    $this->rootSchemas = $value;
   }
 
   /**
@@ -394,6 +385,7 @@ class ContentField extends ForeignField
    * @inheritDoc
    */
   protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element = null): array {
+    /** @noinspection PhpConditionAlreadyCheckedInspection */
     $content = $model instanceof Content ? $model : null;
     $contentModel = is_null($content)
       ? null

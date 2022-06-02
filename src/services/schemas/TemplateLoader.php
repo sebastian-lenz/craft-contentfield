@@ -27,17 +27,17 @@ class TemplateLoader extends AbstractLoader
   /**
    * @var string[]
    */
-  private $_basePaths;
+  private array $_basePaths;
 
   /**
    * @var YamlAwareTemplateLoader
    */
-  private $_loader;
+  private YamlAwareTemplateLoader $_loader;
 
   /**
    * @var array
    */
-  private $_templates;
+  private array $_templates;
 
   /**
    * Prefix for the schema names loaded by this loader.
@@ -136,17 +136,15 @@ class TemplateLoader extends AbstractLoader
         'qualifier' => self::NAME_PREFIX . $name,
         'template'  => $name
       ]);
+    } catch (TemplateConfigException $error) {
+      throw $error;
     } catch (Exception $error) {
-      if ($error instanceof TemplateConfigException) {
-        throw $error;
-      } else {
-        throw new TemplateConfigException(
-          $data['preamble'],
-          sprintf('The template schema `%s` could not be loaded: %s.', $name, $error->getMessage()),
-          0,
-          $error
-        );
-      }
+      throw new TemplateConfigException(
+        $data['preamble'],
+        sprintf('The template schema `%s` could not be loaded: %s.', $name, $error->getMessage()),
+        0,
+        $error
+      );
     }
   }
 
@@ -171,15 +169,8 @@ class TemplateLoader extends AbstractLoader
       ->defaultTemplateExtensions;
 
     return new CallbackFilterIterator(
-      new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($basePath)
-      ),
-      function(SplFileInfo $fileInfo) use ($basePath, $extensions) {
-        return (
-          $fileInfo->isFile() &&
-          in_array($fileInfo->getExtension(), $extensions)
-        );
-      }
+      new RecursiveIteratorIterator(new RecursiveDirectoryIterator($basePath)),
+      fn(SplFileInfo $fileInfo) => $fileInfo->isFile() && in_array($fileInfo->getExtension(), $extensions)
     );
   }
 
@@ -187,12 +178,12 @@ class TemplateLoader extends AbstractLoader
    * Returns a flat list of all available templates.
    *
    * @return array
+   * @throws \yii\base\Exception
    */
   private function getAllTemplates(): array {
     if (!isset($this->_templates)) {
       if (Config::getInstance()->useTemplateIndexCache()) {
-        $key = static::class . '::getAllTemplates';
-        $this->_templates = Craft::$app->getCache()->getOrSet($key, function() {
+        $this->_templates = Craft::$app->getCache()->getOrSet(__METHOD__, function() {
           return $this->getAllTemplatesFromDisk();
         });
       } else {
@@ -211,7 +202,6 @@ class TemplateLoader extends AbstractLoader
     $basePaths = $this->getBasePaths();
     $result = [];
 
-    /** @var SplFileInfo $file */
     foreach ($basePaths as $basePath) {
       foreach ($this->getTemplateIterator($basePath) as $file) {
         $fullPath = FileHelper::normalizePath(
@@ -219,7 +209,7 @@ class TemplateLoader extends AbstractLoader
           YamlAwareTemplateLoader::SEPARATOR
         );
 
-        if (substr($fullPath, 0, strlen($basePath)) !== $basePath) {
+        if (!str_starts_with($fullPath, $basePath)) {
           continue;
         }
 

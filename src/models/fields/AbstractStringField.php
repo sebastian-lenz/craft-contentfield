@@ -14,42 +14,40 @@ abstract class AbstractStringField extends AbstractField
   /**
    * Specifies the maximum string length.
    *
-   * @var int
+   * @var int|null
    */
-  public $maxLength;
+  public ?int $maxLength = null;
 
   /**
    * Specifies the minimum string length.
    *
-   * @var int
+   * @var int|null
    */
-  public $minLength;
+  public ?int $minLength = null;
 
   /**
    * A regular expression the string must match.
    *
-   * @var string
+   * @var string|null
    */
-  public $pattern;
+  public ?string $pattern = null;
 
   /**
    * @var bool
    */
-  public $searchable = true;
+  public bool $searchable = true;
 
   /**
    * @var bool
    */
-  public $translatable = true;
+  public bool $translatable = true;
 
 
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
-    return is_string($data)
-      ? $data
-      : null;
+  public function createValue(mixed $data, ValueInterface $parent = null): ?string {
+    return is_string($data) ? $data : null;
   }
 
   /**
@@ -66,27 +64,23 @@ abstract class AbstractStringField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
-    return is_string($value)
-      ? $value
-      : null;
+  public function getEditorValue(mixed $value): ?string {
+    return is_string($value) ? $value : null;
   }
 
   /**
    * @param mixed $value
    * @return string
    */
-  public function getSearchKeywords($value): string {
-    return $this->searchable && is_string($value)
-      ? (string)$value
-      : '';
+  public function getSearchKeywords(mixed $value): string {
+    return $this->searchable && is_string($value) ? $value : '';
   }
 
   /**
-   * @param $value
-   * @return mixed
+   * @param mixed $value
+   * @return string|null
    */
-  public function getSerializedValue($value) {
+  public function getSerializedValue(mixed $value): ?string {
     $result = $this->getEditorValue($value);
     if (is_string($result)) {
       $result = StringHelper::sanitizeString($result);
@@ -101,16 +95,16 @@ abstract class AbstractStringField extends AbstractField
   public function getValueRules(): array {
     $stringRule = ['string'];
 
-    if (isset($this->maxLength)) {
+    if (!is_null($this->maxLength)) {
       $stringRule['max'] = $this->maxLength;
     }
 
-    if (isset($this->minLength)) {
+    if (!is_null($this->minLength)) {
       $stringRule['min'] = $this->minLength;
     }
 
     $rules = [$stringRule];
-    if (isset($this->pattern)) {
+    if (!is_null($this->pattern)) {
       $rules[] = ['match', 'pattern' => $this->pattern];
     }
 

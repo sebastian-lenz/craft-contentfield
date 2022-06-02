@@ -4,8 +4,6 @@ namespace lenz\contentfield\models\values;
 
 use Craft;
 use craft\base\ElementInterface;
-use craft\helpers\Html;
-use craft\helpers\Template;
 use Exception;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
@@ -23,37 +21,37 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @var bool
    */
-  public $autoNoReferrer = true;
+  public bool $autoNoReferrer = true;
 
   /**
    * @var int
    */
-  public $elementId = 0;
+  public int $elementId = 0;
 
   /**
    * @var string
    */
-  public $hash = '';
+  public string $hash = '';
 
   /**
    * @var bool
    */
-  public $openInNewWindow = false;
+  public bool $openInNewWindow = false;
 
   /**
    * @var string
    */
-  public $type = '';
+  public string $type = '';
 
   /**
    * @var string
    */
-  public $url = '';
+  public string $url = '';
 
   /**
    * @var ElementInterface|null
    */
-  private $_element;
+  private ?ElementInterface $_element;
 
 
   /**
@@ -98,8 +96,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    * @throws Exception
    */
   public function __toString(): string {
-    $result = $this->getUrl();
-    return is_string($result) ? $result : '';
+    return $this->getUrl();
   }
 
   /**
@@ -107,6 +104,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    */
   public function getElementType(): ?string {
     $linkType = $this->getLinkType();
+
     return !is_null($linkType) && $linkType['type'] === 'element'
       ? ReferenceMap::normalizeElementType($linkType['elementType'])
       : null;
@@ -115,7 +113,6 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   /**
    * @param array $extraAttribs
    * @return Attributes
-   * @throws Exception
    * @noinspection PhpUnused (Public API)
    */
   public function getLinkAttributes(array $extraAttribs = []): Attributes {
@@ -138,7 +135,6 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
 
   /**
    * @return ElementInterface|null
-   * @throws Exception
    */
   public function getLinkedElement(): ?ElementInterface {
     if (!isset($this->_element)) {
@@ -195,15 +191,11 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
       ? $linkType['inputType']
       : '';
 
-    switch ($inputType) {
-      case 'url':
-        return $this->getInputUrl();
-      case 'email':
-      case 'mail':
-        return $this->getMailUrl();
-      default:
-        return $this->getElementUrl();
-    }
+    return match ($inputType) {
+      'url' => $this->getInputUrl(),
+      'email', 'mail' => $this->getMailUrl(),
+      default => $this->getElementUrl(),
+    };
   }
 
   /**
@@ -211,16 +203,15 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    */
   public function hasLinkedElement(): bool {
     $elementType = $this->getElementType();
+
     return (
       !is_null($elementType) &&
-      is_numeric($this->elementId) &&
       $this->elementId !== 0
     );
   }
 
   /**
    * @return bool
-   * @throws Exception
    */
   public function isEmpty(): bool {
     $linkType = $this->getLinkType();
@@ -243,7 +234,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   private function getElementUrl(): string {
     try {
       $element = $this->getLinkedElement();
-    } catch (Exception $error) {
+    } catch (Exception) {
       return '';
     }
 
@@ -268,7 +259,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    */
   private function getInputUrl(): string {
     $url = $this->url;
-    if (empty($url) || !is_string($url)) {
+    if (empty($url)) {
       $url = '';
     } elseif ($this->_field->allowAliases) {
       $url = Craft::getAlias($url);
@@ -291,7 +282,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
    */
   private function getMailUrl(): string {
     $url = $this->url;
-    return empty($url) || !is_string($url)
+    return empty($url)
       ? ''
       : 'mailto:' . $url;
   }

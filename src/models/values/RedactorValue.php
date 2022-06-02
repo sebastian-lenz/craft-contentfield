@@ -28,32 +28,32 @@ class RedactorValue
   /**
    * @var string|null
    */
-  private $_compiledContent = null;
+  private ?string $_compiledContent = null;
 
   /**
    * @var Markup[]|null
    */
-  private $_pages = null;
+  private ?array $_pages = null;
 
   /**
    * @var string
    */
-  private $_parsedContent;
+  private string $_parsedContent;
 
   /**
    * @var array|null
    */
-  private $_parsedTokens;
+  private ?array $_parsedTokens;
 
   /**
    * @var string
    */
-  private $_rawContent;
+  private string $_rawContent;
 
   /**
    * @var bool
    */
-  static public $forceNativeRefParse = false;
+  static public bool $forceNativeRefParse = false;
 
 
   /**
@@ -74,21 +74,21 @@ class RedactorValue
   /**
    * @inheritdoc
    */
-  public function __toString() {
+  public function __toString(): string {
     return $this->getCompiledContent();
   }
 
   /**
    * @inheritDoc
    */
-  public function count() {
+  public function count(): int {
     return mb_strlen($this->getCompiledContent(), 'utf-8');
   }
 
   /**
    * @inheritDoc
    */
-  public function display(array $variables = []) {
+  public function display(array $variables = []): void {
     echo $this->getCompiledContent();
   }
 
@@ -120,6 +120,7 @@ class RedactorValue
   /**
    * @param int $pageNumber
    * @return Markup|null
+   * @noinspection PhpUnused
    */
   public function getPage(int $pageNumber): ?Markup {
     $pages = $this->getPages();
@@ -196,7 +197,7 @@ class RedactorValue
 
     try {
       $loader = $this->getContent()->getReferenceLoader();
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       $loader = null;
     }
 
@@ -205,8 +206,8 @@ class RedactorValue
     }
 
     $replace = [];
-    $search  = [];
-    $str     = $this->_parsedContent;
+    $search = [];
+    $str = $this->_parsedContent;
 
     foreach ($this->_parsedTokens as $elementType => $tokensByName) {
       $elements = $loader->getElements($elementType);
@@ -275,7 +276,7 @@ class RedactorValue
   /**
    * @param string $str
    */
-  private function setRawContent(string $str) {
+  private function setRawContent(string $str): void {
     $this->_compiledContent = null;
     $this->_pages = null;
     $this->_rawContent = $str;
@@ -290,7 +291,7 @@ class RedactorValue
         $this->_parsedContent = $parser->content;
         $this->_parsedTokens = $parser->numMatches == 0 ? null : $parser->tokens;
         return;
-      } catch (Throwable $error) {
+      } catch (Throwable) {
         // Ignore errors, use default parser
       }
     }

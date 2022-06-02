@@ -13,9 +13,9 @@ use lenz\contentfield\models\fields\AbstractEnumerationField;
 class EnumerationValue extends AbstractValue
 {
   /**
-   * @var string|number
+   * @var string|int
    */
-  private $_value;
+  private string|int $_value;
 
 
   /**
@@ -35,7 +35,7 @@ class EnumerationValue extends AbstractValue
    * @param string $name
    * @return mixed
    */
-  public function __get($name) {
+  public function __get(string $name): mixed {
     return $this->getCustomData($name);
   }
 
@@ -43,7 +43,7 @@ class EnumerationValue extends AbstractValue
    * @param string $name
    * @return bool
    */
-  public function __isset($name) {
+  public function __isset(string $name) {
     $enumeration = $this->_field->getEnumeration();
     if ($enumeration instanceof CustomDataInterface) {
       return $enumeration->hasCustomData($this->_value, $name);
@@ -55,15 +55,15 @@ class EnumerationValue extends AbstractValue
   /**
    * @inheritdoc
    */
-  public function __toString() {
+  public function __toString(): string {
     return (string)$this->_value;
   }
 
   /**
-   * @param string|number $value
+   * @param string|int $value
    * @return bool
    */
-  public function contains($value) {
+  public function contains(string|int $value): bool {
     return $this->_value == $value;
   }
 
@@ -71,7 +71,7 @@ class EnumerationValue extends AbstractValue
    * @param string $name
    * @return mixed
    */
-  public function getCustomData($name) {
+  public function getCustomData(string $name): mixed {
     $enumeration = $this->_field->getEnumeration();
     if (
       $enumeration instanceof CustomDataInterface &&
@@ -84,9 +84,9 @@ class EnumerationValue extends AbstractValue
   }
 
   /**
-   * @return number|string
+   * @return int|string
    */
-  public function getValue() {
+  public function getValue(): int|string {
     return $this->_value;
   }
 
@@ -105,7 +105,7 @@ class EnumerationValue extends AbstractValue
    * @param mixed $value
    * @return bool
    */
-  static public function isValidEnumerationKey($value) {
+  static public function isValidEnumerationKey(mixed $value): bool {
     return is_int($value) || is_string($value);
   }
 }

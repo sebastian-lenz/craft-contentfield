@@ -20,7 +20,7 @@ class YamlLoader
   /**
    * @param ExceptionEvent $event
    */
-  static public function onBeforeHandleException(ExceptionEvent $event) {
+  static public function onBeforeHandleException(ExceptionEvent $event): void {
     if (
       $event->exception instanceof RuntimeError ||
       $event->exception instanceof SyntaxError
@@ -39,7 +39,7 @@ class YamlLoader
   /**
    * @param TemplateEvent $event
    */
-  static public function onBeforeRenderAnyTemplate(TemplateEvent $event) {
+  static public function onBeforeRenderAnyTemplate(TemplateEvent $event): void {
     $view = $event->sender;
 
     if (
@@ -56,7 +56,7 @@ class YamlLoader
   /**
    * @return void
    */
-  static public function register() {
+  static public function register(): void {
     Event::on(
       View::class, View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
       [self::class, 'onBeforeRenderAnyTemplate']

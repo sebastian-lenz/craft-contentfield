@@ -16,7 +16,7 @@ class Instance
   /**
    * @var array
    */
-  private $_attributes = [];
+  private array $_attributes = [];
 
 
   /**
@@ -46,7 +46,7 @@ class Instance
         $text = (string)$this->getAttribute($name);
         $html = Markdown::process($text);
         $this->setAttribute($name, $html);
-      } catch (Throwable $error) {
+      } catch (Throwable) {
         $this->setAttribute($name, $defaultValue);
       }
     }
@@ -68,7 +68,7 @@ class Instance
         $text = (string)$this->getAttribute($name);
         $text = strip_tags($text);
         $this->setAttribute($name, $text);
-      } catch (Throwable $error) {
+      } catch (Throwable) {
         $this->setAttribute($name, $defaultValue);
       }
     }
@@ -84,7 +84,7 @@ class Instance
    * @param mixed $value
    * @return $this
    */
-  public function ensureAttribute(string $name, $value): Instance {
+  public function ensureAttribute(string $name, mixed $value): Instance {
     if (!$this->hasAttribute($name)) {
       $this->setAttribute($name, $value);
     }
@@ -96,11 +96,11 @@ class Instance
    * Returns a collection of all instances within this
    * instance including this instance.
    *
-   * @param string|array|null $qualifier
+   * @param array|string|null $qualifier
    * @return Collection
    * @throws Throwable
    */
-  public function find($qualifier = null): Collection {
+  public function find(array|string $qualifier = null): Collection {
     return $this
       ->findInstances()
       ->append($this)
@@ -111,11 +111,11 @@ class Instance
    * Returns a collection of all child instances of this
    * instance.
    *
-   * @param string|array|null $qualifier
+   * @param array|string|null $qualifier
    * @return Collection
    * @throws Throwable
    */
-  public function findChildren($qualifier = null): Collection {
+  public function findChildren(array|string $qualifier = null): Collection {
     $collection = new Collection();
 
     foreach ($this->_attributes as $value) {
@@ -137,12 +137,12 @@ class Instance
    * Returns a collection of all child instances of this
    * instance including this instance.
    *
-   * @param string|array|null $qualifier
+   * @param array|string|null $qualifier
    * @return Collection
    * @throws Throwable
    * @noinspection PhpUnused (Public API)
    */
-  public function findChildrenAndSelf($qualifier = null): Collection {
+  public function findChildrenAndSelf(array|string $qualifier = null): Collection {
     return $this
       ->findChildren()
       ->append($this)
@@ -154,11 +154,11 @@ class Instance
    * this instance. Similar to `Instance::children` but returns child
    * instances at any depth.
    *
-   * @param string|array|null $qualifier
+   * @param array|string|null $qualifier
    * @return Collection
    * @throws Throwable
    */
-  public function findInstances($qualifier = null): Collection {
+  public function findInstances(array|string $qualifier = null): Collection {
     $collection = new Collection();
     $this->findChildren()->each(function(Instance $child) use ($collection) {
       $collection->merge($child->find());
@@ -171,7 +171,7 @@ class Instance
    * @param string $name
    * @return mixed
    */
-  public function getAttribute(string $name) {
+  public function getAttribute(string $name): mixed {
     return !array_key_exists($name, $this->_attributes)
       ? null
       : $this->_attributes[$name];
@@ -194,6 +194,7 @@ class Instance
 
   /**
    * @return bool
+   * @noinspection PhpUnused
    */
   public function getVisibility(): bool {
     $visibility = $this->getAttribute(InstanceValue::VISIBLE_PROPERTY);
@@ -213,7 +214,7 @@ class Instance
    * @return boolean
    * @throws Throwable
    */
-  public function matchesQualifier($specs): bool {
+  public function matchesQualifier(array|string $specs): bool {
     return Plugin::getInstance()
       ->schemas
       ->matchesQualifier($this->getType(), $specs);
@@ -287,7 +288,7 @@ class Instance
    * @param mixed $value
    * @return $this
    */
-  public function setAttribute(string $name, $value): Instance {
+  public function setAttribute(string $name, mixed $value): Instance {
     if (self::isInstance($value)) {
       $value = new Instance($value);
     } elseif (is_array($value)) {
@@ -335,6 +336,7 @@ class Instance
   /**
    * @param bool $value
    * @return $this
+   * @noinspection PhpUnused
    */
   public function setVisibility(bool $value): Instance {
     $this->setAttribute(InstanceValue::VISIBLE_PROPERTY, $value);
@@ -388,7 +390,7 @@ class Instance
    * @param mixed $value
    * @return bool
    */
-  static function isInstance($value): bool {
+  static function isInstance(mixed $value): bool {
     return (
       is_array($value) &&
       array_key_exists(InstanceValue::TYPE_PROPERTY, $value) &&

@@ -37,27 +37,27 @@ class LayoutColumnValue
   /**
    * @var array
    */
-  private $_offset;
+  private array $_offset;
 
   /**
    * @var array
    */
-  private $_order;
+  private array $_order;
 
   /**
    * @var string
    */
-  private $_uuid;
+  private string $_uuid;
 
   /**
    * @var mixed|null
    */
-  private $_value = null;
+  private mixed $_value = null;
 
   /**
    * @var array
    */
-  private $_width;
+  private array $_width;
 
 
   /**
@@ -87,7 +87,7 @@ class LayoutColumnValue
     $member = $this->_field->member;
     try {
       $this->_value = $member->createValue($data['value'], $this);
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       $this->_value = null;
     }
   }
@@ -96,14 +96,14 @@ class LayoutColumnValue
   /**
    * @inheritDoc
    */
-  function __toString() {
+  function __toString(): string {
     return $this->render();
   }
 
   /**
    * @param array $variables
    */
-  public function display(array $variables = []) {
+  public function display(array $variables = []): void {
     if ($this->_value instanceof DisplayInterface) {
       $this->_value->display($variables);
     } else {
@@ -114,7 +114,7 @@ class LayoutColumnValue
   /**
    * @inheritDoc
    */
-  public function findInstances($qualifier): array {
+  public function findInstances(array|string $qualifier): array {
     return $this->_value instanceof ValueTraversableInterface
       ? $this->_value->findInstances($qualifier)
       : [];
@@ -231,7 +231,7 @@ class LayoutColumnValue
   /**
    * @return mixed
    */
-  public function getValue() {
+  public function getValue(): mixed {
     return $this->_value;
   }
 
@@ -254,7 +254,7 @@ class LayoutColumnValue
   /**
    * @inheritDoc
    */
-  public function onBeforeAction(BeforeActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event): void {
     if ($this->_value instanceof BeforeActionInterface) {
       $this->_value->onBeforeAction($event);
     }

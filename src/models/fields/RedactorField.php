@@ -21,27 +21,27 @@ class RedactorField extends AbstractField
   /**
    * @var string|null
    */
-  public $purifierConfig = null;
+  public ?string $purifierConfig = null;
 
   /**
    * @var string|null
    */
-  public $redactorConfig = 'Standard.json';
+  public ?string $redactorConfig = 'Standard.json';
 
   /**
    * @var bool
    */
-  public $searchable = true;
+  public bool $searchable = true;
 
   /**
    * @var bool
    */
-  public $translatable = true;
+  public bool $translatable = true;
 
   /**
    * @var FieldProxy|null
    */
-  private $_proxy;
+  private ?FieldProxy $_proxy;
 
   /**
    * The internal name of this widget.
@@ -52,7 +52,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): RedactorValue {
     return new RedactorValue($data, $parent, $this);
   }
 
@@ -69,7 +69,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?string {
     if (!($value instanceof RedactorValue)) {
       return null;
     }
@@ -86,7 +86,9 @@ class RedactorField extends AbstractField
       return $this->getRedactorFieldProxy()->getFieldSettings(
         $element instanceof Element ? $element : null
       );
-    } catch (Throwable $error) { }
+    } catch (Throwable) {
+      // Ignore
+    }
 
     return [];
   }
@@ -94,7 +96,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSearchKeywords($value): string {
+  public function getSearchKeywords(mixed $value): string {
     if (!$this->searchable || !($value instanceof RedactorValue)) {
       return '';
     }
@@ -105,7 +107,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getSerializedValue($value) {
+  public function getSerializedValue(mixed $value): ?string {
     if (!($value instanceof RedactorValue)) {
       return null;
     }
@@ -152,7 +154,7 @@ class RedactorField extends AbstractField
           'purifierConfig' => $this->purifierConfig,
           'redactorConfig' => $this->redactorConfig,
         ]);
-      } catch (Throwable $error) {
+      } catch (Throwable) {
         $this->_proxy = null;
       }
     }

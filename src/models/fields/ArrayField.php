@@ -2,12 +2,12 @@
 
 namespace lenz\contentfield\models\fields;
 
+use craft\base\ElementInterface;
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
-use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\models\values\ArrayValue;
+use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\Plugin;
-use craft\base\ElementInterface;
 use lenz\contentfield\validators\ArrayValueValidator;
 use lenz\contentfield\validators\FieldValidator;
 
@@ -22,14 +22,14 @@ class ArrayField extends AbstractField
    *
    * @var boolean
    */
-  public $collapsible = true;
+  public bool $collapsible = true;
 
   /**
    * The maximum number of elements allowed in this array.
    *
-   * @var int|mixed
+   * @var int
    */
-  public $limit = 0;
+  public int $limit = 0;
 
   /**
    * A field defining each member within the array. Can be any field
@@ -37,7 +37,7 @@ class ArrayField extends AbstractField
    *
    * @var AbstractField|null
    */
-  public $member = null;
+  public ?AbstractField $member = null;
 
   /**
    * The preview mode to use when elements are collapsed. Affects only
@@ -52,7 +52,7 @@ class ArrayField extends AbstractField
    *
    * @var string
    */
-  public $previewMode = 'root';
+  public string $previewMode = 'root';
 
   /**
    * @inheritdoc
@@ -92,7 +92,7 @@ class ArrayField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function createValue($data, ValueInterface $parent = null) {
+  public function createValue(mixed $data, ValueInterface $parent = null): ArrayValue {
     return new ArrayValue($data, $parent, $this);
   }
 
@@ -115,7 +115,7 @@ class ArrayField extends AbstractField
 
     return parent::getEditorData() + [
       'collapsible' => !!$this->collapsible,
-      'limit'       => is_int($this->limit) ? $this->limit : 0,
+      'limit'       => $this->limit,
       'member'      => $this->member->getEditorData($element),
       'previewMode' => $this->previewMode,
     ];
@@ -124,7 +124,7 @@ class ArrayField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getEditorValue($value) {
+  public function getEditorValue(mixed $value): ?array {
     $member = $this->member;
     if (!($value instanceof ArrayValue) || is_null($member)) {
       return null;
@@ -140,12 +140,9 @@ class ArrayField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSearchKeywords($value): string {
+  public function getSearchKeywords(mixed $value): string {
     $member = $this->member;
-    if (
-      !($value instanceof ArrayValue) ||
-      is_null($member)
-    ) {
+    if (!($value instanceof ArrayValue) || is_null($member)) {
       return '';
     }
 
@@ -157,12 +154,9 @@ class ArrayField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSerializedValue($value) {
+  public function getSerializedValue(mixed $value): ?array {
     $member = $this->member;
-    if (
-      !($value instanceof ArrayValue) ||
-      is_null($member)
-    ) {
+    if (!($value instanceof ArrayValue) || is_null($member)) {
       return null;
     }
 

@@ -26,7 +26,7 @@ class TemplateSchema extends AbstractSchemaContainer
    *
    * @var bool
    */
-  public $inline;
+  public bool $inline;
 
   /**
    * The complete filesystem path to this template, e.g.
@@ -34,7 +34,7 @@ class TemplateSchema extends AbstractSchemaContainer
    *
    * @var string
    */
-  public $path;
+  public string $path;
 
   /**
    * The name of this template, unlike the `path` this does not include
@@ -42,34 +42,34 @@ class TemplateSchema extends AbstractSchemaContainer
    *
    * @var string
    */
-  public $template;
+  public string $template;
 
   /**
    * The loaded template instance.
    *
    * @var TemplateWrapper
    */
-  private $_template;
+  private TemplateWrapper $_template;
 
   /**
    * The global template variables, those will be available in all templates.
    *
    * @var array
    */
-  static private $_globalVariables;
+  static private array $_globalVariables;
 
   /**
    * The site twig instance we use to render templates.
    *
    * @var Environment
    */
-  static private $_twig;
+  static private Environment $_twig;
 
 
   /**
    * @inheritDoc
    */
-  public function applyPageTemplate(BeforeActionEvent $event, Content $content) {
+  public function applyPageTemplate(BeforeActionEvent $event, Content $content): void {
     $action = $event->originalEvent->action;
     $module = Plugin::getInstance();
     $config = [
@@ -84,7 +84,7 @@ class TemplateSchema extends AbstractSchemaContainer
    * @inheritdoc
    * @throws Throwable
    */
-  public function display(InstanceValue $instance, array $variables = []) {
+  public function display(InstanceValue $instance, array $variables = []): void {
     $this->getTemplate()->display(
       self::normalizedVariables($instance, $variables)
     );

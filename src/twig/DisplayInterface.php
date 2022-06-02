@@ -11,5 +11,5 @@ interface DisplayInterface
    * @param array $variables
    * @return void
    */
-  public function display(array $variables = []);
+  public function display(array $variables = []): void;
 }

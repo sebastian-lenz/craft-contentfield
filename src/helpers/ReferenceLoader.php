@@ -18,32 +18,36 @@ class ReferenceLoader
   /**
    * @var Content[]
    */
-  private $_contents = [];
+  private array $_contents = [];
 
   /**
    * @var ElementInterface[][]
    */
-  private $_elements = [];
+  private array $_elements = [];
 
   /**
    * @var ReferenceMap
    */
-  private $_referenceMap;
+  private ReferenceMap $_referenceMap;
 
   /**
    * @var int|null
    */
-  private $_siteId = null;
+  private ?int $_siteId = null;
 
 
   /**
    * BatchLoader constructor.
    * @param Content|null $content
-   * @throws Exception
    */
   public function __construct(Content $content = null) {
     if (!is_null($content)) {
-      $this->addContent($content);
+      $element = $content->getOwner();
+      if ($element instanceof Element) {
+        $this->_siteId = $element->siteId;
+      }
+
+      $this->_contents[] = $content;
     }
   }
 
@@ -51,13 +55,13 @@ class ReferenceLoader
    * @param Content $content
    * @throws Exception
    */
-  public function addContent(Content $content) {
+  public function addContent(Content $content): void {
     if (isset($this->_referenceMap)) {
-      throw new Exception('This batch loader is already in used');
+      throw new Exception('This batch loader has already been used.');
     }
 
     $element = $content->getOwner();
-    if (!is_null($element) && $element instanceof Element) {
+    if ($element instanceof Element) {
       if (is_null($this->_siteId)) {
         $this->_siteId = $element->siteId;
       } else if ($this->_siteId !== $element->siteId) {

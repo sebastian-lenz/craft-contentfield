@@ -15,32 +15,32 @@ abstract class AbstractScope extends BaseObject implements ScopeInterface
   /**
    * @var mixed
    */
-  public $transforms = null;
+  public mixed $transforms = null;
 
   /**
    * @var mixed
    */
-  public $transformGroups = null;
+  public mixed $transformGroups = null;
 
   /**
    * @var Source|null
    */
-  private $_nativeSource = null;
+  private ?Source $_nativeSource = null;
 
   /**
    * @var ScopeInterface
    */
-  private $_parent;
+  private ScopeInterface $_parent;
 
   /**
    * @var SourceGroupSet
    */
-  private $_sourceGroups;
+  private SourceGroupSet $_sourceGroups;
 
   /**
    * @var SourceSet
    */
-  private $_sources;
+  private SourceSet $_sources;
 
 
   /**
@@ -106,7 +106,7 @@ abstract class AbstractScope extends BaseObject implements ScopeInterface
    *   PHP style variables like `{$width}` within strings.
    * - Replaces attribute values starting with `$` as this is is easier
    *   to use in yaml definitions.
-   * - Multiple fields can be given seperated by a pipe `|`, the first 
+   * - Multiple fields can be given seperated by a pipe `|`, the first
    *   non empty attribute value will be used
    *
    * @param callable[] $variables
@@ -136,11 +136,11 @@ abstract class AbstractScope extends BaseObject implements ScopeInterface
     };
 
     foreach ($attributes as $key => $value) {
-      if (strlen($value) > 0 && substr($value, 0, 1) == '$') {
+      if (strlen($value) > 0 && str_starts_with($value, '$')) {
         $value = $replace([$value, substr($value, 1)]);
       }
 
-      $value = preg_replace_callback('/\{\s*\$?([^}\s]*)\s*\}/u', $replace, $value);
+      $value = preg_replace_callback('/\{\s*\$?([^}\s]*)\s*}/u', $replace, $value);
       if (!empty($value)) {
         $result[$key] = $value;
       }

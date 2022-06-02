@@ -2,9 +2,9 @@
 
 namespace lenz\contentfield;
 
-use Craft;
 use craft\base\Model;
 use craft\behaviors\EnvAttributeParserBehavior;
+use craft\helpers\App;
 use craft\helpers\ArrayHelper;
 use lenz\contentfield\helpers\grids\BootstrapGrid;
 use Throwable;
@@ -17,62 +17,53 @@ class Config extends Model
   /**
    * @var string
    */
-  public $cpCssFile;
+  public string $cpCssFile = '';
 
   /**
    * @var string
    */
-  public $googleMapsApiKey = '';
+  public string $googleMapsApiKey = '';
 
   /**
    * @var string
    */
-  public $layoutGridClass = BootstrapGrid::class;
+  public string $layoutGridClass = BootstrapGrid::class;
 
   /**
    * @var string
    */
-  public $ownerVariable = '';
+  public string $ownerVariable = '';
 
   /**
    * @var string
    */
-  public $templateInlining = 'production';
+  public string $templateInlining = 'production';
 
   /**
    * @var string
    */
-  public $templateIndexCache = 'production';
+  public string $templateIndexCache = 'production';
 
   /**
    * @var string
    */
-  public $templateModificationCheck = 'dev';
+  public string $templateModificationCheck = 'dev';
 
   /**
    * @var string
    */
-  public $translator = '';
+  public string $translator = '';
 
   /**
    * @var array
    */
-  public $translatorSettings = [];
-
-  /**
-   * A list of attributes for which we must clear the cache when changed.
-   */
-  const CLEAR_CACHE_ATTRIBUTES = [
-    'templateInlining',
-    'templateIndexCache',
-    'templateModificationCheck'
-  ];
+  public array $translatorSettings = [];
 
 
   /**
    * @inheritDoc
    */
-  public function behaviors() {
+  public function behaviors(): array {
     return [
       'parser' => [
         'class' => EnvAttributeParserBehavior::class,
@@ -85,7 +76,7 @@ class Config extends Model
    * @return string
    */
   public function getGoogleMapsApiKey(): string {
-    return Craft::parseEnv($this->googleMapsApiKey);
+    return App::parseEnv($this->googleMapsApiKey);
   }
 
   /**
@@ -107,11 +98,12 @@ class Config extends Model
    * @param string $handle
    * @param string $name
    * @return string|null
+   * @noinspection PhpUnused (Template method)
    */
   public function getTranslatorSetting(string $handle, string $name): ?string {
     try {
       return ArrayHelper::getValue($this->translatorSettings, [$handle, $name]);
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       return null;
     }
   }
@@ -122,7 +114,6 @@ class Config extends Model
    */
   public function getTranslatorSettings(string $handle): array {
     if (
-      is_array($this->translatorSettings) &&
       array_key_exists($handle, $this->translatorSettings) &&
       is_array($this->translatorSettings[$handle])
     ) {
@@ -135,7 +126,7 @@ class Config extends Model
   /**
    * @return array
    */
-  public function rules() {
+  public function rules(): array {
     $environmentModes = array_keys($this->getEnvironmentModes());
     $translators = array_keys(Plugin::getInstance()->translators->getTranslatorTypeOptions());
 
@@ -171,6 +162,7 @@ class Config extends Model
   /**
    * @param string $attribute
    * @return bool
+   * @noinspection PhpUnused (Validator)
    */
   public function validateTranslatorSettings(string $attribute): bool {
     return is_array($this->$attribute);
@@ -185,22 +177,15 @@ class Config extends Model
    * @return bool
    */
   private function resolveEnvironmentMode(string $mode): bool {
-    switch ($mode) {
-      case 'never':
-        return false;
-      case 'dev':
-        return CRAFT_ENVIRONMENT == 'dev';
-      case 'staging':
-        return CRAFT_ENVIRONMENT == 'staging';
-      case 'production':
-        return CRAFT_ENVIRONMENT == 'production';
-      case 'notDev':
-        return CRAFT_ENVIRONMENT != 'dev';
-      case 'notProduction':
-        return CRAFT_ENVIRONMENT != 'production';
-      default:
-        return true;
-    }
+    return match ($mode) {
+      'never' => false,
+      'dev' => CRAFT_ENVIRONMENT == 'dev',
+      'staging' => CRAFT_ENVIRONMENT == 'staging',
+      'production' => CRAFT_ENVIRONMENT == 'production',
+      'notDev' => CRAFT_ENVIRONMENT != 'dev',
+      'notProduction' => CRAFT_ENVIRONMENT != 'production',
+      default => true,
+    };
   }
 
 

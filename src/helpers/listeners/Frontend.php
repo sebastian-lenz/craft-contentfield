@@ -24,7 +24,7 @@ class Frontend
   /**
    * @return void
    */
-  static public function onBeforeRequest() {
+  static public function onBeforeRequest(): void {
     if (YII_DEBUG) {
       $debugger = Craft::$app->getModule('debug');
 
@@ -38,7 +38,7 @@ class Frontend
    * @param ActionEvent $event
    * @throws Exception
    */
-  static public function onBeforeAction(ActionEvent $event) {
+  static public function onBeforeAction(ActionEvent $event): void {
     $action = $event->action;
     if (
       $action->controller instanceof TemplatesController &&
@@ -51,7 +51,7 @@ class Frontend
   /**
    * @return void
    */
-  static public function register() {
+  static public function register(): void {
     Event::on(
       Application::class, Application::EVENT_BEFORE_ACTION,
       [self::class, 'onBeforeAction']
@@ -70,12 +70,12 @@ class Frontend
    * @param ActionEvent $event
    * @throws Exception
    */
-  private static function onBeforeRenderAction(ActionEvent $event) {
-    $element          = Craft::$app->getUrlManager()->getMatchedElement();
-    $request          = Craft::$app->getRequest();
-    $uuid             = $request->getParam(Plugin::$UUID_PARAM);
+  private static function onBeforeRenderAction(ActionEvent $event): void {
+    $element = Craft::$app->urlManager->getMatchedElement();
+    $request = Craft::$app->request;
+    $uuid = $request->getParam(Plugin::$UUID_PARAM);
     $isPreviewRequest = $request->getIsPreview();
-    $isChunkRequest   = !is_null($uuid);
+    $isChunkRequest = !is_null($uuid);
 
     if (!$element) {
       return;
@@ -95,8 +95,8 @@ class Frontend
       if ($fieldValue instanceof Content) {
         $fieldValue->onBeforeAction(new BeforeActionEvent([
           'isPreviewRequest' => $isPreviewRequest,
-          'originalEvent'    => $event,
-          'requestedUuid'    => $isChunkRequest ? $uuid : null,
+          'originalEvent' => $event,
+          'requestedUuid' => $isChunkRequest ? $uuid : null,
         ]));
       }
     }

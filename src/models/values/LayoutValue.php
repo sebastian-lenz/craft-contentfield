@@ -40,17 +40,17 @@ class LayoutValue
   /**
    * @var LayoutColumnValue[]
    */
-  private $_columns;
+  private array $_columns;
 
   /**
    * @var string|null
    */
-  private $_preset;
+  private mixed $_preset;
 
   /**
    * @var string
    */
-  private $_uuid;
+  private mixed $_uuid;
 
 
   /**
@@ -81,14 +81,14 @@ class LayoutValue
   /**
    * @inheritDoc
    */
-  public function display(array $variables = []) {
+  public function display(array $variables = []): void {
     $this->getGrid()->display($this, $variables);
   }
 
   /**
    * @inheritDoc
    */
-  public function findInstances($qualifier): array {
+  public function findInstances(array|string $qualifier): array {
     $reducer = function($result, LayoutColumnValue $column) use ($qualifier) {
       return array_merge($result, $column->findInstances($qualifier));
     };
@@ -149,6 +149,7 @@ class LayoutValue
 
   /**
    * @return string|null
+   * @noinspection PhpUnused
    */
   public function getPreset(): ?string {
     return array_key_exists($this->_preset, $this->_field->presets)
@@ -174,7 +175,7 @@ class LayoutValue
     try {
       $result = ArrayHelper::getValue($preset, ['columns', $index, $attribute]);
       return is_array($result) ? $result : [];
-    } catch (Throwable $error) {
+    } catch (Throwable) {
       return [];
     }
   }
@@ -240,7 +241,7 @@ class LayoutValue
   /**
    * @inheritDoc
    */
-  public function onBeforeAction(BeforeActionEvent $event) {
+  public function onBeforeAction(BeforeActionEvent $event): void {
     foreach ($this->_columns as $column) {
       $column->onBeforeAction($event);
     }
@@ -267,7 +268,7 @@ class LayoutValue
   /**
    * @inheritdoc
    */
-  public function offsetGet($offset) {
+  public function offsetGet($offset): ?LayoutColumnValue {
     return array_key_exists($offset, $this->_columns)
       ? $this->_columns[$offset]
       : null;
@@ -277,13 +278,13 @@ class LayoutValue
    * @inheritdoc
    * @throws Exception
    */
-  public function offsetSet($offset, $value) { }
+  public function offsetSet($offset, $value): void { }
 
   /**
    * @inheritdoc
    * @throws Exception
    */
-  public function offsetUnset($offset) { }
+  public function offsetUnset($offset): void { }
 
 
   // Countable
@@ -303,7 +304,7 @@ class LayoutValue
   /**
    * @inheritdoc
    */
-  public function getIterator() {
+  public function getIterator(): IteratorLoop {
     return new IteratorLoop($this->_columns);
   }
 
@@ -312,10 +313,10 @@ class LayoutValue
   // ---------------
 
   /**
-   * @param $columns
+   * @param mixed $columns
    * @return LayoutColumnValue[]
    */
-  private function createColumns($columns): array {
+  private function createColumns(mixed $columns): array {
     $result = [];
     if (!is_array($columns)) {
       return $result;
@@ -324,7 +325,7 @@ class LayoutValue
     foreach ($columns as $column) {
       try {
         $result[] = new LayoutColumnValue($column, $this, $this->_field);
-      } catch (Throwable $error) {
+      } catch (Throwable) {
         // Ignore errors
       }
     }

@@ -18,42 +18,42 @@ class QueryInfo extends Model
   /**
    * @var array
    */
-  public $backtrace = [];
+  public array $backtrace = [];
 
   /**
    * @var array
    */
-  public $criteria;
+  public array $criteria;
 
   /**
    * @var int
    */
-  public $index;
+  public int $index;
 
   /**
    * @var string
    */
-  public $queryClass;
+  public string $queryClass;
 
   /**
    * @var array
    */
-  public $templates = [];
+  public array $templates = [];
 
   /**
    * @var string
    */
-  public $type = self::TYPE_COMMON;
+  public string $type = self::TYPE_COMMON;
 
   /**
    * @var ElementQuery
    */
-  private $_query;
+  private ElementQuery $_query;
 
   /**
    * @var int
    */
-  static private $_index = 0;
+  static private int $_index = 0;
 
   /**
    * Known query types.
@@ -66,7 +66,7 @@ class QueryInfo extends Model
   /**
    * @return void
    */
-  public function beforeSave() {
+  public function beforeSave(): void {
     if (!isset($this->_query)) {
       return;
     }
@@ -83,7 +83,7 @@ class QueryInfo extends Model
   /**
    * @param ElementQuery $query
    */
-  public function setQuery(ElementQuery $query) {
+  public function setQuery(ElementQuery $query): void {
     if ($query instanceof EntryQuery) {
       $this->type = self::TYPE_ENTRY;
     } elseif ($query instanceof AssetQuery) {
@@ -105,7 +105,7 @@ class QueryInfo extends Model
    * @param array $data
    * @param bool $isExternal
    */
-  private function addBacktrace(array $data, bool $isExternal) {
+  private function addBacktrace(array $data, bool $isExternal): void {
     if (isset($data['object']) && $data['object'] instanceof Template) {
       $template = $data['object']->getSourceContext()->getName();
       $this->addTemplate($data, $template);
@@ -125,7 +125,7 @@ class QueryInfo extends Model
    * @param array $data
    * @param string $name
    */
-  private function addTemplate(array $data, string $name) {
+  private function addTemplate(array $data, string $name): void {
     if (!in_array($name, $this->templates)) {
       $this->templates[] = $name;
     }
@@ -148,7 +148,7 @@ class QueryInfo extends Model
   /**
    * @return void
    */
-  private function fetchBacktrace() {
+  private function fetchBacktrace(): void {
     $backtrace = debug_backtrace();
     $root      = Craft::getAlias('@root');
     $vendor    = Craft::getAlias('@vendor');
@@ -161,8 +161,8 @@ class QueryInfo extends Model
       }
 
       $isExternal = (
-        substr($data['file'], 0, strlen($root)) != $root ||
-        substr($data['file'], 0, strlen($vendor)) == $vendor
+        !str_starts_with($data['file'], $root) ||
+        str_starts_with($data['file'], $vendor)
       );
 
       $this->addBacktrace($data, $isExternal);
@@ -173,7 +173,7 @@ class QueryInfo extends Model
    * @param mixed $value
    * @return mixed
    */
-  static public function removeEntries($value) {
+  static public function removeEntries(mixed $value): mixed {
     if ($value instanceof Element) {
       return 'Element ( ' . $value . ', ' . $value->id . ' )';
     } else if (is_array($value)) {

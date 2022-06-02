@@ -15,7 +15,7 @@ class InlineTemplateNode extends Node
   /**
    * @var TemplateSchema
    */
-  private $_schema;
+  private TemplateSchema $_schema;
 
 
   /**
@@ -40,7 +40,7 @@ class InlineTemplateNode extends Node
       ->write("/**\n")
       ->write(sprintf(" * %s\n", $this->_schema->template))
       ->write(" */\n")
-      ->write(sprintf("public function %s(\$instance, \$variables = []) {\n", $this->getAttribute('name')))
+      ->write(sprintf("public function %s(\$instance, array \$variables = []) {\n", $this->getAttribute('name')))
         ->indent()
         ->write("\$macros = \$this->macros;\n")
         ->write("\$context = \$this->env->mergeGlobals(\\lenz\\contentfield\\models\\schemas\\TemplateSchema::normalizedVariables(\$instance, \$variables));\n")

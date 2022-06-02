@@ -15,7 +15,7 @@ class GoogleTranslator extends AbstractTranslator
   /**
    * @var string
    */
-  private $_apiKey;
+  private string $_apiKey;
 
   /**
    * The url of the API endpoint.
@@ -25,22 +25,24 @@ class GoogleTranslator extends AbstractTranslator
 
   /**
    * @return string
+   * @noinspection PhpUnused
    */
-  public function getApiKey() {
+  public function getApiKey(): string {
     return $this->_apiKey;
   }
 
   /**
    * @param string $value
+   * @noinspection PhpUnused
    */
-  public function setApiKey($value) {
-    $this->_apiKey = (string)$value;
+  public function setApiKey(string $value): void {
+    $this->_apiKey = $value;
   }
 
   /**
    * @inheritDoc
    */
-  public function translate($sourceLanguage, $targetLanguage, $message) {
+  public function translate(string $sourceLanguage, string $targetLanguage, string $message): ?string {
     if (empty($this->_apiKey)) {
       return null;
     }
@@ -62,7 +64,7 @@ class GoogleTranslator extends AbstractTranslator
     curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
 
     $response = curl_exec($handle);
-    $responseDecoded = Json::decode($response, true);
+    $responseDecoded = Json::decode($response);
     $responseCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
     curl_close($handle);
 
@@ -83,21 +85,21 @@ class GoogleTranslator extends AbstractTranslator
   /**
    * @return string
    */
-  static function getDisplayName() {
+  static function getDisplayName(): string {
     return 'Google Translator';
   }
 
   /**
    * @return string
    */
-  static function getHandle() {
+  static function getHandle(): string {
     return 'google';
   }
 
   /**
    * @inheritDoc
    */
-  static function getSettingsHtml() {
+  static function getSettingsHtml(): string {
     return Craft::$app->getView()->renderTemplate(
       'contentfield/_config-translator-google',
       self::getSettings()
