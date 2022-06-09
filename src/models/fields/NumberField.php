@@ -25,7 +25,7 @@ class NumberField extends AbstractNumberField
    *
    * @var string
    */
-  public string $unit;
+  public string $unit = '';
 
   /**
    * The internal name of this widget.
