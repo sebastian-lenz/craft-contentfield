@@ -7,6 +7,7 @@ return [
   'Apply' => 'Anwenden',
   'Before selected element' => 'Vor dem ausgewählten Element',
   'Cancel' => 'Abbrechen',
+  'Choose' => 'Auswählen',
   'Clone the source, overwrites everything' => 'Klonen, überschreibt alle Elemente',
   'Close' => 'Schließen',
   'Collapse' => 'Schließen',

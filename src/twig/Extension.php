@@ -6,6 +6,7 @@ use craft\elements\Asset;
 use craft\elements\db\AssetQuery;
 use craft\helpers\Template;
 use Exception;
+use Illuminate\Support\Collection;
 use lenz\contentfield\models\values\ReferenceValue;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\nodeVisitors\DisplayNodeVisitor;
@@ -59,10 +60,13 @@ class Extension extends AbstractExtension
    * @throws Exception
    */
   static function imageTag(mixed $asset, array|string $config): ?Markup {
+    echo '';
     if ($asset instanceof AssetQuery) {
       $asset = $asset->one();
     } elseif ($asset instanceof ReferenceValue) {
       $asset = $asset->getFirst();
+    } elseif ($asset instanceof Collection) {
+      $asset = $asset->first();
     } elseif (is_array($asset) && count($asset) > 0) {
       $asset = $asset[0];
     }

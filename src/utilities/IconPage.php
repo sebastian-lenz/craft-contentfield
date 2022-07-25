@@ -8,6 +8,7 @@ use craft\helpers\Json;
 use craft\web\assets\cp\CpAsset;
 use craft\web\View;
 use Exception;
+use GuzzleHttp\Client;
 use lenz\contentfield\assets\field\ContentFieldAsset;
 
 /**
@@ -15,6 +16,12 @@ use lenz\contentfield\assets\field\ContentFieldAsset;
  */
 class IconPage extends AbstractPage
 {
+  /**
+   * @var string
+   */
+  const CRAFT_FONT_URL = 'https://raw.githubusercontent.com/craftcms/cms/develop/src/web/assets/cp/src/craft-font/selection.json';
+
+
   /**
    * @inheritDoc
    */
@@ -67,7 +74,15 @@ class IconPage extends AbstractPage
 
     $result = [];
     $path = $bundle->sourcePath . '/../src/craft-font/selection.json';
-    $data = Json::decode(file_get_contents($path));
+    if (file_exists($path)) {
+      $data = Json::decode(file_get_contents($path));
+    } else {
+      $data = Craft::$app->cache->getOrSet(__METHOD__, function() {
+        $client = new Client();
+        $response = $client->request('GET', self::CRAFT_FONT_URL);
+        return Json::decode($response->getBody()->getContents());
+      });
+    }
 
     foreach ($data['icons'] as $icon) {
       $ligatures = ArrayHelper::getValue($icon, ['properties', 'ligatures']);
