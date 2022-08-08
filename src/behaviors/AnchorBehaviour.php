@@ -45,7 +45,7 @@ class AnchorBehaviour extends Behavior
       $this->getRootBehaviour()->generateAnchors();
     }
 
-    return $this->_anchor;
+    return $this->_anchor ?? null;
   }
 
   /**
