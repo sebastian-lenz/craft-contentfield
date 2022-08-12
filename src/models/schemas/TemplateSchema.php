@@ -26,7 +26,7 @@ class TemplateSchema extends AbstractSchemaContainer
    *
    * @var bool
    */
-  public bool $inline;
+  public bool $inline = false;
 
   /**
    * The complete filesystem path to this template, e.g.
@@ -34,7 +34,7 @@ class TemplateSchema extends AbstractSchemaContainer
    *
    * @var string
    */
-  public string $path;
+  public string $path = '';
 
   /**
    * The name of this template, unlike the `path` this does not include
@@ -42,7 +42,7 @@ class TemplateSchema extends AbstractSchemaContainer
    *
    * @var string
    */
-  public string $template;
+  public string $template = '';
 
   /**
    * The loaded template instance.
