@@ -271,24 +271,22 @@ class Schemas
 
     // If no loader is given, assume it is a template
     if ($divider === false) {
-      $name = $this->_templateLoader->normalizeName($name);
-      return [
-        'loader' => $this->_templateLoader,
-        'name' => $name,
-        'uri' => TemplateLoader::NAME_PREFIX . $name,
-      ];
-    }
+      $loader = $this->_templateLoader;
 
     // Otherwise, delegate to the loader
-    $loaderName = substr($qualifier, 0, $divider + 1);
-    if (!array_key_exists($loaderName, $this->_loaders)) {
-      throw new Exception('Invalid schema name "' . $qualifier . '"');
+    } else {
+      $loaderName = substr($qualifier, 0, $divider + 1);
+      if (!array_key_exists($loaderName, $this->_loaders)) {
+        throw new Exception('Invalid schema name "' . $qualifier . '"');
+      }
+
+      $loader = $this->_loaders[$loaderName];
     }
 
-    $loader = $this->_loaders[$loaderName];
+    $name = $loader->normalizeName($name);
     return [
       'loader' => $loader,
-      'name' => $loader->normalizeName($name),
+      'name' => $name,
       'uri' => $loader::NAME_PREFIX . $name,
     ];
   }
