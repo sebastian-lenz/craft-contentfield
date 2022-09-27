@@ -206,21 +206,21 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   /**
    * @inheritDoc
    */
-  public function current() {
+  public function current(): mixed {
     return $this->_values[$this->_index];
   }
 
   /**
    * @inheritDoc
    */
-  public function next() {
+  public function next(): void {
     $this->_index += 1;
   }
 
   /**
    * @inheritDoc
    */
-  public function key() {
+  public function key(): mixed {
     return $this->_index;
   }
 
@@ -234,7 +234,7 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   /**
    * @inheritDoc
    */
-  public function rewind() {
+  public function rewind(): void {
     $this->_index = 0;
   }
 }
