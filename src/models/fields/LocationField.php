@@ -13,9 +13,9 @@ use lenz\contentfield\models\values\ValueInterface;
 class LocationField extends AbstractField
 {
   /**
-   * @var array
+   * @var ?array
    */
-  public array $defaultValue;
+  public ?array $defaultValue = null;
 
   /**
    * @inheritdoc
@@ -35,8 +35,8 @@ class LocationField extends AbstractField
    */
   public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
-      'defaultValue' => $this->getEditorDefaultValue($element),
-    ];
+        'defaultValue' => $this->getEditorDefaultValue($element),
+      ];
   }
 
   /**
@@ -47,6 +47,7 @@ class LocationField extends AbstractField
     $defaultValue = $this->defaultValue;
 
     if (
+      is_array($defaultValue) &&
       is_float($defaultValue['latitude']) &&
       is_float($defaultValue['longitude'])
     ) {
