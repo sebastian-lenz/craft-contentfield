@@ -99,15 +99,15 @@ class OEmbed extends BaseObject
 
   /**
    * The width in pixels required to display the HTML.
-   * @var int
+   * @var string|int
    */
-  public int $width = 0;
+  public string|int $width = 0;
 
   /**
    * The height in pixels required to display the HTML.
-   * @var int
+   * @var string|int
    */
-  public int $height = 0;
+  public string|int $height = 0;
 
   /**
    * @var array
