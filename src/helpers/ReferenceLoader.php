@@ -77,10 +77,11 @@ class ReferenceLoader
   /**
    * @param string $elementType
    * @param int $id
+   * @param int|null $siteId
    * @return ElementInterface|null
    */
-  public function getElement(string $elementType, int $id): ?ElementInterface {
-    $elements = $this->getElements($elementType);
+  public function getElement(string $elementType, int $id, int $siteId = null): ?ElementInterface {
+    $elements = $this->getElements($elementType, $siteId);
 
     return array_key_exists($id, $elements)
       ? $elements[$id]
@@ -89,20 +90,22 @@ class ReferenceLoader
 
   /**
    * @param string $elementType
+   * @param int|null $siteId
    * @return ElementInterface[]
    */
-  public function getElements(string $elementType): array {
-    if (!(array_key_exists($elementType, $this->_elements))) {
+  public function getElements(string $elementType, int $siteId = null): array {
+    $cacheKey = ReferenceMap::key($elementType, $siteId);
+    if (!(array_key_exists($cacheKey, $this->_elements))) {
       $result = [];
-      $elements = $this->queryElements($elementType);
+      $elements = $this->queryElements($elementType, $siteId);
       foreach ($elements as $element) {
         $result[intval($element->getId())] = $element;
       }
 
-      $this->_elements[$elementType] = $result;
+      $this->_elements[$cacheKey] = $result;
     }
 
-    return $this->_elements[$elementType];
+    return $this->_elements[$cacheKey];
   }
 
 
@@ -131,11 +134,12 @@ class ReferenceLoader
 
   /**
    * @param string $elementType
+   * @param int|null $siteId
    * @return ElementInterface[]
    */
-  private function queryElements(string $elementType): array {
+  private function queryElements(string $elementType, int $siteId = null): array {
     $referenceMap = $this->getReferenceMap();
-    $ids = $referenceMap->getElementIds($elementType);
+    $ids = $referenceMap->getElementIds($elementType, $siteId);
     if (count($ids) === 0 || !class_exists($elementType)) {
       return [];
     }
@@ -143,7 +147,7 @@ class ReferenceLoader
     /** @var ElementInterface $elementType */
     $query = $elementType::find()
       ->id($ids)
-      ->siteId($this->_siteId);
+      ->siteId($siteId ?: $this->_siteId);
 
     if ($referenceMap->hasWith($elementType)) {
       $query->with($referenceMap->getWith($elementType));
