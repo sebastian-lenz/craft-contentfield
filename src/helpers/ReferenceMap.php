@@ -27,13 +27,14 @@ class ReferenceMap
 
   /**
    * @param string $elementType
+   * @param int|null $siteId
    * @return int[]
    */
-  public function getElementIds(string $elementType): array {
-    $elementType = self::normalizeElementType($elementType);
+  public function getElementIds(string $elementType, int $siteId = null): array {
+    $key = self::key($elementType, $siteId);
 
-    return array_key_exists($elementType, $this->_elementTypes)
-      ? $this->_elementTypes[$elementType]
+    return array_key_exists($key, $this->_elementTypes)
+      ? $this->_elementTypes[$key]['ids']
       : [];
   }
 
@@ -68,16 +69,22 @@ class ReferenceMap
   /**
    * @param string $elementType
    * @param int $id
+   * @param int|null $siteId
    */
-  public function push(string $elementType, int $id): void {
+  public function push(string $elementType, int $id, int $siteId = null): void {
     $elementType = self::normalizeElementType($elementType);
+    $key = self::key($elementType, $siteId);
 
-    if (!array_key_exists($elementType, $this->_elementTypes)) {
-      $this->_elementTypes[$elementType] = [];
+    if (!array_key_exists($key, $this->_elementTypes)) {
+      $this->_elementTypes[$key] = [
+        'elementType' => $elementType,
+        'ids' => [],
+        'siteId' => $siteId,
+      ];
     }
 
-    if (!in_array($id, $this->_elementTypes[$elementType])) {
-      $this->_elementTypes[$elementType][] = $id;
+    if (!in_array($id, $this->_elementTypes[$key]['ids'])) {
+      $this->_elementTypes[$key]['ids'][] = $id;
     }
   }
 
@@ -88,11 +95,11 @@ class ReferenceMap
   public function queryAll(int $siteId = null): array {
     $result = [];
 
-    foreach ($this->_elementTypes as $elementType => $ids) {
+    foreach ($this->_elementTypes as $data) {
       /** @var ElementInterface $elementType */
-      $elements = $elementType::find()
-        ->id($ids)
-        ->siteId($siteId)
+      $elements = $data['elementType']::find()
+        ->id($data['ids'])
+        ->siteId($data['siteId'] ?: $siteId)
         ->status(null)
         ->all();
 
@@ -139,6 +146,16 @@ class ReferenceMap
 
   // Static methods
   // --------------
+
+  /**
+   * @param string $elementType
+   * @param int|null $siteId
+   * @return string
+   */
+  static public function key(string $elementType, int $siteId = null): string {
+    $elementType = self::normalizeElementType($elementType);
+    return $siteId ? "$elementType:$siteId" : $elementType;
+  }
 
   /**
    * @param string $elementType

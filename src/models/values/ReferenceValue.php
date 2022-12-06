@@ -90,8 +90,9 @@ class ReferenceValue
   public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
     $map = is_null($map) ? new ReferenceMap() : $map;
     $elementType = $this->_field->getElementType();
+    $site = $this->_field->getTargetSite();
     foreach ($this->_values as $value) {
-      $map->push($elementType, $value);
+      $map->push($elementType, $value, $site?->id);
     }
 
     if (!empty($this->_field->with)) {
@@ -223,8 +224,9 @@ class ReferenceValue
     }
 
     $content = $this->getContent();
+    $site = $this->_field->getTargetSite();
     if (!is_null($content)) {
-      $elements = $content->getReferenceLoader()->getElements($elementType);
+      $elements = $content->getReferenceLoader()->getElements($elementType, $site?->id);
       $result = [];
 
       foreach ($this->_values as $id) {
@@ -240,6 +242,7 @@ class ReferenceValue
     $result = [];
     $elements = $elementType::findAll([
       'id' => $this->_values,
+      'siteId' => $site?->id,
     ]);
 
     foreach ($this->_values as $id) {
