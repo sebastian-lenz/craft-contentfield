@@ -223,8 +223,12 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
    * @return string
    */
   static private function toSource(Volume|VolumeFolder $value): string {
-    return $value instanceof Volume
-      ? 'volume:' . $value->uid
+    if ($value instanceof Volume) {
+      return 'volume:' . $value->uid;
+    }
+
+    return empty($value->parentId)
+      ? 'volume:' . $value->volume->uid
       : 'folder:' . $value->uid;
   }
 
@@ -233,12 +237,8 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
    * @return string
    */
   static private function toElementSource(Volume|VolumeFolder $value): string {
-    if ($value instanceof Volume) {
-      return self::toSource($value);
-    }
-
     $segments = [self::toSource($value)];
-    while ($value->parentId && $value->volumeId !== null) {
+    while ($value instanceof VolumeFolder && !empty($value->parentId)) {
       $value = $value->getParent();
       $segments[] = self::toSource($value);
     }
