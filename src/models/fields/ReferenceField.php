@@ -8,6 +8,8 @@ use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\elements\Category;
 use craft\elements\Entry;
+use craft\helpers\StringHelper;
+use craft\models\Site;
 use Exception;
 use lenz\contentfield\events\ReferenceFolderSourcesEvent;
 use lenz\contentfield\events\ReferenceSourcesEvent;
@@ -46,9 +48,19 @@ class ReferenceField extends AbstractField
   public ?string $modalStorageKey = null;
 
   /**
+   * @var string|bool
+   */
+  public string|bool $showSiteMenu = false;
+
+  /**
    * @var string[]|string|null
    */
   public string|array|null $sources = null;
+
+  /**
+   * @var string|int|null
+   */
+  public string|int|null $targetSite = null;
 
   /**
    * @var string
@@ -95,6 +107,7 @@ class ReferenceField extends AbstractField
       'elementType'        => $this->getElementType(),
       'limit'              => $this->getLimit(),
       'modalStorageKey'    => $this->modalStorageKey,
+      'showSiteMenu'       => $this->getShowSiteMenu(),
       'sources'            => $this->getSources($element),
       'viewMode'           => $this->viewMode,
     ];
@@ -122,6 +135,35 @@ class ReferenceField extends AbstractField
     return isset($this->elementType)
       ? self::resolveElementType($this->elementType)
       : null;
+  }
+
+  /**
+   * @return bool|string
+   */
+  public function getShowSiteMenu(): bool|string {
+    if (!is_null($this->getTargetSite())) {
+      return false;
+    }
+
+    return $this->showSiteMenu;
+  }
+
+  /**
+   * @return Site|null
+   */
+  public function getTargetSite(): ?Site {
+    if (empty($this->targetSite) || !Craft::$app->getIsMultiSite()) {
+      return null;
+    }
+
+    $sites = Craft::$app->getSites();
+    if (is_numeric($this->targetSite)) {
+      return $sites->getSiteById($this->targetSite);
+    } elseif (StringHelper::isUUID($this->targetSite)) {
+      return $sites->getSiteByUid($this->targetSite);
+    } else {
+      return $sites->getSiteByHandle($this->targetSite);
+    }
   }
 
   /**
@@ -168,10 +210,15 @@ class ReferenceField extends AbstractField
       ? $this->criteria
       : [];
 
-    if (!($element instanceof Element)) {
-      $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
-    } else {
-      $criteria['siteId'] = $element->siteId;
+    if (!isset($criteria['siteId'])) {
+      $target = $this->getTargetSite();
+      if (!is_null($target)) {
+        $criteria['siteId'] = $target->id;
+      } elseif (!($element instanceof Element)) {
+        $criteria['siteId'] = Craft::$app->getSites()->getCurrentSite()->id;
+      } else {
+        $criteria['siteId'] = $element->siteId;
+      }
     }
 
     return $criteria;
