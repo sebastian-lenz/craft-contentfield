@@ -153,6 +153,7 @@ class RedactorField extends AbstractField
         $this->_proxy = new FieldProxy([
           'purifierConfig' => $this->purifierConfig,
           'redactorConfig' => $this->redactorConfig,
+          'showHtmlButtonForNonAdmins' => true,
         ]);
       } catch (Throwable) {
         $this->_proxy = null;
