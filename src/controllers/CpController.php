@@ -40,14 +40,14 @@ class CpController extends Controller
   }
 
   /**
-   * @param int|string $siteId
-   * @param int|string $elementId
+   * @param string $siteId
+   * @param string $elementId
    * @param string $fieldHandle
    * @return Response
    * @throws InvalidFieldException
    * @noinspection PhpUnused
    */
-  public function actionFetch(int|string $siteId, int|string $elementId, string $fieldHandle): Response {
+  public function actionFetch(string $siteId, string $elementId, string $fieldHandle): Response {
     $element = Craft::$app->elements->getElementById($elementId, null, $siteId);
     if (is_null($element)) {
       return $this->asJson([
