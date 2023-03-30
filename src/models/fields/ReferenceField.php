@@ -3,11 +3,14 @@
 namespace lenz\contentfield\models\fields;
 
 use Craft;
+use craft\base\conditions\ConditionInterface;
 use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
 use craft\elements\Category;
+use craft\elements\conditions\ElementCondition;
 use craft\elements\Entry;
+use craft\errors\SiteNotFoundException;
 use craft\helpers\StringHelper;
 use craft\models\Site;
 use Exception;
@@ -26,6 +29,11 @@ class ReferenceField extends AbstractField
    * @var bool
    */
   public bool $allowSelfReference = false;
+
+  /**
+   * @var ConditionInterface|array|null
+   */
+  public ConditionInterface|array|null $condition = null;
 
   /**
    * @var null|array
@@ -96,20 +104,40 @@ class ReferenceField extends AbstractField
   }
 
   /**
+   * @return ConditionInterface|null
+   * @throws InvalidConfigException
+   */
+  public function getCondition(): ?ConditionInterface {
+    if ($this->condition !== null && !$this->condition instanceof ConditionInterface) {
+      $this->condition = Craft::$app->getConditions()->createCondition($this->condition);
+    }
+
+    return $this->condition;
+  }
+
+  /**
    * @param ElementInterface|null $element
    * @return array
    * @throws Exception
    */
   public function getEditorData(ElementInterface $element = null): array {
+    $condition = $this->getCondition();
+    if ($element && $condition instanceof ElementCondition) {
+      $condition->referenceElement = $element;
+    }
+
     return parent::getEditorData() + [
-      'allowSelfReference' => !!$this->allowSelfReference,
-      'criteria'           => $this->getCriteria($element),
-      'elementType'        => $this->getElementType(),
-      'limit'              => $this->getLimit(),
-      'modalStorageKey'    => $this->modalStorageKey,
-      'showSiteMenu'       => $this->getShowSiteMenu(),
-      'sources'            => $this->getSources($element),
-      'viewMode'           => $this->viewMode,
+      'allowSelfReference'     => !!$this->allowSelfReference,
+      'condition'              => $condition ? $condition->getConfig() : null,
+      'criteria'               => $this->getCriteria($element),
+      'elementType'            => $this->getElementType(),
+      'limit'                  => $this->getLimit(),
+      'modalStorageKey'        => $this->modalStorageKey,
+      'referenceElementId'     => $element?->id,
+      'referenceElementSiteId' => $element?->siteId,
+      'showSiteMenu'           => $this->getShowSiteMenu(),
+      'sources'                => $this->getSources($element),
+      'viewMode'               => $this->viewMode,
     ];
   }
 
@@ -139,6 +167,7 @@ class ReferenceField extends AbstractField
 
   /**
    * @return bool|string
+   * @throws SiteNotFoundException
    */
   public function getShowSiteMenu(): bool|string {
     if (!is_null($this->getTargetSite())) {
@@ -150,6 +179,7 @@ class ReferenceField extends AbstractField
 
   /**
    * @return Site|null
+   * @throws SiteNotFoundException
    */
   public function getTargetSite(): ?Site {
     if (empty($this->targetSite) || !Craft::$app->getIsMultiSite()) {
@@ -228,9 +258,7 @@ class ReferenceField extends AbstractField
    * @return integer|null
    */
   private function getLimit(): ?int {
-    return isset($this->limit) && is_numeric($this->limit)
-      ? intval($this->limit)
-      : null;
+    return $this->limit;
   }
 
   /**
