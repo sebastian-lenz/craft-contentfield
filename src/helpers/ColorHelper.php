@@ -2,6 +2,8 @@
 
 namespace lenz\contentfield\helpers;
 
+use lenz\contentfield\helpers\colors\RGBColor;
+
 /**
  * Class ColorHelpers
  */
@@ -15,33 +17,11 @@ class ColorHelper
    * @noinspection DuplicatedCode
    */
   static public function toHsl(float $red, float $green, float $blue): array {
-    $red = max(0, min(1, $red / 255));
-    $green = max(0, min(1, $green / 255));
-    $blue = max(0, min(1, $blue / 255));
-
-    $max = max($red, $green, $blue);
-    $min = min($red, $green, $blue);
-    $lightness = ($max + $min) / 2;
-    $chroma = $max - $min;
-
-    if ($chroma == 0) {
-      return ['h' => 0, 's' => 0, 'l' => $lightness];
-    }
-
-    if ($red == $max) {
-      $hue = fmod(($green - $blue) / $chroma, 6);
-      if ($blue > $green) $hue += 6;
-    } else if ($green == $max) {
-      $hue = 2 + ($blue - $red) / $chroma;
-    } else {
-      $hue = 4 + ($red - $green) / $chroma;
-    }
-
-    return [
-      'h' => 60 * $hue,
-      's' => $chroma / (1 - abs(2 * $lightness - 1)),
-      'l' => $lightness
-    ];
+    return (new RGBColor([
+      'blue' => $blue,
+      'green' => $green,
+      'red' => $red,
+    ]))->toHSL()->toArray();
   }
 
 
