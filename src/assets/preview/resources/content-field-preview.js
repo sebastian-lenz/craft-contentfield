@@ -119,6 +119,8 @@
 
         target = target.parentElement;
       }
+
+      dispose();
     }
 
     function onFrame() {
