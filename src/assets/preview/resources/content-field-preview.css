@@ -6,7 +6,7 @@
   justify-content: center;
   z-index: 2048;
 
-  background: rgba(97, 110, 125, 0.5);
+  background: rgba(97, 110, 125, 0.25);
 }
 
 .tcfPreview.compact {

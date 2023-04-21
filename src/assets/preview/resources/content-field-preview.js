@@ -119,6 +119,8 @@
 
         target = target.parentElement;
       }
+
+      dispose();
     }
 
     function onFrame() {
@@ -157,7 +159,7 @@
         continue;
       }
 
-      var api = lenz.contentField.getInstanceApi(uuid);
+      var api = contentField.getInstanceApi(uuid);
       if (!api) {
         break;
       }
@@ -172,7 +174,7 @@
   }
 
   (function() {
-    contentField = window.parent.contentField;
+    contentField = window.parent.lenz.contentField;
     if (typeof contentField !== 'object') {
       return;
     }
