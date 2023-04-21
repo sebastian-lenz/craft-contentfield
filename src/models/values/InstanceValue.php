@@ -3,7 +3,6 @@
 namespace lenz\contentfield\models\values;
 
 use Craft;
-use craft\helpers\Template;
 use craft\helpers\UrlHelper;
 use craft\web\Response;
 use Exception;
@@ -17,6 +16,7 @@ use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\DisplayInterface;
+use lenz\craft\utils\models\Attributes;
 use Twig\Markup;
 use yii\base\Model;
 use yii\web\Response as YiiResponse;
@@ -177,12 +177,16 @@ class InstanceValue
   }
 
   /**
-   * @return Markup|string
+   * @param array $values
+   * @return Attributes
    */
-  public function getEditAttributes(): string|Markup {
-    return Plugin::$IS_ELEMENT_PREVIEW
-      ? Template::raw(' data-contentfield-edit-uuid="' . $this->_uuid . '" ')
-      : '';
+  public function getEditAttributes(array $values = []): Attributes {
+    $attributes = new Attributes($values);
+    if (Plugin::$IS_ELEMENT_PREVIEW) {
+      $attributes->set('data-contentfield-edit-uuid', $this->_uuid);
+    }
+
+    return $attributes;
   }
 
   /**
