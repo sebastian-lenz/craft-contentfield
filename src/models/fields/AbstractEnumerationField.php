@@ -119,7 +119,7 @@ abstract class AbstractEnumerationField extends AbstractField
       $enumOptions = [];
     }
 
-    $enum = new $enumClass($enumOptions);
+    $enum = new $enumClass($this, $enumOptions);
     if (!($enum instanceof EnumerationInterface)) {
       throw new Exception(sprintf('Invalid enumeration class given, %s must implement EnumerationInterface.', $enumClass));
     }
