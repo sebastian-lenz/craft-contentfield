@@ -4,6 +4,7 @@ namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
 use Exception;
+use lenz\contentfield\models\enumerations\ElementEnumerationInterface;
 use lenz\contentfield\models\enumerations\EnumerationInterface;
 use lenz\contentfield\models\enumerations\StaticEnumeration;
 use lenz\contentfield\models\schemas\AbstractSchema;
@@ -69,9 +70,14 @@ abstract class AbstractEnumerationField extends AbstractField
    * @return array
    */
   public function getEditorData(ElementInterface $element = null): array {
+    $enum = $this->getEnumeration();
+    $options = $enum instanceof ElementEnumerationInterface
+      ? $enum->getElementOptions($element)
+      : $enum->getOptions();
+
     $options = array_map(function($option) {
       return array_intersect_key($option, self::ALLOWED_OPTION_KEYS);
-    }, $this->getEnumeration()->getOptions());
+    }, $options);
 
     return parent::getEditorData($element) + [
       'defaultValue' => $this->defaultValue,
