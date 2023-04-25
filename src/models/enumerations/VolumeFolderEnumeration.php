@@ -5,7 +5,6 @@ namespace lenz\contentfield\models\enumerations;
 use Craft;
 use craft\helpers\StringHelper;
 use craft\models\VolumeFolder;
-use lenz\contentfield\models\fields\AbstractEnumerationField;
 
 /**
  * Class VolumeFolderEnumeration
@@ -41,9 +40,10 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
 
 
   /**
-   * @inheritDoc
+   * VolumeFolderEnumeration constructor.
+   * @param array $options
    */
-  public function __construct(?AbstractEnumerationField $field, array $options = []) {
+  public function __construct(array $options = []) {
     if (isset($options['rootFolders'])) {
       $args = is_array($options['rootFolders'])
         ? $options['rootFolders']

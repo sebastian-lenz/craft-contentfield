@@ -3,7 +3,6 @@
 namespace lenz\contentfield\models\enumerations;
 
 use Craft;
-use lenz\contentfield\models\fields\AbstractEnumerationField;
 use lenz\contentfield\models\values\EnumerationValue;
 use lenz\contentfield\Plugin;
 use yii\helpers\Inflector;
@@ -20,9 +19,10 @@ class StaticEnumeration implements CustomDataInterface, EnumerationInterface
 
 
   /**
-   * @inheritDoc
+   * StaticEnumeration constructor.
+   * @param array|string $options
    */
-  public function __construct(?AbstractEnumerationField $field, array|string $options = []) {
+  public function __construct(array|string $options = []) {
     if (is_string($options)) {
       $options = explode(',', $options);
       $options = array_map('trim', $options);
