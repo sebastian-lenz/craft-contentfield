@@ -21,7 +21,7 @@ class ReferenceSourcesEvent extends AbstractSourcesEvent
    * @param string $elementType
    * @noinspection PhpUnused
    */
-  public function setToDefaults(string $elementType) {
+  public function setToDefaults(string $elementType): void {
     $sources = Craft::$app
       ->getElementSources()
       ->getSources($elementType);

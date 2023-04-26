@@ -53,7 +53,7 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
   public function getSources(): ?array {
     $folders = $this->_values;
     if (!$this->showUnpermittedVolumes) {
-      $folders = self::filterPermittedFolders($folders);
+      $folders = self::filterPermittedSources($folders);
     }
 
     return empty($folders)
@@ -84,17 +84,16 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
   // --------------
 
   /**
-   * @param VolumeFolder[] $folders
-   * @return VolumeFolder[]
+   * @param array<Volume|VolumeFolder> $values
+   * @return array<Volume|VolumeFolder>
    */
-  static private function filterPermittedFolders(array $folders): array {
-    if (empty($folders)) {
-      return $folders;
+  static private function filterPermittedSources(array $values): array {
+    if (empty($values)) {
+      return $values;
     }
 
     $users = Craft::$app->getUser();
-
-    return array_filter($folders, function(Volume|VolumeFolder $value) use ($users) {
+    return array_filter($values, function(Volume|VolumeFolder $value) use ($users) {
       try {
         $volume = $value instanceof Volume ? $value : $value->getVolume();
       } catch (InvalidConfigException) {
@@ -103,7 +102,7 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
 
       return (
         !($volume instanceof Volume) ||
-        $users->checkPermission('viewVolume:' . $volume->uid)
+        $users->checkPermission('viewpeerassets:' . $volume->uid)
       );
     });
   }
@@ -136,7 +135,7 @@ class ReferenceFolderSourcesEvent extends AbstractSourcesEvent
   /**
    * @param array|null $sources
    * @param ElementInterface|null $element
-   * @return VolumeFolder[]|null
+   * @return array<Volume|VolumeFolder>|null
    */
   static private function resolveSources(array $sources = null, ElementInterface $element = null): ?array {
     if (empty($sources)) {
