@@ -12,6 +12,7 @@ use lenz\contentfield\behaviors\AnchorBehaviour;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
+use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
@@ -104,9 +105,9 @@ abstract class AbstractSchema extends Model
    * previewImage: imageField
    * ```
    *
-   * @var string
+   * @var string[]|string
    */
-  public string $previewImage;
+  public array|string $previewImages;
 
   /**
    * A template for a short text displayed in the header of an instance
@@ -218,6 +219,12 @@ abstract class AbstractSchema extends Model
       unset($config['fields']);
     }
 
+    // `previewImage` is deprecated
+    if (isset($config['previewImage'])) {
+      $config['previewImages'] = $config['previewImage'];
+      unset($config['previewImage']);
+    }
+
     parent::__construct($config);
   }
 
@@ -285,14 +292,14 @@ abstract class AbstractSchema extends Model
     }
 
     return [
-      'fields'       => $fields,
-      'icon'         => $this->getIcon(),
-      'label'        => Plugin::t($this->getLabel()),
-      'preview'      => $this->getPreview(),
-      'previewImage' => $this->getPreviewImage(),
-      'previewLabel' => $this->getPreviewLabel(),
-      'qualifier'    => $this->qualifier,
-      'style'        => $this->getEditorStyle(),
+      'fields'        => $fields,
+      'icon'          => $this->getIcon(),
+      'label'         => Plugin::t($this->getLabel()),
+      'preview'       => $this->getPreview(),
+      'previewImages' => $this->getPreviewImages(),
+      'previewLabel'  => $this->getPreviewLabel(),
+      'qualifier'     => $this->qualifier,
+      'style'         => $this->getEditorStyle(),
     ];
   }
 
@@ -599,24 +606,23 @@ abstract class AbstractSchema extends Model
   }
 
   /**
-   * @return string|null
+   * @return string[]|null
    */
-  protected function getPreviewImage(): ?string {
-    $candidates = isset($this->previewImage)
-      ? [$this->previewImage]
-      : self::PREVIEW_IMAGE_CANDIDATES;
-
-    foreach ($candidates as $candidate) {
-      $field = $this->getField($candidate);
-      if (
-        $field instanceof ReferenceField &&
-        $field->elementType === Asset::class
-      ) {
-        return $field->name;
-      }
+  protected function getPreviewImages(): ?array {
+    $candidates = $this->previewImages ?? self::PREVIEW_IMAGE_CANDIDATES;
+    if (is_string($candidates)) {
+      $candidates = array_map('trim', explode(',', $candidates));
     }
 
-    return null;
+    $result = array_filter($candidates, function($candidate) {
+      $field = $this->getField($candidate);
+      return (
+        ($field instanceof OEmbedField) ||
+        ($field instanceof ReferenceField && $field->elementType === Asset::class)
+      );
+    });
+
+    return count($result) ? $result : null;
   }
 
   /**
