@@ -2,13 +2,13 @@
 
 namespace lenz\contentfield\models\fields;
 
-use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\OEmbedValue;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\Plugin;
 use lenz\contentfield\services\oembeds\Endpoint;
 use lenz\contentfield\services\oembeds\OEmbed;
 use lenz\contentfield\services\oembeds\Provider;
+use lenz\craft\utils\helpers\ArrayHelper;
 
 /**
  * Class OEmbedField
@@ -18,41 +18,13 @@ class OEmbedField extends AbstractField
   /**
    * @var Provider[]
    */
-  public array $providers = [];
+  private array $_providers = [];
 
   /**
    * @inheritdoc
    */
   const NAME = 'oembed';
 
-
-  /**
-   * @inheritdoc
-   */
-  public function __construct(AbstractSchema $schema = null, array $config = []) {
-    if (array_key_exists('providers', $config)) {
-      if (!is_array($config['providers'])) {
-        $config['providers'] = explode(',', (string)$config['providers']);
-      }
-
-      $providers = [];
-      foreach ($config['providers'] as $source) {
-        if (is_string($source)) {
-          $source = Plugin::getInstance()->oembeds->findProvider($source);
-        }
-
-        if ($source instanceof Provider) {
-          $providers[] = $source;
-        } else if (is_array($source)) {
-          $providers[] = new Provider($source);
-        }
-      }
-
-      $config['providers'] = $providers;
-    }
-
-    parent::__construct($schema, $config);
-  }
 
   /**
    * @inheritdoc
@@ -70,10 +42,10 @@ class OEmbedField extends AbstractField
     }
 
     $url = $value->getUrl();
-    return array(
-      'url'  => $url,
+    return [
+      'url' => $url,
       'info' => $this->getOEmbed($url),
-    );
+    ];
   }
 
   /**
@@ -81,14 +53,9 @@ class OEmbedField extends AbstractField
    * @return Endpoint|null
    */
   public function getEndpoint(string $url): ?Endpoint {
-    foreach ($this->providers as $provider) {
-      $endpoint = $provider->getEndpoint($url);
-      if (!is_null($endpoint)) {
-        return $endpoint;
-      }
-    }
-
-    return null;
+    return ArrayHelper::firstResult($this->_providers,
+      fn($provider) => $provider->getEndpoint($url)
+    );
   }
 
   /**
@@ -96,21 +63,44 @@ class OEmbedField extends AbstractField
    * @return OEmbed|null
    */
   public function getOEmbed(string $url): ?OEmbed {
-    $endpoint = $this->getEndpoint($url);
-    return is_null($endpoint)
-      ? null
-      : $endpoint->getOEmbed($url);
+    return $this->getEndpoint($url)?->getOEmbed($url);
+  }
+
+  /**
+   * @return Provider[]
+   */
+  public function getProviders(): array {
+    return $this->_providers;
   }
 
   /**
    * @inheritDoc
    */
   public function getSerializedValue(mixed $value): ?string {
-    if (!($value instanceof OEmbedValue)) {
-      return null;
+    return $value instanceof OEmbedValue ? $value->getUrl() : null;
+  }
+
+  /**
+   * @param array|string $value
+   * @return void
+   */
+  public function setProviders(array|string $value): void {
+    if (!is_array($value)) {
+      $value = array_filter(array_map('trim', explode(',', $value)));
     }
 
-    return $value->getUrl();
+    $oEmbeds = Plugin::getInstance()->oembeds;
+    $this->_providers = array_filter(array_map(function(mixed $provider) use ($oEmbeds) {
+      if ($provider instanceof Provider) {
+        return $provider;
+      } elseif (is_string($provider)) {
+        return $oEmbeds->findProvider(trim($provider));
+      } elseif (is_array($provider)) {
+        return new Provider($provider);
+      } else {
+        return null;
+      }
+    }, $value));
   }
 
 
@@ -122,10 +112,11 @@ class OEmbedField extends AbstractField
    */
   static public function expandFieldConfig(array &$config): void {
     if ($config['type'] === 'youtube') {
-      $config = array(
-        'type'      => self::NAME,
-        'providers' => array('YouTube'),
-      ) + $config;
+      $config = [
+        ...$config,
+        'type' => self::NAME,
+        'providers' => ['YouTube'],
+      ];
     }
   }
 }
