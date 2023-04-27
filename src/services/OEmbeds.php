@@ -5,6 +5,7 @@
 namespace lenz\contentfield\services;
 
 use craft\helpers\Json;
+use lenz\contentfield\events\OEmbedDefinitionsEvent;
 use lenz\contentfield\services\oembeds\Provider;
 use Throwable;
 use yii\base\Component;
@@ -25,39 +26,9 @@ class OEmbeds extends Component
   private FileCache $cache;
 
   /**
-   * @var array
+   * @var Provider[]
    */
-  static array $CUSTOM_DEFINITIONS = [
-    'podigee' => [
-      'provider_name' => 'Podigee',
-      'provider_url' => 'https://www.podigee.com/',
-      'endpoints' => [
-        [
-          'schemes' => [
-            'http://*.podigee.io/*',
-            'https://*.podigee.io/*',
-          ],
-          'url' => 'https://embed.podigee.com/oembed',
-        ]
-      ]
-    ],
-    'youtube' => [
-      'provider_name' => 'YouTube',
-      'provider_url' => 'https://www.youtube.com/',
-      'endpoints' => [
-        [
-          'embedClass' => oembeds\YouTubeEmbed::class,
-          'schemes' => [
-            'http://youtu.be/*',
-            'http://www.youtube.com/*',
-            'https://youtu.be/*',
-            'https://www.youtube.com/*',
-          ],
-          'url' => 'https://www.youtube.com/oembed',
-        ]
-      ]
-    ]
-  ];
+  private array $_customProviders;
 
   /**
    * Default cache duration.
@@ -68,6 +39,16 @@ class OEmbeds extends Component
    * @var string
    */
   const DEFINITIONS_URL = 'https://oembed.com/providers.json';
+
+  /**
+   * @var string
+   */
+  CONST EVENT_CUSTOM_DEFINITIONS = 'customDefinitions';
+
+  /**
+   * @var string
+   */
+  CONST EVENT_OEMBED_URL = 'oembedUrl';
 
 
   /**
@@ -107,8 +88,10 @@ class OEmbeds extends Component
    */
   public function findProvider(string $name): ?Provider {
     $name = strtolower($name);
-    if (array_key_exists($name, self::$CUSTOM_DEFINITIONS)) {
-      return new Provider(self::$CUSTOM_DEFINITIONS[$name]);
+
+    $customDefinitions = $this->getCustomDefinitions();
+    if (array_key_exists($name, $customDefinitions)) {
+      return $customDefinitions[$name];
     }
 
     foreach ($this->getAllProviders() as $provider) {
@@ -180,5 +163,22 @@ class OEmbeds extends Component
     }
 
     return $this->cache;
+  }
+
+  /**
+   * @return Provider[]
+   */
+  private function getCustomDefinitions(): array {
+    if (!isset($this->_customProviders)) {
+      $event = new OEmbedDefinitionsEvent();
+      $this->trigger(self::EVENT_CUSTOM_DEFINITIONS, $event);
+
+      $this->_customProviders = array_map(
+        fn(array $definition) => new Provider($definition),
+        $event->definitions
+      );
+    }
+
+    return $this->_customProviders;
   }
 }

@@ -10,7 +10,7 @@
     "ext-zlib": "*",
     "craftcms/cms": "^4.4.5",
     "craftcms/redactor": "^3.0.4",
-    "sebastianlenz/craft-utils": "^3.0.7",
+    "sebastianlenz/craft-utils": "^3.0.9",
     "symfony/yaml": "^5.4.21"
   },
   "require-dev": {

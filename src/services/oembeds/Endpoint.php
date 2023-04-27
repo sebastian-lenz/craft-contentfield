@@ -2,7 +2,9 @@
 
 namespace lenz\contentfield\services\oembeds;
 
+use lenz\contentfield\events\OEmbedUrlEvent;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\services\OEmbeds;
 use lenz\craft\utils\models\Url;
 
 /**
@@ -45,8 +47,8 @@ class Endpoint
       ? (string)$config['url']
       : '';
 
-    $this->embedClass = array_key_exists('embedClass', $config)
-      ? (string)$config['embedClass']
+    $this->embedClass = array_key_exists('embed_class', $config)
+      ? (string)$config['embed_class']
       : OEmbed::class;
 
     if (array_key_exists('schemes', $config) && is_array($config['schemes'])) {
@@ -77,14 +79,19 @@ class Endpoint
       'url' => $url,
     ]));
 
-    $embedClass = $this->embedClass;
-    $data = Plugin::getInstance()
-      ->oembeds
-      ->fetchJson((string)$endpoint);
+    $event = new OEmbedUrlEvent([
+      'endpoint' => $this,
+      'embedClass' => $this->embedClass,
+      'url' => $endpoint,
+    ]);
+
+    $oembeds = Plugin::getInstance()->oembeds;
+    $oembeds->trigger(OEmbeds::EVENT_OEMBED_URL, $event);
+    $data = $event->data ?? $oembeds->fetchJson((string)$event->url);
 
     return is_null($data)
       ? null
-      : new $embedClass($this, $url, $data);
+      : new $event->embedClass($this, $url, $data);
   }
 
   /**
