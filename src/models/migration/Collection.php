@@ -3,14 +3,16 @@
 namespace lenz\contentfield\models\migration;
 
 use ArrayAccess;
+use ArrayIterator;
 use Countable;
 use Exception;
+use IteratorAggregate;
 use Throwable;
 
 /**
  * Class Collection
  */
-class Collection implements ArrayAccess, Countable
+class Collection implements ArrayAccess, Countable, IteratorAggregate
 {
   /**
    * @var Instance[]
@@ -316,5 +318,16 @@ class Collection implements ArrayAccess, Countable
    */
   public function count(): int {
     return count($this->_instances);
+  }
+
+
+  // IteratorAggregate
+  // -----------------
+
+  /**
+   * @return ArrayIterator
+   */
+  public function getIterator(): ArrayIterator {
+    return new ArrayIterator($this->_instances);
   }
 }
