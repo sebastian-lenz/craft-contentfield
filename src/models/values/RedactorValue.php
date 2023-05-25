@@ -3,15 +3,11 @@
 namespace lenz\contentfield\models\values;
 
 use Craft;
-use craft\base\ElementInterface;
-use craft\helpers\StringHelper;
-use Exception;
-use lenz\contentfield\helpers\redactor\RefParser;
+use lenz\contentfield\helpers\redactor\AbstractTokenizer;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
 use lenz\contentfield\models\fields\RedactorField;
 use lenz\contentfield\twig\DisplayInterface;
-use Throwable;
 use Twig\Markup;
 
 /**
@@ -26,29 +22,14 @@ class RedactorValue
   use ValueTrait;
 
   /**
-   * @var string|null
-   */
-  private ?string $_compiledContent = null;
-
-  /**
    * @var Markup[]|null
    */
   private ?array $_pages = null;
 
   /**
-   * @var string
+   * @var AbstractTokenizer
    */
-  private string $_parsedContent;
-
-  /**
-   * @var array|null
-   */
-  private ?array $_parsedTokens;
-
-  /**
-   * @var string
-   */
-  private string $_rawContent;
+  private AbstractTokenizer $_tokenizer;
 
   /**
    * @var bool
@@ -68,35 +49,35 @@ class RedactorValue
 
     $this->_field = $field;
     $this->_parent = $parent;
-    $this->setRawContent(is_string($data) ? $data : '');
+    $this->_tokenizer = AbstractTokenizer::create($this, is_string($data) ? $data : '', self::$forceNativeRefParse);
   }
 
   /**
    * @inheritdoc
    */
   public function __toString(): string {
-    return $this->getCompiledContent();
+    return $this->_tokenizer->getCompiledContent();
   }
 
   /**
    * @inheritDoc
    */
   public function count(): int {
-    return mb_strlen($this->getCompiledContent(), 'utf-8');
+    return mb_strlen($this->_tokenizer->getCompiledContent(), 'utf-8');
   }
 
   /**
    * @inheritDoc
    */
   public function display(array $variables = []): void {
-    echo $this->getCompiledContent();
+    echo $this->_tokenizer->getCompiledContent();
   }
 
   /**
    * @inheritdoc
    */
   public function getHtml(): Markup {
-    return new Markup($this->getCompiledContent(), Craft::$app->charset);
+    return new Markup($this->_tokenizer->getCompiledContent(), Craft::$app->charset);
   }
 
   /**
@@ -108,7 +89,7 @@ class RedactorValue
     }
 
     $this->_pages = [];
-    $pages = explode('<!--pagebreak-->', $this->getCompiledContent());
+    $pages = explode('<!--pagebreak-->', $this->_tokenizer->getCompiledContent());
 
     foreach ($pages as $page) {
       $this->_pages[] = new Markup($page, Craft::$app->charset);
@@ -139,7 +120,7 @@ class RedactorValue
    * @internal
    */
   public function getRawContent(): string {
-    return $this->_rawContent;
+    return $this->_tokenizer->getRawContent();
   }
 
   /**
@@ -147,18 +128,9 @@ class RedactorValue
    * @internal
    */
   public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
-    $map = is_null($map) ? new ReferenceMap() : $map;
-    if (is_null($this->_parsedTokens)) {
-      return $map;
-    }
-
-    foreach ($this->_parsedTokens as $elementType => $tokens) {
-      foreach (array_keys($tokens) as $id) {
-        $map->push($elementType, $id);
-      }
-    }
-
-    return $map;
+    return $this->_tokenizer->registerReferences(
+      is_null($map) ? new ReferenceMap() : $map
+    );
   }
 
   /**
@@ -180,123 +152,6 @@ class RedactorValue
    * @inheritDoc
    */
   public function jsonSerialize(): ?string {
-    return $this->getCompiledContent();
-  }
-
-
-  // Private methods
-  // ---------------
-
-  /**
-   * @return string
-   */
-  private function compile(): string {
-    if (is_null($this->_parsedTokens) || count($this->_parsedTokens) == 0) {
-      return $this->_parsedContent;
-    }
-
-    try {
-      $loader = $this->getContent()->getReferenceLoader();
-    } catch (Throwable) {
-      $loader = null;
-    }
-
-    if (is_null($loader)) {
-      return Craft::$app->getElements()->parseRefs($this->_rawContent);
-    }
-
-    $replace = [];
-    $search = [];
-    $str = $this->_parsedContent;
-
-    foreach ($this->_parsedTokens as $elementType => $tokensByName) {
-      $elements = $loader->getElements($elementType);
-
-      foreach ($tokensByName as $refName => $tokens) {
-        $element = $elements[$refName] ?? null;
-
-        foreach ($tokens as list($token, $matches)) {
-          $search[] = $token;
-          $replace[] = $this->getTokenReplacement($matches, $element);
-        }
-      }
-    }
-
-    // Swap the tokens with the references
-    return str_replace($search, $replace, $str);
-  }
-
-  /**
-   * @return string
-   */
-  private function getCompiledContent(): string {
-    if (is_null($this->_compiledContent)) {
-      $this->_compiledContent = $this->compile();
-    }
-
-    return $this->_compiledContent;
-  }
-
-  /**
-   * Returns the replacement for a given reference tag.
-   *
-   * @param ElementInterface|null $element
-   * @param array $matches
-   * @return string
-   * @see parseRefs()
-   */
-  private function getTokenReplacement(array $matches, ElementInterface $element = null): string {
-    if ($element === null) {
-      // Put the ref tag back
-      return $matches[0];
-    }
-
-    if (empty($matches[3]) || !isset($element->{$matches[3]})) {
-      // Default to the URL
-      return (string)$element->getUrl();
-    }
-
-    try {
-      $value = $element->{$matches[3]};
-
-      if (is_object($value) && !method_exists($value, '__toString')) {
-        throw new Exception('Object of class ' . get_class($value) . ' could not be converted to string');
-      }
-
-      return Craft::$app->getElements()->parseRefs((string)$value);
-    } catch (Throwable $e) {
-      // Log it
-      Craft::error('An exception was thrown when parsing the ref tag "' . $matches[0] . "\":\n" . $e->getMessage(), __METHOD__);
-
-      // Replace the token with the original ref tag
-      return $matches[0];
-    }
-  }
-
-  /**
-   * @param string $str
-   */
-  private function setRawContent(string $str): void {
-    $this->_compiledContent = null;
-    $this->_pages = null;
-    $this->_rawContent = $str;
-
-    if (!StringHelper::contains($str, '{')) {
-      $this->_parsedContent = $str;
-      $this->_parsedTokens = null;
-      return;
-    } elseif (!self::$forceNativeRefParse) {
-      try {
-        $parser = new RefParser($str);
-        $this->_parsedContent = $parser->content;
-        $this->_parsedTokens = $parser->numMatches == 0 ? null : $parser->tokens;
-        return;
-      } catch (Throwable) {
-        // Ignore errors, use default parser
-      }
-    }
-
-    $this->_parsedContent = Craft::$app->getElements()->parseRefs($str);
-    $this->_parsedTokens = null;
+    return $this->_tokenizer->getCompiledContent();
   }
 }
