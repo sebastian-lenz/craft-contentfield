@@ -61,6 +61,13 @@ abstract class AbstractTokenizer
   }
 
   /**
+   * @return bool
+   */
+  public function isEmpty(): bool {
+    return empty($this->_rawContent);
+  }
+
+  /**
    * @param ReferenceMap $map
    * @return ReferenceMap
    */

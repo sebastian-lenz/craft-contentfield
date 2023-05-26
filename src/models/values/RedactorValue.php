@@ -145,7 +145,7 @@ class RedactorValue
    * @return bool
    */
   public function isEmpty(): bool {
-    return empty($this->_rawContent);
+    return $this->_tokenizer->isEmpty();
   }
 
   /**
