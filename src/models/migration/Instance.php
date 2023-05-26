@@ -116,21 +116,8 @@ class Instance
    * @throws Throwable
    */
   public function findChildren(array|string $qualifier = null): Collection {
-    $collection = new Collection();
-
-    foreach ($this->_attributes as $value) {
-      if (is_array($value)) {
-        foreach ($value as $item) {
-          if ($item instanceof Instance) {
-            $collection->append($item);
-          }
-        }
-      } else if ($value instanceof Instance) {
-        $collection->append($value);
-      }
-    }
-
-    return $collection->matchesQualifier($qualifier);
+    return self::collectInstances($this->_attributes)
+      ->matchesQualifier($qualifier);
   }
 
   /**
@@ -289,17 +276,7 @@ class Instance
    * @return $this
    */
   public function setAttribute(string $name, mixed $value): Instance {
-    if (self::isInstance($value)) {
-      $value = new Instance($value);
-    } elseif (is_array($value)) {
-      $value = array_map(function($item) {
-        return self::isInstance($item)
-          ? new Instance($item)
-          : $item;
-      }, $value);
-    }
-
-    $this->_attributes[$name] = $value;
+    $this->_attributes[$name] = self::toInstances($value);
     return $this;
   }
 
@@ -368,6 +345,27 @@ class Instance
   // --------------
 
   /**
+   * @param mixed $value
+   * @param Collection|null $collection
+   * @return Collection
+   */
+  function collectInstances(mixed &$value, ?Collection $collection = null): Collection {
+    if (is_null($collection)) {
+      $collection = new Collection();
+    }
+
+    if (is_array($value)) {
+      foreach ($value as $child) {
+        self::collectInstances($child, $collection);
+      }
+    } else if ($value instanceof Instance) {
+      $collection->append($value);
+    }
+
+    return $collection;
+  }
+
+  /**
    * @param string $qualifier
    * @param array $attributes
    * @return Instance
@@ -396,5 +394,19 @@ class Instance
       array_key_exists(InstanceValue::TYPE_PROPERTY, $value) &&
       array_key_exists(InstanceValue::UUID_PROPERTY, $value)
     );
+  }
+
+  /**
+   * @param mixed $value
+   * @return mixed
+   */
+  static public function toInstances(mixed $value): mixed {
+    if (self::isInstance($value)) {
+      return new Instance($value);
+    } elseif (is_array($value)) {
+      return array_map(fn($child) => self::toInstances($child), $value);
+    }
+
+    return $value;
   }
 }
