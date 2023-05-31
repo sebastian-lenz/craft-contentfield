@@ -112,11 +112,10 @@ class OEmbedField extends AbstractField
    */
   static public function expandFieldConfig(array &$config): void {
     if ($config['type'] === 'youtube') {
-      $config = [
-        ...$config,
+      $config = array_merge($config, [
         'type' => self::NAME,
         'providers' => ['YouTube'],
-      ];
+      ]);
     }
   }
 }
