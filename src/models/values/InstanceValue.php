@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\values;
 
 use Craft;
+use craft\base\ElementInterface;
 use craft\helpers\UrlHelper;
 use craft\web\Response;
 use Exception;
@@ -240,8 +241,8 @@ class InstanceValue
   /**
    * @inheritDoc
    */
-  public function getSerializedValue(): array {
-    return parent::getSerializedValue() + [
+  public function getSerializedValue(ElementInterface $element = null): array {
+    return parent::getSerializedValue($element) + [
       self::ORIGINAL_UUID_PROPERTY => $this->_originalUuid,
       self::TYPE_PROPERTY          => $this->getSchema()->qualifier,
       self::UUID_PROPERTY          => $this->_uuid,

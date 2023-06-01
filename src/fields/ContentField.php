@@ -387,14 +387,12 @@ class ContentField extends ForeignField
   protected function toRecordAttributes(ForeignFieldModel $model, ElementInterface $element = null): array {
     /** @noinspection PhpConditionAlreadyCheckedInspection */
     $content = $model instanceof Content ? $model : null;
-    $contentModel = is_null($content)
-      ? null
-      : $content->getModel();
+    $model = is_null($content) ? null : $content->getModel();
 
     return [
-      'model' => is_null($contentModel)
+      'model' => is_null($model)
         ? null
-        : ContentRecord::encodeModel($contentModel->getSerializedValue(), $this->shouldCompress($element))
+        : ContentRecord::encodeModel($model->getSerializedValue($element), $this->shouldCompress($element))
     ];
   }
 

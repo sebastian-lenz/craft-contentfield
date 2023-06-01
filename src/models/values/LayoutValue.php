@@ -4,6 +4,7 @@ namespace lenz\contentfield\models\values;
 
 use ArrayAccess;
 use Countable;
+use craft\base\ElementInterface;
 use craft\helpers\ArrayHelper;
 use Exception;
 use IteratorAggregate;
@@ -193,13 +194,14 @@ class LayoutValue
   }
 
   /**
+   * @param ElementInterface|null $element
    * @return array
    */
-  public function getSerializedValue(): array {
+  public function getSerializedValue(ElementInterface $element = null): array {
     return [
       'preset' => $this->_preset,
-      'columns' => array_map(function(LayoutColumnValue $column) {
-        return $column->getSerializedValue();
+      'columns' => array_map(function(LayoutColumnValue $column) use ($element) {
+        return $column->getSerializedValue($element);
       }, $this->_columns),
     ];
   }

@@ -3,6 +3,7 @@
 namespace lenz\contentfield\models\values;
 
 use Craft;
+use craft\base\ElementInterface;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
@@ -235,12 +236,13 @@ abstract class AbstractModelValue
   }
 
   /**
+   * @param ElementInterface|null $element
    * @return array
    */
-  public function getSerializedValue(): array {
+  public function getSerializedValue(ElementInterface $element = null): array {
     $result = [];
     foreach ($this->_schema->fields as $name => $field) {
-      $result[$name] = $field->getSerializedValue($this->_values[$name]);
+      $result[$name] = $field->getSerializedValue($this->_values[$name], $element);
     }
 
     return $result;

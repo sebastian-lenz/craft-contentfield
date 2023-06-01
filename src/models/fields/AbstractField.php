@@ -205,9 +205,10 @@ abstract class AbstractField extends Model
    * this is the same as `$this->getEditorData()`.
    *
    * @param mixed $value
+   * @param ElementInterface|null $element
    * @return mixed
    */
-  public function getSerializedValue(mixed $value): mixed {
+  public function getSerializedValue(mixed $value, ElementInterface $element = null): mixed {
     return $this->getEditorValue($value);
   }
 

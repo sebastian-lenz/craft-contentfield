@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\fields;
 
+use craft\base\ElementInterface;
 use lenz\contentfield\models\values\OEmbedValue;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\Plugin;
@@ -76,7 +77,7 @@ class OEmbedField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSerializedValue(mixed $value): ?string {
+  public function getSerializedValue(mixed $value, ElementInterface $element = null): ?string {
     return $value instanceof OEmbedValue ? $value->getUrl() : null;
   }
 

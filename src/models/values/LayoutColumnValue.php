@@ -2,6 +2,7 @@
 
 namespace lenz\contentfield\models\values;
 
+use craft\base\ElementInterface;
 use craft\helpers\ArrayHelper;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
@@ -198,15 +199,16 @@ class LayoutColumnValue
   }
 
   /**
+   * @param ElementInterface|null $element
    * @return array
    */
-  public function getSerializedValue(): array {
+  public function getSerializedValue(ElementInterface $element = null): array {
     $member = $this->_field->member;
     $data = [
       '__uuid' => $this->_uuid,
       'value' => is_null($member)
         ? null
-        : $member->getSerializedValue($this->_value),
+        : $member->getSerializedValue($this->_value, $element),
     ];
 
     if (!$this->_parent->hasPreset()) {

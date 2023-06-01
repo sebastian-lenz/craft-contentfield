@@ -107,7 +107,7 @@ class RedactorField extends AbstractField
   /**
    * @inheritdoc
    */
-  public function getSerializedValue(mixed $value): ?string {
+  public function getSerializedValue(mixed $value, ElementInterface $element = null): ?string {
     if (!($value instanceof RedactorValue)) {
       return null;
     }

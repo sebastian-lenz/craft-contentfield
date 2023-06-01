@@ -77,10 +77,9 @@ abstract class AbstractStringField extends AbstractField
   }
 
   /**
-   * @param mixed $value
-   * @return string|null
+   * @inheritDoc
    */
-  public function getSerializedValue(mixed $value): ?string {
+  public function getSerializedValue(mixed $value, ElementInterface $element = null): ?string {
     $result = $this->getEditorValue($value);
     if (is_string($result)) {
       $result = StringHelper::sanitizeString($result);
