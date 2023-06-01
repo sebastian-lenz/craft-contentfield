@@ -39,6 +39,11 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   public bool $openInNewWindow = false;
 
   /**
+   * @var int|null
+   */
+  public ?int $siteId = null;
+
+  /**
    * @var string
    */
   public string $type = '';
@@ -75,6 +80,10 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
 
       if (isset($data['hash'])) {
         $this->hash = trim($data['hash']);
+      }
+
+      if (isset($data['siteId']) && is_numeric($data['siteId'])) {
+        $this->siteId = $data['siteId'];
       }
 
       if (isset($data['type'])) {
@@ -142,17 +151,17 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
         $this->_element = null;
       } else {
         $elementType = $this->getElementType();
-        $elementId = $this->elementId;
         $content = $this->getContent();
 
         if (!is_null($content)) {
           $this->_element = $content
             ->getReferenceLoader()
-            ->getElement($elementType, $elementId);
+            ->getElement($elementType, $this->elementId, $this->siteId);
         } else {
           /** @var ElementInterface $elementType */
           $this->_element = $elementType::findOne([
-            'id' => $elementId,
+            'id' => $this->elementId,
+            'siteId' => $this->siteId,
           ]);
         }
       }
@@ -176,7 +185,7 @@ class LinkValue extends AbstractValue implements ReferenceMappableInterface
   public function getReferenceMap(ReferenceMap $map = null): ReferenceMap {
     $map = is_null($map) ? new ReferenceMap() : $map;
     if ($this->hasLinkedElement()) {
-      $map->push($this->getElementType(), $this->elementId);
+      $map->push($this->getElementType(), $this->elementId, $this->siteId);
     }
 
     return $map;

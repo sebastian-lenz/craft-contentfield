@@ -7,6 +7,7 @@ use ArrayIterator;
 use Countable;
 use craft\base\ElementInterface;
 use craft\elements\Asset;
+use craft\errors\SiteNotFoundException;
 use craft\helpers\Template;
 use Exception;
 use IteratorAggregate;
@@ -31,7 +32,7 @@ class ReferenceValue
   private array $_references;
 
   /**
-   * @var int[]
+   * @var array<array{'id': int, 'siteId': null|int}>
    */
   private array $_values;
 
@@ -42,6 +43,7 @@ class ReferenceValue
    * @param mixed $data
    * @param ValueInterface|null $parent
    * @param ReferenceField|null $field
+   * @throws SiteNotFoundException
    */
   public function __construct($data, ValueInterface $parent = null, ReferenceField $field = null) {
     parent::__construct($parent, $field);
@@ -49,7 +51,17 @@ class ReferenceValue
     if (!is_array($data)) {
       $this->_values = [];
     } else {
-      $this->_values = array_filter($data, fn($value) => is_int($value));
+      $site = $this->_field->getTargetSite();
+      $this->_values = array_filter(array_map(function($reference) use ($site) {
+        if (is_numeric($reference)) {
+          return ['id' => intval($reference), 'siteId' => $site?->id];
+        } elseif (is_array($reference) && array_key_exists('id', $reference)) {
+          if ($site) $reference['siteId'] = $site->id;
+          return $reference;
+        } else {
+          return null;
+        }
+      }, $data));
     }
   }
 
@@ -81,7 +93,7 @@ class ReferenceValue
    * @noinspection PhpUnused (Public API)
    */
   public function getReferencedIds(): array {
-    return $this->_values;
+    return array_map(fn($value) => $value['id'], $this->_values);
   }
 
   /**
@@ -91,8 +103,9 @@ class ReferenceValue
     $map = is_null($map) ? new ReferenceMap() : $map;
     $elementType = $this->_field->getElementType();
     $site = $this->_field->getTargetSite();
+
     foreach ($this->_values as $value) {
-      $map->push($elementType, $value, $site?->id);
+      $map->push($elementType, $value['id'], $site ? $site->id : $value['siteId']);
     }
 
     if (!empty($this->_field->with)) {
@@ -225,35 +238,18 @@ class ReferenceValue
 
     $content = $this->getContent();
     $site = $this->_field->getTargetSite();
-    if (!is_null($content)) {
-      $elements = $content->getReferenceLoader()->getElements($elementType, $site?->id);
-      $result = [];
 
-      foreach ($this->_values as $id) {
-        if (array_key_exists($id, $elements)) {
-          $result[] = $elements[$id];
-        }
-      }
-
-      return $result;
+    if (!$content) {
+      return array_filter(array_map(
+        fn(array $value) => $elementType::findOne($value),
+        $this->_values
+      ));
     }
 
-    /** @var ElementInterface $elementType */
-    $result = [];
-    $elements = $elementType::findAll([
-      'id' => $this->_values,
-      'siteId' => $site?->id,
-    ]);
-
-    foreach ($this->_values as $id) {
-      foreach ($elements as $element) {
-        if ($element->getId() === $id) {
-          $result[] = $element;
-          break;
-        }
-      }
-    }
-
-    return $result;
+    $loader = $content->getReferenceLoader();
+    return array_filter(array_map(
+      fn(array $value) => $loader->getElement($elementType, $value['id'], $site ? $site->id : $value['siteId']),
+      $this->_values
+    ));
   }
 }

@@ -151,18 +151,49 @@ class ReferenceField extends AbstractField
     }
 
     return array_map(
-      fn(ElementInterface $element) => intval($element->getId()),
+      fn(ElementInterface $element) => [
+        'id' => $element->id,
+        'siteId' => $element->siteId,
+      ],
       $value->getReferences()
     );
   }
 
   /**
-   * @return string|null
+   * @return class-string<Element>|null
    */
   public function getElementType(): string|null {
     return isset($this->elementType)
       ? self::resolveElementType($this->elementType)
       : null;
+  }
+
+  /**
+   * @param mixed $value
+   * @param ElementInterface|null $element
+   * @return mixed
+   * @throws SiteNotFoundException
+   */
+  public function getSerializedValue(mixed $value, ElementInterface $element = null): mixed {
+    $result = parent::getSerializedValue($value, $element);
+    $site = $this->getTargetSite();
+
+    // If we have a specific site, we can remove all siteIds
+    if ($result && $site) {
+      foreach ($result as $index => $reference) {
+        $result[$index]['siteId'] = null;
+      }
+
+    // If we now the target element, we remove the local site id
+    } elseif ($result && $element) {
+      foreach ($result as $index => $value) {
+        if ($value['siteId'] == $element->siteId) {
+          $result[$index]['siteId'] = null;
+        }
+      }
+    }
+
+    return $result;
   }
 
   /**
@@ -216,7 +247,7 @@ class ReferenceField extends AbstractField
    * @internal
    * @noinspection PhpUnused (Validator)
    */
-  public function validateElementType(string $attribute) {
+  public function validateElementType(string $attribute): void {
     $value = $this->$attribute;
 
     if (!is_string($value) || empty($value)) {

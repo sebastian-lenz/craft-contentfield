@@ -154,15 +154,15 @@ class ArrayField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSerializedValue(mixed $value): ?array {
+  public function getSerializedValue(mixed $value, ElementInterface $element = null): ?array {
     $member = $this->member;
     if (!($value instanceof ArrayValue) || is_null($member)) {
       return null;
     }
 
     return array_values(
-      array_map(function($value) use ($member) {
-        return $member->getSerializedValue($value);
+      array_map(function($value) use ($member, $element) {
+        return $member->getSerializedValue($value, $element);
       }, $value->getValues())
     );
   }

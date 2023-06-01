@@ -32,29 +32,30 @@ class LinkField extends AbstractField
    */
   public array $linkTypes = [
     'url' => [
-      'inputType'   => 'url',
-      'label'       => 'Url',
-      'type'        => 'input',
+      'inputType'    => 'url',
+      'label'        => 'Url',
+      'type'         => 'input',
     ],
     'mail' => [
-      'inputType'   => 'email',
-      'label'       => 'E-Mail',
-      'type'        => 'input',
+      'inputType'    => 'email',
+      'label'        => 'E-Mail',
+      'type'         => 'input',
     ],
     'entry' => [
-      'allowHash'   => false,
-      'allowSelf'   => false,
-      'elementType' => Entry::class,
-      'label'       => 'Entry',
-      'sources'     => null,
-      'type'        => 'element',
+      'allowHash'    => false,
+      'allowSelf'    => false,
+      'elementType'  => Entry::class,
+      'label'        => 'Entry',
+      'showSiteMenu' => false,
+      'sources'      => null,
+      'type'         => 'element',
     ],
     'asset' => [
-      'allowHash'   => false,
-      'elementType' => Asset::class,
-      'label'       => 'Asset',
-      'sources'     => null,
-      'type'        => 'element',
+      'allowHash'    => false,
+      'elementType'  => Asset::class,
+      'label'        => 'Asset',
+      'sources'      => null,
+      'type'         => 'element',
     ],
   ];
 
@@ -122,13 +123,28 @@ class LinkField extends AbstractField
       return null;
     }
 
-    return array(
+    return [
       'elementId'       => $value->elementId,
       'hash'            => $value->hash,
       'openInNewWindow' => $value->openInNewWindow,
+      'siteId'          => $value->siteId,
       'type'            => $value->type,
       'url'             => $value->url,
-    );
+    ];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSerializedValue(mixed $value, ElementInterface $element = null): ?array {
+    $result = parent::getSerializedValue($value);
+    if ($result && $element) {
+      if ($result['siteId'] == $element->siteId) {
+        $result['siteId'] = null;
+      }
+    }
+
+    return $result;
   }
 
   /**
@@ -200,6 +216,10 @@ class LinkField extends AbstractField
     if ($type == 'element') {
       if (array_key_exists('allowSelf', $data) && !is_bool($data['allowSelf'])) {
         throw new Exception("Property `allowSelf` must be boolean");
+      }
+
+      if (array_key_exists('showSiteMenu', $data) && !is_bool($data['showSiteMenu'])) {
+        throw new Exception("Property `showSiteMenu` must be boolean");
       }
 
       $elementType = ReferenceMap::normalizeElementType($data['elementType']);

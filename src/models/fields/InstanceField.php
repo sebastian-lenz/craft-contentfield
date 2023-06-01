@@ -221,9 +221,9 @@ class InstanceField extends AbstractField
   /**
    * @inheritDoc
    */
-  public function getSerializedValue(mixed $value): ?array {
+  public function getSerializedValue(mixed $value, ElementInterface $element = null): ?array {
     return $value instanceof InstanceValue
-      ? $value->getSerializedValue()
+      ? $value->getSerializedValue($element)
       : null;
   }
 
