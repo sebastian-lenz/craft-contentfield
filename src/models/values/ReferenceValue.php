@@ -247,9 +247,9 @@ class ReferenceValue
     }
 
     $loader = $content->getReferenceLoader();
-    return array_filter(array_map(
+    return array_values(array_filter(array_map(
       fn(array $value) => $loader->getElement($elementType, $value['id'], $site ? $site->id : $value['siteId']),
       $this->_values
-    ));
+    )));
   }
 }
