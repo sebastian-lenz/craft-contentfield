@@ -5,6 +5,7 @@ namespace lenz\contentfield\models\fields;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\helpers\Html;
 use lenz\contentfield\helpers\redactor\FieldProxy;
 use lenz\contentfield\helpers\StringHelper;
 use lenz\contentfield\models\values\RedactorValue;
@@ -74,7 +75,17 @@ class RedactorField extends AbstractField
       return null;
     }
 
-    return $value->getRawContent();
+    $value = $value->getRawContent();
+    if ($value !== '') {
+      $value = str_replace('<!--pagebreak-->', Html::tag('hr', '', [
+        'class' => 'redactor_pagebreak',
+        'style' => ['display' => 'none'],
+        'unselectable' => 'on',
+        'contenteditable' => 'false',
+      ]), $value);
+    }
+    
+    return $value;
   }
 
   /**
@@ -115,7 +126,7 @@ class RedactorField extends AbstractField
     try {
       $field = $this->getRedactorFieldProxy();
       return StringHelper::sanitizeString(
-        $field->serializeValue($value, $value->getElement())
+        $field->serializeValue($value->getRawContent(), $value->getElement())
       );
     } catch (Throwable $error) {
       Craft::error($error->getMessage());
