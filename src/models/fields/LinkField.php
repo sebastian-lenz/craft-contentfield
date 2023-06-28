@@ -125,10 +125,10 @@ class LinkField extends AbstractField
 
     $element = $value->getLinkedElement();
     return [
-      'elementId'       => $element?->id,
+      'elementId'       => $element ? $element->id : 0,
       'hash'            => $value->hash,
       'openInNewWindow' => $value->openInNewWindow,
-      'siteId'          => $element?->siteId,
+      'siteId'          => $element ? $element->siteId : 0,
       'type'            => $value->type,
       'url'             => $value->url,
     ];
