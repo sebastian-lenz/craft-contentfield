@@ -113,7 +113,8 @@ abstract class AbstractField extends Model
    * List of attributes allowed on groups.
    */
   const GROUP_ATTRIBUTES = [
-    'label'
+    'label',
+    'type',
   ];
 
   /**
