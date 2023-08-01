@@ -366,16 +366,20 @@ function Lt(){return null===Mt&&(Mt=new Craft.ElementThumbLoader),Mt}function Tt
 const r=s.useRef(null)
 return s.useEffect((()=>{if(r.current){const e=$(".element",r.current)
 Craft.setElementSize(e,a),Lt().load(e)}}),[r.current,n]),s.createElement("div",{className:Ce()("tcfInstancePreviewImage",t,a),dangerouslySetInnerHTML:{__html:n.element},ref:r})}function Pt(e){return"object"==typeof e&&"string"==typeof e.url}function Rt(e){let{className:t,size:n="small",src:a}=e
-return s.createElement("div",{className:Ce()("tcfInstancePreviewImage",t,n)},s.createElement("img",{className:"oembed",src:a}))}function Ut(e,t,n){const a=e.schema.fields[n]
-if(!a||!(n in e.model))return null
-const r=e.model[n]
-switch(a.type){case"oembed":return function(e,t){return Pt(t)&&t.info&&t.info.thumbnail_url?s.createElement(Rt,Object.assign({src:t.info.thumbnail_url},e)):null}(e,r)
+return s.createElement("div",{className:Ce()("tcfInstancePreviewImage",t,n)},s.createElement("img",{className:"oembed",src:a}))}function Ut(e,t,n){const a=n.indexOf(".")
+let r="";-1!==a&&(r=n.substring(a+1),n=n.substring(0,a))
+const l=e.schema.fields[n]
+if(!l||!(n in e.model))return null
+const i=e.model[n]
+switch(l.type){case"oembed":return function(e,t){return Pt(t)&&t.info&&t.info.thumbnail_url?s.createElement(Rt,Object.assign({src:t.info.thumbnail_url},e)):null}(e,i)
 case"reference":return function(e,t,n){if(!Array.isArray(t)||0===t.length)return null
 const a=n.find((e=>Tt(e,t[0])))
-return a&&a.hasThumb?s.createElement($t,Object.assign({},e,{reference:a})):null}(e,r,t)
-default:return null}}function Ft(e){const t=(0,i.v9)((e=>e.config.references)),n=function(e,t){const{previewImages:n}=e.schema
-return n?n.reduce(((n,s)=>n||Ut(e,t,s)),null):null}(e,t)
-return n||s.createElement("div",{className:Ce()("tcfInstancePreviewImage empty",e.className,e.size||"small")})}var Dt=s.memo((function(e){var{field:t,model:n,references:a,schemas:r}=e,l=(0,P._T)(e,["field","model","references","schemas"])
+return a&&a.hasThumb?s.createElement($t,Object.assign({},e,{reference:a})):null}(e,i,t.config.references)
+case"instance":const n=r?o(t,i):null
+return n?Ut(Object.assign(Object.assign({},e),{model:i,schema:n}),t,r):null
+default:return null}}function Ft(e){const t=function(e,t){const{previewImages:n}=e.schema
+return n?n.reduce(((n,s)=>n||Ut(e,t,s)),null):null}(e,(0,i.v9)((e=>e)))
+return t||s.createElement("div",{className:Ce()("tcfInstancePreviewImage empty",e.className,e.size||"small")})}var Dt=s.memo((function(e){var{field:t,model:n,references:a,schemas:r}=e,l=(0,P._T)(e,["field","model","references","schemas"])
 const i=ft(v.getDefinition("instance").preview({context:{depth:0,references:a,schemas:r},field:t,mode:"label",value:n})).replace(/<[^>]*>?/gm,"").replace(/[\n\t\r]+/g,"").trim().substr(0,256)
 return s.createElement("div",Object.assign({},l),i)}),(function(e,t){return e.model===t.model}))
 function Wt(e){const{references:t,schemas:n}=(0,i.v9)((e=>({references:e.config.references,schemas:e.schemas})))
