@@ -615,6 +615,10 @@ abstract class AbstractSchema extends Model
     }
 
     $result = array_filter($candidates, function($candidate) {
+      if (strpos($candidate, '.') !== false) {
+        return true;
+      }
+
       $field = $this->getField($candidate);
       return (
         ($field instanceof OEmbedField) ||
