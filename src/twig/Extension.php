@@ -71,10 +71,10 @@ class Extension extends AbstractExtension
       $asset = $asset[0];
     }
 
-    return $asset instanceof Asset
-      ? Template::raw(Plugin::getInstance()
-        ->imageTags
-        ->render($asset, $config))
+    $html = $asset instanceof Asset
+      ? Plugin::getInstance()->imageTags->render($asset, $config)
       : null;
+
+    return empty($html) ? null : Template::raw($html);
   }
 }
