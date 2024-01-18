@@ -328,41 +328,59 @@ class ReferenceField extends AbstractField
   static public function expandFieldConfig(array &$config): void {
     // Expand the type `instances` to an array of instance fields
     if (in_array($config['type'], ['image', 'images'])) {
-      $config = array(
-        'type'        => self::NAME,
-        'criteria'    => [
-          'kind'      => 'image',
+      $config = array_merge(
+        [
+          'criteria' => [ 'kind' => 'image' ],
+          'limit' => $config['type'] == 'image' ? 1 : null,
         ],
-        'elementType' => Asset::class,
-        'limit'       => $config['type'] == 'image' ? 1 : null,
-      ) + $config;
+        $config,
+        [
+          'type' => self::NAME,
+          'elementType' => Asset::class,
+        ]
+      );
     }
 
     if (in_array($config['type'], ['asset', 'assets', 'file', 'files'])) {
-      $config = array(
-        'type'        => self::NAME,
-        'elementType' => Asset::class,
-        'limit'       => in_array($config['type'], ['asset', 'file']) ? 1 : null,
-        'viewMode'    => 'small'
-      ) + $config;
+      $config = array_merge(
+        [
+          'limit' => in_array($config['type'], ['asset', 'file']) ? 1 : null,
+          'viewMode' => 'small'
+        ],
+        $config,
+        [
+          'type' => self::NAME,
+          'elementType' => Asset::class,
+        ]
+      );
     }
 
     if (in_array($config['type'], ['category', 'categories'])) {
-      $config = array(
-        'type'        => self::NAME,
-        'elementType' => Category::class,
-        'limit'       => $config['type'] == 'category' ? 1 : null,
-        'viewMode'    => 'small'
-      ) + $config;
+      $config = array_merge(
+        [
+          'limit' => $config['type'] == 'category' ? 1 : null,
+          'viewMode' => 'small'
+        ],
+        $config,
+        [
+          'type' => self::NAME,
+          'elementType' => Category::class,
+        ]
+      );
     }
 
     if (in_array($config['type'], ['entry', 'entries'])) {
-      $config = array(
-        'type'        => self::NAME,
-        'elementType' => Entry::class,
-        'limit'       => $config['type'] == 'entry' ? 1 : null,
-        'viewMode'    => 'small'
-      ) + $config;
+      $config = array_merge(
+        [
+          'limit' => $config['type'] == 'entry' ? 1 : null,
+          'viewMode' => 'small'
+        ],
+        $config,
+        [
+          'type' => self::NAME,
+          'elementType' => Entry::class,
+        ]
+      );
     }
   }
 
