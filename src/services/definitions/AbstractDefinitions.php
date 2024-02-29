@@ -4,6 +4,7 @@ namespace lenz\contentfield\services\definitions;
 
 use Craft;
 use Exception;
+use lenz\contentfield\Config;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -161,7 +162,7 @@ abstract class AbstractDefinitions
 
     // In production mode we just return the data
     if (
-      CRAFT_ENVIRONMENT == 'production' &&
+      Config::getEnvironment() == 'production' &&
       is_array($cacheData) &&
       array_key_exists('data', $cacheData)
     ) {
