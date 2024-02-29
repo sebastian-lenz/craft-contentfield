@@ -177,13 +177,15 @@ class Config extends Model
    * @return bool
    */
   private function resolveEnvironmentMode(string $mode): bool {
+    $environment = self::getEnvironment();
+
     return match ($mode) {
       'never' => false,
-      'dev' => CRAFT_ENVIRONMENT == 'dev',
-      'staging' => CRAFT_ENVIRONMENT == 'staging',
-      'production' => CRAFT_ENVIRONMENT == 'production',
-      'notDev' => CRAFT_ENVIRONMENT != 'dev',
-      'notProduction' => CRAFT_ENVIRONMENT != 'production',
+      'dev' => $environment == 'dev',
+      'staging' => $environment == 'staging',
+      'production' => $environment == 'production',
+      'notDev' => $environment != 'dev',
+      'notProduction' => $environment != 'production',
       default => true,
     };
   }
@@ -191,6 +193,13 @@ class Config extends Model
 
   // Static methods
   // --------------
+
+  /**
+   * @return string
+   */
+  static public function getEnvironment(): string {
+    return $_ENV['CRAFT_ENVIRONMENT'] ?? 'production';
+  }
 
   /**
    * @return Config
