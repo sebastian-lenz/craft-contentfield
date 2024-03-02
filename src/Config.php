@@ -198,7 +198,9 @@ class Config extends Model
    * @return string
    */
   static public function getEnvironment(): string {
-    return $_ENV['CRAFT_ENVIRONMENT'] ?? 'production';
+    return \Craft::$app->getConfig()->env
+      ?? $_ENV['CRAFT_ENVIRONMENT']
+      ?? 'production';
   }
 
   /**
