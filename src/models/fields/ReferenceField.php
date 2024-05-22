@@ -73,7 +73,7 @@ class ReferenceField extends AbstractField
   /**
    * @var string
    */
-  public string $viewMode = 'large';
+  public string $viewMode = 'cards';
 
   /**
    * @var string|string[]|null
@@ -236,7 +236,7 @@ class ReferenceField extends AbstractField
       ['elementType', 'validateElementType'],
       ['limit', 'integer', 'min' => 1],
       ['modalStorageKey', 'string'],
-      ['viewMode', 'in', 'range' => ['large', 'small']]
+      ['viewMode', 'in', 'range' => ['cards', 'grid', 'large', 'list']]
     ]);
   }
 
@@ -345,7 +345,7 @@ class ReferenceField extends AbstractField
       $config = array_merge(
         [
           'limit' => in_array($config['type'], ['asset', 'file']) ? 1 : null,
-          'viewMode' => 'small'
+          'viewMode' => 'list'
         ],
         $config,
         [
@@ -359,7 +359,7 @@ class ReferenceField extends AbstractField
       $config = array_merge(
         [
           'limit' => $config['type'] == 'category' ? 1 : null,
-          'viewMode' => 'small'
+          'viewMode' => 'list'
         ],
         $config,
         [
@@ -373,7 +373,7 @@ class ReferenceField extends AbstractField
       $config = array_merge(
         [
           'limit' => $config['type'] == 'entry' ? 1 : null,
-          'viewMode' => 'small'
+          'viewMode' => 'list'
         ],
         $config,
         [

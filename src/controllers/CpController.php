@@ -112,6 +112,19 @@ class CpController extends Controller
 
   /**
    * @return Response
+   */
+  public function actionReference(int $id, int $siteId): Response {
+    Craft::$app->getView()->setNamespace('pageContent');
+
+    return $this->asJson(
+      InputData::toReference(
+        Craft::$app->getElements()->getElementById($id, null, $siteId)
+      )
+    );
+  }
+
+  /**
+   * @return Response
    * @noinspection PhpUnused
    */
   public function actionTranslate(): Response {
