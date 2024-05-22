@@ -3,8 +3,8 @@
 namespace lenz\contentfield\services\fieldUsages;
 
 use craft\base\ElementInterface;
+use craft\base\Field;
 use craft\models\FieldLayout;
-use craft\records\FieldLayoutField;
 use Throwable;
 
 /**
@@ -17,11 +17,12 @@ use Throwable;
 abstract class AbstractAdapter
 {
   /**
+   * @param Field $field
    * @param Usage $scope
    * @param FieldLayout $layout
-   * @param FieldLayoutField $layoutField
+   * @return bool
    */
-  abstract function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField): void;
+  abstract function createUsages(Field $field, Usage $scope, FieldLayout $layout): bool;
 
   /**
    * @param ElementInterface|null $element

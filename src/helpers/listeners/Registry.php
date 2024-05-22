@@ -38,7 +38,7 @@ class Registry
     );
 
     Event::on(
-      Utilities::class, Utilities::EVENT_REGISTER_UTILITY_TYPES,
+      Utilities::class, Utilities::EVENT_REGISTER_UTILITIES,
       [self::class, 'onRegisterUtilityTypes']
     );
   }

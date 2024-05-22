@@ -5,7 +5,6 @@ namespace lenz\contentfield\services;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
-use craft\records\FieldLayoutField;
 use lenz\contentfield\services\fieldUsages\AbstractAdapter;
 use Throwable;
 
@@ -24,18 +23,11 @@ class FieldUsage
    * FieldUsage constructor.
    */
   public function __construct() {
-    $adapters = [
+    $this->_adapters = [
       new fieldUsages\EntryAdapter(),
       new fieldUsages\GlobalSetAdapter(),
       new fieldUsages\CategoryAdapter(),
     ];
-
-    $plugins = Craft::$app->getPlugins();
-    if ($plugins->isPluginEnabled('calendar')) {
-      $adapters[] = new fieldUsages\SolspaceCalendarAdapter();
-    }
-
-    $this->_adapters = $adapters;
   }
 
   /**
@@ -48,22 +40,11 @@ class FieldUsage
   public function findUsages(Field $field): array {
     $usage = new fieldUsages\Usage();
     $fields = Craft::$app->getFields();
-    $layoutFields = FieldLayoutField::findAll([
-      'fieldId' => $field->id
-    ]);
 
-    foreach ($layoutFields as $layoutField) {
-      if (empty($layoutField->layoutId)) {
-        continue;
-      }
-
-      $layout = $fields->getLayoutById($layoutField->layoutId);
-      if (is_null($layout)) {
-        continue;
-      }
-
+    $layouts = $fields->findFieldUsages($field);
+    foreach ($layouts as $layout) {
       foreach ($this->_adapters as $adapter) {
-        $adapter->createUsages($usage, $layout, $layoutField);
+        $adapter->createUsages($field, $usage, $layout);
       }
     }
 
