@@ -5,6 +5,8 @@ namespace lenz\contentfield\fields\content;
 use Craft;
 use craft\base\Element;
 use craft\base\ElementInterface;
+use craft\helpers\Cp;
+use craft\helpers\Html;
 use craft\helpers\Json;
 use lenz\contentfield\fields\ContentField;
 use lenz\contentfield\models\Content;
@@ -56,6 +58,15 @@ class InputData
    * @var array
    */
   private array $_schemas;
+
+  /**
+   * @var array
+   */
+  const CARD_TYPES = [
+    ['card', 'card', []],
+    ['largeChip', 'chip', ['size' => Cp::CHIP_SIZE_LARGE]],
+    ['smallChip', 'chip', ['size' => Cp::CHIP_SIZE_SMALL]],
+  ];
 
 
   /**
@@ -224,10 +235,12 @@ class InputData
       'hasTranslator'    => $plugin->translators->hasTranslator(),
       'rootSchemas'      => $this->_rootSchemas,
       'apiEndpoints'     => [
-        'anchors'   => $urls->createUrl('contentfield/cp/anchors'),
-        'fetchSite' => $urls->createUrl('contentfield/cp/fetch'),
-        'oembed'    => $urls->createUrl('contentfield/cp/oembed'),
-        'translate' => $urls->createUrl('contentfield/cp/translate'),
+        'anchors'      => $urls->createUrl('contentfield/cp/anchors'),
+        'fetchSite'    => $urls->createUrl('contentfield/cp/fetch'),
+        'hotspotAsset' => $urls->createUrl('contentfield/cp/hotspot-asset'),
+        'oembed'       => $urls->createUrl('contentfield/cp/oembed'),
+        'reference'    => $urls->createUrl('contentfield/cp/reference'),
+        'translate'    => $urls->createUrl('contentfield/cp/translate'),
       ],
     ];
   }
@@ -263,30 +276,66 @@ class InputData
       return [];
     }
 
+    $siteId = $content->getOwnerSite()->id;
     $model = $content->getModel();
     if (!($model instanceof InstanceValue)) {
       return [];
     }
 
-    $siteId = $content->getOwnerSite()->id;
-    $view = Craft::$app->getView();
-    return array_map(function(Element $element) use ($view) {
-      $context = [
-        'element' => $element,
-        'context' => 'field',
-        'size'    => 'large'
-      ];
+    return array_map(
+      self::toReference(...),
+      $model->getReferenceMap()->queryAll($siteId)
+    );
+  }
 
-      return [
-        'element'  => $view->invokeHook('cp.elements.element', $context),
-        'hasThumb' => false,
-        'id'       => intval($element->id),
-        'label'    => (string)$element,
-        'siteId'   => $element->siteId,
-        'status'   => $element->getStatus(),
-        'type'     => get_class($element),
-        'url'      => $element->getUrl(),
+  /**
+   * @param Element $element
+   * @return array
+   */
+  static function toReference(Element $element): array {
+    return [
+      'cards' => self::renderCards($element),
+      'hasThumb' => false,
+      'id' => intval($element->id),
+      'label' => (string)$element,
+      'siteId' => $element->siteId,
+      'status' => $element->getStatus(),
+      'type' => get_class($element),
+      'url' => $element->getUrl(),
+    ];
+  }
+
+  /**
+   * @param Element $element
+   * @return array
+   */
+  static private function renderCards(Element $element): array {
+    $cards = [];
+    $view = Craft::$app->getView();
+    $namespace = $view->getNamespace();
+    $common = [
+      'context' => 'field',
+      'showActionMenu' => true,
+    ];
+
+    foreach (self::CARD_TYPES as list($name, $type, $config)) {
+      $view->startJsBuffer();
+      $html = $type == 'card'
+        ? Cp::elementCardHtml($element, [
+          ...$common,
+          ...$config,
+        ]) : Cp::elementChipHtml($element, [
+          ...$common,
+          ...$config,
+        ]);
+
+      $cards[$name] = [
+        'html' => $namespace ? Html::namespaceHtml($html, $namespace) : $html,
+        'id' => uniqid(),
+        'script' => $view->clearJsBuffer(false),
       ];
-    }, $model->getReferenceMap()->queryAll($siteId));
+    }
+
+    return $cards;
   }
 }

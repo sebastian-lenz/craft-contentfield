@@ -3,10 +3,11 @@
 namespace lenz\contentfield\services\fieldUsages;
 
 use craft\base\ElementInterface;
+use craft\base\Field;
 use craft\elements\Entry;
 use craft\models\FieldLayout;
+use craft\models\Section;
 use craft\records\EntryType;
-use craft\records\FieldLayoutField;
 
 /**
  * Class EntryAdapter
@@ -16,31 +17,31 @@ class EntryAdapter extends AbstractAdapter
   /**
    * @inheritDoc
    */
-  public function createUsages(Usage $scope, FieldLayout $layout, FieldLayoutField $layoutField): void {
-    if ($layout->type == Entry::class) {
-      $entryType = EntryType::findOne([
-        'fieldLayoutId' => $layoutField->layoutId,
-      ]);
+  public function createUsages(Field $field, Usage $scope, FieldLayout $layout): bool {
+    if ($layout->type != Entry::class) {
+      return false;
+    }
 
-      if (is_null($entryType)) {
-        return;
-      }
+    $entryType = EntryType::findOne(['fieldLayoutId' => $layout->id]);
+    if (is_null($entryType)) {
+      return false;
+    }
 
-      $section = $entryType->section;
-      if (is_null($section)) {
-        return;
-      }
-
+    foreach (self::getSections($entryType->id) as $section) {
       $scope->findOrCreate([
         'name' => $section->name,
         'type' => 'section',
         'uid'  => $section->uid,
-      ])->findOrCreate([
-        'name' => $entryType->name,
-        'type' => 'entryType',
-        'uid'  => $entryType->uid,
       ]);
     }
+
+    $scope->findOrCreate([
+      'name' => $entryType->name,
+      'type' => 'entryType',
+      'uid'  => $entryType->uid,
+    ]);
+
+    return true;
   }
 
   /**
@@ -55,5 +56,28 @@ class EntryAdapter extends AbstractAdapter
     }
 
     return null;
+  }
+
+
+  // Static methods
+  // --------------
+
+  /**
+   * @param int $entryTypeId
+   * @return Section[]
+   */
+  private static function getSections(int $entryTypeId): array {
+    return array_filter(
+      \Craft::$app->entries->getAllSections(),
+      function(Section $section) use ($entryTypeId) {
+        foreach ($section->entryTypes as $entryType) {
+          if ($entryType->id == $entryTypeId) {
+            return true;
+          }
+        }
+
+        return false;
+      }
+    );
   }
 }

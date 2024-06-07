@@ -330,7 +330,12 @@ class Schemas
    * @return bool
    */
   static public function isPattern(array|string $value): bool {
-    return str_contains(is_array($value) ? $value['name'] : $value, '*');
+    $name = is_array($value) ? $value['name'] : $value;
+
+    return (
+      str_contains($name, '*') ||
+      (str_starts_with($name, '/') && str_ends_with($name, '/'))
+    );
   }
 
   /**
@@ -338,6 +343,10 @@ class Schemas
    * @return string
    */
   static function toPattern(string $value): string {
+    if (str_starts_with($value, '/') && str_ends_with($value, '/')) {
+      return $value;
+    }
+
     $pattern = implode('[A-Za-z0-9-_]+', array_map(function($part) {
       return preg_quote($part, '/');
     }, explode('*', $value)));

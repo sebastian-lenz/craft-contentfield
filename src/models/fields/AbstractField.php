@@ -294,7 +294,7 @@ abstract class AbstractField extends Model
   public function validateName(string $attribute): void {
     if (empty($this->$attribute) || !is_string($this->$attribute)) {
       $this->addError($attribute, 'Field name is required.');
-    } elseif (substr($this->name, 0 , 2) === '___') {
+    } elseif (substr($this->name, 0, 2) === '__') {
       $this->addError($attribute, 'Field names cannot start with two underscores.');
     }
   }

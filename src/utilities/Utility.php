@@ -60,13 +60,15 @@ class Utility extends UtilityBase
    * @return string
    */
   public function getToolbarHtml(): string {
-    return implode('', array_map(function(AbstractPage $page) {
+    $buttons = implode('', array_map(function(AbstractPage $page) {
       return Html::tag('a', $page->getLabel(), [
         'class'     => 'btn' . ($page == $this->_current ? ' active' : ''),
         'href'      => $page->getUrl(),
         'data-icon' => $page->getIcon(),
       ]);
     }, $this->_pages));
+
+    return $buttons . '<span style="flex:1;"></span>';
   }
 
 

@@ -4,6 +4,7 @@ namespace lenz\contentfield\services\schemas;
 
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\StructureSchema;
 use lenz\contentfield\Plugin;
 
 /**
@@ -16,6 +17,18 @@ class StructureLoader extends AbstractLoader
    */
   const NAME_PREFIX = 'structure:';
 
+
+  /**
+   * @inheritDoc
+   */
+  public function findNames(string $pattern): array {
+    list($schemas) = $this->getAllSchemas();
+    $names = array_map(fn(StructureSchema $schema) => $schema->getName(), $schemas);
+
+    return array_values(
+      array_filter($names, fn($name) => preg_match($pattern, $name))
+    );
+  }
 
   /**
    * @return array

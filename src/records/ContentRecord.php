@@ -51,7 +51,7 @@ class ContentRecord extends ForeignFieldRecord
   /**
    * @inheritDoc
    */
-  public static function createTable(Migration $migration, array $columns = []) {
+  public static function createTable(Migration $migration, array $columns = []): void {
     parent::createTable($migration, $columns + [
       'model' => $migration->longText(),
     ]);

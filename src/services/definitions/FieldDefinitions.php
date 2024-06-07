@@ -8,6 +8,7 @@ use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\models\fields\CheckboxField;
 use lenz\contentfield\models\fields\ColorField;
+use lenz\contentfield\models\fields\HotspotField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\fields\LayoutField;
 use lenz\contentfield\models\fields\LightswitchField;
@@ -37,6 +38,7 @@ class FieldDefinitions extends AbstractDefinitions
     CheckboxField::NAME    => CheckboxField::class,
     ColorField::NAME       => ColorField::class,
     LayoutField::NAME      => LayoutField::class,
+    HotspotField::NAME     => HotspotField::class,
     InstanceField::NAME    => InstanceField::class,
     LightswitchField::NAME => LightswitchField::class,
     LinkField::NAME        => LinkField::class,

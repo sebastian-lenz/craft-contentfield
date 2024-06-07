@@ -3,6 +3,7 @@
 namespace lenz\contentfield\controllers;
 
 use Craft;
+use craft\elements\Asset;
 use craft\errors\InvalidFieldException;
 use craft\helpers\HtmlPurifier;
 use craft\web\Controller;
@@ -12,6 +13,7 @@ use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\Plugin;
 use lenz\craft\utils\events\AnchorsEvent;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -79,6 +81,35 @@ class CpController extends Controller
   }
 
   /**
+   * @param int $id
+   * @param int $siteId
+   * @return Response
+   * @throws NotFoundHttpException
+   * @throws \yii\base\InvalidConfigException
+   */
+  public function actionHotspotAsset(int $id, int $siteId) {
+    $asset = Asset::findOne(['id' => $id, 'siteId' => $siteId]);
+    if (!$asset) {
+      throw new NotFoundHttpException();
+    }
+
+    return $this->asJson([
+      'height' => $asset->height,
+      'width' => $asset->width,
+      'editUrl' => $asset->getUrl([
+        'height' => 1080,
+        'mode' => 'fit',
+        'width' => 1920,
+      ]),
+      'previewUrl' => $asset->getUrl([
+        'height' => 240,
+        'mode' => 'fit',
+        'width' => 240,
+      ])
+    ]);
+  }
+
+  /**
    * @param string $schema
    * @param string $field
    * @param string $url
@@ -108,6 +139,19 @@ class CpController extends Controller
       'success' => true,
       'data' => $oembed,
     ]);
+  }
+
+  /**
+   * @return Response
+   */
+  public function actionReference(int $id, int $siteId): Response {
+    Craft::$app->getView()->setNamespace('pageContent');
+
+    return $this->asJson(
+      InputData::toReference(
+        Craft::$app->getElements()->getElementById($id, null, $siteId)
+      )
+    );
   }
 
   /**
