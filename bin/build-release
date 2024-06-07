@@ -39,7 +39,7 @@ git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" pull
 
 
 # Sync with master
-git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" merge origin/master
+git --git-dir="$RELEASEDIR/.git" --work-tree="$RELEASEDIR/" merge origin/main
 
 
 # Build UI
