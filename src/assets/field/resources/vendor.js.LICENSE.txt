@@ -5,9 +5,9 @@ object-assign
 */
 
 /*!
-  Copyright (c) 2018 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
+	Copyright (c) 2018 Jed Watson.
+	Licensed under the MIT License (MIT), see
+	http://jedwatson.github.io/classnames
 */
 
 /** @license React v0.20.2
@@ -67,7 +67,7 @@ object-assign
 /**!
 
  @license
- handlebars v4.7.7
+ handlebars v4.7.8
 
 Copyright (C) 2011-2019 by Yehuda Katz
 
