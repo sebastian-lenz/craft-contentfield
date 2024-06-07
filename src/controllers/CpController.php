@@ -3,6 +3,7 @@
 namespace lenz\contentfield\controllers;
 
 use Craft;
+use craft\elements\Asset;
 use craft\errors\InvalidFieldException;
 use craft\helpers\HtmlPurifier;
 use craft\web\Controller;
@@ -12,6 +13,7 @@ use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\Plugin;
 use lenz\craft\utils\events\AnchorsEvent;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 
 /**
@@ -75,6 +77,35 @@ class CpController extends Controller
       'result'     => true,
       'data'       => $value->getEditorValue(),
       'references' => InputData::loadReferences($value),
+    ]);
+  }
+
+  /**
+   * @param int $id
+   * @param int $siteId
+   * @return Response
+   * @throws NotFoundHttpException
+   * @throws \yii\base\InvalidConfigException
+   */
+  public function actionHotspotAsset(int $id, int $siteId) {
+    $asset = Asset::findOne(['id' => $id, 'siteId' => $siteId]);
+    if (!$asset) {
+      throw new NotFoundHttpException();
+    }
+
+    return $this->asJson([
+      'height' => $asset->height,
+      'width' => $asset->width,
+      'editUrl' => $asset->getUrl([
+        'height' => 1080,
+        'mode' => 'fit',
+        'width' => 1920,
+      ]),
+      'previewUrl' => $asset->getUrl([
+        'height' => 240,
+        'mode' => 'fit',
+        'width' => 240,
+      ])
     ]);
   }
 

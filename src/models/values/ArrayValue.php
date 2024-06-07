@@ -64,7 +64,7 @@ class ArrayValue
         array_map(function($value) use ($member) {
           try {
             return $member->createValue($value, $this);
-          } catch (Throwable) {
+          } catch (Throwable $e) {
             return null;
           }
         }, $data)

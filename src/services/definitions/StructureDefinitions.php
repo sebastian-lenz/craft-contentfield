@@ -43,7 +43,7 @@ class StructureDefinitions extends AbstractDefinitions
       array_map(function(string $name) {
         try {
           return $this->getStructure($name);
-        } catch (Throwable) {
+        } catch (Throwable $e) {
           return null;
         }
       }, array_keys($this->definitions))

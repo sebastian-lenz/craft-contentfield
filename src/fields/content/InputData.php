@@ -235,11 +235,12 @@ class InputData
       'hasTranslator'    => $plugin->translators->hasTranslator(),
       'rootSchemas'      => $this->_rootSchemas,
       'apiEndpoints'     => [
-        'anchors'   => $urls->createUrl('contentfield/cp/anchors'),
-        'fetchSite' => $urls->createUrl('contentfield/cp/fetch'),
-        'oembed'    => $urls->createUrl('contentfield/cp/oembed'),
-        'reference' => $urls->createUrl('contentfield/cp/reference'),
-        'translate' => $urls->createUrl('contentfield/cp/translate'),
+        'anchors'      => $urls->createUrl('contentfield/cp/anchors'),
+        'fetchSite'    => $urls->createUrl('contentfield/cp/fetch'),
+        'hotspotAsset' => $urls->createUrl('contentfield/cp/hotspot-asset'),
+        'oembed'       => $urls->createUrl('contentfield/cp/oembed'),
+        'reference'    => $urls->createUrl('contentfield/cp/reference'),
+        'translate'    => $urls->createUrl('contentfield/cp/translate'),
       ],
     ];
   }

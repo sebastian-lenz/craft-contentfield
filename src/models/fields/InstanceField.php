@@ -161,8 +161,9 @@ class InstanceField extends AbstractField
     }
 
     return parent::getEditorData($element) + [
-      'collapsible' => !!$this->collapsible,
-      'schemas'     => $qualifiers,
+      'collapsible'   => !!$this->collapsible,
+      'defaultSchema' => $this->getDefaultSchema()->qualifier,
+      'schemas'       => $qualifiers,
     ];
   }
 

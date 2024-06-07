@@ -107,22 +107,27 @@ abstract class AbstractDefinitions
         'mtime'    => filemtime($file),
       ];
     } elseif (file_exists($path) && is_dir($path)) {
-      $fileInfos = new RecursiveCallbackFilterIterator(
-        new RecursiveDirectoryIterator($path),
-        function (SplFileInfo $current) {
-          $fileName = $current->getFilename();
-
-          return !str_starts_with($fileName, '.') && (
-            $current->isDir() ||
-            str_ends_with($fileName, '.yml') ||
-            str_ends_with($fileName, '.yaml')
-          );
-        }
+      $fileInfos = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($path)
       );
 
       /** @var SplFileInfo $fileInfo */
-      foreach (new RecursiveIteratorIterator($fileInfos) as $fileInfo) {
-        $key = $fileInfo->getBasename('.yml');
+      foreach ($fileInfos as $fileInfo) {
+        $fileName = $fileInfo->getFilename();
+        $extension = $fileInfo->getExtension();
+        if (
+          $fileInfo->isDir() ||
+          str_starts_with($fileName, '.') ||
+          !in_array($extension, ['yaml', 'yml'])
+        ) {
+          continue;
+        }
+
+        $key = implode('/', array_filter([
+          substr($fileInfo->getPath(), strlen($path) + 1),
+          $fileInfo->getBasename(".$extension")
+        ]));
+
         $sources[$key] = [
           'pathname' => $fileInfo->getPathname(),
           'mtime'    => $fileInfo->getMTime(),
