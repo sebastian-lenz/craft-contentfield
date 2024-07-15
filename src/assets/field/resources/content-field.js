@@ -636,7 +636,7 @@ const{endpoint:n,csrfParams:s={}}=t,r=(0,V.Tt)(t,["endpoint","csrfParams"]),a=Ob
 return Object.keys(a).forEach((e=>i.append(e,a[e]))),new Promise((t=>{fetch(n,{body:i,method:"post"}).then((e=>e.json())).then((n=>{t(n&&n.data?n.data:e)})).catch((n=>{console.error(`Translator returned an error: ${n}`),Is+=1,t(e)}))}))}))}(s,n):s:""}))}createValue(e){return""}isValue(e,t){return"string"==typeof t||t instanceof String}preview({value:e}){return e}}class As{constructor(e){this.reference=e}createPreview(e="large",t=!0){const n=E(this.reference,"large"===e?"large":"list")
 if(!n)return""
 n.classList.remove("removable")
-const s=$(n).find(".elementthumb")
+const s=$(n).find(".thumb")
 if(s.length){let t=s.find("img")[0]
 t||(t=document.createElement("img"),t.srcset=s.attr("data-srcset")||"",s.append(t)),t.sizes="small"===e?"30px":"100px"}return t?`<div class="tcfInstancePreview--thumb ${e}">${s?s.html():""}</div>`:n.outerHTML}createSafePreview(e="large",t=!0){return new ge.SafeString(this.createPreview(e,t))}get asBackground(){const e=E(this.reference,"large")
 if(!e)return null
