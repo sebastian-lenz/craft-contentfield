@@ -16,6 +16,7 @@ use craft\models\Site;
 use Exception;
 use lenz\contentfield\events\ReferenceFolderSourcesEvent;
 use lenz\contentfield\events\ReferenceSourcesEvent;
+use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\models\values\ReferenceValue;
 use lenz\contentfield\models\values\ValueInterface;
 use yii\base\InvalidConfigException;
@@ -95,6 +96,17 @@ class ReferenceField extends AbstractField
    */
   const EVENT_SOURCES = 'sources';
 
+  /**
+   * @inheritDoc
+   */
+  public function beforeElementSave(ElementInterface $element, InstanceValue $model, bool $isNew): void {
+    if (!empty($this->copyTo)) {
+      $references = $model->getValue($this->name);
+      if ($references instanceof ReferenceValue) {
+        $element->setFieldValue($this->copyTo, $references->getReferencedIds());
+      }
+    }
+  }
 
   /**
    * @inheritdoc

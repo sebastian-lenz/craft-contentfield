@@ -148,6 +148,22 @@ class ContentField extends ForeignField
   }
 
   /**
+   * @inheritDoc
+   */
+  public function beforeElementSave(ElementInterface $element, bool $isNew): bool {
+    try {
+      $content = $element->getFieldValue($this->handle);
+      if ($content instanceof Content) {
+        $content->beforeElementSave($element, $isNew);
+      }
+    } catch (Throwable) {
+      // Ignore
+    }
+
+    return parent::beforeElementSave($element, $isNew);
+  }
+
+  /**
    * Returns a complete list of all root schemas. Intended for the
    * field settings form. This method is slow as it has to crawl all
    * templates in the system.
