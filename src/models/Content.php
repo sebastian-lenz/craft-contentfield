@@ -83,6 +83,22 @@ class Content extends ForeignFieldModel implements DisplayInterface
   }
 
   /**
+   * @param ElementInterface $element
+   * @param bool $isNew
+   * @return void
+   */
+  public function beforeElementSave(ElementInterface $element, bool $isNew): void {
+    $model = $this->_model;
+    if (empty($model)) {
+      return;
+    }
+
+    foreach ($this->_model->getSchema()->fields as $field) {
+      $field->beforeElementSave($element, $model, $isNew);
+    }
+  }
+
+  /**
    * @inheritDoc
    * @throws Exception
    */

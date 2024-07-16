@@ -5,6 +5,7 @@ namespace lenz\contentfield\models\fields;
 use craft\base\ElementInterface;
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\Plugin;
 use yii\base\Model;
@@ -16,6 +17,11 @@ use yii\base\Model;
  */
 abstract class AbstractField extends Model
 {
+  /**
+   * @var string|null
+   */
+  public string|null $copyTo = null;
+
   /**
    * The group name this field belongs to.
    * @var array|string|null
@@ -163,6 +169,18 @@ abstract class AbstractField extends Model
     }
 
     parent::__construct($config);
+  }
+
+  /**
+   * @param ElementInterface $element
+   * @param InstanceValue $model
+   * @param bool $isNew
+   * @return void
+   */
+  public function beforeElementSave(ElementInterface $element, InstanceValue $model, bool $isNew): void {
+    if (!empty($this->copyTo)) {
+      $element->setFieldValue($this->copyTo, $model->getValue($this->name));
+    }
   }
 
   /**
