@@ -142,6 +142,8 @@ class CpController extends Controller
   }
 
   /**
+   * @param int $id
+   * @param int $siteId
    * @return Response
    */
   public function actionReference(int $id, int $siteId): Response {

@@ -1,0 +1,8 @@
+{% import '_includes/forms' as forms %}
+
+{{- forms.textField({
+  label:        'AuthKey',
+  instructions: 'The AuthKey of the DeepL API.',
+  name:         'authKey',
+  value:        authKey is defined ? authKey : '',
+}) -}}

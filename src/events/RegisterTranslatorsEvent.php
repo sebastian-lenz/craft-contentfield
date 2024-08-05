@@ -4,6 +4,7 @@ namespace lenz\contentfield\events;
 
 use lenz\contentfield\services\translators\AbstractTranslator;
 use lenz\contentfield\services\translators\AzureTranslator;
+use lenz\contentfield\services\translators\DeepLTranslator;
 use lenz\contentfield\services\translators\GoogleTranslator;
 use yii\base\Event;
 
@@ -18,6 +19,7 @@ class RegisterTranslatorsEvent extends Event
    */
   public array $translators = [
     AzureTranslator::class,
+    DeepLTranslator::class,
     GoogleTranslator::class,
   ];
 
