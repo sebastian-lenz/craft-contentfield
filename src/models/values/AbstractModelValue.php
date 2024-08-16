@@ -9,6 +9,7 @@ use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
+use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
@@ -43,14 +44,15 @@ abstract class AbstractModelValue
    * @param AbstractSchema $schema
    * @param ValueInterface|null $parent
    * @param InstanceField|null $field
-   * @throws Exception
+   * @param Content|null $content
    */
-  public function __construct(array $data, AbstractSchema $schema, ValueInterface $parent = null, InstanceField $field = null) {
+  public function __construct(array $data, AbstractSchema $schema, ValueInterface $parent = null, InstanceField $field = null, Content $content = null) {
     parent::__construct();
 
     $this->_field  = $field;
     $this->_parent = $parent;
     $this->_schema = $schema;
+    $this->_content = $content;
 
     foreach ($schema->fields as $name => $field) {
       $this->$name = array_key_exists($name, $data) ? $data[$name] : null;

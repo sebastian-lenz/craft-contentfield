@@ -5,6 +5,7 @@ namespace lenz\contentfield\services;
 use craft\web\twig\TemplateLoaderException;
 use Exception;
 use lenz\contentfield\exceptions\ContentLoadException;
+use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\InstanceValue;
@@ -67,11 +68,11 @@ class Schemas
    * @param mixed $data
    * @param ValueInterface|null $parent
    * @param InstanceField|null $field
+   * @param Content|null $content
    * @return InstanceValue|null
    * @throws ContentLoadException
-   * @throws Exception
    */
-  public function createValue(mixed $data, ValueInterface $parent = null, InstanceField $field = null): ?InstanceValue {
+  public function createValue(mixed $data, ValueInterface $parent = null, InstanceField $field = null, Content $content = null): ?InstanceValue {
     if (!is_array($data) || !isset($data[InstanceValue::TYPE_PROPERTY])) {
       return null;
     }
@@ -86,7 +87,7 @@ class Schemas
       return null;
     }
 
-    return new InstanceValue($data, $schema, $parent, $field);
+    return new InstanceValue($data, $schema, $parent, $field, $content);
   }
 
   /**

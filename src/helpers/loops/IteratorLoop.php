@@ -14,24 +14,24 @@ use Throwable;
 class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
 {
   /**
-   * @var int
+   * @phpstan-var int
    */
   private int $_count;
 
   /**
-   * @var int
+   * @phpstan-var int
    */
   private int $_index = 0;
 
   /**
-   * @var array
+   * @phpstan-var array
    */
   private array $_values;
 
 
   /**
    * LoopIterator constructor.
-   * @param array $values
+   * @phpstan-param array $values
    */
   public function __construct(array $values) {
     $this->_count  = count($values);
@@ -39,8 +39,9 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   }
 
   /**
-   * @param array $variables
-   * @return void
+   * @phpstan-param array $variables
+   * @phpstan-param callable|null $callback
+   * @phpstan-return void
    * @throws Exception
    */
   public function display(array $variables = []): void {
@@ -56,11 +57,11 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   }
 
   /**
-   * @param mixed|null $limit
-   * @param mixed|null $only
-   * @param mixed|null $until
-   * @param bool|null $addBack
-   * @return IteratorLoop
+   * @phpstan-param mixed|null $limit
+   * @phpstan-param mixed|null $only
+   * @phpstan-param mixed|null $until
+   * @phpstan-param bool|null $addBack
+   * @phpstan-return IteratorLoop
    * @throws Throwable
    * @noinspection PhpUnused
    */
@@ -168,21 +169,21 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   }
 
   /**
-   * @return bool
+   * @phpstan-return bool
    */
   public function hasNext(): bool {
     return $this->_index < $this->_count - 1;
   }
 
   /**
-   * @return bool
+   * @phpstan-return bool
    */
   public function hasPrevious(): bool {
     return $this->_index > 0;
   }
 
   /**
-   * @return mixed
+   * @phpstan-return mixed
    */
   public function peakNext(): mixed {
     return $this->_index < $this->_count - 1
@@ -191,7 +192,7 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
   }
 
   /**
-   * @return mixed
+   * @phpstan-return mixed
    */
   public function peakPrevious(): mixed {
     return $this->_index > 0
