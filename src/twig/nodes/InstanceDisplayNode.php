@@ -70,9 +70,9 @@ class InstanceDisplayNode extends DisplayNode
   // -----------------
 
   /**
-   * @param Compiler $compiler
+   * @inerhitDoc
    */
-  protected function addDisplay(Compiler $compiler) {
+  protected function addDisplay(Compiler $compiler): void {
     if ($this->usesIndexDisplay()) {
       parent::addDisplay($compiler);
       return;

@@ -13,6 +13,7 @@ use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\InstanceAwareInterface;
 use lenz\contentfield\helpers\RenderableInterface;
+use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
@@ -88,10 +89,11 @@ class InstanceValue
    * @param AbstractSchema $schema
    * @param ValueInterface|null $parent
    * @param InstanceField|null $field
+   * @param Content|null $content
    * @throws Exception
    */
-  public function __construct(array $data, AbstractSchema $schema, ValueInterface $parent = null, InstanceField $field = null) {
-    parent::__construct($data, $schema, $parent, $field);
+  public function __construct(array $data, AbstractSchema $schema, ValueInterface $parent = null, InstanceField $field = null, Content $content = null) {
+    parent::__construct($data, $schema, $parent, $field, $content);
 
     if (array_key_exists(self::UUID_PROPERTY, $data)) {
       $this->_uuid = $data[self::UUID_PROPERTY];

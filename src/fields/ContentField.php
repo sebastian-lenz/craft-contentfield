@@ -319,7 +319,7 @@ class ContentField extends ForeignField
    * @param mixed $value
    * @noinspection PhpUnused (Used by Craft when applying settings)
    */
-  public function setCpRootSchemasByUsage(mixed $value) {
+  public function setCpRootSchemasByUsage(mixed $value): void {
     if (!is_array($value)) {
       throw new InvalidArgumentException();
     }

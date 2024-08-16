@@ -7,6 +7,7 @@ use lenz\contentfield\exceptions\FieldConfigException;
 use lenz\contentfield\models\fields\AbstractField;
 use lenz\contentfield\models\fields\ArrayField;
 use lenz\contentfield\models\fields\CheckboxField;
+use lenz\contentfield\models\fields\CKEditorField;
 use lenz\contentfield\models\fields\ColorField;
 use lenz\contentfield\models\fields\HotspotField;
 use lenz\contentfield\models\fields\InstanceField;
@@ -36,6 +37,7 @@ class FieldDefinitions extends AbstractDefinitions
   static array $FIELD_TYPES = [
     ArrayField::NAME       => ArrayField::class,
     CheckboxField::NAME    => CheckboxField::class,
+    CKEditorField::NAME    => CKEditorField::class,
     ColorField::NAME       => ColorField::class,
     LayoutField::NAME      => LayoutField::class,
     HotspotField::NAME     => HotspotField::class,

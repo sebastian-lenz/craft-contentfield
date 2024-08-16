@@ -77,7 +77,7 @@ class ArrayDisplayNode extends DisplayNode
   /**
    * @param Compiler $compiler
    */
-  protected function addDisplay(Compiler $compiler) {
+  protected function addDisplay(Compiler $compiler): void {
     if ($this->usesIndexDisplay()) {
       parent::addDisplay($compiler);
       return;
@@ -96,10 +96,7 @@ class ArrayDisplayNode extends DisplayNode
             ->write("continue;\n")
             ->outdent()
           ->write("}\n\n");
-
-    $this->addInstanceDisplay($compiler, '$displayContentItem');
-
-    $compiler
+          $this->addInstanceDisplay($compiler, '$displayContentItem')
           ->write("\n")
           ->outdent()
         ->write("}\n")

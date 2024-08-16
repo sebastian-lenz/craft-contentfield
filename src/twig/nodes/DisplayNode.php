@@ -14,17 +14,17 @@ use Twig\Node\Node;
 class DisplayNode extends Node
 {
   /**
-   * @var AbstractField|null
+   * @phpstan-var AbstractField|null
    */
   protected ?AbstractField $_field;
 
   /**
-   * @var bool
+   * @phpstan-var bool
    */
   protected bool $_forceInline;
 
   /**
-   * @var array
+   * @phpstan-var array
    */
   protected array $_inlinedSchemas = [];
 
@@ -32,12 +32,12 @@ class DisplayNode extends Node
   /**
    * DisplayNode constructor.
    *
-   * @param AbstractExpression $value
-   * @param AbstractField|null $field
-   * @param AbstractExpression|null $variables
-   * @param bool $forceInline
-   * @param int $line
-   * @param string|null $tag
+   * @phpstan-param AbstractExpression $value
+   * @phpstan-param AbstractField|null $field
+   * @phpstan-param AbstractExpression|null $variables
+   * @phpstan-param bool $forceInline
+   * @phpstan-param int $line
+   * @phpstan-param string|null $tag
    */
   public function __construct(
     AbstractExpression $value,
@@ -59,9 +59,9 @@ class DisplayNode extends Node
   }
 
   /**
-   * @param Compiler $compiler
+   * @phpstan-param Compiler $compiler
    */
-  public function compile(Compiler $compiler) {
+  public function compile(Compiler $compiler): void {
     // Set `$displayContent` to the passed variable
     $compiler
       ->addDebugInfo($this)
@@ -79,29 +79,29 @@ class DisplayNode extends Node
   }
 
   /**
-   * @return AbstractField|null
+   * @phpstan-return AbstractField|null
    */
   public function getField(): ?AbstractField {
     return $this->_field;
   }
 
   /**
-   * @return TemplateSchema[]
+   * @phpstan-return TemplateSchema[]
    */
   public function getInlineSchemaCandidates(): array {
     return [];
   }
 
   /**
-   * @param string $qualifier
-   * @param string $callback
+   * @phpstan-param string $qualifier
+   * @phpstan-param string $callback
    */
-  public function setInlinedSchema(string $qualifier, string $callback) {
+  public function setInlinedSchema(string $qualifier, string $callback): void {
     $this->_inlinedSchemas[$qualifier] = $callback;
   }
 
   /**
-   * @return bool
+   * @phpstan-return bool
    */
   public function usesIndexDisplay(): bool {
     return true;
@@ -112,9 +112,9 @@ class DisplayNode extends Node
   // -----------------
 
   /**
-   * @param Compiler $compiler
+   * @phpstan-param Compiler $compiler
    */
-  protected function addTemplateArguments(Compiler $compiler) {
+  protected function addTemplateArguments(Compiler $compiler): void {
     if ($this->hasNode('variables')) {
       $compiler->raw('twig_to_array(');
       $compiler->subcompile($this->getNode('variables'));
@@ -125,23 +125,46 @@ class DisplayNode extends Node
   }
 
   /**
-   * @param Compiler $compiler
+   * @phpstan-param Compiler $compiler
    */
-  protected function addDisplay(Compiler $compiler) {
-    $compiler->write("\$this->contentfieldDisplay(\$displayContent, \$displayVariables);\n");
+  protected function addDisplay(Compiler $compiler): void {
+    $compiler
+      ->write("if (is_array(\$displayContent) || \$displayContent instanceof \\lenz\\contentfield\\models\\values\\ArrayValue) {\n")
+        ->indent()
+        ->write("\$displayIterator = is_array(\$displayContent) ? new \lenz\contentfield\helpers\loops\IteratorLoop(\$displayContent) : \$displayContent->getIterator();\n")
+        ->write("\$displayVariables['loop'] = \$displayIterator;\n")
+        ->write("foreach (\$displayIterator as \$displayContentItem) {\n")
+          ->indent()
+          ->write("if (\$displayContentItem->hasCachedOutput()) {\n")
+            ->indent()
+            ->write("echo \$displayContentItem->getCachedOutput();\n")
+            ->write("continue;\n")
+            ->outdent()
+          ->write("}\n\n");
+          $this->addInstanceDisplay($compiler, '$displayContentItem')
+          ->write("\n")
+        ->outdent()
+        ->write("}\n")
+      ->outdent()
+      ->write("} else {\n")
+        ->indent()
+        ->write("\$this->contentfieldDisplay(\$displayContent, \$displayVariables);\n")
+      ->outdent()
+      ->write("}\n");
   }
 
   /**
-   * @param Compiler $compiler
-   * @param string $instanceVar
-   * @param string $variablesVar
+   * @phpstan-param Compiler $compiler
+   * @phpstan-param string $instanceVar
+   * @phpstan-param string $variablesVar
+   * @phpstan-return Compiler
    * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection (cause PhpStorm is stupid)
    */
   protected function addInstanceDisplay(
     Compiler $compiler,
     string $instanceVar = '$displayContent',
     string $variablesVar = '$displayVariables'
-  ) {
+  ): Compiler {
     $compiler
       ->write("switch ({$instanceVar}->getSchema()->qualifier) {\n")
       ->indent();
@@ -150,7 +173,7 @@ class DisplayNode extends Node
       $compiler->write(sprintf("case '%s': \$this->%s({$instanceVar}, {$variablesVar}); break;\n", $qualifier, $callback));
     }
 
-    $compiler
+    return $compiler
       ->write("default: {$instanceVar}->display({$variablesVar});\n")
       ->outdent()
       ->write("}\n");

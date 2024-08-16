@@ -266,9 +266,9 @@ class Content extends ForeignFieldModel implements DisplayInterface
       if ($value instanceof InstanceValue) {
         $model = $value;
       } elseif (is_string($value)) {
-        $model = $schemas->createValue(ContentRecord::decodeModel($value));
+        $model = $schemas->createValue(ContentRecord::decodeModel($value), null, null, $this);
       } elseif (is_array($value)) {
-        $model = $schemas->createValue($value);
+        $model = $schemas->createValue($value, null, null, $this);
       }
 
       // If we have a model, check whether the type is allowed
