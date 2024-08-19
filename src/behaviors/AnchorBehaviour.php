@@ -5,6 +5,7 @@ namespace lenz\contentfield\behaviors;
 use craft\helpers\StringHelper;
 use lenz\contentfield\models\values\ArrayValue;
 use lenz\contentfield\models\values\InstanceValue;
+use lenz\contentfield\models\values\ReferenceValue;
 use yii\base\Behavior;
 
 /**
@@ -101,9 +102,12 @@ class AnchorBehaviour extends Behavior
    * @param InstanceValue $instance
    */
   private function collectInstanceAnchors(InstanceValue $instance): void {
-    if ($instance->hasAnchor()) {
-      $anchor = $instance->getBehavior('anchor');
-      if ($anchor instanceof AnchorBehaviour) {
+    $anchor = $instance->getBehavior('anchor');
+    if ($anchor instanceof AnchorBehaviour) {
+      $delegates = $anchor->getDelegates();
+      if ($delegates) {
+        array_push($this->_childAnchors, ...$delegates);
+      } elseif ($anchor->hasAnchor()) {
         $this->_childAnchors[] = $anchor;
       }
     }
@@ -154,6 +158,28 @@ class AnchorBehaviour extends Behavior
   }
 
   /**
+   * @return AnchorBehaviour[]
+   */
+  private function getDelegates(): array {
+    $fields = self::parseAnchorFields($this->owner->getSchema()->anchor, 'delegates');
+    $anchors = [];
+
+    foreach ($fields as $field) {
+      $value = $this->owner->offsetGet($field[0]);
+      if (!($value instanceof ReferenceValue)) {
+        continue;
+      }
+
+      foreach ($value->getReferences() as $element) {
+        $model = $element->{$field[1]}->getModel();
+        $anchors = array_merge($anchors, $model->getAllAnchors());
+      }
+    }
+
+    return $anchors;
+  }
+
+  /**
    * @return AnchorBehaviour
    */
   private function getRootBehaviour(): AnchorBehaviour {
@@ -173,12 +199,10 @@ class AnchorBehaviour extends Behavior
    */
   private function loadRawValue(): ?string {
     $fields = self::parseAnchorFields($this->owner->getSchema()->anchor);
-    if (!is_array($fields)) {
-      return null;
-    }
 
     foreach ($fields as $field) {
       $value = trim((string)$this->owner->offsetGet($field));
+
       if (!empty($value)) {
         return $value;
       }
@@ -192,18 +216,31 @@ class AnchorBehaviour extends Behavior
   // --------------
 
   /**
-   * @param mixed $value
-   * @return string[]|null
+   * @param mixed $values
+   * @param string $mode
+   * @return string[]
    */
-  static public function parseAnchorFields(mixed $value): ?array {
-    if (empty($value)) {
-      return null;
+  static public function parseAnchorFields(mixed $values, string $mode = 'fields'): array {
+    if (empty($values)) {
+      return [];
     }
 
-    if (!is_array($value)) {
-      $value = explode(',', $value);
-    }
+    $values = array_filter(array_map('trim',
+      is_array($values) ? $values : explode(',', $values)
+    ));
 
-    return array_filter(array_map('trim', $value));
+    return match ($mode) {
+      'delegates' => array_filter(array_map(
+        fn(string $value) => str_starts_with($value, '...')
+          ? array_filter(array_map('trim', explode('.', substr($value, 3))))
+          : null,
+        $values
+      )),
+      'fields' => array_filter(
+        $values,
+        fn(string $value) => !str_starts_with($value, '...')
+      ),
+      default => $values,
+    };
   }
 }
