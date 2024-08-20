@@ -401,7 +401,7 @@ return s.createElement("dl",{className:je()("tcfCheckbox",t)},s.createElement("d
 class pn extends s.Component{constructor(){super(...arguments),this.editor=null,this.setElement=e=>{const{editor:t}=this
 if(this.editor=null,t&&t.destroy(),e){const t=jr.getCKEditor(this.props.field.configId)
 CKEditor5.craftcms.create(e,t).then((t=>{t.model.document.on("change",(()=>{this.props.onUpdate(e.value)})),this.editor=t}))}}}onChange(){}render(){const{data:e,disabled:t,field:n,onUpdate:r}=this.props
-return t?s.createElement("div",{className:"noteditable",dangerouslySetInnerHTML:{__html:e}}):s.createElement("div",{className:n.showWordCount?"ck-with-show-word-count":void 0},s.createElement("textarea",{defaultValue:e,onInput:e=>{r(e.currentTarget.value)},ref:this.setElement}),n.showWordCount?s.createElement("div",{className:"ck-word-count light smalltext"},"&nbps;"):null)}}let fn=0
+return t?s.createElement("div",{className:"noteditable",dangerouslySetInnerHTML:{__html:e}}):s.createElement("div",{className:je()(n.editorClass,{"ck-with-show-word-count":n.showWordCount})},s.createElement("textarea",{defaultValue:e,onInput:e=>{r(e.currentTarget.value)},ref:this.setElement}),n.showWordCount?s.createElement("div",{className:"ck-word-count light smalltext"},"&nbps;"):null)}}let fn=0
 class gn extends cn{cloneValue(e){return(0,W.sH)(this,void 0,void 0,(function*(){const{field:t,translate:n,value:s}=e
 return this.isValue(t,s)?t.translatable&&n?function(e,t){return(0,W.sH)(this,void 0,void 0,(function*(){if(fn>2)return console.warn(`Translator has returned to many errors, skipping translation for text "${e}".`),e
 const{endpoint:n,csrfParams:s={}}=t,r=(0,W.Tt)(t,["endpoint","csrfParams"]),a=Object.assign(Object.assign(Object.assign({},r),s),{text:e}),i=new FormData
