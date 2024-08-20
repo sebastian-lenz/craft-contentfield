@@ -21,6 +21,11 @@ class CKEditorField extends AbstractField
   public ?string $ckeConfig = null;
 
   /**
+   * @var string|null
+   */
+  public ?string $editorClass = null;
+
+  /**
    * @var bool
    */
   public bool $enableSourceEditingForNonAdmins = false;
@@ -72,6 +77,7 @@ class CKEditorField extends AbstractField
   public function getEditorData(ElementInterface $element = null): array {
     return parent::getEditorData($element) + [
       'configId' => $this->getFieldProxy()->registerJs($element),
+      'editorClass' => $this->editorClass,
       'showWordCount' => !!$this->showWordCount,
     ];
   }
@@ -119,7 +125,7 @@ class CKEditorField extends AbstractField
     return array_merge(
       parent::rules(),
       [
-        [['ckeConfig'], 'string'],
+        [['ckeConfig', 'editorClass'], 'string'],
         [['wordLimit'], 'number'],
         [['enableSourceEditingForNonAdmins', 'searchable', 'wordLimit', 'translatable'], 'boolean'],
       ]
