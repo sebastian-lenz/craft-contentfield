@@ -107,13 +107,13 @@ class InputData
    * @noinspection PhpUnused (Used in templates)
    */
   public function getPayload(): string {
-    return Json::encode([
+    return base64_encode(Json::encode([
       'config' => array_merge(
         $this->getGlobalConfig(),
         $this->getElementConfig()
       ),
       'schemas' => $this->_schemas,
-    ]);
+    ]));
   }
 
   /**

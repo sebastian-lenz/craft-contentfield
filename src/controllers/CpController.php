@@ -87,7 +87,7 @@ class CpController extends Controller
    * @throws NotFoundHttpException
    * @throws \yii\base\InvalidConfigException
    */
-  public function actionHotspotAsset(int $id, int $siteId) {
+  public function actionHotspotAsset(int $id, int $siteId): Response {
     $asset = Asset::findOne(['id' => $id, 'siteId' => $siteId]);
     if (!$asset) {
       throw new NotFoundHttpException();
@@ -129,6 +129,10 @@ class CpController extends Controller
     ) {
       throw new Exception('Invalid field provided: ' . $field);
     }
+
+    // We cannot pass `?` to the action
+    // https://httpd.apache.org/docs/current/rewrite/flags.html#flag_unsafe_allow_3f
+    $url = str_replace('___@CTF_URL_QUERY___', '?', $url);
 
     $oembedField = $instance->fields[$field];
     $oembed = $oembedField->getOEmbed($url);
