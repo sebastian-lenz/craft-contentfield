@@ -73,7 +73,7 @@ const r=jr.getValidator(s)
 if(!r)return null
 const a=[]
 return r(n,t[n],a),a}(n,t,s)
-return r&&r.length&&(e[s]=r),e}),{}))}function D(e,t){return{direction:t,type:"uuidOrder",uuid:e}}function F(e){return{type:"uuidVisibility",uuid:e}}function V(e,t,n){return{path:e,key:t,type:"updateValue",value:n}}function H(e){return{sync:e,type:"updateSync"}}var W=n(635)
+return r&&r.length&&(e[s]=r),e}),{}))}function F(e,t){return{direction:t,type:"uuidOrder",uuid:e}}function D(e){return{type:"uuidVisibility",uuid:e}}function V(e,t,n){return{path:e,key:t,type:"updateValue",value:n}}function H(e){return{sync:e,type:"updateSync"}}var W=n(635)
 function B(e,t){const n=-1===e.indexOf("?")?"?":"&"
 return`${e}${n}${Object.keys(t).filter((e=>!!t[e])).map((e=>`${e}=${encodeURIComponent(t[e])}`)).join("&")}`}function z(e){return(t,n)=>(0,W.sH)(this,void 0,void 0,(function*(){try{yield function(e,t,n){return(0,W.sH)(this,void 0,void 0,(function*(){const{config:{apiEndpoints:s,elementSiteId:r}}=n(),a=e.map((e=>fetch(B(s.reference,{id:e.id,siteId:e.siteId||r})).then((e=>e.json()))))
 Promise.all(a).then((e=>t(x(e))))}))}(e,t,n)}catch(e){}}))}function q(e){return(0,W.sH)(this,void 0,void 0,(function*(){var{source:t}=e,n=(0,W.Tt)(e,["source"])
@@ -180,11 +180,11 @@ return U(e,r),r}))})},uuidVisibility:function(e,{uuid:t}){const n=d(e,t)
 return n?Object.assign(Object.assign({},e),{model:j(e.model,n.path,(e=>e?Object.assign(Object.assign({},e),{__visible:!e.__visible}):e))}):e},updateSync:function(e,{sync:t}){let{overlay:n}=e
 return n&&"synchronize"===n.type&&(n=Object.assign(Object.assign({},n),{preventClose:"working"===t.status})),Object.assign(Object.assign({},e),{overlay:n,sync:t})},updateValue:function(e,{path:t,key:n,value:s}){return Object.assign(Object.assign({},e),{model:j(e.model,t,(t=>{const r=n?Object.assign(Object.assign({},t),{[n]:s}):s
 return U(e,r),r}))})}}
-const de=[function({location:{uuid:e},owner:t}){return t&&"array"===t.field.type?{group:me.Manipulation,icon:"material:add",id:"create",invoke:(t,n=!1)=>{t(T({afterCreate:n?"layer":"expand",type:"create",uuid:e}))},label:g("Create")}:null},function({location:{uuid:e}}){return{group:me.Manipulation,icon:"material:edit",id:"edit",invoke:t=>{t(T({type:"edit",uuid:e}))},label:g("Edit")}},function({owner:e,location:{uuid:t}}){return e&&"array"===e.field.type?{group:me.Manipulation,icon:"material:delete",id:"delete",invoke:e=>{e(function(e){return{type:"uuidRemove",uuid:e}}(t))},label:g("Delete")}:null},function({location:{uuid:e,model:{__visible:t}}}){return{group:me.Visibility,icon:t?"material:visibility_off":"material:visibility",id:"visibility",invoke:t=>{t(F(e))},label:g(t?"Hide":"Show")}},function({location:{uuid:e},owner:t}){if(!t||"array"!==t.field.type)return null
+const de=[function({location:{uuid:e},owner:t}){return t&&"array"===t.field.type?{group:me.Manipulation,icon:"material:add",id:"create",invoke:(t,n=!1)=>{t(T({afterCreate:n?"layer":"expand",type:"create",uuid:e}))},label:g("Create")}:null},function({location:{uuid:e}}){return{group:me.Manipulation,icon:"material:edit",id:"edit",invoke:t=>{t(T({type:"edit",uuid:e}))},label:g("Edit")}},function({owner:e,location:{uuid:t}}){return e&&"array"===e.field.type?{group:me.Manipulation,icon:"material:delete",id:"delete",invoke:e=>{e(function(e){return{type:"uuidRemove",uuid:e}}(t))},label:g("Delete")}:null},function({location:{uuid:e,model:{__visible:t}}}){return{group:me.Visibility,icon:t?"material:visibility_off":"material:visibility",id:"visibility",invoke:t=>{t(D(e))},label:g(t?"Hide":"Show")}},function({location:{uuid:e},owner:t}){if(!t||"array"!==t.field.type)return null
 const n=t.owner[t.field.name]
-return!Array.isArray(n)||void 0===t.index||t.index<=0?null:{group:me.Movement,icon:"material:arrow_upward",id:"moveUp",invoke:t=>t(D(e,"up")),label:g("Move up")}},function({location:{uuid:e},owner:t}){if(!t||"array"!==t.field.type)return null
+return!Array.isArray(n)||void 0===t.index||t.index<=0?null:{group:me.Movement,icon:"material:arrow_upward",id:"moveUp",invoke:t=>t(F(e,"up")),label:g("Move up")}},function({location:{uuid:e},owner:t}){if(!t||"array"!==t.field.type)return null
 const n=t.owner[t.field.name]
-return!Array.isArray(n)||void 0===t.index||t.index>=n.length-1?null:{group:me.Movement,icon:"material:arrow_downward",id:"moveDown",invoke:t=>t(D(e,"down")),label:g("Move down")}},function(){return null},function({owner:e}){return null},function({owner:e}){return null}]
+return!Array.isArray(n)||void 0===t.index||t.index>=n.length-1?null:{group:me.Movement,icon:"material:arrow_downward",id:"moveDown",invoke:t=>t(F(e,"down")),label:g("Move down")}},function(){return null},function({owner:e}){return null},function({owner:e}){return null}]
 var me
 function he(e,t){const n=d(e,t)
 if(!n)return[]
@@ -203,26 +203,26 @@ default:return new String(e)}}(e)
 return Object.defineProperty(n,"__uuid",{value:t&&we(t)?t.__uuid:_()}),n}function Se(e,t,n){const{fields:s}=t[e.__type]
 n&&n.uniqueUuids&&(-1===n.uniqueUuids.indexOf(e.__uuid)?n.uniqueUuids.push(e.__uuid):(console.error(`Found duplicate uuid "${e.__uuid}".`),e.__uuid=_()))
 for(const r of Object.keys(s)){const a=s[r]
-"array"===a.type?e[r]=e[r].map((e=>"instance"===a.member.type?Se(e,t,n):Ce(e))):"instance"===a.type&&(e[r]=Se(e[r],t,n))}return e}function xe(e){return"string"==typeof e&&""!==e.trim()?ye().compile(e):null}function Oe(e,t){const n=JSON.parse(e.innerHTML)
-n.user=function(){try{const t=window.localStorage.getItem(R)
+"array"===a.type?e[r]=e[r].map((e=>"instance"===a.member.type?Se(e,t,n):Ce(e))):"instance"===a.type&&(e[r]=Se(e[r],t,n))}return e}function xe(e){return"string"==typeof e&&""!==e.trim()?ye().compile(e):null}function Oe(e,t){const n=decodeURIComponent(escape(atob(e.innerText))),s=JSON.parse(n)
+s.user=function(){try{const t=window.localStorage.getItem(R)
 if(null===t)throw new Error("User state missing")
 const{favoriteSchemas:n={}}=JSON.parse(t)
 return{favoriteSchemas:(e=n,Object.keys(e).reduce(((t,n)=>Array.isArray(e[n])?Object.assign(Object.assign({},t),{[n]:e[n]}):t),{}))}}catch(e){}var e
-return{favoriteSchemas:{}}}(),n.sync={status:"idle"}
-for(const e of Object.keys(n.schemas)){const t=n.schemas[e]
-t.previewTemplate=xe(t.preview),t.previewLabelTemplate=xe(t.previewLabel)||t.previewTemplate}var s
-let r
-s=n.config.googleMapsApiKey,ve=s,1===n.config.rootSchemas.length&&(r=n.schemas[n.config.rootSchemas[0]])
-try{n.model=Se(JSON.parse(t.value),n.schemas,{uniqueUuids:[]})}catch(e){}return!r||c(n.model)&&n.model.__type===r.qualifier||(n.model=N({oldModel:n.model,schema:r,schemas:n.schemas})),n}var _e=n(200),Ne=n(909),ke=n(942),je=n.n(ke)
+return{favoriteSchemas:{}}}(),s.sync={status:"idle"}
+for(const e of Object.keys(s.schemas)){const t=s.schemas[e]
+t.previewTemplate=xe(t.preview),t.previewLabelTemplate=xe(t.previewLabel)||t.previewTemplate}var r
+let a
+r=s.config.googleMapsApiKey,ve=r,1===s.config.rootSchemas.length&&(a=s.schemas[s.config.rootSchemas[0]])
+try{s.model=Se(JSON.parse(t.value),s.schemas,{uniqueUuids:[]})}catch(e){}return!a||c(s.model)&&s.model.__type===a.qualifier||(s.model=N({oldModel:s.model,schema:a,schemas:s.schemas})),s}var _e=n(200),Ne=n(909),ke=n(942),je=n.n(ke)
 function Ie(e){var{children:t,className:n,outline:r,secondary:a}=e,i=(0,W.Tt)(e,["children","className","outline","secondary"])
 return s.createElement("div",Object.assign({},i,{className:je()("tcfButtonFlat",n,{outline:r,secondary:a})}),t)}const Me=s.createContext({expanded:[],isExpanded:()=>!1,toggleExpanded:function(){}})
 function Le({children:e}){const[t,n]=s.useState([])
 return s.createElement(Me.Provider,{value:{expanded:t,isExpanded:e=>-1!==t.indexOf(e),toggleExpanded:(e,s)=>{let r=[...t]
 void 0===s&&(s=-1===t.indexOf(e)),s?r.push(e):r=r.filter((t=>t!==e)),n(r)}}},e)}function Ae({children:e,disabled:t,onClick:n,primary:r,secondary:a}){return s.createElement("div",{className:je()("tcfButton btn",{disabled:t,submit:r,secondary:a}),onClick:e=>{e.preventDefault(),t||n(e)}},e)}function Pe({className:e,params:t,value:n}){return s.createElement("span",{className:e},g(n,t))}function Te({children:e,className:t}){return s.createElement("div",{className:je()("tcfWindow--content",t)},e)}function $e({children:e,className:t,flex:n=!0}){return s.createElement("div",{className:je()("tcfWindow--footer flex-nowrap",t,{flex:n})},e)}function Re({children:e,className:t,width:n}){return s.createElement("div",{className:je()("tcfWindow",t),style:{width:n}},e)}!function(e){e.Content=Te,e.Footer=$e}(Re||(Re={}))
 const Ue=Re
-function De({onClose:e}){return s.createElement(Ue,{width:600},s.createElement(Ue.Content,null,s.createElement(Pe,{value:"Cannot create an element at the given location."})),s.createElement(Ue.Footer,null,s.createElement(Ae,{onClick:e,secondary:!0},s.createElement(Pe,{value:"Cancel"}))))}const Fe="craft:",Ve="material:"
+function Fe({onClose:e}){return s.createElement(Ue,{width:600},s.createElement(Ue.Content,null,s.createElement(Pe,{value:"Cannot create an element at the given location."})),s.createElement(Ue.Footer,null,s.createElement(Ae,{onClick:e,secondary:!0},s.createElement(Pe,{value:"Cancel"}))))}const De="craft:",Ve="material:"
 function He({className:e,name:t,size:n}){let r="craft"
-return t.startsWith(Ve)?(r="material",t=t.substr(Ve.length)):t.startsWith(Fe)&&(t=t.substr(Fe.length)),s.createElement("div",{className:je()("tcfIcon",e,r,n)},t)}function We({children:e,label:t}){const[n,r]=s.useState(!1)
+return t.startsWith(Ve)?(r="material",t=t.substr(Ve.length)):t.startsWith(De)&&(t=t.substr(De.length)),s.createElement("div",{className:je()("tcfIcon",e,r,n)},t)}function We({children:e,label:t}){const[n,r]=s.useState(!1)
 return s.createElement("div",{className:je()("tcfFieldGroup tcfAccordion",{isExpanded:n})},s.createElement("div",{className:"tcfAccordion--label",onClick:()=>r(!n)},s.createElement(He,{name:n?"material:expand_less":"material:expand_more"}),s.createElement("span",null,t)),s.createElement("div",{className:"tcfAccordion--content"},s.createElement("div",{className:"tcfFieldGroup--content"},e)))}const Be="toolbar"
 function ze({children:e,isBorderless:t,label:n,style:r,type:a}){return"accordion"===a?s.createElement(We,{label:n||"Details"},e):"panel"===a?s.createElement("div",{className:"tcfFieldGroup shadowed",style:r},s.createElement("div",{className:"tcfFieldGroup--content"},e)):n&&""!==n&&n!==Be&&"default"!==n?s.createElement("div",{className:"tcfFieldGroup shadowed",style:r},s.createElement("div",{className:"tcfFieldGroup--label"},n),s.createElement("div",{className:"tcfFieldGroup--content"},e)):s.createElement("div",{className:je()("tcfFieldGroup--content",{isBorderless:t}),style:r},e)}function qe({children:e,className:t,errors:n,instructions:r,isPlainField:a,isRequired:i,label:l,style:o}){if(a)return s.createElement(s.Fragment,null,e)
 const c=n&&n.length
@@ -234,7 +234,7 @@ return s.createElement(Ue,{width:600},s.createElement(Ue.Content,null,s.createEl
 if(!n||!n.path.length)return null
 const s=f(e,n.path)
 return s&&"array"===s.field.type&&void 0!==s.index?{field:s.field,model:s.owner}:null}))
-if(null===a)return s.createElement(De,{onClose:function(){n(T(null))}})
+if(null===a)return s.createElement(Fe,{onClose:function(){n(T(null))}})
 const{field:i,model:o}=a,{factory:u}=O.getDefinition(i.member.type)
 return s.createElement(Ge,{Factory:u,field:i.member,onCreate:function(s,a){let i=null
 c(s)&&("expand"===e?r.toggleExpanded(s.__uuid,!0):i={type:"edit",uuid:s.__uuid}),n(function(e,t,n){return{position:n,type:"uuidInsert",uuid:e,value:t}}(t,s,a)),n(T(i))},scope:o.__type})}function Je(e){const{field:t}=e,{widget:n}=O.getDefinition(t)
@@ -277,7 +277,7 @@ return r="working"===e.status?s.createElement(mt,null):"error"===e.status?s.crea
 function ft({children:e}){const t=s.useContext(pt)
 return s.createElement(pt.Provider,{value:t+1},e)}function gt({disabled:e,dispatch:t,model:n,path:r,schemas:a}){const i=s.useContext(Me),l=a.map((({qualifier:e,label:t})=>({key:e,label:t})))
 return l.sort(Xe),s.createElement(qe,{className:"tcfInstance--controlsSchema",label:"Type"},s.createElement(Ke,{disabled:e,onChange:e=>t(function(e,t,n){return{expandedState:n,newType:t,path:e,type:"changeType"}}(r,e,i)),options:l,value:n?n.__type:null}))}function yt({disabled:e,dispatch:t,model:n}){const r=n.__visible?"material:visibility":"material:visibility_off",a=s.createElement(s.Fragment,null,s.createElement(Pe,{value:"Visibility"}),s.createElement(He,{className:je()("tcfInstance--controlsVisibilityIcon",{off:!n.__visible}),name:r}))
-return s.createElement(qe,{label:a,className:"tcfInstance--controlsVisibility"},s.createElement(Ae,{disabled:e,onClick:()=>t(F(n.__uuid))},s.createElement(Pe,{value:n.__visible?"Hide":"Show"})))}const vt=s.memo((function({canChangeVisibility:e=!1,canChangeType:t=!0,disabled:n=!1,isBorderless:r,model:a,path:i,schemaNames:o}){const u=(0,l.wA)(),d=(0,l.d4)((e=>o.map((t=>e.schemas[t]))))
+return s.createElement(qe,{label:a,className:"tcfInstance--controlsVisibility"},s.createElement(Ae,{disabled:e,onClick:()=>t(D(n.__uuid))},s.createElement(Pe,{value:n.__visible?"Hide":"Show"})))}const vt=s.memo((function({canChangeVisibility:e=!1,canChangeType:t=!0,disabled:n=!1,isBorderless:r,model:a,path:i,schemaNames:o}){const u=(0,l.wA)(),d=(0,l.d4)((e=>o.map((t=>e.schemas[t]))))
 let m=!1
 c(a)&&(m=d.some((e=>e.qualifier===a.__type)))
 const h=t&&d.length>1,p=e&&m&&!a.__visible
@@ -327,9 +327,9 @@ s.style.height=`${n.height}px`,s.getBoundingClientRect(),s.style.transition="hei
 if(t.currentUri!==this.state.currentUri&&n){const e=n.offsetHeight
 return n.style.height=`${e}px`,{height:e}}return null}render(){const{className:e,itemClassName:t}=this.props,{currentChildren:n,currentUri:r,inTransition:a,lastChildren:i,lastUri:l}=this.state,o=[]
 return a&&l&&o.push(s.createElement("div",{className:je()(t,"tcfDetailsPanel--item","from"),key:l},i)),o.push(s.createElement("div",{className:je()(t,"tcfDetailsPanel--item",{to:a}),key:r,onAnimationEnd:this.handleAnimationEnd},n)),s.createElement("div",{className:je()(e,"tcfDetailsPanel"),ref:this.setElement},o)}static getDerivedStateFromProps(e,t){return e.uri===t.currentUri?Object.assign(Object.assign({},t),{currentChildren:e.children}):e.uri===t.currentUri||t.inTransition?null:{inTransition:!0,lastChildren:t.currentChildren,lastUri:t.currentUri,currentChildren:e.children,currentUri:e.uri}}}function Rt({children:e,onClick:t,primary:n}){return s.createElement("div",{className:je()("tcfArrayWidgetMember--headerActionsButton",{primary:n}),onClick:e=>{e.preventDefault(),t()}},e)}let Ut=null
-function Dt(){return null===Ut&&(Ut=new Craft.ElementThumbLoader),Ut}function Ft({className:e,reference:t,size:n="small"}){const r=s.useRef(null)
+function Ft(){return null===Ut&&(Ut=new Craft.ElementThumbLoader),Ut}function Dt({className:e,reference:t,size:n="small"}){const r=s.useRef(null)
 s.useEffect((()=>{if(r.current){const e=$(".element",r.current)
-Dt().load(e)}}),[r.current,t])
+Ft().load(e)}}),[r.current,t])
 const a=t.cards["large"===n?"largeChip":"smallChip"]
 return s.createElement("div",{className:je()("tcfInstancePreviewImage",e,n),dangerouslySetInnerHTML:{__html:a.html},ref:r})}function Vt(e){return"object"==typeof e&&"string"==typeof e.url}function Ht({className:e,size:t="small",src:n}){return s.createElement("div",{className:je()("tcfInstancePreviewImage",e,t)},s.createElement("img",{className:"oembed",src:n}))}function Wt(e,t,n){const r=n.indexOf(".")
 let a="";-1!==r&&(a=n.substring(r+1),n=n.substring(0,r))
@@ -339,7 +339,7 @@ const l=e.model[n]
 switch(i.type){case"oembed":return function(e,t){return Vt(t)&&t.info&&t.info.thumbnail_url?s.createElement(Ht,Object.assign({src:t.info.thumbnail_url},e)):null}(e,l)
 case"reference":return function(e,t,n){if(!Array.isArray(t)||0===t.length)return null
 const r=n.find((e=>C(e,t[0])))
-return r?s.createElement(Ft,Object.assign({},e,{reference:r})):null}(e,l,t.config.references)
+return r?s.createElement(Dt,Object.assign({},e,{reference:r})):null}(e,l,t.config.references)
 case"instance":const n=a?o(t,l):null
 return n?Wt(Object.assign(Object.assign({},e),{model:l,schema:n}),t,a):null
 default:return null}}function Bt(e){const t=function(e,t){const{previewImages:n}=e.schema
@@ -461,7 +461,7 @@ function o(){const c=Date.now()-s
 c<t&&c>=0?a=window.setTimeout(o,t-c):(a=null,n||(r=e.apply(l,i),a||(l=i=null)))}return function(){l=this,i=arguments,s=Date.now()
 const c=n&&!a
 return a||(a=window.setTimeout(o,t)),c&&(r=e.apply(l,i),l=i=null),r}}((()=>{this.setState({mode:"loading"})
-const{apiEndpoint:e,model:t,field:n}=this.props,s={schema:t.__type,field:n.name,url:this.getOEmbed().url},r=new XMLHttpRequest
+const{apiEndpoint:e,model:t,field:n}=this.props,s={schema:t.__type,field:n.name,url:this.getOEmbed().url.replace(/\?/g,"___@CTF_URL_QUERY___")},r=new XMLHttpRequest
 r.onreadystatechange=()=>this.handleRequestStateChange(r),r.onerror=()=>this.handleRequestError(),r.open("GET",B(e,s)),r.send(),this.request&&this.request.abort(),this.request=r}),500)}getOEmbed(){const{data:e}=this.props
 return Vt(e)?e:{url:""}}handleRequestStateChange(e){if(e.readyState!==XMLHttpRequest.DONE)return
 if(200!==e.status)return this.handleRequestError()
@@ -471,12 +471,12 @@ let r
 if("typing"===n||"loading"===n)r=s.createElement("div",{className:"tcfOEmbedWidget--activity"},s.createElement("div",{className:"tcfOEmbedWidget--activityBounce first"}),s.createElement("div",{className:"tcfOEmbedWidget--activityBounce second"}),s.createElement("div",{className:"tcfOEmbedWidget--activityBounce third"}))
 else if(e.info){const{title:t,author_name:n,thumbnail_url:a}=e.info
 r=s.createElement("div",{className:"tcfOEmbedWidget--info"},a?s.createElement("div",{className:"tcfOEmbedWidget--infoImagePanel"},s.createElement("img",{className:"tcfOEmbedWidget--infoImage",src:a})):null,s.createElement("div",{className:"tcfOEmbedWidget--infoContent"},s.createElement("div",{className:"tcfOEmbedWidget--infoTitle"},t),s.createElement("div",{className:"tcfOEmbedWidget--infoAuthor"},n)))}else e.url&&(r=s.createElement(Rn,{title:"Invalid embed url"}))
-return s.createElement("div",{className:"tcfOEmbedWidget"},s.createElement("div",{className:"tcfOEmbedWidget--input"},s.createElement("input",{autoComplete:"off",className:"text fullwidth",disabled:t,onChange:t?void 0:this.handleChange,value:e.url})),r)}}const Dn=(0,l.Ng)((e=>({apiEndpoint:e.config.apiEndpoints.oembed})))(Un)
-class Fn{constructor(e){this.value=e}get author(){return this.value.info?this.value.info.author_name:""}get thumbnail(){const{info:e}=this.value
+return s.createElement("div",{className:"tcfOEmbedWidget"},s.createElement("div",{className:"tcfOEmbedWidget--input"},s.createElement("input",{autoComplete:"off",className:"text fullwidth",disabled:t,onChange:t?void 0:this.handleChange,value:e.url})),r)}}const Fn=(0,l.Ng)((e=>({apiEndpoint:e.config.apiEndpoints.oembed})))(Un)
+class Dn{constructor(e){this.value=e}get author(){return this.value.info?this.value.info.author_name:""}get thumbnail(){const{info:e}=this.value
 return e&&e.thumbnail_url?new ge.SafeString(`<img width="100" src=${e.thumbnail_url} />`):""}get title(){return this.value.info?this.value.info.title:""}toHTML(){const{info:e}=this.value
 if(!e)return new ge.SafeString("")
 let t=""
-return e.thumbnail_url&&(t=`<img class="tcfOEmbedWidget--infoImage" src="${e.thumbnail_url}" />`),new ge.SafeString(`\n      <div class="tcfOEmbedWidget--info">\n        ${t}\n        <div class="tcfOEmbedWidget--infoContent">\n          <div class="tcfOEmbedWidget--infoTitle">${e.title}</div>\n          <div class="tcfOEmbedWidget--infoAuthor">${e.author_name}</div>\n        </div>\n      </div>\n    `)}}(0,W.Cg)([_t],Fn.prototype,"value",void 0),(0,W.Cg)([_t],Fn.prototype,"author",null),(0,W.Cg)([_t],Fn.prototype,"thumbnail",null),(0,W.Cg)([_t],Fn.prototype,"title",null),(0,W.Cg)([Ot],Fn.prototype,"toHTML",null)
+return e.thumbnail_url&&(t=`<img class="tcfOEmbedWidget--infoImage" src="${e.thumbnail_url}" />`),new ge.SafeString(`\n      <div class="tcfOEmbedWidget--info">\n        ${t}\n        <div class="tcfOEmbedWidget--infoContent">\n          <div class="tcfOEmbedWidget--infoTitle">${e.title}</div>\n          <div class="tcfOEmbedWidget--infoAuthor">${e.author_name}</div>\n        </div>\n      </div>\n    `)}}(0,W.Cg)([_t],Dn.prototype,"value",void 0),(0,W.Cg)([_t],Dn.prototype,"author",null),(0,W.Cg)([_t],Dn.prototype,"thumbnail",null),(0,W.Cg)([_t],Dn.prototype,"title",null),(0,W.Cg)([Ot],Dn.prototype,"toHTML",null)
 function Vn({favorites:e,onSchema:t,onToggleFavorite:n,schemas:r}){const a=r.map((r=>{const a=-1!==e.indexOf(r.qualifier)
 return s.createElement("div",{className:"tcfSchemaList--row",key:r.qualifier},s.createElement("div",{className:"tcfSchemaList--schema",onMouseUp:()=>t(r)},s.createElement(He,{className:"tcfSchemaList--schemaIcon",name:r.icon}),s.createElement("div",{className:"tcfSchemaList--schemaLabel"},r.label)),n?s.createElement("div",{className:"tcfSchemaList-favorite",onClick:()=>n(r)},s.createElement(He,{name:a?"material:star":"material:star_border"})):null)}))
 return s.createElement("div",{className:"tcfSchemaList"},a)}function Hn({onCreate:e,schemas:t,scope:n}){const[r,a]=s.useState(!1),i=(0,l.wA)()
@@ -543,7 +543,7 @@ const is=(0,l.Ng)(((e,t)=>({schemas:e.schemas})))(as)
 function ls({data:e,disabled:t,onUpdate:n}){return s.createElement(ot,{disabled:t,onChange:n,value:!!e})}function os(e){const t=s.useRef(null)
 return s.useEffect((()=>{const{current:n}=t
 if(!n)return
-const s=Dt()
+const s=Ft()
 for(const t of function(e){const{data:t,elementType:n,references:s}=e,r=[]
 if(Array.isArray(t))for(const e of t){const t=s.find((t=>C(e,t)&&t.type===n))
 t&&r.push(t)}return r}(e)){const r=E(t,e.viewMode)
@@ -657,8 +657,8 @@ for(const t of n){const n=e.find((e=>C(e,t)&&e.type===r))
 n&&s.push(new $s(n))}return s}(e))}get asBackground(){return this.length?this[0].asBackground:null}get asLargeElement(){return this.length?this[0].asLargeElement:null}get asLargeImage(){return this.length?this[0].asLargeImage:null}get asSmallElement(){return this.length?this[0].asSmallElement:null}get asSmallImage(){return this.length?this[0].asSmallImage:null}get firstLabel(){return this.length?this[0].label:""}get label(){return this._map((e=>e.label)).join(", ")}toHTML(){return new ge.SafeString(`<div class="tcfInstancePreview--elements">${this.toString()}</div>`)}toString(){return this._map((e=>Ct(e))).join("")}_map(e){const t=[]
 for(let n=0;n<this.length;n++)t.push(e(this[n],n))
 return t}}function Us({data:e,disabled:t,field:n,model:r,onUpdate:a}){return s.createElement(us,{allowSelfReference:n.allowSelfReference,condition:n.condition,criteria:n.criteria,disabled:t,data:e,elementType:n.elementType,limit:n.limit||null,modalStorageKey:n.modalStorageKey||`tcf_${r.__type}_${n.name}`,onUpdate:a,referenceElementId:n.referenceElementId,referenceElementSiteId:n.referenceElementSiteId,showSiteMenu:n.showSiteMenu,sources:n.sources||null,viewMode:n.viewMode})}(0,W.Cg)([_t],Rs.prototype,"asBackground",null),(0,W.Cg)([_t],Rs.prototype,"asLargeElement",null),(0,W.Cg)([_t],Rs.prototype,"asLargeImage",null),(0,W.Cg)([_t],Rs.prototype,"asSmallElement",null),(0,W.Cg)([_t],Rs.prototype,"asSmallImage",null),(0,W.Cg)([_t],Rs.prototype,"firstLabel",null),(0,W.Cg)([_t],Rs.prototype,"label",null),(0,W.Cg)([Ot],Rs.prototype,"toHTML",null),(0,W.Cg)([Ot],Rs.prototype,"toString",null)
-class Ds extends cn{createValue({field:e}){return e.defaultValue&&this.isValue(e,e.defaultValue)?e.defaultValue:e.options[0].key}isValue(e,t){return e.options.some((e=>e.key==t))}preview({field:e,value:t}){const n=e?e.options.find((e=>e.key===t)):void 0
-return n?n.label:"-"}}function Fs({data:e,disabled:t,onUpdate:n,field:r}){return s.createElement(Ke,{disabled:t,onChange:n,options:r.options,value:e})}function Vs(e){let t
+class Fs extends cn{createValue({field:e}){return e.defaultValue&&this.isValue(e,e.defaultValue)?e.defaultValue:e.options[0].key}isValue(e,t){return e.options.some((e=>e.key==t))}preview({field:e,value:t}){const n=e?e.options.find((e=>e.key===t)):void 0
+return n?n.label:"-"}}function Ds({data:e,disabled:t,onUpdate:n,field:r}){return s.createElement(Ke,{disabled:t,onChange:n,options:r.options,value:e})}function Vs(e){let t
 return e&&(t="color"in e?e.color:e.label),"string"==typeof t?t:"transparent"}class Hs extends s.Component{constructor(){super(...arguments),this.state={isExpanded:!1},this.handleFlyoutClick=()=>{this.setState({isExpanded:!1})},this.handleSelect=e=>{this.props.onUpdate(e.key),this.setState({isExpanded:!1})},this.handleSwatchClick=e=>{e.currentTarget===e.target&&this.setState({isExpanded:!0})}}render(){const{data:e,disabled:t,field:n}=this.props,{isExpanded:r}=this.state,a=n.options.find((t=>t.key===e))
 return s.createElement("div",{className:je()("tcfSwatchColorWidget",{isUndecided:!a}),onClick:t?void 0:this.handleSwatchClick,style:{background:a?Vs(a):void 0}},r&&!t?this.renderFlyout(a):null)}renderFlyout(e){const{field:t}=this.props
 return s.createElement(Yt,{onClick:this.handleFlyoutClick},s.createElement("div",{className:"tcfSwatchColorWidget--swatches"},t.options.map((t=>s.createElement("div",{className:je()("tcfSwatchColorWidget--swatch",{isSelected:t===e}),key:t.key,onClick:()=>this.handleSelect(t),style:{background:Vs(t)}})))))}}function Ws({data:e,disabled:t,errors:n,field:{maxLength:r,minLength:a,placeholder:i,inputType:l},onUpdate:o}){return s.createElement("input",{autoComplete:"off",className:je()("tcfTextWidget text fullwidth",{error:n&&n.length}),disabled:t,maxLength:r,minLength:a,onChange:e=>o(e.target.value),placeholder:i,type:l,value:e?`${e}`:""})}function Bs({data:e,disabled:t,field:{maxLength:n,minLength:r,monospace:a,placeholder:i,rows:l},onUpdate:o}){return s.createElement("textarea",{className:je()("tcfTextareaWidget text fullwidth",{monospace:a}),disabled:t,maxLength:n,minLength:r,onChange:e=>o(e.target.value),placeholder:i,rows:l,value:e})}function zs(e,t){const n=[],s=d(e,t.__uuid)
@@ -755,10 +755,10 @@ const{breakpoints:s,columnsPerRow:r}=t,a=re(t,e.schemas),i=O.getDefinition(a),l=
 return`<div style="${[`margin-left:${(100*s).toFixed(6)}%`,`order:${n}`,`width:${(100*o).toFixed(6)}%`].join(";")}">${Ct(i.preview({context:e,field:a,value:t.value}))}</div>`}))
 return new ge.SafeString(`<div class="tcpRow">${o.join("")}</div>`)}},lightswitch:new class extends un{constructor(){super({widget:ls})}},link:new class extends cn{constructor(){super({widget:bs})}cloneValue(e){const t=Object.create(null,{cloneValue:{get:()=>super.cloneValue}})
 return(0,W.sH)(this,void 0,void 0,(function*(){const n=yield t.cloneValue.call(this,e)
-return n.siteId=yield Es(n.elementId,n.siteId,e),n}))}createValue(){return{elementId:0,hash:"",openInNewWindow:!1,siteId:0,type:"url",url:""}}isValue(e,t){return vs(t)}preview(){return""}},location:new class extends cn{constructor(){super({widget:ks})}createValue({field:e}){return Os(e.defaultValue)?Object.assign({},e.defaultValue):{latitude:0,longitude:0}}isValue(e,t){return Os(t)}preview({value:e}){return new ws(e)}},number:new class extends Is{constructor(){super({widget:js})}},oembed:new class extends cn{constructor(){super({widget:Dn})}createValue(e){return{url:""}}isValue(e,t){return Vt(t)}preview({value:e}){return new Fn(Vt(e)?e:{url:""})}},redactor:new class extends gn{constructor(){super({widget:Ts})}preview({value:e}){return new Ms(e)}},reference:new class extends cn{constructor(){super({widget:Us})}cloneValue(e){const t=Object.create(null,{cloneValue:{get:()=>super.cloneValue}})
+return n.siteId=yield Es(n.elementId,n.siteId,e),n}))}createValue(){return{elementId:0,hash:"",openInNewWindow:!1,siteId:0,type:"url",url:""}}isValue(e,t){return vs(t)}preview(){return""}},location:new class extends cn{constructor(){super({widget:ks})}createValue({field:e}){return Os(e.defaultValue)?Object.assign({},e.defaultValue):{latitude:0,longitude:0}}isValue(e,t){return Os(t)}preview({value:e}){return new ws(e)}},number:new class extends Is{constructor(){super({widget:js})}},oembed:new class extends cn{constructor(){super({widget:Fn})}createValue(e){return{url:""}}isValue(e,t){return Vt(t)}preview({value:e}){return new Dn(Vt(e)?e:{url:""})}},redactor:new class extends gn{constructor(){super({widget:Ts})}preview({value:e}){return new Ms(e)}},reference:new class extends cn{constructor(){super({widget:Us})}cloneValue(e){const t=Object.create(null,{cloneValue:{get:()=>super.cloneValue}})
 return(0,W.sH)(this,void 0,void 0,(function*(){const n=yield t.cloneValue.call(this,e)
 for(const t of n)t.siteId=yield Es(t.id,t.siteId,e)
-return n}))}createValue(e){return[]}isValue(e,t){return Array.isArray(t)&&t.every(w)}preview(e){return new Rs(e)}},select:new class extends Ds{constructor(){super({widget:Fs})}},swatchcolor:new class extends Ds{constructor(){super({widget:Hs})}},text:new class extends gn{constructor(){super({widget:Ws})}},textarea:new class extends gn{constructor(){super({widget:Bs})}}})
+return n}))}createValue(e){return[]}isValue(e,t){return Array.isArray(t)&&t.every(w)}preview(e){return new Rs(e)}},select:new class extends Fs{constructor(){super({widget:Ds})}},swatchcolor:new class extends Fs{constructor(){super({widget:Hs})}},text:new class extends gn{constructor(){super({widget:Ws})}},textarea:new class extends gn{constructor(){super({widget:Bs})}}})
 const Or={},_r=[],Nr={},kr={create:e=>{try{let t=null
 const n=document.getElementById(e)
 if(!n)throw new Error("Root element not found.")
