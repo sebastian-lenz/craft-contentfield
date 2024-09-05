@@ -60,7 +60,6 @@ class Extension extends AbstractExtension
    * @throws Exception
    */
   static function imageTag(mixed $asset, array|string $config): ?Markup {
-    echo '';
     if ($asset instanceof AssetQuery) {
       $asset = $asset->one();
     } elseif ($asset instanceof ReferenceValue) {
@@ -76,5 +75,23 @@ class Extension extends AbstractExtension
       : null;
 
     return empty($html) ? null : Template::raw($html);
+  }
+
+  /**
+   * Copy of legacy twig_to_array() helper
+   * @phpstan-param mixed $values
+   * @phpstan-param bool $preserveKeys
+   * @phpstan-return array
+   */
+  static function toArray(mixed $values, bool $preserveKeys = true): array {
+    if ($values instanceof \Traversable) {
+      return iterator_to_array($values, $preserveKeys);
+    }
+
+    if (!\is_array($values)) {
+      return [];
+    }
+
+    return $preserveKeys ? $values : array_values($values);
   }
 }

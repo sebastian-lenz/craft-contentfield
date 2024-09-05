@@ -116,7 +116,7 @@ class DisplayNode extends Node
    */
   protected function addTemplateArguments(Compiler $compiler): void {
     if ($this->hasNode('variables')) {
-      $compiler->raw('twig_to_array(');
+      $compiler->raw('\lenz\contentfield\twig\Extension::toArray(');
       $compiler->subcompile($this->getNode('variables'));
       $compiler->raw(')');
     } else {
