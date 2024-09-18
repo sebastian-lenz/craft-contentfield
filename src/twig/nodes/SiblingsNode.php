@@ -85,7 +85,7 @@ class SiblingsNode extends Node
    */
   protected function addWith(Compiler $compiler) {
     if ($this->hasNode('with')) {
-      $compiler->raw('twig_to_array(');
+      $compiler->raw('\lenz\contentfield\twig\Extension::toArray(');
       $compiler->subcompile($this->getNode('with'));
       $compiler->raw(')');
     } else {
