@@ -69,8 +69,8 @@ class RedactorValue
   /**
    * @inheritDoc
    */
-  public function display(array $variables = []): void {
-    echo $this->_tokenizer->getCompiledContent();
+  public function display(array $variables = []): \Generator {
+    yield $this->_tokenizer->getCompiledContent();
   }
 
   /**

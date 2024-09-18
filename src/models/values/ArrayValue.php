@@ -84,15 +84,15 @@ class ArrayValue
    * @inheritDoc
    * @throws Exception
    */
-  public function display(array $variables = []): void {
+  public function display(array $variables = []): \Generator {
     $iterator = $this->getIterator();
     $variables['loop'] = $iterator;
 
     foreach ($iterator as $value) {
       if ($value instanceof InstanceValue) {
-        $value->display($variables);
+        yield from $value->display($variables);
       } else {
-        echo $value;
+        yield $value;
       }
     }
   }

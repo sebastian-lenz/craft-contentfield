@@ -132,12 +132,12 @@ class InstanceValue
    * @inheritDoc
    * @throws Exception
    */
-  public function display(array $variables = []): void {
+  public function display(array $variables = []): \Generator {
     if ($this->isVisible()) {
       if (!is_null($this->_output)) {
-        echo $this->_output;
+        yield $this->_output;
       } else {
-        $this->getSchema()->display($this, $variables);
+        yield from $this->getSchema()->display($this, $variables);
       }
     }
   }

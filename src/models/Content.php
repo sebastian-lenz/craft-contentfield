@@ -102,14 +102,14 @@ class Content extends ForeignFieldModel implements DisplayInterface
    * @inheritDoc
    * @throws Exception
    */
-  public function display(array $variables = []): void {
+  public function display(array $variables = []): \Generator {
     $model = $this->_model;
     if (!is_null($model)) {
       $this->trigger(self::EVENT_BEFORE_RENDER, new RenderEvent([
         'content' => $this,
       ]));
 
-      $model->display($variables);
+      yield from $model->display($variables);
     }
   }
 

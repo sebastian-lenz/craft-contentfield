@@ -137,7 +137,7 @@ class DisplayNode extends Node
           ->indent()
           ->write("if (\$displayContentItem->hasCachedOutput()) {\n")
             ->indent()
-            ->write("echo \$displayContentItem->getCachedOutput();\n")
+            ->write("yield \$displayContentItem->getCachedOutput();\n")
             ->write("continue;\n")
             ->outdent()
           ->write("}\n\n");
@@ -148,7 +148,7 @@ class DisplayNode extends Node
       ->outdent()
       ->write("} else {\n")
         ->indent()
-        ->write("\$this->contentfieldDisplay(\$displayContent, \$displayVariables);\n")
+        ->write("yield from \$this->contentfieldDisplay(\$displayContent, \$displayVariables);\n")
       ->outdent()
       ->write("}\n");
   }
@@ -170,11 +170,11 @@ class DisplayNode extends Node
       ->indent();
 
     foreach ($this->_inlinedSchemas as $qualifier => $callback) {
-      $compiler->write(sprintf("case '%s': \$this->%s({$instanceVar}, {$variablesVar}); break;\n", $qualifier, $callback));
+      $compiler->write(sprintf("case '%s': yield from \$this->%s({$instanceVar}, {$variablesVar}); break;\n", $qualifier, $callback));
     }
 
     return $compiler
-      ->write("default: {$instanceVar}->display({$variablesVar});\n")
+      ->write("default: yield from {$instanceVar}->display({$variablesVar});\n")
       ->outdent()
       ->write("}\n");
   }

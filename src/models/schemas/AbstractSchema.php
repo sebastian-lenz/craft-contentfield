@@ -241,9 +241,10 @@ abstract class AbstractSchema extends Model
    *
    * @param InstanceValue $instance
    * @param array $variables
+   * @return \Generator
    */
-  public function display(InstanceValue $instance, array $variables = []): void {
-    echo $this->render($instance, $variables);
+  public function display(InstanceValue $instance, array $variables = []): \Generator {
+    yield $this->render($instance, $variables);
   }
 
   /**

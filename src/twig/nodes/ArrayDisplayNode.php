@@ -92,7 +92,7 @@ class ArrayDisplayNode extends DisplayNode
           ->indent()
           ->write("if (\$displayContentItem->hasCachedOutput()) {\n")
             ->indent()
-            ->write("echo \$displayContentItem->getCachedOutput();\n")
+            ->write("yield \$displayContentItem->getCachedOutput();\n")
             ->write("continue;\n")
             ->outdent()
           ->write("}\n\n");

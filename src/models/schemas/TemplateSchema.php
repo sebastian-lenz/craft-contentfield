@@ -84,8 +84,8 @@ class TemplateSchema extends AbstractSchemaContainer
    * @inheritdoc
    * @throws Throwable
    */
-  public function display(InstanceValue $instance, array $variables = []): void {
-    $this->getTemplate()->display(
+  public function display(InstanceValue $instance, array $variables = []): \Generator {
+    yield from $this->getTemplate()->unwrap()->yield(
       self::normalizedVariables($instance, $variables)
     );
   }

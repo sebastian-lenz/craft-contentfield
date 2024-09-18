@@ -3,6 +3,7 @@
 namespace lenz\contentfield\helpers\loops;
 
 use Exception;
+use Generator;
 use Iterator;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\twig\DisplayInterface;
@@ -40,18 +41,17 @@ class IteratorLoop implements DisplayInterface, Iterator, LoopInterface
 
   /**
    * @phpstan-param array $variables
-   * @phpstan-param callable|null $callback
-   * @phpstan-return void
+   * @phpstan-return Generator
    * @throws Exception
    */
-  public function display(array $variables = []): void {
+  public function display(array $variables = []): Generator {
     $variables['loop'] = $this;
 
     foreach ($this as $value) {
       if ($value instanceof InstanceValue) {
-        $value->display($variables);
+        yield from $value->display($variables);
       } else {
-        echo $value;
+        yield $value;
       }
     }
   }

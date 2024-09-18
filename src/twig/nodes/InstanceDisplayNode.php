@@ -83,7 +83,7 @@ class InstanceDisplayNode extends DisplayNode
         ->indent()
         ->write("if (\$displayContent->hasCachedOutput()) {\n")
           ->indent()
-          ->write("echo \$displayContent->getCachedOutput();\n")
+          ->write("yield \$displayContent->getCachedOutput();\n")
           ->outdent()
         ->write("} else {\n")
           ->indent();

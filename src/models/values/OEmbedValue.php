@@ -47,9 +47,9 @@ class OEmbedValue extends AbstractValue implements DisplayInterface
   /**
    * @inheritDoc
    */
-  public function display(array $variables = []): void {
+  public function display(array $variables = []): \Generator {
     $oEmbed = $this->getOEmbed();
-    echo is_null($oEmbed)
+    yield is_null($oEmbed)
       ? ''
       : $oEmbed->getHtml($variables);
   }
