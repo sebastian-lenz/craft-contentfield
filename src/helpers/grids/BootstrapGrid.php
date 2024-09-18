@@ -26,16 +26,16 @@ class BootstrapGrid implements GridInterface
   /**
    * @inheritDoc
    */
-  public function display(LayoutValue $layout, array $variables = []) {
-    echo '<div class="', $this->rowClassName, '">';
+  public function display(LayoutValue $layout, array $variables = []): \Generator {
+    yield '<div class="' . $this->rowClassName . '">';
 
     foreach ($layout->getColumns() as $column) {
-      echo '<div class="', $this->getColumnClassName($column), '">';
-      $column->display($variables);
-      echo '</div>';
+      yield '<div class="'. $this->getColumnClassName($column) . '">';
+      yield from $column->display($variables);
+      yield '</div>';
     }
 
-    echo '</div>';
+    yield '</div>';
   }
 
   /**

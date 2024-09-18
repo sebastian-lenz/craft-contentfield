@@ -55,7 +55,7 @@ class m190202_133033_AddContentTable extends Migration
       $columnName = 'field_' . $field->handle;
       $rows = (new Query())
         ->select(['elementId', 'siteId', $columnName])
-        ->from(Table::CONTENT)
+        ->from('{{%content}}')
         ->where(['not', [$columnName => null]])
         ->all();
 
@@ -68,7 +68,7 @@ class m190202_133033_AddContentTable extends Migration
         ])->execute();
       }
 
-      $this->dropColumn(Table::CONTENT, $columnName);
+      $this->dropColumn('{{%content}}', $columnName);
     }
   }
 

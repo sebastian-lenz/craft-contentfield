@@ -102,13 +102,13 @@ class LayoutColumnValue
   }
 
   /**
-   * @param array $variables
+   * @inheritDoc
    */
-  public function display(array $variables = []): void {
+  public function display(array $variables = []): \Generator {
     if ($this->_value instanceof DisplayInterface) {
-      $this->_value->display($variables);
+      yield from $this->_value->display($variables);
     } else {
-      echo $this->_value;
+      yield $this->_value;
     }
   }
 

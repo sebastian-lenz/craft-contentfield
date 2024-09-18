@@ -82,8 +82,8 @@ class LayoutValue
   /**
    * @inheritDoc
    */
-  public function display(array $variables = []): void {
-    $this->getGrid()->display($this, $variables);
+  public function display(array $variables = []): \Generator {
+    yield from $this->getGrid()->display($this, $variables);
   }
 
   /**

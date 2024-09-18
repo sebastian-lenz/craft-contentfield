@@ -13,8 +13,9 @@ interface GridInterface
   /**
    * @param LayoutValue $layout
    * @param array $variables
+   * @return \Generator
    */
-  public function display(LayoutValue $layout, array $variables = []);
+  public function display(LayoutValue $layout, array $variables = []): \Generator;
 
   /**
    * @param LayoutField $field

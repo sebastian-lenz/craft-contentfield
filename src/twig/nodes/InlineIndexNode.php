@@ -61,31 +61,31 @@ class InlineIndexNode extends Node
             ->outdent()
           ->write("} elseif (\$instance->hasCachedOutput()) {\n")
             ->indent()
-            ->write("echo \$instance->getCachedOutput();\n")
+            ->write("yield \$instance->getCachedOutput();\n")
             ->outdent()
           ->write("} else switch (\$instance->getSchema()->qualifier) {\n")
             ->indent();
 
     foreach ($templates as $qualifier => $callback) {
-      $compiler->write(sprintf("case \"%s\": return \$this->%s(\$instance, \$variables);\n", $qualifier, $callback));
+      $compiler->write(sprintf("case \"%s\": yield from \$this->%s(\$instance, \$variables); break;\n", $qualifier, $callback));
     }
 
     $compiler
-            ->write("default: return \$instance->display(\$variables);\n")
+            ->write("default: yield from \$instance->display(\$variables);\n")
             ->outdent()
           ->write("}\n")
           ->outdent()
         ->write("} elseif (\$instance instanceof \\lenz\\contentfield\\twig\\DisplayInterface) {\n")
           ->indent()
-          ->write("\$instance->display(\$variables);\n")
+          ->write("yield from \$instance->display(\$variables);\n")
           ->outdent()
         ->write("} elseif (\$instance instanceof \\lenz\\contentfield\\models\\values\\ValueInterface) {\n")
           ->indent()
-          ->write("echo \$instance->getHtml();\n")
+          ->write("yield \$instance->getHtml();\n")
           ->outdent()
         ->write("} else {\n")
           ->indent()
-          ->write("echo (string)\$instance;\n")
+          ->write("yield (string)\$instance;\n")
           ->outdent()
         ->write("}\n")
         ->outdent()
