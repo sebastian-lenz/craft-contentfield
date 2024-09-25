@@ -41,7 +41,7 @@ class SiblingsNode extends Node
         ->write("\n")
         ->write("foreach (\$displayIterator as \$displayContentItem) {\n")
           ->indent()
-          ->write("\$this->contentfieldDisplay(\$displayContentItem, \$displayVariables);\n")
+          ->write("yield from \$this->contentfieldDisplay(\$displayContentItem, \$displayVariables);\n")
           ->outdent()
         ->write("}\n")
         ->outdent()
@@ -56,7 +56,7 @@ class SiblingsNode extends Node
    * @param Compiler $compiler
    * @param string $name
    */
-  protected function addArgument(Compiler $compiler, string $name) {
+  protected function addArgument(Compiler $compiler, string $name): void {
     if ($this->hasNode($name)) {
       $compiler->subcompile($this->getNode($name));
     } else {
@@ -68,7 +68,7 @@ class SiblingsNode extends Node
    * @param Compiler $compiler
    * @param array $names
    */
-  protected function addArguments(Compiler $compiler, array $names) {
+  protected function addArguments(Compiler $compiler, array $names): void {
     $isFirst = true;
     foreach ($names as $name) {
       if (!$isFirst) {
@@ -83,7 +83,7 @@ class SiblingsNode extends Node
   /**
    * @param Compiler $compiler
    */
-  protected function addWith(Compiler $compiler) {
+  protected function addWith(Compiler $compiler): void {
     if ($this->hasNode('with')) {
       $compiler->raw('\lenz\contentfield\twig\Extension::toArray(');
       $compiler->subcompile($this->getNode('with'));
