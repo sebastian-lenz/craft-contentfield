@@ -86,7 +86,13 @@ class ContentRecord extends ForeignFieldRecord
       }
     }
 
-    return Json::decode($value);
+    try {
+      $result = Json::decode($value);
+    } catch (\Throwable) {
+      $result = [];
+    }
+
+    return is_array($result) ? $result : [];
   }
 
   /**
