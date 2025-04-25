@@ -60,6 +60,22 @@ class Source
   }
 
   /**
+   * @return string|null
+   */
+  public function getAltText(): ?string {
+    return $this->_asset->alt;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getAltOrTitle(): ?string {
+    return !empty($this->_asset->alt)
+      ? $this->_asset->alt
+      : $this->getTitle();
+  }
+
+  /**
    * @return float
    */
   public function getAspect(): float {
@@ -197,6 +213,8 @@ class Source
     }
 
     $variables = [
+      'alt'           => [$this, 'getAltText'],
+      'altOrTitle'    => [$this, 'getAltOrTitle'],
       'focusX'        => [$this, 'getFocusX'],
       'focusXPercent' => [$this, 'getFocusXPercent'],
       'focusY'        => [$this, 'getFocusY'],
