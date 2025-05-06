@@ -30,6 +30,11 @@ class AnchorBehaviour extends Behavior
    */
   private ?string $_rawValue;
 
+  /**
+   * @var string
+   */
+  public static string $DISABLED_VALUE = '#NULL';
+
 
   /**
    * @return AnchorBehaviour[]
@@ -201,7 +206,19 @@ class AnchorBehaviour extends Behavior
     $fields = self::parseAnchorFields($this->owner->getSchema()->anchor);
 
     foreach ($fields as $field) {
-      $value = trim((string)$this->owner->offsetGet($field));
+      $rawValue = $this->owner->offsetGet($field);
+      if (is_bool($rawValue)) {
+        if (!$rawValue) {
+          return null;
+        } else {
+          continue;
+        }
+      }
+
+      $value = trim((string)$rawValue);
+      if ($value === self::$DISABLED_VALUE) {
+        return null;
+      }
 
       if (!empty($value)) {
         return $value;
