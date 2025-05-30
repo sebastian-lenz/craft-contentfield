@@ -96,7 +96,7 @@ class AnchorBehaviour extends Behavior
    * @param ArrayValue $value
    */
   private function collectArrayAnchors(ArrayValue $value): void {
-    foreach ($value->getValues() as $item) {
+    foreach ($value->getVisibleValues() as $item) {
       if ($item instanceof InstanceValue) {
         $this->collectInstanceAnchors($item);
       }
@@ -107,6 +107,10 @@ class AnchorBehaviour extends Behavior
    * @param InstanceValue $instance
    */
   private function collectInstanceAnchors(InstanceValue $instance): void {
+    if (!$instance->isVisible()) {
+      return;
+    }
+
     $anchor = $instance->getBehavior('anchor');
     if ($anchor instanceof AnchorBehaviour) {
       $delegates = $anchor->getDelegates();
