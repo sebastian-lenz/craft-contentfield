@@ -167,6 +167,13 @@ class Instance
   /**
    * @return array
    */
+  public function getAttributes(): array {
+    return $this->_attributes;
+  }
+
+  /**
+   * @return array
+   */
   public function getSerializedValue(): array {
     return $this->serializeRecursive($this->_attributes);
   }

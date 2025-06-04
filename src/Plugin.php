@@ -6,6 +6,7 @@ use Craft;
 use craft\base\Plugin as BasePlugin;
 use craft\helpers\FileHelper;
 use lenz\contentfield\twig\Extension;
+use lenz\craft\utils\foreignField\ForeignFieldQueryListener;
 use Throwable;
 use yii\caching\FileCache;
 
@@ -74,6 +75,7 @@ class Plugin extends BasePlugin
 
     Craft::$app->view->registerTwigExtension(new Extension());
 
+    ForeignFieldQueryListener::init();
     helpers\listeners\Anchors::register();
     helpers\listeners\Frontend::register();
     helpers\listeners\Caches::register();
