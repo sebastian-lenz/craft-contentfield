@@ -10,9 +10,9 @@
     "ext-libxml": "*",
     "ext-zlib": "*",
     "craftcms/ckeditor": "^4.2.0",
-    "craftcms/cms": "^5.3.0",
+    "craftcms/cms": "^5.7.9",
     "craftcms/redactor": "^4.0.0",
-    "sebastianlenz/craft-utils": "^4.0.1",
+    "sebastianlenz/craft-utils": "^4.0.7",
     "symfony/yaml": "^5.4.21",
     "deeplcom/deepl-php": "^1.8"
   },
