@@ -4,6 +4,7 @@ namespace lenz\contentfield\models\values;
 
 use craft\ckeditor\data\FieldData;
 use lenz\contentfield\models\fields\AbstractField;
+use Twig\Markup;
 
 /**
  * Class CKEditorValue
@@ -11,6 +12,12 @@ use lenz\contentfield\models\fields\AbstractField;
 class CKEditorValue extends FieldData implements ValueInterface
 {
   use ValueTrait;
+
+  /**
+   * @var Markup[]|null
+   */
+  private ?array $_pages;
+
 
   /**
    * CKEditorValue constructor.
@@ -28,7 +35,48 @@ class CKEditorValue extends FieldData implements ValueInterface
   }
 
   /**
-   * @inheritDoc
+   * Returns a specific page.
+   *
+   * @param int $pageNumber
+   * @return Markup|null
+   */
+  public function getPage(int $pageNumber): ?Markup {
+    $pages = $this->getPages();
+
+    if (isset($pages[$pageNumber - 1])) {
+      return $pages[$pageNumber - 1];
+    }
+
+    return null;
+  }
+
+  /**
+   * @return Markup[]
+   */
+  public function getPages(): array {
+    if (isset($this->_pages)) {
+      return $this->_pages;
+    }
+
+    $this->_pages = [];
+    $pages = explode('<!--pagebreak-->', $this->getParsedContent());
+
+    foreach ($pages as $page) {
+      $this->_pages[] = new Markup($page, \Craft::$app->charset);
+    }
+
+    return $this->_pages;
+  }
+
+  /**
+   * @return int
+   */
+  public function getTotalPages(): int {
+    return count($this->getPages());
+  }
+
+  /**
+   * @return bool
    */
   public function isEmpty(): bool {
     return empty($this->rawContent);
