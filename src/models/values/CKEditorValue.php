@@ -58,9 +58,12 @@ class CKEditorValue extends FieldData implements ValueInterface
       return $this->_pages;
     }
 
-    $this->_pages = [];
-    $pages = explode('<!--pagebreak-->', $this->getParsedContent());
+    $pages = preg_split(
+      '/(<div.*?class="page-break".*?>.*?<\\/div>|<!--pagebreak-->)/',
+      $this->getParsedContent()
+    );
 
+    $this->_pages = [];
     foreach ($pages as $page) {
       $this->_pages[] = new Markup($page, \Craft::$app->charset);
     }
