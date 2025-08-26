@@ -6,3 +6,10 @@
   name:         'authKey',
   value:        authKey is defined ? authKey : '',
 }) -}}
+
+{{- forms.textareaField({
+  label:        'Locale replacements ',
+  instructions: 'Maps locales before sending them to DeepL. DeepL does not accept "en" but expects "en-GB" or "en-US". Each line should contain source and target locale separated by a colon.',
+  name:         'localeReplacements',
+  value:        localeReplacements is defined ? localeReplacements : 'en: en-GB',
+}) -}}
