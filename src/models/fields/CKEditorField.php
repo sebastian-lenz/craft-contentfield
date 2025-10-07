@@ -79,6 +79,7 @@ class CKEditorField extends AbstractField
       'configId' => $this->getFieldProxy()->registerJs($element),
       'editorClass' => $this->editorClass,
       'showWordCount' => !!$this->showWordCount,
+      'translatable' => !!$this->translatable,
     ];
   }
 
