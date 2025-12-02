@@ -36,7 +36,7 @@ class TextField extends AbstractStringField
    * Defines all allowed input types.
    */
   const INPUT_TYPES = [
-    'email', 'password', 'search', 'tel', 'text', 'url'
+    'color', 'date', 'datetime-local', 'email', 'month', 'password', 'search', 'tel', 'text', 'time', 'url', 'week'
   ];
 
 
