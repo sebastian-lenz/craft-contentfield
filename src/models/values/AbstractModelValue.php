@@ -15,6 +15,7 @@ use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\Plugin;
 use Throwable;
+use yii\base\Event;
 use yii\base\Model;
 
 /**
@@ -35,6 +36,11 @@ abstract class AbstractModelValue
    * @var array
    */
   private array $_values = [];
+
+  /**
+   * @var string
+   */
+  const EVENT_COLLECT_SEARCH_KEYWORDS = 'createSearchKeywords';
 
 
   /**
@@ -229,12 +235,18 @@ abstract class AbstractModelValue
    * @return string
    */
   public function getSearchKeywords(): string {
-    return implode(
-      ' ',
-      array_map(function(AbstractField $field) {
-        return $field->getSearchKeywords($this->_values[$field->name]);
-      }, $this->_schema->fields)
-    );
+    $values = [];
+    foreach ($this->_schema->fields as $field) {
+      $values[$field->name] = $field->getSearchKeywords($this->_values[$field->name]);
+    }
+
+    if (Event::hasHandlers(self::class, self::EVENT_COLLECT_SEARCH_KEYWORDS)) {
+      $event = new Event(['data' => $values, 'sender' => $this]);
+      Event::trigger(self::class, self::EVENT_COLLECT_SEARCH_KEYWORDS, $event);
+      $values = $event->data;
+    }
+
+    return implode(' ', array_filter(array_values($values)));
   }
 
   /**
