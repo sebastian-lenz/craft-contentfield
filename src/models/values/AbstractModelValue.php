@@ -6,6 +6,7 @@ use Craft;
 use craft\base\ElementInterface;
 use Exception;
 use lenz\contentfield\events\BeforeActionEvent;
+use lenz\contentfield\events\InstanceSearchKeywordsEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\ReferenceMap;
 use lenz\contentfield\helpers\ReferenceMappableInterface;
@@ -114,7 +115,7 @@ abstract class AbstractModelValue
   /**
    * @inheritDoc
    */
-  public function addError($attribute, $error = '') {
+  public function addError($attribute, $error = ''): void {
     if (str_starts_with($attribute, 'raw:')) {
       $attribute = substr($attribute, 4);
     }
@@ -235,18 +236,22 @@ abstract class AbstractModelValue
    * @return string
    */
   public function getSearchKeywords(): string {
-    $values = [];
+    $keywords = [];
     foreach ($this->_schema->fields as $field) {
-      $values[$field->name] = $field->getSearchKeywords($this->_values[$field->name]);
+      $keywords[$field->name] = $field->getSearchKeywords($this->_values[$field->name]);
     }
 
     if (Event::hasHandlers(self::class, self::EVENT_COLLECT_SEARCH_KEYWORDS)) {
-      $event = new Event(['data' => $values, 'sender' => $this]);
+      $event = new InstanceSearchKeywordsEvent([
+        'instance' => $this,
+        'keywords' => $keywords,
+      ]);
+
       Event::trigger(self::class, self::EVENT_COLLECT_SEARCH_KEYWORDS, $event);
-      $values = $event->data;
+      $keywords = $event->keywords;
     }
 
-    return implode(' ', array_filter(array_values($values)));
+    return implode(' ', array_filter(array_values($keywords)));
   }
 
   /**
