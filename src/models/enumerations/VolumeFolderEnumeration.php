@@ -136,7 +136,7 @@ class VolumeFolderEnumeration implements CustomDataInterface, EnumerationInterfa
    */
   private function toOptions(array &$options, VolumeFolder $folder, int $depth = 0) {
     $options[] = [
-      'key'    => $folder->id,
+      'key'    => $folder->uid,
       'label'  => $folder->name,
       'indent' => $depth,
     ];
