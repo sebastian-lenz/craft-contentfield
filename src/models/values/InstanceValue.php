@@ -10,6 +10,7 @@ use Exception;
 use lenz\contentfield\behaviors\AnchorBehaviour;
 use lenz\contentfield\behaviors\SiblingsBehavior;
 use lenz\contentfield\events\BeforeActionEvent;
+use lenz\contentfield\events\ResponseEvent;
 use lenz\contentfield\helpers\BeforeActionInterface;
 use lenz\contentfield\helpers\InstanceAwareInterface;
 use lenz\contentfield\helpers\RenderableInterface;
@@ -20,6 +21,7 @@ use lenz\contentfield\Plugin;
 use lenz\contentfield\twig\DisplayInterface;
 use lenz\craft\utils\models\Attributes;
 use Twig\Markup;
+use yii\base\Event;
 use yii\base\Model;
 use yii\web\Response as YiiResponse;
 
@@ -80,6 +82,11 @@ class InstanceValue
   const TYPE_PROPERTY = '__type';
   const UUID_PROPERTY = '__uuid';
   const VISIBLE_PROPERTY = '__visible';
+
+  /**
+   * @var string
+   */
+  const EVENT_CHUNK_RESPONSE = 'chunkResponse';
 
 
   /**
@@ -366,6 +373,10 @@ class InstanceValue
     } else {
       $response->data = $content;
     }
+
+    Event::trigger($this, self::EVENT_CHUNK_RESPONSE, new ResponseEvent([
+      'response' => $response,
+    ]));
   }
 
 
