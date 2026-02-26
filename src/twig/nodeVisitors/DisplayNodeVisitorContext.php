@@ -8,7 +8,9 @@ use lenz\contentfield\twig\nodes\InlineIndexNode;
 use lenz\contentfield\twig\nodes\InlineTemplateNode;
 use Throwable;
 use Twig\Environment;
+use Twig\Node\EmptyNode;
 use Twig\Node\ModuleNode;
+use Twig\Node\Nodes;
 
 /**
  * Class DisplayNodeVisitorContext
@@ -264,8 +266,15 @@ class DisplayNodeVisitorContext
 
     // Copy over all macros
     $rootMacros = $this->_module->getNode('macros');
-    foreach ($module->getNode('macros') as $name => $macroNode) {
-      $rootMacros->setNode($name, $macroNode);
+    $macros = $module->getNode('macros');
+    if ($macros instanceof Nodes && count($macros)) {
+      if ($rootMacros instanceof EmptyNode) {
+        $this->_module->setNode('macros', $macros);
+      } else {
+        foreach ($module->getNode('macros') as $name => $macroNode) {
+          $rootMacros->setNode($name, $macroNode);
+        }
+      }
     }
 
     // Copy over macro imports
