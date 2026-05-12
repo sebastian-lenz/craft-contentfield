@@ -2,10 +2,10 @@
 
 namespace lenz\contentfield\behaviors;
 
-use craft\helpers\StringHelper;
-use lenz\contentfield\models\values\ArrayValue;
 use lenz\contentfield\models\values\InstanceValue;
-use lenz\contentfield\models\values\ReferenceValue;
+use lenz\contentfield\services\anchors\Anchor;
+use lenz\contentfield\services\anchors\AnchorInterface;
+use lenz\contentfield\services\anchors\Manager;
 use yii\base\Behavior;
 
 /**
@@ -15,61 +15,37 @@ use yii\base\Behavior;
  */
 class AnchorBehaviour extends Behavior
 {
+  /** @var Anchor|null */
+  public Anchor|null $anchor;
+
+  /** @var Manager */
+  private Manager $_manager;
+
+
   /**
-   * @var string|null
+   * @return string
    */
-  private ?string $_anchor;
+  public function __toString(): string {
+    $anchor = $this->getAnchor();
+    return is_null($anchor) ? '' : $anchor->getId();
+  }
 
   /**
-   * @var AnchorBehaviour[]
-   */
-  private array $_childAnchors;
-
-  /**
-   * @var string|null
-   */
-  private ?string $_rawValue;
-
-  /**
-   * @var string
-   */
-  public static string $DISABLED_VALUE = '#NULL';
-
-
-  /**
-   * @return AnchorBehaviour[]
+   * @return AnchorInterface[]
    */
   public function getAllAnchors(): array {
-    return $this->getRootBehaviour()->getChildAnchors();
+    return $this->getManager()->anchors;
   }
 
   /**
-   * @return string|null
+   * @return AnchorInterface|null
    */
-  public function getAnchor(): ?string {
+  public function getAnchor(): ?AnchorInterface {
     if (!isset($this->_anchor)) {
-      $this->getRootBehaviour()->generateAnchors();
+      $this->anchor = $this->getManager()->findInstanceAnchor($this->owner);
     }
 
-    return $this->_anchor ?? null;
-  }
-
-  /**
-   * @return string|null
-   */
-  public function getAnchorRawValue(): ?string {
-    if (!isset($this->_rawValue)) {
-      $this->_rawValue = $this->loadRawValue();
-    }
-
-    return $this->_rawValue;
-  }
-
-  /**
-   * @return string|null
-   */
-  public function getAnchorTitle(): ?string {
-    return $this->getAnchorRawValue();
+    return $this->anchor;
   }
 
   /**
@@ -77,15 +53,7 @@ class AnchorBehaviour extends Behavior
    * @noinspection PhpUnused (Public API)
    */
   public function hasAnchor(): bool {
-    return !is_null($this->getAnchorRawValue());
-  }
-
-  /**
-   * @return string
-   */
-  public function __toString(): string {
-    $anchor = $this->getAnchor();
-    return is_null($anchor) ? '' : $anchor;
+    return !is_null($this->getAnchor());
   }
 
 
@@ -93,99 +61,15 @@ class AnchorBehaviour extends Behavior
   // ---------------
 
   /**
-   * @param ArrayValue $value
+   * @return Manager
    */
-  private function collectArrayAnchors(ArrayValue $value): void {
-    foreach ($value->getVisibleValues() as $item) {
-      if ($item instanceof InstanceValue) {
-        $this->collectInstanceAnchors($item);
-      }
-    }
-  }
-
-  /**
-   * @param InstanceValue $instance
-   */
-  private function collectInstanceAnchors(InstanceValue $instance): void {
-    if (!$instance->isVisible()) {
-      return;
+  private function getManager(): Manager {
+    $rootBehaviour = $this->getRootBehaviour();
+    if (!isset($rootBehaviour->_manager)) {
+      $rootBehaviour->_manager = new Manager($rootBehaviour->owner);
     }
 
-    $anchor = $instance->getBehavior('anchor');
-    if ($anchor instanceof AnchorBehaviour) {
-      $delegates = $anchor->getDelegates();
-      if ($delegates) {
-        array_push($this->_childAnchors, ...$delegates);
-      } elseif ($anchor->hasAnchor()) {
-        $this->_childAnchors[] = $anchor;
-      }
-    }
-
-    foreach ($instance->getAttributes() as $value) {
-      if ($value instanceof ArrayValue) {
-        $this->collectArrayAnchors($value);
-      } elseif ($value instanceof InstanceValue) {
-        $this->collectInstanceAnchors($value);
-      }
-    }
-  }
-
-  /**
-   * @return void
-   */
-  private function generateAnchors(): void {
-    $ids = [];
-    foreach ($this->getChildAnchors() as $anchor) {
-      $rawValue = $anchor->getAnchorRawValue();
-      if (is_null($rawValue)) {
-        $rawValue = $anchor->owner->getUuid();
-      }
-
-      $slug = StringHelper::slugify($rawValue);
-      $id = $slug;
-      $index = 0;
-
-      while (in_array($id, $ids) && $index < 50) {
-        $id = $slug . '-' . (++$index);
-      }
-
-      $ids[] = $id;
-      $anchor->_anchor = $id;
-    }
-  }
-
-  /**
-   * @return AnchorBehaviour[]
-   */
-  private function getChildAnchors(): array {
-    if (!isset($this->_childAnchors)) {
-      $this->_childAnchors = [];
-      $this->collectInstanceAnchors($this->owner);
-    }
-
-    return $this->_childAnchors;
-  }
-
-  /**
-   * @return AnchorBehaviour[]
-   */
-  private function getDelegates(): array {
-    $fields = self::parseAnchorFields($this->owner->getSchema()->anchor, 'delegates');
-    $anchors = [];
-
-    foreach ($fields as $field) {
-      $value = $this->owner->offsetGet($field[0]);
-      if (!($value instanceof ReferenceValue)) {
-        continue;
-      }
-
-      foreach ($value->getReferences() as $element) {
-        $model = $element->{$field[1]}->getModel();
-        $anchors = array_merge($anchors, $model->getAllAnchors());
-      }
-    }
-
-    return $anchors;
+    return $rootBehaviour->_manager;
   }
 
   /**
@@ -201,67 +85,5 @@ class AnchorBehaviour extends Behavior
     return $behaviour instanceof AnchorBehaviour
       ? $behaviour
       : $this;
-  }
-
-  /**
-   * @return string|null
-   */
-  private function loadRawValue(): ?string {
-    $fields = self::parseAnchorFields($this->owner->getSchema()->anchor);
-
-    foreach ($fields as $field) {
-      $rawValue = $this->owner->offsetGet($field);
-      if (is_bool($rawValue)) {
-        if (!$rawValue) {
-          return null;
-        } else {
-          continue;
-        }
-      }
-
-      $value = trim((string)$rawValue);
-      if ($value === self::$DISABLED_VALUE) {
-        return null;
-      }
-
-      if (!empty($value)) {
-        return $value;
-      }
-    }
-
-    return null;
-  }
-
-
-  // Static methods
-  // --------------
-
-  /**
-   * @param mixed $values
-   * @param string $mode
-   * @return string[]
-   */
-  static public function parseAnchorFields(mixed $values, string $mode = 'fields'): array {
-    if (empty($values)) {
-      return [];
-    }
-
-    $values = array_filter(array_map('trim',
-      is_array($values) ? $values : explode(',', $values)
-    ));
-
-    return match ($mode) {
-      'delegates' => array_filter(array_map(
-        fn(string $value) => str_starts_with($value, '...')
-          ? array_filter(array_map('trim', explode('.', substr($value, 3))))
-          : null,
-        $values
-      )),
-      'fields' => array_filter(
-        $values,
-        fn(string $value) => !str_starts_with($value, '...')
-      ),
-      default => $values,
-    };
   }
 }

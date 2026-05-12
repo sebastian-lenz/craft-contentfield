@@ -8,7 +8,6 @@ use craft\elements\Asset;
 use craft\helpers\ArrayHelper;
 use Error;
 use Exception;
-use lenz\contentfield\behaviors\AnchorBehaviour;
 use lenz\contentfield\events\BeforeActionEvent;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\AbstractField;
@@ -16,6 +15,7 @@ use lenz\contentfield\models\fields\OEmbedField;
 use lenz\contentfield\models\fields\ReferenceField;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\Plugin;
+use lenz\contentfield\services\anchors\Parser;
 use lenz\contentfield\validators\ValueValidator;
 use Throwable;
 use yii\base\Model;
@@ -482,10 +482,7 @@ abstract class AbstractSchema extends Model
    * @noinspection PhpUnused (Validator)
    */
   public function validateAnchor(string $attribute) {
-    $fields = AnchorBehaviour::parseAnchorFields($this->$attribute);
-    if (is_null($fields)) {
-      return;
-    }
+    $fields = Parser::parse($this->$attribute, 'fields');
 
     foreach ($fields as $field) {
       if (!$this->hasField($field)) {
@@ -686,7 +683,7 @@ abstract class AbstractSchema extends Model
       $triggers['+'] = ['structures', ArrayHelper::getValue($definitions, 'structures', [])];
     }
 
-    foreach ($triggers as list($name, $value)) {
+    foreach ($triggers as [$name, $value]) {
       if (!is_array($value)) {
         throw new Error("The schema attribute `$name` must be an array.");
       }
@@ -701,7 +698,7 @@ abstract class AbstractSchema extends Model
       }
     }, ARRAY_FILTER_USE_BOTH);
 
-    foreach ($triggers as list($name, $value)) {
+    foreach ($triggers as [$name, $value]) {
       $definitions[$name] = $name === 'structures'
         ? array_map(function($definition) {
             return self::expandConfig($definition);
