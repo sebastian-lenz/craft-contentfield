@@ -68,7 +68,7 @@ readonly class Manager
       return [];
     }
 
-    $result = [Parser::parseDelegates($instance)];
+    $result = Parser::parseDelegates($instance);
     $anchor = Parser::parseFields($instance);
     if ($anchor) {
       $result[] = $anchor;
@@ -86,9 +86,9 @@ readonly class Manager
 
     foreach ($instance->getAttributes() as $value) {
       if ($value instanceof ArrayValue) {
-        $result = array_merge(self::collectArrayAnchors($value));
+        $result = array_merge($result, self::collectArrayAnchors($value));
       } elseif ($value instanceof InstanceValue) {
-        $result = array_merge(self::collectInstanceAnchors($value));
+        $result = array_merge($result, self::collectInstanceAnchors($value));
       }
     }
 
