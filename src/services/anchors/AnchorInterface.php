@@ -13,6 +13,11 @@ interface AnchorInterface
   public function getId(): string;
 
   /**
+   * @return string
+   */
+  public function getTitle(): string;
+
+  /**
    * @param string $value
    * @return void
    */
