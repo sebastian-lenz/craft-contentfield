@@ -39,6 +39,13 @@ class Anchor implements AnchorInterface
   }
 
   /**
+   * @return string
+   */
+  public function getTitle(): string {
+    return $this->title;
+  }
+
+  /**
    * @inheritDoc
    */
   public function setId(string $value): void {

@@ -5,6 +5,7 @@ namespace lenz\contentfield\helpers\listeners;
 use craft\base\ElementInterface;
 use lenz\contentfield\behaviors\AnchorBehaviour;
 use lenz\contentfield\models\Content;
+use lenz\contentfield\services\anchors\InstanceAnchor;
 use lenz\craft\utils\events\AnchorEvent;
 use lenz\craft\utils\events\AnchorsEvent;
 use yii\base\Event;
@@ -21,9 +22,9 @@ class Anchors
     self::eachAnchors($event->getElement(), function(AnchorBehaviour $anchors) use ($event) {
       foreach ($anchors->getAllAnchors() as $anchor) {
         $event->addAnchor(
-          $anchor->getAnchor(),
-          $anchor->getAnchorTitle(),
-          $anchor->owner->getUuid()
+          $anchor->getId(),
+          $anchor->getTitle(),
+          $anchor instanceof InstanceAnchor ? $anchor->uid : null,
         );
       }
     });
@@ -35,8 +36,8 @@ class Anchors
   static public function onResolveAnchorId(AnchorEvent $event): void {
     self::eachAnchors($event->getElement(), function(AnchorBehaviour $anchors) use ($event) {
       foreach ($anchors->getAllAnchors() as $anchor) {
-        if ($anchor->owner->getUuid() == $event->id) {
-          $event->anchor = $anchor->getAnchor();
+        if ($anchor instanceof InstanceAnchor && $anchor->uid == $event->id) {
+          $event->anchor = $anchor->getId();
         }
       }
     });
