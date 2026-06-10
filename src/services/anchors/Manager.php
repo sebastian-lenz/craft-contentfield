@@ -81,7 +81,7 @@ readonly class Manager
 
     $behaviour = $instance->getBehavior('anchor');
     if ($behaviour instanceof AnchorBehaviour) {
-      $behaviour->anchor = $anchor;
+      $behaviour->setAnchor($anchor);
     }
 
     foreach ($instance->getAttributes() as $value) {
