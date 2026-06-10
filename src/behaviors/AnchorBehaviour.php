@@ -3,7 +3,6 @@
 namespace lenz\contentfield\behaviors;
 
 use lenz\contentfield\models\values\InstanceValue;
-use lenz\contentfield\services\anchors\Anchor;
 use lenz\contentfield\services\anchors\AnchorInterface;
 use lenz\contentfield\services\anchors\Manager;
 use yii\base\Behavior;
@@ -15,8 +14,8 @@ use yii\base\Behavior;
  */
 class AnchorBehaviour extends Behavior
 {
-  /** @var Anchor|null */
-  public Anchor|null $anchor;
+  /** @var AnchorInterface|null */
+  private AnchorInterface|null $_anchor;
 
   /** @var Manager */
   private Manager $_manager;
@@ -42,10 +41,10 @@ class AnchorBehaviour extends Behavior
    */
   public function getAnchor(): ?AnchorInterface {
     if (!isset($this->_anchor)) {
-      $this->anchor = $this->getManager()->findInstanceAnchor($this->owner);
+      $this->_anchor = $this->getManager()->findInstanceAnchor($this->owner);
     }
 
-    return $this->anchor;
+    return $this->_anchor;
   }
 
   /**
@@ -54,6 +53,14 @@ class AnchorBehaviour extends Behavior
    */
   public function hasAnchor(): bool {
     return !is_null($this->getAnchor());
+  }
+
+  /**
+   * @param AnchorInterface|null $value
+   * @return void
+   */
+  public function setAnchor(AnchorInterface|null $value): void {
+    $this->_anchor = $value;
   }
 
 
