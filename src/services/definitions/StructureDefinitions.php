@@ -4,6 +4,7 @@ namespace lenz\contentfield\services\definitions;
 
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\Qualifier;
 use lenz\contentfield\models\schemas\StructureSchema;
 use lenz\contentfield\services\schemas\StructureLoader;
 use Throwable;
@@ -51,11 +52,12 @@ class StructureDefinitions extends AbstractDefinitions
   }
 
   /**
-   * @param string $name
+   * @param Qualifier|string $qualifier
    * @return StructureSchema
    * @throws Exception
    */
-  public function getStructure(string $name): StructureSchema {
+  public function getStructure(Qualifier|string $qualifier): StructureSchema {
+    $name = $qualifier instanceof Qualifier ? $qualifier->name : $qualifier;
     if (!array_key_exists($name, $this->_structures)) {
       $definition = $this->resolveDefinition([
         'type' => $name
@@ -67,7 +69,7 @@ class StructureDefinitions extends AbstractDefinitions
 
       unset($definition['type']);
       $this->_structures[$name] = new StructureSchema([
-        'qualifier' => StructureLoader::createQualifier($name),
+        'qualifier' => (string)StructureLoader::createQualifier($name),
       ] + $definition);
     }
 

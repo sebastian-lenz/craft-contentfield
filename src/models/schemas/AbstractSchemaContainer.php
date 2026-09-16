@@ -92,7 +92,7 @@ abstract class AbstractSchemaContainer extends AbstractSchema
 
     $schema = new StructureSchema([
       'container' => $this,
-      'qualifier' => StructureLoader::createQualifier($name, $this),
+      'qualifier' => (string)StructureLoader::createQualifier($name, $this),
     ] + $config);
 
     $this->_localStructures[$name] = $schema;

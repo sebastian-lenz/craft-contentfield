@@ -4,6 +4,7 @@ namespace lenz\contentfield\services\schemas;
 
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\Qualifier;
 use lenz\contentfield\models\schemas\StructureSchema;
 use lenz\contentfield\Plugin;
 
@@ -22,7 +23,7 @@ class StructureLoader extends AbstractLoader
    * @inheritDoc
    */
   public function findNames(string $pattern): array {
-    list($schemas) = $this->getAllSchemas();
+    [$schemas] = $this->getAllSchemas();
     $names = array_map(fn(StructureSchema $schema) => $schema->getName(), $schemas);
 
     return array_values(
@@ -41,23 +42,25 @@ class StructureLoader extends AbstractLoader
   /**
    * @inheritDoc
    */
-  public function load(string $name): AbstractSchema {
-    $schemaOffset = strpos($name, '@');
-    if ($schemaOffset !== false) {
-      $schemaName = substr($name, $schemaOffset + 1);
-      $schema = Plugin::getInstance()->schemas->getSchema($schemaName);
+  public function load(Qualifier|string $qualifier): AbstractSchema {
+    $qualifier = Qualifier::toQualifier($qualifier);
+    $qualifier->name = $this->normalizeName($qualifier->name);
 
-      $structName = substr($name, 0, $schemaOffset);
-      $struct = $schema->getLocalStructure($structName);
+    if ($qualifier->scope) {
+      $scope = Plugin::getInstance()->schemas->getSchema($qualifier->scope);
+      if (is_null($scope)) {
+        throw new Exception(sprintf('The scope `%s` does not exist.', $qualifier->scope));
+      }
 
+      $struct = $scope->getLocalStructure($qualifier->name);
       if (is_null($struct)) {
-        throw new Exception(printf('The local structure `%s` does not exist in `%s`.', $structName, $schemaName));
+        throw new Exception(sprintf('The local structure `%s` does not exist in `%s`.', $qualifier->name, $scope->qualifier));
       }
 
       return $struct;
     }
 
-    return Plugin::getInstance()->structures->getStructure($name);
+    return Plugin::getInstance()->structures->getStructure($qualifier);
   }
 
 
@@ -67,20 +70,13 @@ class StructureLoader extends AbstractLoader
   /**
    * @param string $name
    * @param AbstractSchema|null $scope
-   * @return string
+   * @return Qualifier
    */
-  public static function createName(string $name, AbstractSchema $scope = null): string {
-    return is_null($scope)
-      ? $name
-      : $name . '@' . $scope->qualifier;
-  }
-
-  /**
-   * @param string $name
-   * @param AbstractSchema|null $scope
-   * @return string
-   */
-  static public function createQualifier(string $name, AbstractSchema $scope = null): string {
-    return self::NAME_PREFIX . self::createName($name, $scope);
+  static public function createQualifier(string $name, AbstractSchema $scope = null): Qualifier {
+    return new Qualifier(
+      name: $name,
+      loader: self::NAME_PREFIX,
+      scope: $scope ? Qualifier::toQualifier($scope) : null
+    );
   }
 }

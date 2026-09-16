@@ -10,6 +10,7 @@ use lenz\contentfield\Config;
 use lenz\contentfield\exceptions\TemplateConfigException;
 use lenz\contentfield\exceptions\YamlMissingException;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\Qualifier;
 use lenz\contentfield\models\schemas\TemplateSchema;
 use lenz\contentfield\twig\YamlAwareTemplateLoader;
 use RecursiveDirectoryIterator;
@@ -119,10 +120,13 @@ class TemplateLoader extends AbstractLoader
   /**
    * @inheritdoc
    */
-  public function load(string $name): AbstractSchema {
-    $name = $this->normalizeName($name);
-    $data = $this->_loader->getMetaData($name);
+  public function load(Qualifier|string $qualifier): AbstractSchema {
+    $name = $this->normalizeName($qualifier instanceof Qualifier
+      ? $qualifier->name
+      : $qualifier
+    );
 
+    $data = $this->_loader->getMetaData($name);
     if (is_null($data['preamble'])) {
       throw new YamlMissingException(sprintf(
         'The template `%s` does not contain a yaml preamble.',

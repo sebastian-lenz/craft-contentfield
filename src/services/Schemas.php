@@ -8,6 +8,7 @@ use lenz\contentfield\exceptions\ContentLoadException;
 use lenz\contentfield\models\Content;
 use lenz\contentfield\models\fields\InstanceField;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\Qualifier;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\models\values\ValueInterface;
 use lenz\contentfield\services\schemas\AbstractLoader;
@@ -112,7 +113,7 @@ class Schemas
       $schemas = [];
 
       foreach ($this->_loaders as $loader) {
-        list($loaderSchemas, $loaderErrors) = $loader->getAllSchemas();
+        [$loaderSchemas, $loaderErrors] = $loader->getAllSchemas();
         $errors  = array_merge($errors, $loaderErrors);
         $schemas = array_merge($schemas, $loaderSchemas);
       }
@@ -164,7 +165,7 @@ class Schemas
       return $this->_schemas[$parsed['uri']];
     }
 
-    $schema = $parsed['loader']->load($parsed['name']);
+    $schema = $parsed['loader']->load($parsed['qualifier'] ?? $parsed['name']);
     $this->_schemas[$parsed['uri']] = $schema;
     return $schema;
   }
@@ -246,49 +247,44 @@ class Schemas
   }
 
   /**
-   * @param string $qualifier
+   * @param Qualifier|string $qualifier
    * @param AbstractSchema|null $scope
    * @return array
    * @throws Exception
    */
-  public function parseSchemaQualifier(string $qualifier, AbstractSchema $scope = null): array {
-    $divider = strpos($qualifier, ':');
-    $name = $divider === false
-      ? trim($qualifier)
-      : trim(substr($qualifier, $divider + 1));
+  public function parseSchemaQualifier(Qualifier|string $qualifier, AbstractSchema $scope = null): array {
+    $qualifier = Qualifier::toQualifier($qualifier);
 
     // Check if the name is a local structure
+    $structureName = $this->_structureLoader->normalizeName($qualifier->name);
     if (
       !is_null($scope) &&
-      $scope->hasLocalStructure($name)
+      $scope->hasLocalStructure($structureName)
     ) {
-      $name = $this->_structureLoader->normalizeName($name);
+      $qualifier->loader = StructureLoader::NAME_PREFIX;
+      $qualifier->name = $structureName;
+
       return [
         'loader' => $this->_structureLoader,
-        'name' => StructureLoader::createName($name, $scope),
-        'uri' => StructureLoader::createQualifier($name, $scope),
+        'name' => $qualifier->getFullName(),
+        'qualifier' => $qualifier,
+        'uri' => (string)$qualifier,
       ];
     }
 
-    // If no loader is given, assume it is a template
-    if ($divider === false) {
-      $loader = $this->_templateLoader;
-
-    // Otherwise, delegate to the loader
-    } else {
-      $loaderName = substr($qualifier, 0, $divider + 1);
-      if (!array_key_exists($loaderName, $this->_loaders)) {
-        throw new Exception('Invalid schema name "' . $qualifier . '"');
-      }
-
-      $loader = $this->_loaders[$loaderName];
+    $loaderName = $qualifier->loader ?? TemplateLoader::NAME_PREFIX;
+    if (!array_key_exists($loaderName, $this->_loaders)) {
+      throw new Exception('Invalid schema name "' . $qualifier . '"');
     }
 
-    $name = $loader->normalizeName($name);
+    $loader = $this->_loaders[$loaderName];
+    $qualifier->name = $loader->normalizeName($qualifier->name);
+
     return [
       'loader' => $loader,
-      'name' => $name,
-      'uri' => $loader::NAME_PREFIX . $name,
+      'name' => $qualifier->name,
+      'qualifier' => $qualifier,
+      'uri' => (string)$qualifier,
     ];
   }
 
