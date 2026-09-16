@@ -263,6 +263,7 @@ class Schemas
     ) {
       $qualifier->loader = StructureLoader::NAME_PREFIX;
       $qualifier->name = $structureName;
+      $qualifier->scope = Qualifier::toQualifier($scope);
 
       return [
         'loader' => $this->_structureLoader,
