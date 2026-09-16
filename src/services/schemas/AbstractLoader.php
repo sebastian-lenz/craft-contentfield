@@ -4,6 +4,7 @@ namespace lenz\contentfield\services\schemas;
 
 use Exception;
 use lenz\contentfield\models\schemas\AbstractSchema;
+use lenz\contentfield\models\schemas\Qualifier;
 use Throwable;
 
 /**
@@ -47,11 +48,11 @@ abstract class AbstractLoader
   /**
    * Load the schema with the given name.
    *
-   * @param string $name
+   * @param Qualifier|string $qualifier
    * @return AbstractSchema
    * @throws Throwable
    */
-  abstract function load(string $name): AbstractSchema;
+  abstract function load(Qualifier|string $qualifier): AbstractSchema;
 
   /**
    * Normalize the given name.

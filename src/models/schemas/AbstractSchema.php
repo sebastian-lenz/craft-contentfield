@@ -346,7 +346,7 @@ abstract class AbstractSchema extends Model
    * @return string
    */
   public function getName(): string {
-    return self::extractName($this->qualifier);
+    return Qualifier::extractName($this->qualifier);
   }
 
   /**
@@ -587,7 +587,7 @@ abstract class AbstractSchema extends Model
    * @return string
    */
   protected function generateSchemaLabel(string $qualifier): string {
-    return Inflector::camel2words(self::extractName($qualifier));
+    return Inflector::camel2words(Qualifier::extractName($qualifier));
   }
 
   /**
@@ -649,24 +649,6 @@ abstract class AbstractSchema extends Model
 
   // Static methods
   // --------------
-
-  /**
-   * @param string $qualifier
-   * @return string
-   */
-  public static function extractName(string $qualifier): string {
-    $offset = strpos($qualifier, ':');
-    if ($offset !== false) {
-      $qualifier = substr($qualifier, $offset + 1);
-    }
-
-    $offset = strpos($qualifier, '@');
-    if ($offset !== false) {
-      $qualifier = substr($qualifier, 0, $offset);
-    }
-
-    return $qualifier;
-  }
 
   /**
    * @param array $definitions
