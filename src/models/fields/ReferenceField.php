@@ -320,7 +320,7 @@ class ReferenceField extends AbstractField
       'sources' => $sources,
     ];
 
-    if ($this->elementType == Asset::class) {
+    if ($this->elementType === Asset::class) {
       $event = new ReferenceFolderSourcesEvent($eventArgs);
     } else {
       $event = new ReferenceSourcesEvent($eventArgs);

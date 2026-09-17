@@ -4,6 +4,8 @@ namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
 use Exception;
+use Illuminate\Support\Arr;
+use lenz\contentfield\events\InstanceSchemasEvent;
 use lenz\contentfield\models\schemas\AbstractSchema;
 use lenz\contentfield\models\values\InstanceValue;
 use lenz\contentfield\models\values\ValueInterface;
@@ -65,6 +67,11 @@ class InstanceField extends AbstractField
    * The internal name of this field.
    */
   const NAME = 'instance';
+
+  /**
+   * Event triggered when this fields collects the available schemas.
+   */
+  const EVENT_SCHEMAS = 'schemas';
 
 
   /**
@@ -160,9 +167,27 @@ class InstanceField extends AbstractField
       return null;
     }
 
+    $event = new InstanceSchemasEvent([
+      'element' => $element,
+      'field' => $this,
+      'qualifiers' => $qualifiers,
+    ]);
+
+    $this->trigger(self::EVENT_SCHEMAS, $event);
+    $qualifiers = $event->getQualifiers();
+    if (count($qualifiers) === 0) {
+      return null;
+    }
+
+    $defaultSchema = $this->getDefaultSchema()->qualifier;
+    if (!in_array($defaultSchema, $qualifiers)) {
+      $defaultSchema = Arr::first($qualifiers);
+    }
+
+
     return parent::getEditorData($element) + [
       'collapsible'   => !!$this->collapsible,
-      'defaultSchema' => $this->getDefaultSchema()->qualifier,
+      'defaultSchema' => $defaultSchema,
       'schemas'       => $qualifiers,
     ];
   }
@@ -188,17 +213,15 @@ class InstanceField extends AbstractField
 
       $schemas = $manager->getSchemas(
         array_map(
-          function($schema) use ($parent, $manager) {
-            return $manager->parseSchemaQualifier($schema, $parent);
-          },
+          fn($schema) => $manager->parseSchemaQualifier($schema, $parent),
           array_merge($this->schemas, $this->includes)
         )
       );
 
       if (isset($this->excludes)) {
-        $schemas = array_filter($schemas, function(AbstractSchema $schema) {
-          return !$schema->matchesQualifier($this->excludes);
-        });
+        $schemas = array_filter($schemas,
+          fn(AbstractSchema $schema) => !$schema->matchesQualifier($this->excludes)
+        );
       }
 
       $this->_resolvedSchemas = $schemas;
