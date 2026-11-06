@@ -283,6 +283,11 @@ class DisplayNodeVisitorContext
       $constructorEnd->setNode($name, $constructorEndNode);
     }
 
+    // Inlined bodies call `$this->escaper`, so the host template must initialize it
+    if ($module->hasAttribute('escaper') && $module->getAttribute('escaper')) {
+      $this->_module->setAttribute('escaper', true);
+    }
+
     // Create an inline template node
     $node     = new InlineTemplateNode($schema, $module);
     $callback = $node->getAttribute('name');
