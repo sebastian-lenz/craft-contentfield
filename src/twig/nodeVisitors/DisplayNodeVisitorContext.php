@@ -8,7 +8,7 @@ use lenz\contentfield\twig\nodes\InlineIndexNode;
 use lenz\contentfield\twig\nodes\InlineTemplateNode;
 use Throwable;
 use Twig\Environment;
-use Twig\Node\EmptyNode;
+use Twig\Node\MacrosNode;
 use Twig\Node\ModuleNode;
 use Twig\Node\Nodes;
 
@@ -264,17 +264,20 @@ class DisplayNodeVisitorContext
         ->getAttribute('name');
     }
 
-    // Copy over all macros
-    $rootMacros = $this->_module->getNode('macros');
+    // Copy over all macros. Twig >= 3.29 uses a `MacrosNode` (compiled to
+    // `loadDeclaredMacros()`), older versions use `Nodes` / `EmptyNode`.
+    // Always create a new container, the inlined module is cached and
+    // must not be modified.
     $macros = $module->getNode('macros');
-    if ($macros instanceof Nodes && count($macros)) {
-      if ($rootMacros instanceof EmptyNode) {
-        $this->_module->setNode('macros', $macros);
-      } else {
-        foreach ($module->getNode('macros') as $name => $macroNode) {
-          $rootMacros->setNode($name, $macroNode);
-        }
-      }
+    if (count($macros)) {
+      $merged = array_merge(
+        iterator_to_array($this->_module->getNode('macros')),
+        iterator_to_array($macros)
+      );
+
+      $this->_module->setNode('macros', class_exists(MacrosNode::class)
+        ? new MacrosNode($merged)
+        : new Nodes($merged));
     }
 
     // Copy over macro imports
