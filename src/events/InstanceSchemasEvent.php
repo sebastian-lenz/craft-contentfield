@@ -54,11 +54,11 @@ class InstanceSchemasEvent extends Event
       $isRegExp = true;
     }
 
-    $this->_qualifiers = array_filter($this->_qualifiers,
+    $this->_qualifiers = array_values(array_filter($this->_qualifiers,
       fn(string $qualifier) => $isRegExp
         ? !preg_match($value, $qualifier)
         : $qualifier !== $value
-    );
+    ));
 
     return $this;
   }
