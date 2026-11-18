@@ -44,8 +44,14 @@ class InlineTemplateNode extends Node
         ->indent()
         ->write("\$blocks = [];\n")
         ->write("\$macros = \$this->macros;\n")
-        ->write("\$context = \$this->env->getGlobals() + \\lenz\\contentfield\\models\\schemas\\TemplateSchema::normalizedVariables(\$instance, \$variables);\n")
+        // Template variables must take precedence over globals, matching `Template::yield()`
+        ->write("\$context = \\lenz\\contentfield\\models\\schemas\\TemplateSchema::normalizedVariables(\$instance, \$variables) + \$this->env->getGlobals();\n")
+        // Extensions (e.g. Craft's profiler) hook into the module's display start / end
+        ->subcompile($body->getNode('display_start'))
         ->subcompile($body->getNode('body'))
+        ->subcompile($body->getNode('display_end'))
+        // Ensure the method is always a generator, even if the template has no output
+        ->write("return; yield;\n")
         ->outdent()
       ->write("}\n\n");
   }
