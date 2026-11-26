@@ -193,6 +193,10 @@ class DisplayNodeVisitorContext
       try {
         $source = $env->getLoader()->getSourceContext($schema->template);
         $module = $env->parse($env->tokenize($source));
+
+        // Macros of all inlined templates end up in the host template,
+        // give them unique names so they cannot overwrite each other
+        InlineMacroScope::apply($module, substr(md5($template), 0, 8));
       } catch (Throwable $error) {
         Craft::error($error->getMessage());
       }
