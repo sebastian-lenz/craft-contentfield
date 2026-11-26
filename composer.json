@@ -14,6 +14,12 @@
     "symfony/yaml": "^5.4.21",
     "deeplcom/deepl-php": "^1.8"
   },
+  "conflict": {
+    "craftcms/ckeditor": "<5.10.0"
+  },
+  "suggest": {
+    "craftcms/ckeditor": "Required for the `ckeditor` field type (^5.10.0)."
+  },
   "require-dev": {
     "craftcms/phpstan": "dev-main",
     "phpstan/phpstan": "^1.5",
