@@ -12,6 +12,9 @@
 - Added the `contentfield/cke/export` command to export legacy CKEditor configs manually.
 - `ckeConfig` now accepts an inline config.
 
+### Fixed
+- Macros of inlined templates sharing a name (e.g. two element templates both declaring `results`) no longer overwrite each other, calls like `_self.results()` invoked the macro of another template.
+
 ### Deprecated
 - Referencing CKEditor configs by their uid. See the upgrade guide in `docs/fields/ckeditor.md`.
 
