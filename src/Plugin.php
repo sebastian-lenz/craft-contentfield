@@ -13,6 +13,7 @@ use yii\caching\FileCache;
 /**
  * Class Plugin
  *
+ * @property services\definitions\CKEditorConfigDefinitions $ckeConfigs
  * @property services\definitions\FieldDefinitions $fields
  * @property services\FieldUsage $fieldUsage
  * @property FileCache $imageTagCache
@@ -59,6 +60,7 @@ class Plugin extends BasePlugin
     parent::init();
 
     $this->setComponents([
+      'ckeConfigs' => services\definitions\CKEditorConfigDefinitions::class,
       'fields' => services\definitions\FieldDefinitions::class,
       'fieldUsage' => services\FieldUsage::class,
       'imageTagCache' => [
@@ -79,6 +81,7 @@ class Plugin extends BasePlugin
     helpers\listeners\Anchors::register();
     helpers\listeners\Frontend::register();
     helpers\listeners\Caches::register();
+    helpers\listeners\CKEditorConfigs::register();
     helpers\listeners\Registry::register();
     helpers\listeners\YamlLoader::register();
   }

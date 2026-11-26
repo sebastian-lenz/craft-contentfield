@@ -5,7 +5,6 @@ namespace lenz\contentfield\services\definitions;
 use Craft;
 use Exception;
 use lenz\contentfield\Config;
-use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
@@ -192,12 +191,10 @@ abstract class AbstractDefinitions
 
     // Finally, read all the definitions
     $definitions = [];
-    foreach ($sources as $source) {
+    foreach ($sources as $key => $source) {
       $definitions = array_merge(
         $definitions,
-        static::transformDefinitions(
-          Yaml::parseFile($source['pathname'])
-        )
+        $this->parseDefinitionSource((string)$key, $source['pathname'])
       );
     }
 
@@ -206,6 +203,19 @@ abstract class AbstractDefinitions
       'hash' => $hash,
       'data' => $definitions
     ));
+  }
+
+  /**
+   * Parses a single definition file and returns the definitions it contains.
+   *
+   * @param string $key The source key, either `*` for a single definition file
+   *   or the path of the file relative to the definition directory.
+   * @param string $pathname
+   * @return array
+   */
+  protected function parseDefinitionSource(string $key, string $pathname): array {
+    $definitions = Yaml::parseFile($pathname);
+    return static::transformDefinitions(is_array($definitions) ? $definitions : []);
   }
 
   /**

@@ -51,6 +51,7 @@ module.exports = {
       '/fields/': [
         'array',
         'checkbox',
+        'ckeditor',
         'color',
         'instance',
         'instances',

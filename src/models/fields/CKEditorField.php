@@ -3,10 +3,13 @@
 namespace lenz\contentfield\models\fields;
 
 use craft\base\ElementInterface;
+use Exception;
 use lenz\contentfield\helpers\ckeditor\FieldProxy;
 use lenz\contentfield\helpers\StringHelper;
 use lenz\contentfield\models\values\CKEditorValue;
 use lenz\contentfield\models\values\ValueInterface;
+use lenz\contentfield\Plugin;
+use lenz\contentfield\services\definitions\CKEditorConfigDefinitions;
 
 /**
  * Class CKEditorField
@@ -16,9 +19,12 @@ use lenz\contentfield\models\values\ValueInterface;
 class CKEditorField extends AbstractField
 {
   /**
-   * @var string|null
+   * The CKEditor config to use. Either the name of a config stored
+   * in `config/content/cke` or an inline config array.
+   *
+   * @var string|array|null
    */
-  public ?string $ckeConfig = null;
+  public string|array|null $ckeConfig = null;
 
   /**
    * @var string|null
@@ -126,7 +132,7 @@ class CKEditorField extends AbstractField
     return array_merge(
       parent::rules(),
       [
-        [['ckeConfig', 'editorClass'], 'string'],
+        [['editorClass'], 'string'],
         [['wordLimit'], 'number'],
         [['enableSourceEditingForNonAdmins', 'searchable', 'wordLimit', 'translatable'], 'boolean'],
       ]
@@ -138,16 +144,34 @@ class CKEditorField extends AbstractField
   // ---------------
 
   /**
+   * @return array
+   * @throws Exception
+   */
+  private function getCKEditorConfig(): array {
+    if (is_array($this->ckeConfig)) {
+      return CKEditorConfigDefinitions::withoutMeta($this->ckeConfig);
+    }
+
+    return empty($this->ckeConfig)
+      ? []
+      : Plugin::getInstance()->ckeConfigs->getConfig($this->ckeConfig);
+  }
+
+  /**
    * @return FieldProxy
+   * @throws Exception
    */
   private function getFieldProxy(): FieldProxy {
     if (!isset($this->_proxy)) {
-      $this->_proxy = new FieldProxy([
-        'ckeConfig' => $this->ckeConfig,
-        'enableSourceEditingForNonAdmins' => $this->enableSourceEditingForNonAdmins,
-        'showWordCount' => $this->showWordCount,
-        'wordLimit' => $this->wordLimit,
-      ]);
+      $config = $this->getCKEditorConfig();
+      $config['showWordCount'] = $this->showWordCount;
+      $config['wordLimit'] = $this->wordLimit;
+
+      if ($this->enableSourceEditingForNonAdmins) {
+        $config['enableSourceEditingForNonAdmins'] = true;
+      }
+
+      $this->_proxy = new FieldProxy($config);
     }
 
     return $this->_proxy;
